@@ -1,0 +1,99 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f3f3f3;
+  padding: 40px 16px;
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.card h1 {
+  font-size: 20px;
+  color: #2f3e9e;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  padding: 10px 12px;
+}
+
+.input-icon input {
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #4a5bdc, #3b4acb);
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-link {
+  display: block;
+  margin: 16px 0;
+  font-size: 13px;
+  color: #4a5bdc;
+  text-decoration: none;
+}
+
+.security-box {
+  margin-top: 18px;
+  background: #f5f7ff;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: left;
+}
+
+.security-box h3 {
+  font-size: 12px;
+  color: #2f3e9e;
+  margin-bottom: 6px;
+}
+
+.security-box p {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.4;
+}

@@ -1,0 +1,50 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px 44px;
+}
+
+.logo img {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+
+.nav {
+  display: flex;
+  gap: 34px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #1f1f1f;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary {
+  background: #5863d9;
+  color: #ffffff;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-outline {
+  border: 1px solid #5863d9;
+  color: #5863d9;
+  background: #ffffff;
+  padding: 11px 26px;
+  border-radius: 999px;
+  font-size: 16px;
+  cursor: pointer;
+}

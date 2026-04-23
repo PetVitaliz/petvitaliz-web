@@ -1,0 +1,39 @@
+.header-funcionario {
+  position: fixed; /* 👈 cola no topo */
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 90px; /* altura fixa igual ao layout */
+
+  background: #ffffff;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 48px;
+  box-sizing: border-box;
+
+  z-index: 1000; /* fica acima de tudo */
+}
+
+/* LOGO */
+.logo-area img {
+  height: 60px;
+  width: auto;
+}
+
+/* MENU */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #111;
+  font-size: 16px;
+  font-weight: 500;
+}
