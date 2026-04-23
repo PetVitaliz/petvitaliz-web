@@ -21,3 +21,6 @@ describe('FooterComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+//Footer.component.component.spec.ts
+//Footer.component.ts
