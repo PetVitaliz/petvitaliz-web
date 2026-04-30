@@ -1,0 +1,282 @@
+.container {
+  padding: 24px 34px;
+  background: #f5f6fa;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif; 
+  box-sizing: border-box;
+}
+
+.header .subtitle {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #7a86a1;
+}
+
+.header h1 {
+  margin-top: 5px;
+  color: #1f3b82; 
+  font-weight: 800; 
+}
+
+/* resto intacto */
+
+.card {
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+/* FILTROS */
+.filters {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: end;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+.input-group.small {
+  flex: 0.5;
+}
+
+.input-group label {
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: #6b7280;
+}
+
+.input-group input,
+.input-group select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.2s;
+}
+
+/* 🔵 HOVER NOS INPUTS */
+.input-group input:hover,
+.input-group select:hover,
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #5D6ED3;
+  box-shadow: 0 0 0 2px rgba(93,110,211,0.2);
+}
+
+/* BOTÕES */
+.btn-filtrar {
+  background: #5D6ED3;
+  color: white;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-filtrar:hover {
+  background: #4a5bc2;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(93,110,211,0.3);
+}
+
+.btn-limpar {
+  background: #e5e7eb;
+  color: #1c2b4a;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-limpar:hover {
+  background: #5D6ED3;
+  color: white;
+}
+
+/* LISTA */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ITEM */
+.item {
+  display: grid;
+  grid-template-columns: 90px 200px 1fr 1fr 130px;
+  align-items: center;
+  background: #f9fafc;
+  padding: 16px;
+  border-radius: 12px;
+  gap: 10px;
+  border: 2px solid transparent;
+  transition: 0.2s;
+}
+
+/* 🔵 HOVER */
+.item:hover {
+  background: #eef2ff;
+  border-color: #5D6ED3;
+  transform: translateX(3px);
+}
+
+.item:hover .pet-name,
+.item:hover .info strong,
+.item:hover .time strong {
+  color: #5D6ED3;
+}
+
+/* TIME */
+.time {
+  text-align: center;
+}
+
+.time strong {
+  font-size: 18px;
+  color: #1c2b4a;
+}
+
+.time span {
+  font-size: 11px;
+  color: gray;
+}
+
+/* PET */
+.pet {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pet-img {
+  width: 40px;
+  height: 40px;
+  background: #d9def5;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.item:hover .pet-img {
+  background: #5D6ED3;
+}
+
+.pet-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1c2b4a;
+}
+
+.pet-age {
+  font-size: 12px;
+  color: #7a86a1;
+}
+
+/* INFO */
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 11px;
+  color: #9aa3b2;
+}
+
+.info strong {
+  font-size: 14px;
+}
+
+/* STATUS */
+.status {
+  background: #e6e9f8;
+  color: #5D6ED3;
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.item:hover .status {
+  background: #5D6ED3;
+  color: white;
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #6b7280;
+}
+
+.pagination {
+  display: flex;
+  gap: 6px;
+}
+
+.pagination button {
+  border: none;
+  background: #eee;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pagination button:hover {
+  background: #5D6ED3;
+  color: white;
+}
+
+.pagination .active {
+  background: #1c2b4a;
+  color: white;
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+  .item {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .time {
+    text-align: left;
+  }
+
+  .status {
+    width: fit-content;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-filtrar,
+  .btn-limpar {
+    width: 100%;
+  }
+
+  .pet {
+    align-items: flex-start;
+  }
+}

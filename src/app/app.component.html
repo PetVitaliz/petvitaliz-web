@@ -1,5 +1,8 @@
 <app-header *ngIf="!isFuncionarioRoute()"></app-header>
 
+<app-header-funcionario *ngIf="isFuncionarioRoute()"></app-header-funcionario>
+
 <router-outlet></router-outlet>
+
 
 <app-footer></app-footer>

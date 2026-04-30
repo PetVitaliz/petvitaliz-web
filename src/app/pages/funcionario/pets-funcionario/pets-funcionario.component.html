@@ -1,0 +1,209 @@
+<div class="pets-page">
+  <div class="page-header">
+    <div>
+      <h1>Diretório de Pacientes</h1>
+      <p>Gerencie o histórico clínico e agendamentos de todos os animais</p>
+    </div>
+
+    <button class="btn-novo" (click)="abrirNovoPaciente()">+ Novo Paciente</button>
+  </div>
+
+  <div class="filters-area">
+    <div class="filter-group">
+      <span>ESPÉCIE</span>
+
+      <button [class.active]="filtroEspecie === 'Todos'" (click)="alterarEspecie('Todos')">Todos</button>
+      <button [class.active]="filtroEspecie === 'Cão'" (click)="alterarEspecie('Cão')">Cão</button>
+      <button [class.active]="filtroEspecie === 'Gato'" (click)="alterarEspecie('Gato')">Gato</button>
+      <button [class.active]="filtroEspecie === 'Outros'" (click)="alterarEspecie('Outros')">Outros</button>
+    </div>
+
+    <div class="filter-group">
+      <span>STATUS</span>
+
+      <button [class.active]="filtroStatus === 'Ativo'" (click)="alterarStatus('Ativo')">Ativo</button>
+      <button [class.active]="filtroStatus === 'Em Tratamento'" (click)="alterarStatus('Em Tratamento')">Em Tratamento</button>
+      <button [class.active]="filtroStatus === 'Todos'" (click)="alterarStatus('Todos')">Todos</button>
+    </div>
+
+    <button class="view-box" (click)="alternarVisualizacao()">
+      <div>
+        <span>VISUALIZAÇÃO</span>
+        <strong>{{ visualizacao === 'grid' ? 'Grade Editorial' : 'Lista Editorial' }}</strong>
+      </div>
+
+      <span class="grid-icon">{{ visualizacao === 'grid' ? '▦' : '☰' }}</span>
+    </button>
+  </div>
+
+  <div class="pets-grid" [class.lista]="visualizacao === 'lista'">
+    <div class="pet-card" *ngFor="let pet of petsPaginados">
+      <div class="image-box">
+        <span class="pet-status" [class.tratamento]="pet.status === 'Em Tratamento'">
+          {{ pet.status }}
+        </span>
+      </div>
+
+      <div class="pet-content">
+        <div class="pet-title">
+          <div>
+            <h3>{{ pet.nome }}</h3>
+            <p>{{ pet.raca }}</p>
+          </div>
+
+          <span>{{ pet.idade }}</span>
+        </div>
+
+        <div class="tutor-box">
+          <div class="tutor-avatar">👤</div>
+
+          <div>
+            <span>TUTOR</span>
+            <strong>{{ pet.tutor }}</strong>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn-prontuario" (click)="abrirProntuario(pet)">Prontuário</button>
+          <button class="btn-agendar" (click)="abrirAgendamento(pet)">Agendar</button>
+          <button class="btn-imprimir" (click)="imprimirRelatorio(pet)">Imprimir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sem-pacientes" *ngIf="petsPaginados.length === 0">
+    Nenhum paciente encontrado.
+  </div>
+
+  <div class="bottom-area">
+    <span>
+      Exibindo {{ petsPaginados.length }} de {{ petsFiltrados.length }} pacientes
+    </span>
+
+    <div class="pagination" *ngIf="totalPaginas > 1">
+      <button (click)="mudarPagina(paginaAtual - 1)">&lt;</button>
+
+      <button
+        *ngFor="let pagina of paginas"
+        [class.active]="paginaAtual === pagina"
+        (click)="mudarPagina(pagina)"
+      >
+        {{ pagina }}
+      </button>
+
+      <button (click)="mudarPagina(paginaAtual + 1)">&gt;</button>
+    </div>
+
+    <div class="bottom-buttons">
+      <button (click)="exportarLista()">⇩ Exportar Lista</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-fundo" *ngIf="modalTipo && modalTipo !== 'imprimir'">
+  <div class="modal">
+    <button class="btn-fechar" (click)="fecharModal()">×</button>
+
+    <div *ngIf="modalTipo === 'novo'">
+      <h2>Novo Paciente</h2>
+
+      <label>Nome</label>
+      <input type="text" [(ngModel)]="novoPet.nome">
+
+      <label>Espécie</label>
+      <select [(ngModel)]="novoPet.especie">
+        <option>Cão</option>
+        <option>Gato</option>
+        <option>Outros</option>
+      </select>
+
+      <label>Raça</label>
+      <input type="text" [(ngModel)]="novoPet.raca">
+
+      <label>Idade</label>
+      <input type="text" [(ngModel)]="novoPet.idade">
+
+      <label>Tutor</label>
+      <input type="text" [(ngModel)]="novoPet.tutor">
+
+      <label>Status</label>
+      <select [(ngModel)]="novoPet.status">
+        <option>Ativo</option>
+        <option>Em Tratamento</option>
+      </select>
+
+      <div class="modal-actions">
+        <button class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
+        <button class="btn-salvar" (click)="salvarNovoPaciente()">Salvar</button>
+      </div>
+    </div>
+
+    <div *ngIf="modalTipo === 'prontuario'">
+      <h2>Prontuário</h2>
+
+      <div class="modal-pet-header">
+        <div class="modal-pet-placeholder"></div>
+
+        <div>
+          <h3>{{ petSelecionado.nome }}</h3>
+          <p>{{ petSelecionado.raca }} • {{ petSelecionado.idade }}</p>
+        </div>
+      </div>
+
+      <div class="prontuario-box">
+        <span>Histórico clínico</span>
+        <p>{{ petSelecionado.prontuario }}</p>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-salvar" (click)="fecharModal()">Fechar</button>
+      </div>
+    </div>
+
+    <div *ngIf="modalTipo === 'agendar'">
+      <h2>Agendar Consulta</h2>
+
+      <div class="modal-pet-header">
+        <div class="modal-pet-placeholder"></div>
+
+        <div>
+          <h3>{{ petSelecionado.nome }}</h3>
+          <p>Tutor: {{ petSelecionado.tutor }}</p>
+        </div>
+      </div>
+
+      <label>Data</label>
+      <input type="date" [(ngModel)]="agendamento.data">
+
+      <label>Horário</label>
+      <input type="time" [(ngModel)]="agendamento.horario">
+
+      <label>Motivo</label>
+      <input type="text" [(ngModel)]="agendamento.motivo">
+
+      <div class="modal-actions">
+        <button class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
+        <button class="btn-salvar" (click)="salvarAgendamento()">Agendar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="print-area" *ngIf="modalTipo === 'imprimir' && petSelecionado">
+  <h1>Relatório do Paciente</h1>
+
+  <div class="print-card">
+    <h2>{{ petSelecionado.nome }}</h2>
+    <p><strong>Espécie:</strong> {{ petSelecionado.especie }}</p>
+    <p><strong>Raça:</strong> {{ petSelecionado.raca }}</p>
+    <p><strong>Idade:</strong> {{ petSelecionado.idade }}</p>
+    <p><strong>Status:</strong> {{ petSelecionado.status }}</p>
+    <p><strong>Tutor:</strong> {{ petSelecionado.tutor }}</p>
+
+    <div class="print-prontuario">
+      <h3>Histórico clínico</h3>
+      <p>{{ petSelecionado.prontuario }}</p>
+    </div>
+  </div>
+</div>
