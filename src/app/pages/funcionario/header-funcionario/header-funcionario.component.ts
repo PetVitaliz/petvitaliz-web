@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgIf, CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 @Component({
   selector: 'app-header-funcionario',
@@ -10,8 +10,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './header-funcionario.component.css'
 })
 export class HeaderFuncionarioComponent {
+
   isMenuOpen = false;
   isMobileMenuOpen = false;
+
+  constructor(private router: Router) {}
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -26,6 +29,6 @@ export class HeaderFuncionarioComponent {
   }
 
   logout() {
-    console.log('Logout executado');
+    this.router.navigate(['/']);
   }
 }

@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 @Component({
   selector: 'app-header-adm',
@@ -14,6 +14,8 @@ export class HeaderAdmComponent {
   adminsAberto = false;
   perfilAberto = false;
   menuAberto = false;
+
+  constructor(private router: Router) {}
 
   toggleMenu(event: Event) {
     event.stopPropagation();
@@ -38,6 +40,10 @@ export class HeaderAdmComponent {
     this.menuAberto = false;
     this.adminsAberto = false;
     this.perfilAberto = false;
+  }
+
+  logout() {
+    this.router.navigate(['/']);
   }
 
   @HostListener('document:click')

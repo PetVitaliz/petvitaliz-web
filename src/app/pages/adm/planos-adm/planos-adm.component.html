@@ -1,1 +1,175 @@
-<p>planos-adm works!</p>
+<section class="page-container">
+
+  <div class="breadcrumb">
+    <span>ADMIN</span>
+    <small>›</small>
+    <small>PLANOS DE ASSINATURA</small>
+  </div>
+
+  <div class="page-header">
+    <div>
+      <h1>Planos de Assinatura</h1>
+      <p>
+        Gerencie configurações de níveis, preços e disponibilidade para o
+        ecossistema de saúde PetVital.
+      </p>
+    </div>
+
+    <button class="btn-novo" type="button" (click)="novoPlano()">
+      + Criar Novo Plano
+    </button>
+  </div>
+
+  <div class="content-card">
+
+    <div class="planos-grid">
+
+      <div class="plano-card" *ngFor="let plano of planos">
+
+        <div class="plano-top">
+          <span class="tag">{{ plano.tag }}</span>
+          <span class="status">● {{ plano.status }}</span>
+        </div>
+
+        <h2>{{ plano.nome }}</h2>
+
+        <div class="preco">
+          R$ {{ plano.preco }}<small>/mês</small>
+        </div>
+
+        <div class="linha"></div>
+
+        <div class="plano-actions">
+          <div>
+            <button type="button" title="Editar" (click)="editarPlano(plano)">
+              ✎
+            </button>
+
+            <button type="button" title="Excluir" (click)="excluirPlano(plano.id)">
+              🗑
+            </button>
+          </div>
+
+          <button type="button" class="detalhes" (click)="verDetalhes(plano)">
+            Ver Detalhes
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="stats">
+
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div>
+          <span>TOTAL DE ASSINANTES</span>
+          <strong>12.482</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon yellow">↗</div>
+        <div>
+          <span>CRESCIMENTO (MÊS)</span>
+          <strong>+18.4%</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⚙</div>
+        <div>
+          <span>TAXA DE RENOVAÇÃO</span>
+          <strong>94.2%</strong>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="modal-overlay" *ngIf="modalAberto">
+
+    <div class="modal">
+
+      <h2>{{ modoEdicao ? 'Editar Plano' : 'Criar Novo Plano' }}</h2>
+
+      <label>Nome do Plano</label>
+      <input type="text" [(ngModel)]="planoSelecionado.nome">
+
+      <label>Categoria</label>
+      <input type="text" [(ngModel)]="planoSelecionado.tag">
+
+      <label>Preço Mensal</label>
+      <input type="text" [(ngModel)]="planoSelecionado.preco">
+
+      <label>Status</label>
+      <select [(ngModel)]="planoSelecionado.status">
+        <option value="Ativo">Ativo</option>
+        <option value="Inativo">Inativo</option>
+      </select>
+
+      <label>Detalhes</label>
+      <textarea [(ngModel)]="planoSelecionado.detalhes"></textarea>
+
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="planoSelecionado.destaque">
+        Plano em destaque
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancelar" (click)="fecharModal()">
+          Cancelar
+        </button>
+
+        <button type="button" class="btn-salvar" (click)="salvarPlano()">
+          Salvar
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="modal-overlay" *ngIf="modalDetalhesAberto">
+
+    <div class="modal-detalhes">
+
+      <div class="detalhes-topo">
+        <div>
+          <span>{{ planoDetalhes.tag }}</span>
+          <h2>{{ planoDetalhes.nome }}</h2>
+        </div>
+
+        <button type="button" (click)="fecharDetalhes()">×</button>
+      </div>
+
+      <div class="detalhes-preco">
+        R$ {{ planoDetalhes.preco }}<small>/mês</small>
+      </div>
+
+      <p class="detalhes-texto">
+        {{ planoDetalhes.detalhes }}
+      </p>
+
+      <div class="beneficios">
+        <h3>Benefícios inclusos</h3>
+
+        <ul>
+          <li *ngFor="let beneficio of planoDetalhes.beneficios">
+            <span>✓</span>
+            {{ beneficio }}
+          </li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn-fechar-detalhes" (click)="fecharDetalhes()">
+        Fechar
+      </button>
+
+    </div>
+
+  </div>
+
+</section>

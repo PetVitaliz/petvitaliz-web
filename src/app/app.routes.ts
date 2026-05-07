@@ -50,8 +50,8 @@ export const routes: Routes = [
   { path: 'adm/consultas-agendadas', component: ConsultasAgendadasComponent },
   { path: 'adm/financeiro', component: FinanceiroAdmComponent },
   { path: 'adm/listar-admin', component: ListarAdminComponent },
+  { path: 'adm/editar-admin/:id', component: ListarAdminComponent },
   { path: 'adm/cadastrar-funcionario', component: CadastrarFuncionarioComponent },
-  
 
   { path: '**', redirectTo: '' }
 
