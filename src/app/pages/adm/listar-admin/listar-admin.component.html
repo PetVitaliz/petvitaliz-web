@@ -1,8 +1,10 @@
 <section class="page-container">
 
   <div class="page-header">
+
     <div>
       <h1>Gestão de Administradores</h1>
+
       <p>
         Controle de acessos, permissões e gerenciamento de membros da equipe
         administrativa do centro clínico.
@@ -10,9 +12,10 @@
     </div>
 
     <button class="btn-novo" type="button" (click)="novoAdministrador()">
-      <span>⊕</span>
+      <span class="icon-plus">♙</span>
       Novo Administrador
     </button>
+
   </div>
 
   <div class="card">
@@ -20,23 +23,42 @@
     <div class="filters-area">
 
       <div class="filter-group">
+
         <span>Filtrar por:</span>
 
-        <button type="button" [class.active]="filtroStatus === 'Todos'" (click)="alterarFiltro('Todos')">
+        <button
+          type="button"
+          [class.active]="filtroStatus === 'Todos'"
+          (click)="alterarFiltro('Todos')">
+
           Todos
+
         </button>
 
-        <button type="button" [class.active]="filtroStatus === 'Ativo'" (click)="alterarFiltro('Ativo')">
+        <button
+          type="button"
+          [class.active]="filtroStatus === 'Ativo'"
+          (click)="alterarFiltro('Ativo')">
+
           Ativos
+
         </button>
 
-        <button type="button" [class.active]="filtroStatus === 'Inativo'" (click)="alterarFiltro('Inativo')">
+        <button
+          type="button"
+          [class.active]="filtroStatus === 'Inativo'"
+          (click)="alterarFiltro('Inativo')">
+
           Inativos
+
         </button>
+
       </div>
 
       <div class="right-filter">
+
         <div class="search-box">
+
           <span>⌕</span>
 
           <input
@@ -44,16 +66,20 @@
             placeholder="Buscar administrador..."
             [(ngModel)]="termoBusca"
             (ngModelChange)="paginaAtual = 1">
+
         </div>
 
         <div class="total-card">
+
           <div>
             <span>TOTAL ATIVOS</span>
             <strong>{{ totalAtivos }}</strong>
           </div>
 
           <div class="total-icon">👥</div>
+
         </div>
+
       </div>
 
     </div>
@@ -61,7 +87,9 @@
     <div class="table-wrapper">
 
       <table>
+
         <thead>
+
           <tr>
             <th>Nome</th>
             <th>E-mail</th>
@@ -70,73 +98,124 @@
             <th>Status</th>
             <th>Ações</th>
           </tr>
+
         </thead>
 
         <tbody>
+
           <tr *ngFor="let admin of adminsPaginados">
 
             <td>
+
               <div class="admin-info">
+
                 <img [src]="admin.imagem" alt="Administrador">
 
                 <div>
                   <strong>{{ admin.nome }}</strong>
                   <span>ID: #{{ admin.id }}</span>
                 </div>
+
               </div>
+
             </td>
 
             <td>{{ admin.email }}</td>
+
             <td>{{ admin.cargo }}</td>
 
             <td>
-              <span class="badge-acesso">{{ admin.acesso }}</span>
-            </td>
 
-            <td>
-              <span class="status" [class.inativo]="admin.status === 'Inativo'">
-                {{ admin.status }}
+              <span class="badge-acesso">
+                {{ admin.acesso }}
               </span>
+
             </td>
 
             <td>
+
+              <span
+                class="status"
+                [class.inativo]="admin.status === 'Inativo'">
+
+                {{ admin.status }}
+
+              </span>
+
+            </td>
+
+            <td>
+
               <div class="acoes">
-                <button type="button" title="Editar" (click)="editarAdmin(admin.id)">
+
+                <button
+                  type="button"
+                  title="Editar"
+                  (click)="editarAdmin(admin.id)">
+
                   ✎
+
                 </button>
 
-                <button type="button" title="Excluir" (click)="excluirAdmin(admin.id)">
+                <button
+                  type="button"
+                  title="Excluir"
+                  (click)="excluirAdmin(admin.id)">
+
                   🗑
+
                 </button>
+
               </div>
+
             </td>
 
           </tr>
 
           <tr *ngIf="adminsPaginados.length === 0">
+
             <td colspan="6" class="empty-message">
               Nenhum administrador encontrado.
             </td>
+
           </tr>
+
         </tbody>
+
       </table>
 
     </div>
 
     <div class="footer-table">
+
       <span>
-        Mostrando {{ adminsFiltrados.length }} de {{ administradores.length }} administradores
+        Mostrando {{ adminsFiltrados.length }}
+        de {{ administradores.length }} administradores
       </span>
 
       <div class="pagination" *ngIf="totalPaginas > 1">
-        <button type="button" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
+
+        <button
+          type="button"
+          (click)="paginaAnterior()"
+          [disabled]="paginaAtual === 1">
+
           Anterior
+
         </button>
 
-        <button type="button" class="active" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
+        <button
+          type="button"
+          class="active"
+          (click)="proximaPagina()"
+          [disabled]="paginaAtual === totalPaginas">
+
           Próximo
+
         </button>
+
       </div>
+
     </div>
 
   </div>
@@ -145,7 +224,7 @@
 
     <div class="modal-editar">
 
-      <h2>Editar Administrador</h2>
+      <h2>{{ tituloModal }}</h2>
 
       <label>Nome</label>
       <input type="text" [(ngModel)]="adminEditando.nome">
@@ -157,6 +236,7 @@
       <input type="text" [(ngModel)]="adminEditando.cargo">
 
       <label>Nível de Acesso</label>
+
       <select [(ngModel)]="adminEditando.acesso">
         <option value="TOTAL">TOTAL</option>
         <option value="INTERMEDIÁRIO">INTERMEDIÁRIO</option>
@@ -164,19 +244,32 @@
       </select>
 
       <label>Status</label>
+
       <select [(ngModel)]="adminEditando.status">
         <option value="Ativo">Ativo</option>
         <option value="Inativo">Inativo</option>
       </select>
 
       <div class="modal-actions">
-        <button type="button" class="btn-cancelar" (click)="cancelarEdicao()">
+
+        <button
+          type="button"
+          class="btn-cancelar"
+          (click)="cancelarEdicao()">
+
           Cancelar
+
         </button>
 
-        <button type="button" class="btn-salvar" (click)="salvarEdicao()">
-          Salvar alterações
+        <button
+          type="button"
+          class="btn-salvar"
+          (click)="salvarEdicao()">
+
+          Salvar
+
         </button>
+
       </div>
 
     </div>

@@ -17,14 +17,12 @@ import { PerfilFuncionarioComponent } from './pages/funcionario/perfil-funcionar
 // ADM
 import { HomeAdmComponent } from './pages/adm/home-adm/home-adm.component';
 import { PlanosAdmComponent } from './pages/adm/planos-adm/planos-adm.component';
-import { CadastrarAdminComponent } from './pages/adm/cadastrar-admin/cadastrar-admin.component';
 import { EquipeFuncionariosComponent } from './pages/adm/equipe-funcionarios/equipe-funcionarios.component';
 import { ConsultasAgendadasComponent } from './pages/adm/consultas-agendadas/consultas-agendadas.component';
 import { ConsultasAdmComponent } from './pages/adm/consultas-adm/consultas-adm.component';
 import { ClientesAdmComponent } from './pages/adm/clientes-adm/clientes-adm.component';
 import { FinanceiroAdmComponent } from './pages/adm/financeiro-adm/financeiro-adm.component';
 import { ListarAdminComponent } from './pages/adm/listar-admin/listar-admin.component';
-import { CadastrarFuncionarioComponent } from './pages/adm/cadastrar-funcionario/cadastrar-funcionario.component';
 
 export const routes: Routes = [
 
@@ -45,13 +43,11 @@ export const routes: Routes = [
   { path: 'adm/consultas', component: ConsultasAdmComponent },
   { path: 'adm/clientes', component: ClientesAdmComponent },
   { path: 'adm/planos', component: PlanosAdmComponent },
-  { path: 'adm/cadastrar-admin', component: CadastrarAdminComponent },
   { path: 'adm/equipe-funcionarios', component: EquipeFuncionariosComponent },
   { path: 'adm/consultas-agendadas', component: ConsultasAgendadasComponent },
   { path: 'adm/financeiro', component: FinanceiroAdmComponent },
   { path: 'adm/listar-admin', component: ListarAdminComponent },
   { path: 'adm/editar-admin/:id', component: ListarAdminComponent },
-  { path: 'adm/cadastrar-funcionario', component: CadastrarFuncionarioComponent },
 
   { path: '**', redirectTo: '' }
 

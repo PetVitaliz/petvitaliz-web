@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AdminsService } from '../../../core/services/admins.service';
 
 @Component({
@@ -12,19 +11,17 @@ import { AdminsService } from '../../../core/services/admins.service';
   styleUrl: './listar-admin.component.css'
 })
 export class ListarAdminComponent {
-
   filtroStatus = 'Todos';
   termoBusca = '';
   paginaAtual = 1;
   itensPorPagina = 4;
+
   adminEditando: any = null;
+  tituloModal = 'Editar Administrador';
 
   administradores: any[] = [];
 
-  constructor(
-    private router: Router,
-    private adminsService: AdminsService
-  ) {
+  constructor(private adminsService: AdminsService) {
     this.administradores = this.adminsService.listarAdmins();
   }
 
@@ -50,7 +47,7 @@ export class ListarAdminComponent {
   }
 
   get totalPaginas() {
-    return Math.ceil(this.adminsFiltrados.length / this.itensPorPagina);
+    return Math.ceil(this.adminsFiltrados.length / this.itensPorPagina) || 1;
   }
 
   get adminsPaginados() {
@@ -66,27 +63,50 @@ export class ListarAdminComponent {
   }
 
   novoAdministrador() {
-    this.router.navigate(['/adm/cadastrar-admin']);
+    this.tituloModal = 'Novo Administrador';
+
+    this.adminEditando = {
+      id: 'BPV-' + Math.floor(1000 + Math.random() * 9000),
+      nome: '',
+      email: '',
+      cargo: '',
+      acesso: 'TOTAL',
+      status: 'Ativo',
+      imagem: 'assets/img/admin.png'
+    };
   }
 
   editarAdmin(id: string) {
     const adminEncontrado = this.administradores.find(admin => admin.id === id);
 
     if (adminEncontrado) {
+      this.tituloModal = 'Editar Administrador';
       this.adminEditando = { ...adminEncontrado };
     }
   }
 
   salvarEdicao() {
+    if (
+      !this.adminEditando.nome ||
+      !this.adminEditando.email ||
+      !this.adminEditando.cargo
+    ) {
+      alert('Preencha todos os campos.');
+      return;
+    }
+
     const index = this.administradores.findIndex(
       admin => admin.id === this.adminEditando.id
     );
 
     if (index !== -1) {
       this.administradores[index] = { ...this.adminEditando };
+    } else {
+      this.administradores.unshift({ ...this.adminEditando });
     }
 
     this.adminEditando = null;
+    this.paginaAtual = 1;
   }
 
   cancelarEdicao() {
@@ -98,7 +118,7 @@ export class ListarAdminComponent {
 
     if (confirmar) {
       this.adminsService.excluirAdmin(id);
-      this.administradores = this.adminsService.listarAdmins();
+      this.administradores = this.administradores.filter(admin => admin.id !== id);
 
       if (this.paginaAtual > this.totalPaginas) {
         this.paginaAtual = this.totalPaginas || 1;
