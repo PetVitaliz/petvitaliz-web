@@ -1,0 +1,157 @@
+<main class="servicos-page">
+  <section class="servicos-hero">
+    <div class="servicos-hero-text">
+      <h1>
+        Cuidados<br />
+        abrangentes para<br />
+        pets adaptados a<br />
+        cada necessidade
+      </h1>
+
+      <p>
+        Descubra serviços especializados projetados para nutrir,<br />
+        curar e garantir a felicidade de seus amados pet
+      </p>
+
+      <a routerLink="/usuario/login" class="servicos-hero-button">
+        Agendar Consulta
+      </a>
+    </div>
+
+    <div class="servicos-hero-image-area">
+      <img class="servicos-hero-pets" [src]="imgPetsServicos" alt="Cachorro e gato" />
+      <img class="servicos-hero-paw" [src]="imgPataServicos" alt="Pata decorativa" />
+    </div>
+  </section>
+
+  <section class="servicos-info-section">
+    <div class="servicos-info-left">
+      <h2>
+        A felicidade do seu pet,<br />
+        nossa maior prioridade<br />
+        sempre!
+      </h2>
+
+      <div class="servicos-info-cards">
+        @for (item of servicosInfo; track item.titulo) {
+          <div class="servicos-info-card">
+            <h3>{{ item.titulo }}</h3>
+            <p>{{ item.descricao }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="servicos-info-right">
+      <p>
+        Descubra cuidados personalizados e serviços especializados<br />
+        projetados para manter seus amigos peludos saudáveis, felizes e<br />
+        cheios de alegria
+      </p>
+
+      <img class="servicos-info-image" [src]="imgServicosInfo" alt="Gato feliz" />
+    </div>
+  </section>
+
+  <section class="servicos-carousel-section">
+  <div class="servicos-carousel-box">
+
+    <div class="servicos-carousel-preview">
+      <div class="servicos-carousel-line"></div>
+
+      <img
+        class="servicos-carousel-main-img"
+        [src]="servicosCarrossel[servicoCarrosselSelecionado].imagem"
+        [alt]="servicosCarrossel[servicoCarrosselSelecionado].titulo"
+      />
+
+      <div class="servicos-carousel-main-title">
+        {{ servicosCarrossel[servicoCarrosselSelecionado].titulo }}
+      </div>
+
+      <button class="servicos-carousel-arrow" type="button">
+        ↗
+      </button>
+    </div>
+
+    <div class="servicos-carousel-list">
+      <h2>Nossos serviços</h2>
+
+      @for (servico of servicosCarrossel; track servico.titulo; let i = $index) {
+        <button
+          type="button"
+          class="servicos-carousel-item"
+          [class.servicos-carousel-item-active]="servicoCarrosselSelecionado === i"
+          (click)="selecionarServicoCarrossel(i)"
+        >
+          <img
+            class="servicos-carousel-thumb"
+            [src]="servico.imagem"
+            [alt]="servico.titulo"
+          />
+
+          <div class="servicos-carousel-info">
+            <h3>{{ servico.titulo }}</h3>
+
+            <div class="servicos-carousel-tags">
+              @for (tag of servico.tags; track tag) {
+                <span>{{ tag }}</span>
+              }
+            </div>
+          </div>
+        </button>
+      }
+    </div>
+
+  </div>
+</section>
+
+<section class="servicos-tosa-section">
+  <div class="servicos-tosa-content">
+    <div class="servicos-tosa-arrows">
+      <button type="button">←</button>
+      <button type="button">→</button>
+    </div>
+
+    <h2>
+      Mime seu pet com nossos<br />
+      Serviços de tosa especializados
+    </h2>
+
+    <div class="servicos-tosa-tags">
+      <span>Banho e Secagem</span>
+      <span>Corte de unhas</span>
+      <span>Limpeza de ouvido</span>
+      <span>Cortes de cabelo elegantes</span>
+      <span>Escovas</span>
+    </div>
+
+    <p>
+      Na Vet Care, nossos serviços profissionais de<br />
+      higiene são projetados para manter seus<br />
+      amigos peludos com a melhor aparência e se<br />
+      sentindo o melhor possível.
+    </p>
+
+    <div class="servicos-tosa-actions">
+      <a routerLink="/usuario/login">Agendar consulta</a>
+
+      <select>
+        <option>Porte Grande (18-36 kg): R$70</option>
+        <option>Porte Médio (10-17 kg): R$55</option>
+        <option>Porte Pequeno (até 9 kg): R$40</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="servicos-tosa-gallery">
+    <img class="servicos-tosa-main-img" [src]="imgTosaPrincipal" alt="Pet tosado" />
+
+    <div class="servicos-tosa-thumbs">
+      <img [src]="imgTosaMini1" alt="Tosa 1" />
+      <img [src]="imgTosaMini2" alt="Tosa 2" />
+      <img [src]="imgTosaMini3" alt="Tosa 3" />
+    </div>
+  </div>
+</section>
+</main>

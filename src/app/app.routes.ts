@@ -6,6 +6,7 @@ import { LoginComponent } from './pages/usuario/login/login.component';
 import { EsqueciSenhaComponent } from './pages/usuario/esqueci-senha/esqueci-senha.component';
 import { CadastroComponent } from './pages/usuario/cadastro/cadastro.component';
 import { ResetSenhaComponent } from './pages/usuario/reset-senha/reset-senha.component';
+import { ServicosComponent } from './pages/usuario/servicos/servicos.component';
 
 // FUNCIONÁRIO
 import { HomeFuncionarioComponent } from './pages/funcionario/home-funcionario/home-funcionario.component';
@@ -23,6 +24,10 @@ import { ConsultasAdmComponent } from './pages/adm/consultas-adm/consultas-adm.c
 import { ClientesAdmComponent } from './pages/adm/clientes-adm/clientes-adm.component';
 import { FinanceiroAdmComponent } from './pages/adm/financeiro-adm/financeiro-adm.component';
 import { ListarAdminComponent } from './pages/adm/listar-admin/listar-admin.component';
+import { SobreNosComponent } from './pages/usuario/sobre-nos/sobre-nos.component';
+import { ContatoComponent } from './pages/usuario/contato/contato.component';
+import { AdocaoComponent } from './pages/usuario/adocao/adocao.component';
+import { EmergenciaComponent } from './pages/usuario/emergencia/emergencia.component';
 
 export const routes: Routes = [
 
@@ -32,6 +37,11 @@ export const routes: Routes = [
   { path: 'usuario/esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'usuario/cadastro', component: CadastroComponent },
   { path: 'usuario/reset-senha', component: ResetSenhaComponent },
+  { path: 'servicos', component: ServicosComponent},
+  { path: 'sobre-nos', component: SobreNosComponent},
+  { path: 'contato', component: ContatoComponent},
+  { path: 'adocao', component: AdocaoComponent},
+  { path: 'emergencia', component: EmergenciaComponent},
 
   { path: 'funcionario/home', component: HomeFuncionarioComponent },
   { path: 'funcionario/consultas', component: ConsultasFuncionarioComponent },

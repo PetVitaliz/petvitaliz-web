@@ -1,14 +1,15 @@
 <header class="header">
-  <div class="logo">
-    <img src="assets/img/logo.png" alt="PetVital" />
+  <div class="logo" routerLink="/">
+    <img src="assets/img/logo.png" alt="PetVitaliz" />
   </div>
 
   <nav class="nav">
     <a routerLink="/">Home</a>
-    <a href="#">Nossos Serviços</a>
-    <a href="#">Sobre Nós</a>
-    <a href="#">Contato</a>
-    <a href="#">Emergência</a>
+    <a routerLink="/servicos">Nossos Serviços</a>
+    <a routerLink="/sobre-nos">Sobre Nós</a>
+    <a routerLink="/contato">Contato</a>
+    <a routerLink="/emergencia">Emergência</a>
+    <a routerLink="/adocao">Adoção</a>
   </nav>
 
   <div class="buttons">
@@ -20,4 +21,8 @@
       Login
     </button>
   </div>
+
+  <button class="menu-mobile">
+    ☰
+  </button>
 </header>
