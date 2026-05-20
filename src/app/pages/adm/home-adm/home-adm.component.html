@@ -1,0 +1,242 @@
+<div class="container">
+
+  <div class="topo">
+    <h1>Painel Administrativo Central</h1>
+    <p>Gerencie a infraestrutura e operação da clínica PetVitaliz</p>
+  </div>
+
+  <div class="area-dashboard">
+
+    <div class="dashboard">
+
+      <main class="main">
+
+        <section class="planos">
+
+          <div class="plano-card" *ngFor="let plano of planos">
+
+            <div class="plano-topo">
+              <span>{{ plano.tipo }}</span>
+
+              <small *ngIf="plano.destaque">
+                RECOMENDADO
+              </small>
+            </div>
+
+            <h3>{{ plano.nome }}</h3>
+
+            <h2>
+              {{ plano.preco }}
+              <span>/mês</span>
+            </h2>
+
+            <ul>
+              <li *ngFor="let beneficio of plano.beneficios">
+                {{ beneficio }}
+              </li>
+            </ul>
+
+            <button [routerLink]="plano.rota">
+              Editar
+            </button>
+
+          </div>
+
+        </section>
+
+        <section class="conteudo-baixo">
+
+          <div class="gestao">
+
+            <div class="secao-header">
+
+              <div>
+                <h3>Gestão de Administradores</h3>
+                <p>Controle de acesso e privilégios do sistema</p>
+              </div>
+
+              <button routerLink="/adm/cadastrar-admin">
+                + Novo Administrador
+              </button>
+
+            </div>
+
+            <div class="tabela">
+
+              <div class="linha cabecalho">
+                <span>Usuário</span>
+                <span>Cargo</span>
+                <span>Último Acesso</span>
+                <span>Ações</span>
+              </div>
+
+              <div class="linha" *ngFor="let adm of administradores">
+
+                <div class="usuario">
+
+                  <div class="avatar">
+                    {{ adm.inicial }}
+                  </div>
+
+                  <div>
+                    <strong>{{ adm.nome }}</strong>
+                    <small>{{ adm.email }}</small>
+                  </div>
+
+                </div>
+
+                <span class="cargo">
+                  {{ adm.cargo }}
+                </span>
+
+                <span class="ultimo">
+                  {{ adm.ultimo }}
+                </span>
+
+                <button
+                  class="editar"
+                  routerLink="/adm/equipe-funcionarios"
+                >
+                  ✎
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="agenda">
+
+            <div class="agenda-header">
+              <h3>Agenda de Consultas</h3>
+              <span>24 MAIO</span>
+            </div>
+
+            <div class="consulta azul">
+
+              <span>09:00 - 10:00</span>
+
+              <div>
+                <strong>Thor (Golden Retriever)</strong>
+                <p>Consulta de Rotina - Dr. Pedro</p>
+              </div>
+
+            </div>
+
+            <div class="consulta laranja">
+
+              <span>10:30 - 11:30</span>
+
+              <div>
+                <strong>Luna (Persa)</strong>
+                <p>Vacinação - Dra. Carla</p>
+              </div>
+
+            </div>
+
+            <button
+              class="emergencia"
+              (click)="encaixarEmergencia()"
+            >
+              ⊕ Encaixar Emergência
+            </button>
+
+          </div>
+
+        </section>
+
+      </main>
+
+      <aside class="sidebar">
+
+        <div class="resumo">
+
+          <small>RESUMO ATIVO</small>
+
+          <h2>24</h2>
+
+          <span>
+            ↗ Total Ativos
+          </span>
+
+        </div>
+
+        <div class="side-card">
+
+          <h4>Segurança do Sistema</h4>
+
+          <div class="info-box">
+            <small>ÚLTIMO LOGIN</small>
+            <strong>Hoje, 09:42</strong>
+          </div>
+
+          <div class="info-box">
+            <small>NOVAS SOLICITAÇÕES</small>
+            <strong>03 pendentes</strong>
+          </div>
+
+          <button (click)="verLogs()">
+            Ver Logs Completos
+          </button>
+
+        </div>
+
+        <div class="side-dark">
+
+          <h4>Estrutura de RH</h4>
+
+          <p>
+            Horas Preenchidas
+            <span>12/15</span>
+          </p>
+
+          <div class="barra">
+            <div></div>
+          </div>
+
+        </div>
+
+        <div class="side-dark">
+
+          <h4>Performance Mensal</h4>
+
+          <p>
+            Metas de Vendas
+            <span>82%</span>
+          </p>
+
+          <div class="barra">
+            <div></div>
+          </div>
+
+          <p>
+            Capacidade Clínica
+            <span>65%</span>
+          </p>
+
+          <div class="barra menor">
+            <div></div>
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+    <section class="banner">
+
+      <div>
+        <h2>Equipe Integrada</h2>
+
+        <p>
+          Mantenha os dados da sua equipe atualizados para garantir a melhor experiência para os tutores e seus pets.
+        </p>
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

@@ -1,0 +1,233 @@
+<section class="page-container">
+
+  <div class="breadcrumb">
+    <span>ADMIN</span>
+    <small>›</small>
+    <small>CONSULTAS</small>
+  </div>
+
+  <div class="page-header">
+    <div>
+      <h1>Consultas Agendadas</h1>
+      <p>
+        Gerencie o fluxo de atendimento da clínica, acompanhe status e facilite
+        o agendamento de retorno dos pacientes.
+      </p>
+    </div>
+
+    <div class="cards-resumo">
+      <div class="resumo-card azul">
+        <div class="resumo-icon">▣</div>
+        <div>
+          <span>HOJE</span>
+          <strong>{{ totalHoje }}</strong>
+        </div>
+      </div>
+
+      <div class="resumo-card">
+        <div class="resumo-icon laranja">▣</div>
+        <div>
+          <span>PENDENTES</span>
+          <strong>{{ totalPendentes }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-card">
+
+    <div class="filters">
+
+      <div class="filter-pet">
+        <label>FILTRAR POR PET</label>
+        <input
+          type="text"
+          placeholder="Nome do pet ou ID..."
+          [(ngModel)]="filtroPet"
+          (ngModelChange)="aplicarFiltros()">
+      </div>
+
+      <div class="filter-small">
+        <label>DATA</label>
+        <input
+          type="date"
+          [(ngModel)]="filtroData"
+          (change)="aplicarFiltros()">
+      </div>
+
+      <div class="filter-small">
+        <label>STATUS</label>
+        <select [(ngModel)]="filtroStatus" (change)="aplicarFiltros()">
+          <option value="Todos">Todos os Status</option>
+          <option value="Confirmado">Confirmado</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+      </div>
+
+      <button class="btn-filtrar" type="button" (click)="aplicarFiltros()">
+        Aplicar Filtros
+      </button>
+
+      <button class="btn-limpar" type="button" (click)="limparFiltros()">
+        Limpar
+      </button>
+
+    </div>
+
+    <div class="consultas-lista">
+
+      <div class="consulta-card" *ngFor="let consulta of consultasPaginadas">
+
+        <div class="horario">
+          <strong>{{ consulta.horario }}</strong>
+          <span>{{ consulta.periodo }}</span>
+        </div>
+
+        <div class="pet-area">
+          <div class="pet-avatar"></div>
+
+          <div>
+            <strong>{{ consulta.pet }}</strong>
+            <span>IDADE: {{ consulta.idade }}</span>
+          </div>
+        </div>
+
+        <div class="info">
+          <span>TUTOR</span>
+          <strong>{{ consulta.tutor }}</strong>
+        </div>
+
+        <div class="info">
+          <span>MOTIVO</span>
+          <strong>{{ consulta.motivo }}</strong>
+        </div>
+
+        <div>
+          <span
+            class="status"
+            [class.pendente]="consulta.status === 'Pendente'"
+            [class.cancelado]="consulta.status === 'Cancelado'">
+            {{ consulta.status }}
+          </span>
+        </div>
+
+        <div class="acoes">
+          <button type="button" title="Detalhes" (click)="abrirDetalhes(consulta)">
+            👁
+          </button>
+
+          <button type="button" title="Confirmar" (click)="confirmarConsulta(consulta)">
+            ✓
+          </button>
+
+          <button type="button" title="Reagendar" (click)="reagendarConsulta(consulta)">
+            ✎
+          </button>
+
+          <button type="button" title="Cancelar" (click)="cancelarConsulta(consulta.id)">
+            ×
+          </button>
+
+          <button type="button" title="Excluir" (click)="excluirConsulta(consulta.id)">
+            🗑
+          </button>
+        </div>
+
+      </div>
+
+      <div class="empty" *ngIf="consultasPaginadas.length === 0">
+        Nenhuma consulta encontrada.
+      </div>
+
+    </div>
+
+    <div class="footer-lista">
+      <span>
+        Mostrando {{ consultasFiltradas.length }} de {{ consultas.length }} consultas para hoje
+      </span>
+
+      <div class="pagination" *ngIf="totalPaginas > 1">
+        <button type="button" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
+          ‹
+        </button>
+
+        <button type="button" class="active">
+          {{ paginaAtual }}
+        </button>
+
+        <button type="button" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
+          ›
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-overlay" *ngIf="modalAberto">
+
+    <div class="modal">
+
+      <h2>Detalhes da Consulta</h2>
+
+      <div class="modal-grid">
+
+        <label>
+          Pet
+          <input type="text" [(ngModel)]="consultaSelecionada.pet">
+        </label>
+
+        <label>
+          Idade
+          <input type="text" [(ngModel)]="consultaSelecionada.idade">
+        </label>
+
+        <label>
+          Tutor
+          <input type="text" [(ngModel)]="consultaSelecionada.tutor">
+        </label>
+
+        <label>
+          Horário
+          <input type="time" [(ngModel)]="consultaSelecionada.horario">
+        </label>
+
+        <label>
+          Período
+          <select [(ngModel)]="consultaSelecionada.periodo">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </label>
+
+        <label>
+          Status
+          <select [(ngModel)]="consultaSelecionada.status">
+            <option value="Confirmado">Confirmado</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </label>
+
+      </div>
+
+      <label class="full">
+        Motivo
+        <textarea [(ngModel)]="consultaSelecionada.motivo"></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancelar" (click)="fecharModal()">
+          Fechar
+        </button>
+
+        <button type="button" class="btn-salvar" (click)="salvarAlteracoes()">
+          Salvar Alterações
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

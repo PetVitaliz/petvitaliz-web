@@ -1,0 +1,137 @@
+<section class="login-page">
+
+  <div class="login-card">
+
+    <h2>
+      Entrar com e-mail e senha
+    </h2>
+
+    <form (ngSubmit)="entrar()">
+
+      <!-- EMAIL -->
+
+      <div class="form-group">
+
+        <label for="email">
+          E-mail
+        </label>
+
+        <div class="input-box">
+
+          <span>
+            ✉
+          </span>
+
+          <input type="email" id="email" name="email" placeholder="Digite seu e-mail" [(ngModel)]="email">
+
+        </div>
+
+      </div>
+
+      <!-- SENHA -->
+
+      <div class="form-group">
+
+        <div class="label-row">
+
+          <label for="senha">
+            Senha
+          </label>
+
+          <a routerLink="/usuario/esqueci-senha">
+            Esqueci minha senha
+          </a>
+
+        </div>
+
+        <div class="input-box">
+
+          <span>
+            🔒
+          </span>
+
+          <input [type]="senhaVisivel ? 'text' : 'password'" id="senha" name="senha" placeholder="Digite sua senha"
+            [(ngModel)]="senha">
+
+          <button type="button" class="eye-btn" (click)="senhaVisivel = !senhaVisivel">
+
+            👁
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- LEMBRAR -->
+
+      <label class="remember">
+
+        <input type="checkbox" name="lembrar" [(ngModel)]="lembrar">
+
+        <span>
+          Lembrar-me neste dispositivo
+        </span>
+
+      </label>
+
+      <!-- ERRO -->
+
+      <p class="erro" *ngIf="erro">
+
+        {{ erro }}
+
+      </p>
+
+      <!-- BOTÃO LOGIN -->
+
+      <button type="submit" class="btn-login">
+
+        Entrar
+
+        <span>
+          →
+        </span>
+
+      </button>
+
+    </form>
+
+    <!-- SEGURANÇA -->
+
+    <div class="security-box">
+
+      <div class="security-icon">
+        ♡
+      </div>
+
+      <div>
+
+        <strong>
+          AMBIENTE SEGURO
+        </strong>
+
+        <p>
+          Este portal é de uso exclusivo de colaboradores autorizados.
+          Todo acesso é monitorado para garantir a segurança dos dados dos nossos pacientes e protocolos internos.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- CADASTRO -->
+
+    <button class="btn-register" type="button" routerLink="/usuario/cadastro">
+
+      Cadastre-se
+
+      <span>
+        →
+      </span>
+
+    </button>
+
+  </div>
+
+</section>

@@ -1,0 +1,57 @@
+<section class="esqueci-page">
+
+  <div class="esqueci-card">
+
+    <h2>Esqueceu sua senha?</h2>
+
+    <p class="subtitle">
+      Insira seu e-mail cadastrado e enviaremos as instruções para criar uma nova senha.
+    </p>
+
+    <form (ngSubmit)="enviarLink()">
+
+      <div class="form-group">
+        <label for="email">E-mail</label>
+
+        <div class="input-box">
+          <span>✉</span>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Coloque seu e-mail"
+            [(ngModel)]="email">
+        </div>
+      </div>
+
+      <p class="erro" *ngIf="erro">{{ erro }}</p>
+
+      <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+
+      <button type="submit" class="btn-submit">
+        Enviar link
+        <span>→</span>
+      </button>
+
+    </form>
+
+    <a routerLink="/usuario/login" class="back-login">
+      ‹ Voltar para o login
+    </a>
+
+    <div class="security-box">
+      <div class="security-icon">♡</div>
+
+      <div>
+        <strong>AMBIENTE SEGURO</strong>
+        <p>
+          Este portal é de uso exclusivo de colaboradores autorizados.
+          Todo acesso é monitorado para garantir a segurança dos dados dos nossos pacientes e protocolos internos.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</section>

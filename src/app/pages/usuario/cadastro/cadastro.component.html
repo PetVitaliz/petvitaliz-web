@@ -1,0 +1,235 @@
+<section class="cadastro-page">
+
+  <div class="cadastro-card">
+
+    <h2>
+      Criar sua conta
+    </h2>
+
+    <p class="subtitle">
+      Preencha os dados abaixo para começar sua experiência exclusiva.
+    </p>
+
+    <form
+      class="cadastro-form"
+      (ngSubmit)="cadastrar()">
+
+      <!-- NOME -->
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="nome">
+            Nome completo
+          </label>
+
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="ex: João"
+            [(ngModel)]="nome">
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="sobrenome">
+            Sobrenome
+          </label>
+
+          <input
+            type="text"
+            id="sobrenome"
+            name="sobrenome"
+            placeholder="ex: Silva"
+            [(ngModel)]="sobrenome">
+
+        </div>
+
+      </div>
+
+      <!-- CPF -->
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="cpf">
+            CPF
+          </label>
+
+          <input
+            type="text"
+            id="cpf"
+            name="cpf"
+            placeholder="000.000.000-00"
+            [(ngModel)]="cpf">
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="nascimento">
+            Data de Nascimento
+          </label>
+
+          <input
+            type="text"
+            id="nascimento"
+            name="nascimento"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="nascimento">
+
+        </div>
+
+      </div>
+
+      <!-- TELEFONE -->
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="telefone">
+            Telefone
+          </label>
+
+          <input
+            type="text"
+            id="telefone"
+            name="telefone"
+            placeholder="(11) 99999-9999"
+            [(ngModel)]="telefone">
+
+        </div>
+
+        <div class="form-group">
+
+          <label for="genero">
+            Gênero
+          </label>
+
+          <select
+            id="genero"
+            name="genero"
+            [(ngModel)]="genero">
+
+            <option value="">
+              Selecione
+            </option>
+
+            <option value="Feminino">
+              Feminino
+            </option>
+
+            <option value="Masculino">
+              Masculino
+            </option>
+
+            <option value="Prefiro não informar">
+              Prefiro não informar
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+      <!-- EMAIL -->
+
+      <div class="form-group full">
+
+        <label for="email">
+          E-mail
+        </label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="seu@email.com.br"
+          [(ngModel)]="email">
+
+      </div>
+
+      <!-- SENHA -->
+
+      <div class="form-group full">
+
+        <label for="senha">
+          Senha
+        </label>
+
+        <div class="password-wrapper">
+
+          <input
+            [type]="senhaVisivel ? 'text' : 'password'"
+            id="senha"
+            name="senha"
+            placeholder="••••••••"
+            [(ngModel)]="senha">
+
+          <button
+            type="button"
+            class="eye-btn"
+            (click)="senhaVisivel = !senhaVisivel">
+
+            👁
+
+          </button>
+
+        </div>
+
+        <div class="password-strength">
+
+          <span class="dot active"></span>
+          <span class="dot active"></span>
+
+          <span class="label">
+            SEGURANÇA MÉDIA
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- ERRO -->
+
+      <p
+        class="erro"
+        *ngIf="erro">
+
+        {{ erro }}
+
+      </p>
+
+      <!-- BOTÃO -->
+
+      <button
+        type="submit"
+        class="btn-submit">
+
+        Cadastrar
+
+      </button>
+
+      <!-- LOGIN -->
+
+      <p class="login-link">
+
+        Já tem uma conta?
+
+        <a routerLink="/usuario/login">
+          Entre
+        </a>
+
+      </p>
+
+    </form>
+
+  </div>
+
+</section>

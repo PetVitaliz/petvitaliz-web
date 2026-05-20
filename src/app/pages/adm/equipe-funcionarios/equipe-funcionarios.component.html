@@ -1,0 +1,260 @@
+<div class="page">
+
+  <section class="top">
+
+    <div>
+      <p class="breadcrumb">ADMIN <span>› FUNCIONÁRIOS</span></p>
+      <h1>Equipe e Funcionários</h1>
+    </div>
+
+    <button class="btn-new" (click)="abrirNovoFuncionario()">
+      <span class="icon-plus">♙</span>
+      Novo Funcionário
+    </button>
+
+  </section>
+
+  <section class="content">
+
+    <div class="cards">
+
+      <div class="stat-card">
+        <div>
+          <p>TOTAL DE FUNCIONÁRIOS</p>
+          <h2>{{ totalFuncionarios }}</h2>
+          <small>+2 este mês</small>
+        </div>
+
+        <span class="icon-bg">▣</span>
+      </div>
+
+      <div class="stat-card">
+        <div>
+          <p>VETERINÁRIOS ATIVOS</p>
+          <h2>{{ veterinariosAtivos }}</h2>
+          <small>85% em plantão</small>
+        </div>
+
+        <span class="icon-bg">✚</span>
+      </div>
+
+      <div class="stat-card">
+        <div>
+          <p>EQUIPE DE APOIO</p>
+          <h2>{{ equipeApoio | number:'2.0' }}</h2>
+          <small>Recepcionista e Auxiliares</small>
+        </div>
+
+        <span class="icon-bg">☏</span>
+      </div>
+
+    </div>
+
+    <div class="filters">
+
+      <div class="search">
+
+        <span>⌕</span>
+
+        <input
+          type="text"
+          placeholder="Buscar por nome, e-mail ou cargo..."
+          [(ngModel)]="busca"
+          (ngModelChange)="paginaAtual = 1"
+        />
+
+      </div>
+
+      <select [(ngModel)]="filtroCargo" (change)="paginaAtual = 1">
+        <option>Todos os Cargos</option>
+        <option>Veterinário Sênior</option>
+        <option>Auxiliar Clínica</option>
+        <option>Recepcionista</option>
+        <option>Cirurgião Vet</option>
+      </select>
+
+      <select [(ngModel)]="filtroStatus" (change)="paginaAtual = 1">
+        <option>Status: Todos</option>
+        <option>Ativo</option>
+        <option>Inativo</option>
+      </select>
+
+      <button class="filter-icon" (click)="limparFiltros()">≡</button>
+
+    </div>
+
+    <div class="main-grid">
+
+      <div class="table-card">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Funcionário</th>
+              <th>Cargo</th>
+              <th>E-mail</th>
+              <th>Telefone</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let funcionario of funcionariosPaginados">
+
+              <td>
+
+                <div class="employee">
+
+                  <img [src]="funcionario.avatar" alt="Funcionário">
+
+                  <div>
+                    <strong>{{ funcionario.nome }}</strong>
+                    <small>ID: {{ funcionario.id }}</small>
+                  </div>
+
+                </div>
+
+              </td>
+
+              <td>
+                <span class="cargo">{{ funcionario.cargo }}</span>
+              </td>
+
+              <td>{{ funcionario.email }}</td>
+
+              <td>{{ funcionario.telefone }}</td>
+
+              <td>
+
+                <span
+                  class="status"
+                  [class.inativo]="funcionario.status === 'Inativo'">
+
+                  {{ funcionario.status }}
+
+                </span>
+
+              </td>
+
+              <td>
+
+                <button
+                  class="action edit"
+                  (click)="editarFuncionario(funcionario)">
+
+                  ✎
+
+                </button>
+
+                <button
+                  class="action delete"
+                  (click)="excluirFuncionario(funcionario)">
+
+                  🗑
+
+                </button>
+
+              </td>
+
+            </tr>
+
+            <tr *ngIf="funcionariosPaginados.length === 0">
+
+              <td colspan="6" class="empty">
+                Nenhum funcionário encontrado.
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+        <div class="pagination">
+
+          <p>
+            Mostrando {{ funcionariosPaginados.length }}
+            de {{ funcionariosFiltrados.length }} funcionários
+          </p>
+
+          <div>
+
+            <button
+              (click)="mudarPagina(paginaAtual - 1)"
+              [disabled]="paginaAtual === 1">
+
+              ‹
+
+            </button>
+
+            <button
+              *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
+              [class.active]="paginaAtual === i + 1"
+              (click)="mudarPagina(i + 1)"
+            >
+              {{ i + 1 }}
+            </button>
+
+            <button
+              (click)="mudarPagina(paginaAtual + 1)"
+              [disabled]="paginaAtual === totalPaginas">
+
+              ›
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <aside class="side">
+
+        <div class="info-card">
+
+          <div class="info-title">
+
+            <span>ⓘ</span>
+
+            <h3>Diretrizes da Equipe</h3>
+
+          </div>
+
+          <p>
+            Todos os novos funcionários devem passar pelo treinamento de biossegurança
+            nível 1 antes de acessar a área cirúrgica.
+          </p>
+
+          <button (click)="abrirManual()">
+            Ver manual do colaborador →
+          </button>
+
+        </div>
+
+        <div class="help-card">
+
+          <h3>Precisa de Ajuda?</h3>
+
+          <p>
+            Nossa central de suporte administrativo está disponível para dúvidas.
+          </p>
+
+          <button (click)="falarComRH()">
+            Falar com RH
+          </button>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </section>
+
+</div>

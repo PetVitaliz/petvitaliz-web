@@ -1,0 +1,82 @@
+<section class="reset-page">
+
+  <div class="reset-card">
+
+    <h2>Redefinir sua senha</h2>
+
+    <form (ngSubmit)="redefinirSenha()">
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+
+        <div class="input-box">
+          <span>🔒</span>
+
+          <input
+            [type]="senhaVisivel ? 'text' : 'password'"
+            id="senha"
+            name="senha"
+            placeholder="••••••••"
+            [(ngModel)]="senha">
+
+          <button
+            type="button"
+            class="eye-btn"
+            (click)="senhaVisivel = !senhaVisivel">
+            👁
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmarSenha">Confirmar senha</label>
+
+        <div class="input-box">
+          <span>🔒</span>
+
+          <input
+            [type]="confirmarVisivel ? 'text' : 'password'"
+            id="confirmarSenha"
+            name="confirmarSenha"
+            placeholder="••••••••"
+            [(ngModel)]="confirmarSenha">
+
+          <button
+            type="button"
+            class="eye-btn"
+            (click)="confirmarVisivel = !confirmarVisivel">
+            👁
+          </button>
+        </div>
+      </div>
+
+      <p class="erro" *ngIf="erro">{{ erro }}</p>
+
+      <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+
+      <button type="submit" class="btn-submit">
+        Redefinir senha
+        <span>→</span>
+      </button>
+
+    </form>
+
+    <a routerLink="/usuario/login" class="back-login">
+      ‹ Voltar para o login
+    </a>
+
+    <div class="security-box">
+      <div class="security-icon">♡</div>
+
+      <div>
+        <strong>AMBIENTE SEGURO</strong>
+        <p>
+          Este portal é de uso exclusivo de colaboradores autorizados.
+          Todo acesso é monitorado para garantir a segurança dos dados dos nossos pacientes e protocolos internos.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</section>

@@ -1,0 +1,242 @@
+<section class="perfil-page">
+  <h1>Meu Perfil</h1>
+
+  <div class="perfil-container">
+    <div class="topo">
+      <div class="foto-area">
+        <img [src]="fotoPerfil" alt="Foto do funcionário">
+
+        <label class="btn-foto">
+          ✎
+          <input type="file" accept="image/*" (change)="alterarFoto($event)">
+        </label>
+      </div>
+
+      <div class="dados-principais">
+        <span>Clinical Guardian</span>
+        <h2>{{ funcionario.nome }}</h2>
+
+        <div class="info-linha">
+          <p>✚ {{ funcionario.cargo }}</p>
+          <p>⚕ CRMV: {{ funcionario.crmv }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="conteudo-principal">
+      <div class="card info-pessoais">
+        <div class="card-titulo">
+          <h3>Informações Pessoais</h3>
+          <span>♙</span>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label>Nome completo</label>
+            <input type="text" [(ngModel)]="dadosTemp.nome" [disabled]="!editando">
+          </div>
+
+          <div>
+            <label>E-mail profissional</label>
+            <input type="email" [(ngModel)]="dadosTemp.email" [disabled]="!editando">
+          </div>
+
+          <div>
+            <label>Telefone de contato</label>
+            <input type="text" [(ngModel)]="dadosTemp.telefone" [disabled]="!editando">
+          </div>
+
+          <div>
+            <label>Data de nascimento</label>
+            <input type="text" [(ngModel)]="dadosTemp.nascimento" [disabled]="!editando">
+          </div>
+        </div>
+
+        <div class="botoes-edicao">
+          <button *ngIf="!editando" (click)="habilitarEdicao()">Editar informações</button>
+
+          <div *ngIf="editando" class="grupo-edicao">
+            <button (click)="salvarEdicao()">Salvar</button>
+            <button class="cancelar" (click)="cancelarEdicao()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card desempenho">
+        <h3>Desempenho Mensal</h3>
+
+        <div class="meta">
+          <div>
+            <p>Consultas Realizadas</p>
+            <div class="barra">
+              <span style="width: 90%;"></span>
+            </div>
+          </div>
+          <strong>142</strong>
+        </div>
+
+        <div class="meta">
+          <div>
+            <p>Cirurgias de Sucesso</p>
+            <div class="barra">
+              <span style="width: 78%;"></span>
+            </div>
+          </div>
+          <strong>28</strong>
+        </div>
+
+        <div class="pacientes">
+          <div class="avatar-list">
+            <img src="assets/img/pet1.png" alt="Pet">
+            <img src="assets/img/pet2.png" alt="Pet">
+            <span>+15</span>
+          </div>
+          <p>Pacientes atendidos hoje</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="credenciais">
+      <div class="titulo-secao">
+        <span>▣</span>
+        <h3>Credenciais Clínicas</h3>
+      </div>
+
+      <div class="credenciais-grid">
+        <div class="mini-card">
+          <h4>⊕ Especialidades</h4>
+
+          <div class="tags">
+            <span>Cirurgia de Pequenos Animais</span>
+            <span>Ortopedia</span>
+            <span>Diagnóstico por Imagem</span>
+          </div>
+        </div>
+
+        <div class="mini-card">
+          <h4>⊕ Formação Acadêmica</h4>
+
+          <p><b>Medicina Veterinária</b></p>
+          <small>Universidade de São Paulo, 2005</small>
+
+          <p><b>Mestrado em Clínica Cirúrgica</b></p>
+          <small>Unesp Botucatu, 2009</small>
+        </div>
+
+        <div class="mini-card">
+          <h4>⊕ Certificações</h4>
+
+          <p>✔ Board Certified Surgeon (AVS)</p>
+          <p>✔ Especialista em Anestesiologia Pet</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="rodape-grid">
+      <div class="card configuracoes">
+        <div class="card-titulo">
+          <h3>Configurações da Conta</h3>
+          <span>⚙</span>
+        </div>
+
+        <div class="config-linha">
+          <div>
+            <h4>Segurança</h4>
+            <p>Gerencie sua senha e acessos.</p>
+          </div>
+
+          <div class="botoes-config">
+            <button (click)="abrirModalSenha()">Alterar Senha</button>
+
+            <button *ngIf="!doisFatoresAtivo" (click)="abrirModal2FA()">Ativar 2FA</button>
+            <button *ngIf="doisFatoresAtivo" class="ativo" (click)="desativar2FA()">2FA Ativo</button>
+          </div>
+        </div>
+
+        <div class="config-linha notificacoes">
+          <div>
+            <h4>Notificações</h4>
+            <p>Preferências do sistema.</p>
+          </div>
+
+          <div class="switches">
+            <label>
+              E-mails de novos agendamentos
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+
+            <label>
+              Alertas de urgência no celular
+              <input type="checkbox" checked>
+              <span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="ajuda">
+        <h3>Precisa de ajuda?</h3>
+
+        <p>
+          Nossa equipe de suporte técnico está disponível para auxiliar você com qualquer
+          dúvida sobre as ferramentas clínicas do PetVital.
+        </p>
+
+        <button class="btn-branco" (click)="suporteChat()">☰ Suporte via Chat</button>
+        <button class="btn-azul" (click)="centralAjuda()">ⓘ Central de Ajuda</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-fundo" *ngIf="modalSenhaAberto">
+    <div class="modal-card">
+      <button class="fechar-modal" (click)="fecharModalSenha()">×</button>
+
+      <h2>Alterar Senha</h2>
+      <p>Digite sua senha atual e escolha uma nova senha.</p>
+
+      <div class="modal-form">
+        <label>Senha atual</label>
+        <input type="password" [(ngModel)]="senhaAtual">
+
+        <label>Nova senha</label>
+        <input type="password" [(ngModel)]="novaSenha">
+
+        <label>Confirmar nova senha</label>
+        <input type="password" [(ngModel)]="confirmarSenha">
+      </div>
+
+      <div class="modal-botoes">
+        <button class="btn-cancelar" (click)="fecharModalSenha()">Cancelar</button>
+        <button class="btn-salvar" (click)="salvarSenha()">Salvar senha</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-fundo" *ngIf="modal2FAAberto">
+    <div class="modal-card">
+      <button class="fechar-modal" (click)="fecharModal2FA()">×</button>
+
+      <h2>Ativar 2FA</h2>
+      <p>Escaneie o código abaixo no aplicativo autenticador e digite o código gerado.</p>
+
+      <div class="qr-code">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
+      <div class="modal-form">
+        <label>Código de verificação</label>
+        <input type="text" maxlength="6" [(ngModel)]="codigo2FA" placeholder="000000">
+      </div>
+
+      <div class="modal-botoes">
+        <button class="btn-cancelar" (click)="fecharModal2FA()">Cancelar</button>
+        <button class="btn-salvar" (click)="ativar2FA()">Ativar 2FA</button>
+      </div>
+    </div>
+  </div>
+</section>

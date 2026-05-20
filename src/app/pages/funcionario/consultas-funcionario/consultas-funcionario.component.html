@@ -1,0 +1,96 @@
+<div class="container">
+
+  <div class="header">
+    <span class="subtitle">CALENDÁRIO PROFISSIONAL</span>
+    <h1>Próximas Consultas</h1>
+  </div>
+
+  <div class="card">
+
+    <div class="filters">
+
+      <div class="input-group">
+        <label>FILTRAR POR PET</label>
+        <input type="text" [(ngModel)]="filtros.pet" placeholder="Nome do pet..." />
+      </div>
+
+      <div class="input-group small">
+        <label>DATA</label>
+        <input type="date" [(ngModel)]="filtros.data" />
+      </div>
+
+      <div class="input-group small">
+        <label>STATUS</label>
+        <select [(ngModel)]="filtros.status">
+          <option>Todos os Status</option>
+          <option>Confirmado</option>
+          <option>Pendente</option>
+        </select>
+      </div>
+
+      <button class="btn-filtrar" (click)="aplicarFiltros()">
+        Aplicar
+      </button>
+
+      <button class="btn-limpar" (click)="limparFiltros()">
+        Limpar
+      </button>
+
+    </div>
+
+    <div class="list">
+
+      <div class="item" *ngFor="let consulta of consultasPaginadas">
+
+        <div class="time">
+          <strong>{{ consulta.hora }}</strong>
+          <span>{{ consulta.periodo }}</span>
+        </div>
+
+        <div class="pet">
+          <div class="pet-img"></div>
+
+          <div class="pet-text">
+            <span class="pet-name">{{ consulta.pet }}</span>
+            <span class="pet-age">IDADE • {{ consulta.idade }}</span>
+          </div>
+        </div>
+
+        <div class="info">
+          <span class="label">TUTOR</span>
+          <strong>{{ consulta.tutor }}</strong>
+        </div>
+
+        <div class="info">
+          <span class="label">MOTIVO</span>
+          <strong>{{ consulta.motivo }}</strong>
+        </div>
+
+        <div class="status">
+          {{ consulta.status }}
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="footer">
+      <span>Mostrando {{ consultasPaginadas.length }} de {{ consultasFiltradas.length }}</span>
+
+      <div class="pagination" *ngIf="totalPaginas > 1">
+        <button (click)="mudarPagina(paginaAtual - 1)">&lt;</button>
+
+        <button
+          *ngFor="let p of paginas"
+          [class.active]="paginaAtual === p"
+          (click)="mudarPagina(p)"
+        >
+          {{ p }}
+        </button>
+
+        <button (click)="mudarPagina(paginaAtual + 1)">&gt;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
