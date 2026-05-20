@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <header class="header-adm">
 
   <div class="header-container">
@@ -137,6 +138,101 @@
         </div>
 
       </div>
+=======
+<header class="header">
+
+  <div class="logo">
+    <img src="assets/img/logo.png" alt="PetVitaliz">
+  </div>
+
+  <button class="hamburguer" type="button" (click)="toggleMenu($event)">
+    ☰
+  </button>
+
+  <nav class="menu" [class.menu-aberto]="menuAberto">
+
+    <a routerLink="/adm/home"
+       routerLinkActive="active"
+       (click)="fecharMenus()">
+      Home
+    </a>
+
+    <a routerLink="/adm/consultas"
+       routerLinkActive="active"
+       (click)="fecharMenus()">
+      Consultas
+    </a>
+
+    <a routerLink="/adm/clientes"
+       routerLinkActive="active"
+       (click)="fecharMenus()">
+      Clientes
+    </a>
+
+    <a routerLink="/adm/financeiro"
+       routerLinkActive="active"
+       (click)="fecharMenus()">
+      Financeiro
+    </a>
+
+    <div class="dropdown">
+
+      <button type="button" (click)="toggleAdmins($event)">
+        Admins ⌄
+      </button>
+
+      <div class="dropdown-menu" *ngIf="adminsAberto">
+
+        <a routerLink="/adm/listar-admin"
+           (click)="fecharMenus()">
+          Listar / Editar Admin
+        </a>
+
+        <a routerLink="/adm/equipe-funcionarios"
+           (click)="fecharMenus()">
+          Equipe e Funcionários
+        </a>
+
+        <a routerLink="/adm/planos"
+           (click)="fecharMenus()">
+          Planos
+        </a>
+
+        <a routerLink="/adm/consultas-agendadas"
+           (click)="fecharMenus()">
+          Consultas Agendadas
+        </a>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+  <div class="perfil">
+
+    <div class="info" (click)="togglePerfil($event)">
+
+      <div>
+        <strong>Dr. Ricardo Silva</strong>
+        <span>Administrador</span>
+      </div>
+
+      <img src="assets/img/perfil.png" alt="Perfil">
+
+    </div>
+
+    <div class="perfil-menu" *ngIf="perfilAberto">
+
+      <button
+        type="button"
+        class="sair"
+        (click)="logout()">
+
+        Sair
+
+      </button>
+>>>>>>> 44eeca2f2ddc344f8c8e427a26b436475878460d
 
     </div>
 

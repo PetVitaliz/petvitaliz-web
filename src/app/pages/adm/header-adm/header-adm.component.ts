@@ -15,7 +15,11 @@ export class HeaderAdmComponent {
   perfilAberto = false;
   menuAberto = false;
 
+<<<<<<< HEAD
   constructor(private router: Router) { }
+=======
+  constructor(private router: Router) {}
+>>>>>>> 44eeca2f2ddc344f8c8e427a26b436475878460d
 
   toggleMenu(event: Event) {
     event.stopPropagation();
@@ -43,7 +47,10 @@ export class HeaderAdmComponent {
   }
 
   logout() {
+<<<<<<< HEAD
     localStorage.removeItem('usuarioLogado');
+=======
+>>>>>>> 44eeca2f2ddc344f8c8e427a26b436475878460d
     this.router.navigate(['/']);
   }
 
