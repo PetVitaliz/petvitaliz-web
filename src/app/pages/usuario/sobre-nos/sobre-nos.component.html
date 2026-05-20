@@ -1,0 +1,134 @@
+<main class="sobre-page">
+
+  <section class="sobre-hero">
+    <img class="sobre-paw" [src]="imgPataSobre" alt="Pata decorativa" />
+
+    <div class="sobre-content">
+      <h1>
+        Cuidando de pets, criando<br />
+        vidas felizes e saudáveis
+      </h1>
+
+      <p>
+        Dedicados a fornecer cuidados especializados para pets com amor,<br />
+        confiança e atenção personalizada para cada companheiro peludo
+      </p>
+
+      <div class="sobre-buttons">
+        <a routerLink="/usuario/login">Agendar Consulta</a>
+        <a href="#sobre-info">Começar Agora</a>
+      </div>
+    </div>
+
+    <img class="sobre-pets" [src]="imgPetsSobre" alt="Pets juntos" />
+  </section>
+
+  <section class="sobre-history-section" id="sobre-info">
+    <div class="sobre-history-card">
+      <h2>Fundada em 2025</h2>
+
+      <p>
+        O PetVitaliz surgiu no coração de 2025 com uma missão clara: elevar o padrão do atendimento
+        veterinário. Percebemos que o mercado precisava de um lugar que unisse a precisão clínica dos
+        melhores laboratórios com o acolhimento de uma casa de família.
+      </p>
+
+      <p>
+        Nossa trajetória é curta, mas intensa. Investimos nas tecnologias mais recentes para garantir
+        diagnósticos rápidos e precisos, sem nunca esquecer que, por trás de cada exame, existe uma
+        vida que amamos.
+      </p>
+    </div>
+
+    <div class="sobre-values">
+      <div class="sobre-value-card sobre-value-card-blue">
+        <img class="sobre-value-icon" [src]="imgIconPrecisao" alt="Ícone precisão" />
+
+        <h3>Precisão</h3>
+
+        <p>
+          Protocolos clínicos rigorosos e tecnologia de ponta para sua segurança.
+        </p>
+      </div>
+
+      <div class="sobre-value-card">
+        <img class="sobre-value-icon" [src]="imgIconBemEstar" alt="Ícone bem-estar" />
+
+        <h3>Bem-estar</h3>
+
+        <p>
+          Foco total no conforto emocional e físico dos animais.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sobre-team-section">
+  <h2>
+    Conheça nossa equipe: especialistas compassivos<br />
+    a serviço dos pets
+  </h2>
+
+  <div class="sobre-team-categories">
+    @for (categoria of categoriasEquipe; track categoria) {
+      <button type="button">
+        {{ categoria }}
+      </button>
+    }
+  </div>
+
+  <div class="sobre-team-grid">
+    @for (pessoa of equipeSobre; track pessoa.nome) {
+      <div class="sobre-team-card">
+        <img
+          class="sobre-team-image"
+          [src]="pessoa.imagem"
+          [alt]="pessoa.nome"
+        />
+
+        <div class="sobre-team-info">
+          <div>
+            <h3>{{ pessoa.nome }}</h3>
+            <p>⌘ {{ pessoa.experiencia }}</p>
+          </div>
+
+          <button type="button">↗</button>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="sobre-values-section-final">
+
+  <h2>
+    Cuidado compassivo para cada pata, todos os dia
+  </h2>
+
+  <div class="sobre-values-grid-final">
+
+    @for (valor of valoresSobre; track valor.titulo) {
+
+      <div class="sobre-value-final-card">
+
+        <img
+          class="sobre-value-final-icon"
+          [src]="valor.icone"
+          [alt]="valor.titulo"
+        />
+
+        <h3>{{ valor.titulo }}</h3>
+
+        <p>
+          {{ valor.descricao }}
+        </p>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>
+
+</main>
