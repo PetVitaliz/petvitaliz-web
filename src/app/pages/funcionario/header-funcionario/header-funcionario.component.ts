@@ -14,11 +14,7 @@ export class HeaderFuncionarioComponent {
   isMenuOpen = false;
   isMobileMenuOpen = false;
 
-<<<<<<< HEAD
-  constructor(private router: Router) { }
-=======
   constructor(private router: Router) {}
->>>>>>> 44eeca2f2ddc344f8c8e427a26b436475878460d
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -33,10 +29,7 @@ export class HeaderFuncionarioComponent {
   }
 
   logout() {
-<<<<<<< HEAD
     localStorage.removeItem('usuarioLogado');
-=======
->>>>>>> 44eeca2f2ddc344f8c8e427a26b436475878460d
     this.router.navigate(['/']);
   }
 }
