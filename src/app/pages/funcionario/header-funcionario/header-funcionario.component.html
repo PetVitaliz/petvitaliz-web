@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 <header class="header-funcionario">
-
   <div class="header-container">
 
     <div class="logo">
@@ -8,31 +6,14 @@
     </div>
 
     <nav class="navbar" [class.open]="isMobileMenuOpen">
-
-      <a routerLink="/funcionario/home" routerLinkActive="ativo" (click)="closeMobileMenu()">
-        Home
-      </a>
-
-      <a routerLink="/funcionario/consultas" routerLinkActive="ativo" (click)="closeMobileMenu()">
-        Consultas
-      </a>
-
-      <a routerLink="/funcionario/clientes" routerLinkActive="ativo" (click)="closeMobileMenu()">
-        Clientes
-      </a>
-
-      <a routerLink="/funcionario/pets" routerLinkActive="ativo" (click)="closeMobileMenu()">
-        Pets
-      </a>
-
-      <a routerLink="/funcionario/perfil" routerLinkActive="ativo" (click)="closeMobileMenu()">
-        Perfil
-      </a>
-
+      <a routerLink="/funcionario/home" routerLinkActive="ativo" (click)="closeMobileMenu()">Home</a>
+      <a routerLink="/funcionario/consultas" routerLinkActive="ativo" (click)="closeMobileMenu()">Consultas</a>
+      <a routerLink="/funcionario/clientes" routerLinkActive="ativo" (click)="closeMobileMenu()">Clientes</a>
+      <a routerLink="/funcionario/pets" routerLinkActive="ativo" (click)="closeMobileMenu()">Pets</a>
+      <a routerLink="/funcionario/perfil" routerLinkActive="ativo" (click)="closeMobileMenu()">Perfil</a>
     </nav>
 
     <div class="user-area">
-
       <button class="menu-mobile" type="button" (click)="toggleMobileMenu()">
         ☰
       </button>
@@ -43,75 +24,17 @@
       </div>
 
       <div class="perfil-dropdown">
-
         <button type="button" class="perfil-btn" (click)="toggleMenu()">
-
           <img src="assets/img/DrRogerio.png" alt="Foto Perfil">
-
-          <span class="arrow" [class.open]="isMenuOpen">
-            ▼
-          </span>
-
+          <span class="arrow" [class.open]="isMenuOpen">▼</span>
         </button>
 
         <div class="perfil-menu" *ngIf="isMenuOpen">
-
-          <a routerLink="/funcionario/perfil">
-            Meu Perfil
-          </a>
-
-          <button type="button" (click)="logout()">
-            Sair
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-=======
-<header class="header-container">
-  <div class="header-content">
-
-    <div class="logo-section">
-      <img src="assets/img/logo.png" alt="PetVitaliz" class="logo">
-    </div>
-
-    <nav class="nav-menu" [class.open]="isMobileMenuOpen">
-      <a routerLink="/funcionario/home" routerLinkActive="active" (click)="closeMobileMenu()">Home</a>
-      <a routerLink="/funcionario/consultas" routerLinkActive="active" (click)="closeMobileMenu()">Consultas</a>
-      <a routerLink="/funcionario/clientes" routerLinkActive="active" (click)="closeMobileMenu()">Clientes</a>
-      <a routerLink="/funcionario/pets" routerLinkActive="active" (click)="closeMobileMenu()">Pets</a>
-      <a routerLink="/funcionario/perfil" routerLinkActive="active" (click)="closeMobileMenu()">Perfil</a>
-    </nav>
-
-    <div class="right-section">
-      <button class="menu-toggle" type="button" (click)="toggleMobileMenu()">
-        ☰
-      </button>
-
-      <div class="profile-wrapper">
-        <div class="profile-info" (click)="toggleMenu()">
-          <div class="text-info">
-            <span class="user-name">Dr. Rogério Souza</span>
-            <span class="user-role">Veterinário</span>
-          </div>
-
-          <div class="avatar-box">
-            <img src="assets/img/DrRogerio.png" alt="Foto Perfil" class="user-avatar">
-            <span class="arrow" [class.open]="isMenuOpen">▼</span>
-          </div>
-        </div>
-
-        <div class="dropdown-menu" *ngIf="isMenuOpen">
-          <button class="btn-logout" type="button" (click)="logout()">Sair</button>
+          <a routerLink="/funcionario/perfil" (click)="closeMobileMenu()">Meu Perfil</a>
+          <button type="button" (click)="logout()">Sair</button>
         </div>
       </div>
     </div>
 
   </div>
->>>>>>> 44eeca2f2ddc344f8c8e427a26b436475878460d
 </header>

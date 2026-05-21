@@ -1,54 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.header {
+.header-adm {
   width: 100%;
-  height: 82px;
+  height: 86px;
   background: #ffffff;
-  border-bottom: 1px solid #ececec;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 42px;
-
-  box-sizing: border-box;
-
+  border-bottom: 1px solid #edf0f7;
   font-family: 'Inter', sans-serif;
-
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-.logo {
+.header-container {
+  width: 100%;
+  height: 100%;
+  padding: 0 42px;
   display: flex;
   align-items: center;
-  cursor: pointer;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .logo img {
-  height: 48px;
-  object-fit: contain;
+  height: 50px;
+  display: block;
 }
 
-.nav {
+.navbar {
   display: flex;
   align-items: center;
-  gap: 42px;
+  gap: 34px;
 }
 
-.nav a {
-  text-decoration: none;
+.navbar a,
+.admin-dropdown button {
+  border: none;
+  background: transparent;
+  color: #1d1d1d;
   font-size: 15px;
   font-weight: 500;
-  color: #1d1d1d;
-
-  transition: 0.2s ease;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
 }
 
-.nav a:hover,
-.nav a.active {
+.navbar a:hover,
+.navbar a.ativo,
+.admin-dropdown button:hover {
   color: #5D6ED3;
 }
 
@@ -56,172 +54,147 @@
   position: relative;
 }
 
-.admin-btn {
-  border: none;
-  background: transparent;
-
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  font-size: 15px;
-  font-weight: 500;
-  color: #1d1d1d;
-
-  cursor: pointer;
-
-  font-family: 'Inter', sans-serif;
-}
-
-.admin-btn:hover {
-  color: #5D6ED3;
-}
-
-.dropdown {
+.dropdown-menu {
   position: absolute;
-  top: 42px;
+  top: 38px;
   left: 0;
-
-  width: 230px;
-
+  width: 240px;
   background: #ffffff;
-
+  border: 1px solid #edf0f7;
   border-radius: 18px;
-
-  border: 1px solid #ececec;
-
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-
-  padding: 14px 0;
-
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.12);
+  padding: 10px;
   display: flex;
   flex-direction: column;
-
-  z-index: 1000;
+  z-index: 1200;
 }
 
-.dropdown a {
-  padding: 14px 22px;
-
-  text-decoration: none;
-
-  color: #1d1d1d;
-
+.dropdown-menu a {
+  padding: 12px 14px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 500;
-
-  transition: 0.2s ease;
 }
 
-.dropdown a:hover {
-  background: #f5f7ff;
-  color: #5D6ED3;
+.dropdown-menu a:hover {
+  background: #f4f6ff;
 }
 
-.profile-wrapper {
-  position: relative;
-}
-
-.profile-box {
+.user-area {
   display: flex;
   align-items: center;
-  gap: 12px;
-
-  cursor: pointer;
+  gap: 14px;
 }
 
-.profile-info {
+.user-info {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 }
 
-.profile-info strong {
+.user-info strong {
   font-size: 14px;
-  color: #1d1d1d;
+  color: #111827;
 }
 
-.profile-info span {
+.user-info span {
   font-size: 12px;
-  color: #7a7a7a;
+  color: #7b8190;
 }
 
-.avatar {
-  width: 42px;
-  height: 42px;
+.perfil-dropdown {
+  position: relative;
+}
 
+.perfil-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.perfil-btn img {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-
   object-fit: cover;
 }
 
-.profile-dropdown {
+.perfil-menu {
   position: absolute;
-  top: 56px;
+  top: 55px;
   right: 0;
-
-  width: 170px;
-
+  width: 150px;
   background: #ffffff;
-
+  border: 1px solid #edf0f7;
   border-radius: 16px;
-
-  border: 1px solid #ececec;
-
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.12);
   padding: 10px;
-
-  z-index: 1000;
+  z-index: 1200;
 }
 
-.profile-dropdown button {
+.perfil-menu button {
   width: 100%;
-  height: 44px;
-
+  height: 42px;
   border: none;
   border-radius: 12px;
-
-  background: #f8f8f8;
-
-  color: #e53935;
-
+  background: #fff1f1;
+  color: #d93025;
   font-size: 14px;
   font-weight: 700;
-
   cursor: pointer;
-
-  transition: 0.2s ease;
 }
 
-.profile-dropdown button:hover {
-  background: #ffeaea;
-}
-
-.menu-mobile {
+.hamburguer {
   display: none;
 }
 
-@media (max-width: 1100px) {
-
-  .header {
-    padding: 0 24px;
+@media (max-width: 950px) {
+  .header-container {
+    padding: 0 22px;
   }
 
-  .nav {
-    gap: 24px;
+  .hamburguer {
+    display: block;
+    border: none;
+    background: #f4f6ff;
+    color: #5D6ED3;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 22px;
+    cursor: pointer;
   }
 
-}
+  .navbar {
+    display: none;
+    position: absolute;
+    top: 86px;
+    left: 16px;
+    right: 16px;
+    background: #ffffff;
+    border: 1px solid #edf0f7;
+    border-radius: 20px;
+    padding: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: 0 18px 40px rgba(16, 24, 40, 0.12);
+  }
 
-@media (max-width: 900px) {
+  .navbar.menu-aberto {
+    display: flex;
+  }
 
-  .nav {
+  .dropdown-menu {
+    position: static;
+    box-shadow: none;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .user-info {
     display: none;
   }
-
-  .menu-mobile {
-    display: block;
-  }
-
 }
