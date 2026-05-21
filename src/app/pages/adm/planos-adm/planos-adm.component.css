@@ -4,9 +4,11 @@
 }
 
 .page-container {
-  min-height: 100vh;
-  background: #eeeeef;
-  padding: 58px 42px 44px;
+  min-height: calc(100vh - 84px);
+  background:
+    radial-gradient(circle at top left, rgba(93, 110, 211, 0.12), transparent 34%),
+    linear-gradient(180deg, #f7f8fc 0%, #eef2f8 100%);
+  padding: 34px 44px;
 }
 
 .breadcrumb {
@@ -20,7 +22,7 @@
 }
 
 .breadcrumb span {
-  color: #4055c8;
+  color: #536dfe;
 }
 
 .breadcrumb small {
@@ -30,24 +32,24 @@
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 28px;
-  gap: 20px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  gap: 24px;
 }
 
 .page-header h1 {
-  margin: 0 0 12px;
+  margin: 0 0 8px;
   font-size: 34px;
   font-weight: 800;
-  color: #082c75;
+  color: #1f3b82;
 }
 
 .page-header p {
   margin: 0;
-  max-width: 560px;
+  max-width: 650px;
   font-size: 15px;
   line-height: 1.5;
-  color: #4d5668;
+  color: #6b7280;
 }
 
 .btn-novo {
@@ -83,30 +85,34 @@
 }
 
 .content-card {
-  background: #f8faff;
-  padding: 16px;
-  border: 1px solid #ffffff;
+  background: #f7f8fc;
+  border: 1px solid #e7ebf5;
+  padding: 28px;
+  border-radius: 28px;
+  box-shadow: 0 18px 45px rgba(31, 59, 130, 0.08);
 }
 
 .planos-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 26px 18px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
 }
 
 .plano-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 22px;
-  min-height: 190px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  transition: 0.25s;
+  background: #fcfdff;
+  border: 1px solid #e8edf8;
+  border-radius: 24px;
+  padding: 24px;
+  min-height: 210px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
+  transition: 0.28s ease;
 }
 
 .plano-card:hover {
-  background: #4658c4;
+  background: linear-gradient(135deg, #536dfe, #4055c8);
   color: #ffffff;
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 22px 48px rgba(93, 110, 211, 0.18);
 }
 
 .plano-top {
@@ -116,9 +122,9 @@
 }
 
 .tag {
-  background: #e8ecf7;
-  color: #5c6476;
-  padding: 6px 12px;
+  background: #eef2ff;
+  color: #536dfe;
+  padding: 7px 12px;
   border-radius: 999px;
   font-size: 10px;
   font-weight: 800;
@@ -127,7 +133,7 @@
 .status {
   background: #dcffe8;
   color: #00a35c;
-  padding: 5px 10px;
+  padding: 6px 11px;
   border-radius: 999px;
   font-size: 10px;
   font-weight: 800;
@@ -135,15 +141,15 @@
 
 .plano-card:hover .tag,
 .plano-card:hover .status {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.18);
   color: #ffffff;
 }
 
 .plano-card h2 {
-  margin: 14px 0 12px;
+  margin: 16px 0 12px;
   font-size: 26px;
   font-weight: 800;
-  color: #222936;
+  color: #1f3b82;
 }
 
 .plano-card:hover h2 {
@@ -151,14 +157,14 @@
 }
 
 .preco {
-  font-size: 27px;
+  font-size: 29px;
   font-weight: 800;
   color: #4055c8;
 }
 
 .preco small {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   margin-left: 3px;
   color: #6b7280;
 }
@@ -171,11 +177,11 @@
 .linha {
   height: 1px;
   background: #eef1f6;
-  margin: 24px 0 14px;
+  margin: 24px 0 16px;
 }
 
 .plano-card:hover .linha {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .plano-actions {
@@ -191,27 +197,38 @@
 
 .plano-actions button {
   border: none;
-  background: #f3f5fb;
+  background: #f4f6ff;
   color: #4055c8;
-  width: 27px;
-  height: 27px;
-  border-radius: 7px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 800;
-  transition: 0.2s;
+  transition: 0.25s ease;
+}
+
+.plano-actions button:hover {
+  background: #4055c8;
+  color: #ffffff;
 }
 
 .plano-card:hover .plano-actions button {
-  background: rgba(255,255,255,0.16);
+  background: rgba(255, 255, 255, 0.16);
   color: #ffffff;
+}
+
+.plano-card:hover .plano-actions button:hover {
+  background: #ffffff;
+  color: #4055c8;
 }
 
 .plano-actions .detalhes {
   width: auto;
+  padding: 0 12px;
   background: transparent;
   color: #4055c8;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .plano-card:hover .plano-actions .detalhes {
@@ -223,23 +240,32 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
-  margin-top: 14px;
+  margin-top: 22px;
 }
 
 .stat-card {
-  background: #f1f4fb;
-  border-radius: 12px;
-  padding: 19px 22px;
+  background: #fcfdff;
+  border: 1px solid #e8edf8;
+  border-radius: 24px;
+  padding: 22px;
   display: flex;
   align-items: center;
   gap: 17px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
+  transition: 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: #536dfe;
+  box-shadow: 0 18px 40px rgba(93, 110, 211, 0.12);
 }
 
 .stat-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #e4ebff;
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  background: #eef2ff;
   color: #4055c8;
   display: flex;
   align-items: center;
@@ -255,21 +281,21 @@
   display: block;
   font-size: 11px;
   font-weight: 800;
-  color: #6b7280;
+  color: #7a86a1;
   letter-spacing: 0.5px;
 }
 
 .stat-card strong {
   display: block;
-  margin-top: 3px;
-  font-size: 20px;
-  color: #111827;
+  margin-top: 5px;
+  font-size: 22px;
+  color: #1f3b82;
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(8, 20, 50, 0.55);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -280,37 +306,39 @@
 .modal,
 .modal-detalhes {
   width: 100%;
-  max-width: 520px;
-  background: #ffffff;
-  border-radius: 16px;
+  max-width: 540px;
+  background: #fcfdff;
+  border-radius: 24px;
   padding: 28px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+  box-shadow: 0 24px 70px rgba(8, 20, 50, 0.25);
 }
 
 .modal h2 {
   margin: 0 0 20px;
-  color: #082c75;
-  font-size: 24px;
+  color: #1f3b82;
+  font-size: 26px;
   font-weight: 800;
 }
 
 .modal label {
   display: block;
   margin: 13px 0 7px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #333b4d;
+  font-size: 12px;
+  font-weight: 800;
+  color: #4d5870;
 }
 
 .modal input,
 .modal select,
 .modal textarea {
   width: 100%;
-  border: 1px solid #d7deea;
-  border-radius: 8px;
+  border: 1px solid #d8deee;
+  border-radius: 12px;
   padding: 12px;
   outline: none;
   font-size: 14px;
+  background: #ffffff;
+  transition: 0.25s ease;
 }
 
 .modal textarea {
@@ -321,7 +349,8 @@
 .modal input:focus,
 .modal select:focus,
 .modal textarea:focus {
-  border-color: #4055c8;
+  border-color: #536dfe;
+  box-shadow: 0 0 0 3px rgba(83, 109, 254, 0.12);
 }
 
 .check {
@@ -344,20 +373,30 @@
 .btn-cancelar,
 .btn-salvar {
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 12px 18px;
   font-weight: 800;
   cursor: pointer;
+  transition: 0.25s ease;
 }
 
 .btn-cancelar {
-  background: #edf0f7;
+  background: #e5e7eb;
   color: #4d5668;
 }
 
 .btn-salvar {
   background: #4055c8;
   color: #ffffff;
+}
+
+.btn-fechar-detalhes:hover,
+.btn-salvar:hover {
+  background: #3044b8;
+}
+
+.btn-cancelar:hover {
+  background: #dfe4ee;
 }
 
 .detalhes-topo {
@@ -368,7 +407,7 @@
 
 .detalhes-topo span {
   display: inline-block;
-  background: #e8ecff;
+  background: #eef2ff;
   color: #4055c8;
   padding: 7px 12px;
   border-radius: 999px;
@@ -378,20 +417,25 @@
 
 .detalhes-topo h2 {
   margin: 14px 0 0;
-  color: #082c75;
+  color: #1f3b82;
   font-size: 28px;
   font-weight: 800;
 }
 
 .detalhes-topo button {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border: none;
-  border-radius: 50%;
-  background: #f1f4fb;
+  border-radius: 14px;
+  background: #f4f6ff;
   color: #4055c8;
   font-size: 24px;
   cursor: pointer;
+}
+
+.detalhes-topo button:hover {
+  background: #4055c8;
+  color: #ffffff;
 }
 
 .detalhes-preco {
@@ -416,13 +460,13 @@
 
 .beneficios {
   background: #f6f8fd;
-  border-radius: 14px;
+  border-radius: 18px;
   padding: 18px;
 }
 
 .beneficios h3 {
   margin: 0 0 14px;
-  color: #082c75;
+  color: #1f3b82;
   font-size: 16px;
 }
 
@@ -443,8 +487,8 @@
 }
 
 .beneficios li span {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #dcffe8;
   color: #00a35c;
@@ -459,23 +503,18 @@
   height: 44px;
   margin-top: 22px;
   border: none;
-  border-radius: 9px;
+  border-radius: 12px;
   background: #4055c8;
   color: #ffffff;
   font-weight: 800;
   cursor: pointer;
 }
 
-.btn-fechar-detalhes:hover,
-.btn-salvar:hover {
-  background: #3044b8;
-}
-
-.btn-cancelar:hover {
-  background: #dfe4ee;
-}
-
 @media (max-width: 900px) {
+  .page-container {
+    padding: 28px 18px;
+  }
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;
@@ -493,7 +532,11 @@
 
 @media (max-width: 600px) {
   .page-container {
-    padding: 36px 18px;
+    padding: 24px 14px;
+  }
+
+  .content-card {
+    padding: 20px;
   }
 
   .page-header h1 {

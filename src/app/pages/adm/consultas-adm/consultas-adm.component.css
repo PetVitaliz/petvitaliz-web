@@ -1,7 +1,9 @@
 .consultas-page {
-  min-height: 100vh;
-  background: #eeeeef;
-  padding: 34px 48px;
+  min-height: calc(100vh - 84px);
+  background:
+    radial-gradient(circle at top left, rgba(93, 110, 211, 0.12), transparent 34%),
+    linear-gradient(180deg, #f7f8fc 0%, #eef2f8 100%);
+  padding: 34px 44px;
   font-family: 'Inter', sans-serif;
   box-sizing: border-box;
 }
@@ -12,28 +14,30 @@
 
 .topo h1 {
   margin: 0;
-  color: #062d72;
+  color: #1f3b82;
   font-size: 34px;
   font-weight: 800;
 }
 
 .topo p {
-  margin: 6px 0 0;
-  color: #5f6b82;
-  font-size: 13px;
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 15px;
 }
 
 .consultas-box {
   background: #f7f8fc;
-  padding: 18px;
-  border-radius: 8px;
+  border: 1px solid #e7ebf5;
+  padding: 26px;
+  border-radius: 26px;
   box-sizing: border-box;
+  box-shadow: 0 16px 40px rgba(31, 59, 130, 0.08);
 }
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 275px;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 20px;
   align-items: start;
 }
 
@@ -42,118 +46,138 @@
 }
 
 .filtros {
-  background: #fff;
-  border-radius: 14px;
-  padding: 16px;
+  background: #fcfdff;
+  border: 1px solid #edf0f7;
+  border-radius: 22px;
+  padding: 18px;
   display: grid;
-  grid-template-columns: 2fr 130px 150px 120px;
-  gap: 12px;
+  grid-template-columns: 2fr 140px 160px 130px;
+  gap: 14px;
   align-items: end;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 }
 
 .campo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .campo label {
-  font-size: 9px;
-  color: #7d879f;
+  font-size: 10px;
+  color: #7a86a1;
   font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.7px;
 }
 
 .campo input,
 .campo select {
-  height: 36px;
-  border: 1px solid #edf1fa;
-  border-radius: 7px;
-  background: #f8faff;
+  height: 42px;
+  border: 1px solid #d8deee;
+  border-radius: 12px;
+  background: #ffffff;
   padding: 0 12px;
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   outline: none;
+  transition: 0.25s ease;
+}
+
+.campo input:hover,
+.campo select:hover,
+.campo input:focus,
+.campo select:focus {
+  border-color: #5D6ED3;
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.12);
 }
 
 .tabela-card {
-  margin-top: 16px;
-  background: #fff;
-  border-radius: 14px;
-  padding: 14px 16px;
+  margin-top: 18px;
+  background: #fcfdff;
+  border: 1px solid #edf0f7;
+  border-radius: 22px;
+  padding: 18px;
   box-sizing: border-box;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 }
 
 .linha {
   display: grid;
-  grid-template-columns: 100px 1.25fr 1fr 100px 105px 30px;
+  grid-template-columns: 100px 1.25fr 1fr 110px 112px 34px;
   align-items: center;
   gap: 14px;
-  min-height: 58px;
+  min-height: 64px;
   border-bottom: 1px solid #eef1f7;
+}
+
+.linha:last-child {
+  border-bottom: none;
 }
 
 .cabecalho {
   min-height: 34px;
-  color: #7d879f;
-  font-size: 9px;
+  color: #7a86a1;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .horario strong {
   display: block;
-  color: #0d42a5;
-  font-size: 12px;
+  color: #1f3b82;
+  font-size: 13px;
 }
 
 .horario small,
 .paciente small {
   display: block;
-  margin-top: 2px;
+  margin-top: 3px;
   color: #7d879f;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .paciente strong {
   display: block;
-  color: #0f172a;
-  font-size: 12px;
+  color: #111827;
+  font-size: 13px;
 }
 
 .vet {
-  color: #0f172a;
-  font-size: 11px;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .procedimento {
   display: inline-flex;
+  width: fit-content;
   background: #eef2ff;
   color: #5D6ED3;
-  padding: 5px 8px;
-  border-radius: 18px;
-  font-size: 9px;
-  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
 }
 
 .status {
   display: inline-flex;
   justify-content: center;
-  min-width: 84px;
-  padding: 5px 9px;
-  border-radius: 20px;
-  font-size: 9px;
+  min-width: 92px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 10px;
   font-weight: 800;
 }
 
 .status.Confirmada {
-  background: #d9f8e8;
-  color: #09864c;
+  background: #dcfce7;
+  color: #166534;
 }
 
 .status.Pendente {
   background: #fff3c4;
-  color: #d28b00;
+  color: #b77900;
 }
 
 .status.Cancelada {
@@ -176,26 +200,32 @@
 }
 
 .menu-btn {
-  width: 26px;
-  height: 26px;
+  width: 34px;
+  height: 34px;
   border: none;
-  background: transparent;
-  border-radius: 6px;
+  background: #f4f6ff;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 18px;
-  color: #556070;
+  color: #5D6ED3;
+  transition: 0.25s ease;
+}
+
+.menu-btn:hover {
+  background: #5D6ED3;
+  color: #ffffff;
 }
 
 .menu {
   position: absolute;
   right: 0;
-  top: 30px;
-  width: 135px;
-  background: #fff;
+  top: 40px;
+  width: 150px;
+  background: #ffffff;
   border: 1px solid #edf1fa;
-  border-radius: 10px;
-  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.14);
-  padding: 6px;
+  border-radius: 16px;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+  padding: 8px;
   z-index: 20;
 }
 
@@ -204,10 +234,12 @@
   background: transparent;
   border: none;
   text-align: left;
-  padding: 8px;
-  border-radius: 7px;
+  padding: 10px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: 0.25s ease;
 }
 
 .menu button:hover {
@@ -216,22 +248,24 @@
 }
 
 .vazio {
-  padding: 30px;
+  padding: 34px;
   text-align: center;
   color: #7d879f;
   font-size: 13px;
 }
 
 .paginacao {
-  margin-top: 10px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 9px 12px;
+  margin-top: 14px;
+  background: #ffffff;
+  border: 1px solid #edf0f7;
+  border-radius: 18px;
+  padding: 12px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #5f6b82;
-  font-size: 11px;
+  font-size: 12px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
 }
 
 .paginas {
@@ -240,37 +274,42 @@
 }
 
 .paginas button {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #edf1fa;
-  background: #fff;
-  border-radius: 7px;
+  min-width: 34px;
+  height: 34px;
+  border: none;
+  background: #e5e7eb;
+  color: #0a2a66;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: 800;
+  transition: 0.25s ease;
 }
 
+.paginas button:hover,
 .paginas .ativo {
   background: #5D6ED3;
-  color: #fff;
-  border-color: #5D6ED3;
+  color: #ffffff;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .calendario,
 .resumo,
 .lembrete {
-  background: #fff;
-  border-radius: 14px;
-  padding: 16px;
+  background: #fcfdff;
+  border: 1px solid #edf0f7;
+  border-radius: 22px;
+  padding: 18px;
   box-sizing: border-box;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 }
 
 .calendario {
-  min-height: 230px;
+  min-height: 235px;
 }
 
 .calendario-topo {
@@ -282,23 +321,27 @@
 .calendario h4,
 .lembrete h4 {
   margin: 0;
-  color: #0f172a;
-  font-size: 13px;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .calendario-topo button {
   border: none;
-  background: transparent;
-  color: #8b95aa;
+  background: #f4f6ff;
+  color: #5D6ED3;
   cursor: pointer;
   font-size: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
 }
 
 .calendario h5 {
   text-align: center;
   margin: 16px 0 10px;
-  color: #0d42a5;
-  font-size: 10px;
+  color: #1f3b82;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -311,9 +354,9 @@
 
 .dias span,
 .dias button {
-  padding: 5px 0;
-  border-radius: 6px;
-  font-size: 9px;
+  padding: 6px 0;
+  border-radius: 8px;
+  font-size: 10px;
 }
 
 .dias button {
@@ -323,9 +366,15 @@
   cursor: pointer;
 }
 
+.dias button:hover {
+  background: #f4f6ff;
+  color: #5D6ED3;
+}
+
 .dias.semana {
   margin-bottom: 4px;
   color: #b1b8c8;
+  font-weight: 800;
 }
 
 .dias .outro-mes {
@@ -333,25 +382,27 @@
 }
 
 .dias .hoje {
-  border: 1px solid #0d42a5;
-  color: #0d42a5;
+  border: 1px solid #5D6ED3;
+  color: #5D6ED3;
   font-weight: 800;
 }
 
 .dias .selecionado {
-  background: #0d42a5;
-  color: #fff;
+  background: #5D6ED3;
+  color: #ffffff;
   font-weight: 800;
 }
 
 .resumo.azul {
   background: linear-gradient(135deg, #071a4a, #0d42a5);
-  color: #fff;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 16px 34px rgba(31, 59, 130, 0.18);
 }
 
 .resumo small {
   display: block;
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
   font-weight: 800;
 }
@@ -364,7 +415,7 @@
 
 .resumo h2 {
   margin: 6px 0 0;
-  font-size: 28px;
+  font-size: 32px;
   line-height: 1;
 }
 
@@ -381,17 +432,17 @@
 .resumo.claro span {
   background: #ffe1e1;
   color: #c62828;
-  border-radius: 20px;
-  padding: 5px 8px;
-  font-size: 9px;
+  border-radius: 999px;
+  padding: 6px 9px;
+  font-size: 10px;
   font-weight: 800;
 }
 
 .lembrete p {
   margin: 12px 0 0;
   color: #5f6b82;
-  font-size: 11px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 @media (max-width: 1200px) {
@@ -414,6 +465,10 @@
     padding: 26px 18px;
   }
 
+  .consultas-box {
+    padding: 20px;
+  }
+
   .topo h1 {
     font-size: 28px;
   }
@@ -425,7 +480,7 @@
 
   .linha {
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 8px;
     padding: 14px 0;
   }
 

@@ -7,8 +7,8 @@
       <h1>Equipe e Funcionários</h1>
     </div>
 
-    <button class="btn-new" (click)="abrirNovoFuncionario()">
-      <span class="icon-plus">♙</span>
+    <button class="btn-new" type="button" (click)="abrirNovoFuncionario()">
+      <span class="icon-plus">♟</span>
       Novo Funcionário
     </button>
 
@@ -56,12 +56,8 @@
 
         <span>⌕</span>
 
-        <input
-          type="text"
-          placeholder="Buscar por nome, e-mail ou cargo..."
-          [(ngModel)]="busca"
-          (ngModelChange)="paginaAtual = 1"
-        />
+        <input type="text" placeholder="Buscar por nome, e-mail ou cargo..." [(ngModel)]="busca"
+          (ngModelChange)="paginaAtual = 1" />
 
       </div>
 
@@ -131,9 +127,7 @@
 
               <td>
 
-                <span
-                  class="status"
-                  [class.inativo]="funcionario.status === 'Inativo'">
+                <span class="status" [class.inativo]="funcionario.status === 'Inativo'">
 
                   {{ funcionario.status }}
 
@@ -143,17 +137,13 @@
 
               <td>
 
-                <button
-                  class="action edit"
-                  (click)="editarFuncionario(funcionario)">
+                <button class="action edit" (click)="editarFuncionario(funcionario)">
 
                   ✎
 
                 </button>
 
-                <button
-                  class="action delete"
-                  (click)="excluirFuncionario(funcionario)">
+                <button class="action delete" (click)="excluirFuncionario(funcionario)">
 
                   🗑
 
@@ -184,29 +174,91 @@
 
           <div>
 
-            <button
-              (click)="mudarPagina(paginaAtual - 1)"
-              [disabled]="paginaAtual === 1">
+            <button (click)="mudarPagina(paginaAtual - 1)" [disabled]="paginaAtual === 1">
 
               ‹
 
             </button>
 
-            <button
-              *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
-              [class.active]="paginaAtual === i + 1"
-              (click)="mudarPagina(i + 1)"
-            >
+            <button *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
+              [class.active]="paginaAtual === i + 1" (click)="mudarPagina(i + 1)">
               {{ i + 1 }}
             </button>
 
-            <button
-              (click)="mudarPagina(paginaAtual + 1)"
-              [disabled]="paginaAtual === totalPaginas">
+            <button (click)="mudarPagina(paginaAtual + 1)" [disabled]="paginaAtual === totalPaginas">
 
               ›
 
             </button>
+
+          </div>
+
+        </div>
+
+        <div class="modal-overlay" *ngIf="modalAberto">
+
+          <div class="modal">
+
+            <div class="modal-header">
+
+              <h2>
+                {{ modoEdicao ? 'Editar Funcionário' : 'Novo Funcionário' }}
+              </h2>
+
+              <button type="button" (click)="fecharModal()">
+                ×
+              </button>
+
+            </div>
+
+            <div class="form-grid">
+
+              <label>
+                Nome
+                <input type="text" [(ngModel)]="funcionarioForm.nome">
+              </label>
+
+              <label>
+                Cargo
+                <select [(ngModel)]="funcionarioForm.cargo">
+                  <option>Veterinário Sênior</option>
+                  <option>Auxiliar Clínica</option>
+                  <option>Recepcionista</option>
+                  <option>Cirurgião Vet</option>
+                </select>
+              </label>
+
+              <label>
+                E-mail
+                <input type="email" [(ngModel)]="funcionarioForm.email">
+              </label>
+
+              <label>
+                Telefone
+                <input type="text" [(ngModel)]="funcionarioForm.telefone">
+              </label>
+
+              <label>
+                Status
+                <select [(ngModel)]="funcionarioForm.status">
+                  <option>Ativo</option>
+                  <option>Inativo</option>
+                </select>
+              </label>
+
+            </div>
+
+            <div class="modal-actions">
+
+              <button class="cancel" type="button" (click)="fecharModal()">
+                Cancelar
+              </button>
+
+              <button class="save" type="button" (click)="salvarFuncionario()">
+                Salvar
+              </button>
+
+            </div>
 
           </div>
 

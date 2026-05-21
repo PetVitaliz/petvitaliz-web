@@ -1,7 +1,9 @@
 .financeiro-page {
   min-height: 100vh;
-  background: #eeeeef;
-  padding: 34px 48px;
+  background:
+    radial-gradient(circle at top left, rgba(93, 110, 211, 0.10), transparent 34%),
+    linear-gradient(180deg, #f7f8fc 0%, #eef2f8 100%);
+  padding: 34px 44px;
   font-family: 'Inter', sans-serif;
   box-sizing: border-box;
 }
@@ -10,25 +12,26 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  gap: 24px;
   margin-bottom: 26px;
 }
 
 .page-header h1 {
   margin: 0;
-  color: #062d72;
+  color: #1f3b82;
   font-size: 34px;
   font-weight: 800;
 }
 
 .page-header p {
-  margin: 5px 0 0;
-  color: #5f6b82;
-  font-size: 13px;
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 15px;
 }
 
 .actions {
   display: flex;
-  gap: 14px;
+  gap: 12px;
 }
 
 button {
@@ -38,26 +41,38 @@ button {
 .btn-light,
 .btn-primary {
   border: none;
-  border-radius: 7px;
+  border-radius: 14px;
   padding: 14px 18px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 800;
   cursor: pointer;
+  transition: 0.25s ease;
 }
 
 .btn-light {
-  background: #cfe0ff;
-  color: #3458a8;
+  background: #f4f6ff;
+  color: #5D6ED3;
 }
 
 .btn-primary {
-  background: #4b5cc7;
+  background: #5D6ED3;
   color: #fff;
+  box-shadow: 0 12px 26px rgba(93, 110, 211, 0.24);
+}
+
+.btn-light:hover,
+.btn-primary:hover {
+  background: #4a5bc2;
+  color: #fff;
+  transform: translateY(-2px);
 }
 
 .financeiro-box {
   background: #f7f8fc;
-  padding: 18px;
-  border-radius: 8px;
+  border: 1px solid #e7ebf5;
+  padding: 28px;
+  border-radius: 28px;
+  box-shadow: 0 18px 45px rgba(31, 59, 130, 0.08);
   box-sizing: border-box;
 }
 
@@ -72,19 +87,26 @@ button {
 }
 
 .resumo-card,
-.saldo-card,
 .fluxo-card,
 .categorias-card,
-.transacoes,
-.performance {
-  background: #fff;
-  border-radius: 12px;
+.transacoes {
+  background: #fcfdff;
+  border: 1px solid #e8edf8;
+  border-radius: 24px;
   box-sizing: border-box;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
 }
 
 .resumo-card {
-  height: 130px;
-  padding: 18px;
+  min-height: 140px;
+  padding: 22px;
+  transition: 0.28s ease;
+}
+
+.resumo-card:hover {
+  transform: translateY(-5px);
+  border-color: #5D6ED3;
+  box-shadow: 0 22px 48px rgba(93, 110, 211, 0.14);
 }
 
 .resumo-topo {
@@ -95,12 +117,12 @@ button {
 }
 
 .icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .azul {
@@ -119,10 +141,10 @@ button {
 }
 
 .tag {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
-  padding: 5px 8px;
-  border-radius: 20px;
+  padding: 6px 10px;
+  border-radius: 999px;
 }
 
 .verde {
@@ -146,12 +168,13 @@ button {
   color: #59657c;
   font-size: 10px;
   font-weight: 800;
+  text-transform: uppercase;
 }
 
 .resumo-card h2,
 .saldo-card h2 {
-  margin: 8px 0 0;
-  font-size: 22px;
+  margin: 10px 0 0;
+  font-size: 24px;
   color: #0f172a;
 }
 
@@ -160,10 +183,13 @@ button {
 }
 
 .saldo-card {
-  height: 130px;
-  padding: 22px;
-  background: linear-gradient(135deg, #0b327a, #123f9c);
+  min-height: 140px;
+  padding: 24px;
+  background: linear-gradient(135deg, #071a4a, #5D6ED3);
   color: white;
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(11, 50, 122, 0.28);
+  box-sizing: border-box;
 }
 
 .saldo-card small,
@@ -172,44 +198,47 @@ button {
 }
 
 .saldo-card h2 {
-  font-size: 26px;
+  font-size: 30px;
   margin: 12px 0;
 }
 
 .saldo-barra {
-  height: 5px;
-  background: rgba(255,255,255,0.25);
-  border-radius: 20px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .saldo-barra div {
   width: 75%;
   height: 100%;
   background: #fff;
-  border-radius: 20px;
+  border-radius: 999px;
 }
 
 .saldo-card span {
   float: right;
-  margin-top: 5px;
-  font-size: 9px;
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .conteudo-meio {
-  margin-top: 18px;
+  margin-top: 20px;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 18px;
+  gap: 20px;
 }
 
 .fluxo-card {
-  height: 330px;
-  padding: 22px;
+  min-height: 340px;
+  padding: 24px;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
+  gap: 18px;
 }
 
 .card-header h3,
@@ -218,40 +247,43 @@ button {
 .performance h3 {
   margin: 0;
   color: #0f172a;
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 800;
 }
 
 .card-header p {
-  margin: 4px 0 0;
+  margin: 5px 0 0;
   color: #7d879f;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .tabs {
   display: flex;
   background: #f2f5fb;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 4px;
-  height: 30px;
+  height: 34px;
 }
 
 .tabs button {
   border: none;
   background: transparent;
-  padding: 0 12px;
-  font-size: 10px;
+  padding: 0 13px;
+  font-size: 11px;
   cursor: pointer;
+  border-radius: 9px;
+  color: #4d5870;
 }
 
 .tabs .ativo {
   background: white;
-  color: #0b327a;
-  border-radius: 6px;
+  color: #5D6ED3;
   font-weight: 800;
+  box-shadow: 0 5px 12px rgba(15, 23, 42, 0.06);
 }
 
 .grafico {
-  height: 220px;
+  height: 230px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -275,17 +307,19 @@ button {
   display: flex;
   gap: 24px;
   font-size: 11px;
+  color: #4d5870;
 }
 
 .bolinha {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
+  margin-right: 5px;
 }
 
 .azul-b {
-  background: #0b327a;
+  background: #5D6ED3;
 }
 
 .cinza-b {
@@ -293,7 +327,7 @@ button {
 }
 
 .categorias-card {
-  padding: 22px;
+  padding: 24px;
 }
 
 .categoria {
@@ -303,35 +337,38 @@ button {
 .categoria p {
   display: flex;
   justify-content: space-between;
-  margin: 0 0 7px;
-  font-size: 11px;
+  margin: 0 0 8px;
+  font-size: 12px;
   color: #1f2937;
+  font-weight: 600;
 }
 
 .barra {
-  height: 5px;
+  height: 7px;
   background: #eef1f7;
-  border-radius: 20px;
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .barra div {
   height: 100%;
-  background: #0b327a;
-  border-radius: 20px;
+  background: #5D6ED3;
+  border-radius: 999px;
 }
 
 .dica {
   margin-top: 22px;
-  background: #f4f6fb;
+  background: #f4f6ff;
   color: #4d5870;
   padding: 18px;
-  border-radius: 10px;
-  font-size: 11px;
+  border-radius: 18px;
+  font-size: 12px;
   text-align: center;
+  line-height: 1.5;
 }
 
 .baixo-financeiro {
-  margin-top: 18px;
+  margin-top: 20px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
   gap: 22px;
@@ -340,24 +377,33 @@ button {
 
 .transacoes {
   margin-top: 0;
-  padding: 18px;
+  padding: 24px;
 }
 
 .transacoes-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 14px;
 }
 
 .busca {
   width: 240px;
-  height: 34px;
-  background: #f8faff;
-  border-radius: 8px;
+  height: 42px;
+  background: #ffffff;
+  border: 1px solid #d8deee;
+  border-radius: 14px;
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 14px;
   gap: 8px;
+  transition: 0.25s ease;
+}
+
+.busca:focus-within,
+.busca:hover {
+  border-color: #5D6ED3;
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.12);
 }
 
 .busca input {
@@ -365,7 +411,12 @@ button {
   background: transparent;
   outline: none;
   width: 100%;
-  font-size: 11px;
+  font-size: 12px;
+  color: #111827;
+}
+
+.busca input::placeholder {
+  color: #9aa3b2;
 }
 
 .tabela {
@@ -377,9 +428,16 @@ button {
   grid-template-columns: 120px 1.7fr 120px 120px 100px 30px;
   align-items: center;
   gap: 14px;
-  min-height: 60px;
+  min-height: 68px;
   border-bottom: 1px solid #eef1f7;
   font-size: 12px;
+  transition: 0.22s ease;
+  border-radius: 14px;
+  padding: 0 10px;
+}
+
+.linha:hover {
+  background: #f8faff;
 }
 
 .cabecalho {
@@ -388,6 +446,10 @@ button {
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.cabecalho:hover {
+  background: transparent;
 }
 
 .linha strong {
@@ -406,10 +468,10 @@ button {
   width: fit-content;
   background: #e8efff;
   color: #3458c7;
-  padding: 5px 8px;
-  border-radius: 6px;
+  padding: 6px 9px;
+  border-radius: 999px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .valor {
@@ -440,20 +502,31 @@ button {
 }
 
 .acoes > button {
-  background: none;
+  background: #f4f6ff;
   border: none;
   font-size: 18px;
   cursor: pointer;
+  color: #5D6ED3;
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  transition: 0.25s ease;
+}
+
+.acoes > button:hover {
+  background: #5D6ED3;
+  color: white;
 }
 
 .menu-acoes {
   position: absolute;
   right: 0;
-  top: 28px;
+  top: 38px;
   background: white;
   width: 165px;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(15,23,42,0.15);
+  border-radius: 16px;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+  border: 1px solid #e8edf8;
   padding: 8px;
   z-index: 20;
 }
@@ -464,14 +537,15 @@ button {
   background: transparent;
   padding: 10px;
   text-align: left;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 12px;
+  font-weight: 700;
 }
 
 .menu-acoes button:hover {
   background: #f3f5ff;
-  color: #4b5cc7;
+  color: #5D6ED3;
 }
 
 .menu-acoes .perigo {
@@ -483,7 +557,8 @@ button {
   color: white;
   padding: 34px 28px;
   min-height: 100%;
-  border-radius: 12px;
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(7, 26, 74, 0.30);
 }
 
 .performance h3 {
@@ -499,23 +574,22 @@ button {
 }
 
 .barra-dark {
-  height: 6px;
-  background: rgba(255,255,255,0.22);
-  border-radius: 20px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .barra-dark div {
   height: 100%;
   background: #35e691;
-  border-radius: 20px;
+  border-radius: 999px;
 }
-
-/* MODAL */
 
 .modal-fundo {
   position: fixed;
   inset: 0;
-  background: rgba(15,23,42,0.45);
+  background: rgba(8, 20, 50, 0.55);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -527,10 +601,11 @@ button {
 .modal {
   width: 720px;
   max-width: 100%;
-  background: white;
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: 0 25px 55px rgba(15,23,42,0.25);
+  background: #fcfdff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 24px 70px rgba(8, 20, 50, 0.25);
+  box-sizing: border-box;
 }
 
 .modal-header {
@@ -542,17 +617,26 @@ button {
 
 .modal-header h2 {
   margin: 0;
-  color: #062d72;
+  color: #1f3b82;
+  font-size: 26px;
+  font-weight: 800;
 }
 
 .modal-header button {
   border: none;
-  background: #f1f3f9;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  background: #f4f6ff;
+  color: #1f3b82;
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
   font-size: 22px;
   cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.modal-header button:hover {
+  background: #5D6ED3;
+  color: white;
 }
 
 .form-grid {
@@ -567,17 +651,24 @@ button {
   gap: 7px;
   color: #4d5870;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .form-grid input,
 .form-grid select {
   height: 44px;
-  border: 1px solid #edf1fa;
-  background: #f8faff;
-  border-radius: 9px;
+  border: 1px solid #d8deee;
+  background: #ffffff;
+  border-radius: 12px;
   padding: 0 12px;
   outline: none;
+  transition: 0.25s ease;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+  border-color: #5D6ED3;
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.12);
 }
 
 .campo-full {
@@ -610,10 +701,18 @@ button {
     padding: 26px 18px;
   }
 
+  .financeiro-box {
+    padding: 20px;
+  }
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 18px;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
   }
 
   .actions {
@@ -634,10 +733,19 @@ button {
     grid-column: span 1;
   }
 
+  .card-header,
   .transacoes-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+
+  .tabs {
+    width: 100%;
+  }
+
+  .tabs button {
+    flex: 1;
   }
 
   .busca {
@@ -647,7 +755,7 @@ button {
   .linha {
     grid-template-columns: 1fr;
     gap: 6px;
-    padding: 14px 0;
+    padding: 14px 10px;
   }
 
   .cabecalho {
