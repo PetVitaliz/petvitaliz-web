@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ConsultasService, ConsultaFuncionario } from '../../../core/services/consultas.service';
 
 @Component({
   selector: 'app-home-funcionario',
@@ -9,7 +10,8 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './home-funcionario.component.html',
   styleUrl: './home-funcionario.component.css'
 })
-export class HomeFuncionarioComponent {
+export class HomeFuncionarioComponent implements OnInit {
+
   filtroAberto = false;
   modalConsultaAberto = false;
   prontuarioAberto = false;
@@ -19,54 +21,30 @@ export class HomeFuncionarioComponent {
   dialogoMensagem = '';
 
   filtroSelecionado = 'Todos';
-  consultaSelecionada: any = null;
+  consultaSelecionada: ConsultaFuncionario | null = null;
 
   novaConsulta = {
     horario: '',
     pet: '',
+    tutor: '',
+    idade: '',
     motivo: ''
   };
 
-  consultas = [
-    {
-      horario: '09:00',
-      periodo: 'AM',
-      pet: 'Thor (Golden)',
-      motivo: 'Retorno Pós-Operatório',
-      imagem: 'assets/pets/thor.jpg',
-      status: 'EM ESPERA',
-      tipo: 'gray'
-    },
-    {
-      horario: '10:30',
-      periodo: 'AM',
-      pet: 'Luna (Golden)',
-      motivo: 'Vacinação Anual',
-      imagem: 'assets/pets/luna.jpg',
-      status: 'CONFIRMADO',
-      tipo: 'green'
-    },
-    {
-      horario: '11:15',
-      periodo: 'AM',
-      pet: 'Bento (Bulldog Francês)',
-      motivo: 'Suspeita de Alergia Alimentar',
-      imagem: 'assets/pets/bento.jpg',
-      status: 'URGENTE',
-      tipo: 'red'
-    },
-    {
-      horario: '14:00',
-      periodo: 'PM',
-      pet: 'Cookie (SRD)',
-      motivo: 'Consulta Geral',
-      imagem: 'assets/pets/cookie.jpg',
-      status: 'AGENDADO',
-      tipo: 'gray'
-    }
-  ];
+  consultas: ConsultaFuncionario[] = [];
 
-  get consultasFiltradas() {
+  constructor(private consultasService: ConsultasService) {}
+
+  ngOnInit(): void {
+    this.carregarConsultas();
+  }
+
+  carregarConsultas(): void {
+    this.consultas = this.consultasService.listarConsultas();
+    this.consultaSelecionada = null;
+  }
+
+  get consultasFiltradas(): ConsultaFuncionario[] {
     if (this.filtroSelecionado === 'Todos') {
       return this.consultas;
     }
@@ -74,68 +52,84 @@ export class HomeFuncionarioComponent {
     return this.consultas.filter(consulta => consulta.status === this.filtroSelecionado);
   }
 
-  abrirDialogo(titulo: string, mensagem: string) {
+  abrirDialogo(titulo: string, mensagem: string): void {
     this.dialogoTitulo = titulo;
     this.dialogoMensagem = mensagem;
     this.dialogoAberto = true;
   }
 
-  fecharDialogo() {
+  fecharDialogo(): void {
     this.dialogoAberto = false;
   }
 
-  selecionarConsulta(consulta: any) {
+  selecionarConsulta(consulta: ConsultaFuncionario): void {
     this.consultaSelecionada = consulta;
   }
 
-  abrirFiltros() {
+  abrirFiltros(): void {
+    this.carregarConsultas();
     this.filtroAberto = true;
   }
 
-  fecharFiltros() {
+  fecharFiltros(): void {
     this.filtroAberto = false;
   }
 
-  aplicarFiltro(filtro: string) {
+  aplicarFiltro(filtro: string): void {
     this.filtroSelecionado = filtro;
     this.consultaSelecionada = null;
     this.filtroAberto = false;
   }
 
-  abrirNovaConsulta() {
+  abrirNovaConsulta(): void {
     this.modalConsultaAberto = true;
     this.novaConsulta = {
       horario: '',
       pet: '',
+      tutor: '',
+      idade: '',
       motivo: ''
     };
   }
 
-  fecharNovaConsulta() {
+  fecharNovaConsulta(): void {
     this.modalConsultaAberto = false;
   }
 
-  salvarNovaConsulta() {
-    if (!this.novaConsulta.horario || !this.novaConsulta.pet || !this.novaConsulta.motivo) {
-      this.abrirDialogo('Campos obrigatórios', 'Preencha todos os campos antes de salvar a consulta.');
+  salvarNovaConsulta(): void {
+    if (
+      !this.novaConsulta.horario ||
+      !this.novaConsulta.pet ||
+      !this.novaConsulta.tutor ||
+      !this.novaConsulta.idade ||
+      !this.novaConsulta.motivo
+    ) {
+      this.abrirDialogo('Campos obrigatórios', 'Preencha horário, pet, tutor, idade e motivo antes de salvar a consulta.');
       return;
     }
 
-    this.consultas.push({
+    const novaConsulta: ConsultaFuncionario = {
+      hora: this.novaConsulta.horario,
       horario: this.novaConsulta.horario,
-      periodo: 'AM',
+      periodo: this.definirPeriodo(this.novaConsulta.horario),
       pet: this.novaConsulta.pet,
+      tutor: this.novaConsulta.tutor,
+      idade: this.novaConsulta.idade,
       motivo: this.novaConsulta.motivo,
       imagem: 'assets/pets/pet-default.jpg',
       status: 'AGENDADO',
+      data: this.pegarDataHoje(),
       tipo: 'gray'
-    });
+    };
+
+    this.consultasService.adicionarConsulta(novaConsulta);
+    this.carregarConsultas();
 
     this.fecharNovaConsulta();
     this.abrirDialogo('Consulta cadastrada', 'A nova consulta foi adicionada à agenda com sucesso.');
   }
 
-  iniciarConsulta() {
+  iniciarConsulta(): void {
     if (!this.consultaSelecionada) {
       this.abrirDialogo('Consulta não selecionada', 'Selecione uma consulta da agenda primeiro.');
       return;
@@ -145,7 +139,7 @@ export class HomeFuncionarioComponent {
     this.abrirDialogo('Consulta iniciada', `Consulta iniciada: ${this.consultaSelecionada.pet}`);
   }
 
-  abrirProntuario() {
+  abrirProntuario(): void {
     if (!this.consultaSelecionada) {
       this.abrirDialogo('Prontuário indisponível', 'Selecione uma consulta para ver o prontuário.');
       return;
@@ -154,7 +148,26 @@ export class HomeFuncionarioComponent {
     this.prontuarioAberto = true;
   }
 
-  fecharProntuario() {
+  fecharProntuario(): void {
     this.prontuarioAberto = false;
+  }
+
+  private definirPeriodo(horario: string): string {
+    const hora = Number(horario.split(':')[0]);
+
+    if (hora >= 12) {
+      return 'PM';
+    }
+
+    return 'AM';
+  }
+
+  private pegarDataHoje(): string {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoje.getDate()).padStart(2, '0');
+
+    return `${ano}-${mes}-${dia}`;
   }
 }

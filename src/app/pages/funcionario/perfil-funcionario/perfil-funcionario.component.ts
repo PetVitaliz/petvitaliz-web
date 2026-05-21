@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -9,7 +9,8 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './perfil-funcionario.component.html',
   styleUrl: './perfil-funcionario.component.css'
 })
-export class PerfilFuncionarioComponent {
+export class PerfilFuncionarioComponent implements OnInit {
+
   fotoPerfil = 'assets/img/veterinario.png';
 
   editando = false;
@@ -33,6 +34,19 @@ export class PerfilFuncionarioComponent {
 
   dadosTemp = { ...this.funcionario };
 
+  ngOnInit(): void {
+    const fotoSalva = localStorage.getItem('fotoFuncionario');
+    const dadosSalvos = localStorage.getItem('dadosFuncionario');
+
+    if (fotoSalva) {
+      this.fotoPerfil = fotoSalva;
+    }
+
+    if (dadosSalvos) {
+      this.funcionario = JSON.parse(dadosSalvos);
+      this.dadosTemp = { ...this.funcionario };
+    }
+  }
   alterarFoto(event: Event) {
     const input = event.target as HTMLInputElement;
 
@@ -41,39 +55,52 @@ export class PerfilFuncionarioComponent {
 
       reader.onload = () => {
         this.fotoPerfil = reader.result as string;
+
+        localStorage.setItem(
+          'fotoFuncionario',
+          this.fotoPerfil
+        );
       };
 
       reader.readAsDataURL(input.files[0]);
     }
   }
+  removerFoto(): void {
+    this.fotoPerfil = 'assets/img/veterinario.png';
+    localStorage.removeItem('fotoFuncionario');
 
-  habilitarEdicao() {
+    window.dispatchEvent(new Event('fotoFuncionarioAtualizada'));
+  }
+
+  habilitarEdicao(): void {
     this.editando = true;
     this.dadosTemp = { ...this.funcionario };
   }
 
-  salvarEdicao() {
+  salvarEdicao(): void {
     this.funcionario = { ...this.dadosTemp };
+    localStorage.setItem('dadosFuncionario', JSON.stringify(this.funcionario));
+
     this.editando = false;
   }
 
-  cancelarEdicao() {
+  cancelarEdicao(): void {
     this.dadosTemp = { ...this.funcionario };
     this.editando = false;
   }
 
-  abrirModalSenha() {
+  abrirModalSenha(): void {
     this.modalSenhaAberto = true;
     this.senhaAtual = '';
     this.novaSenha = '';
     this.confirmarSenha = '';
   }
 
-  fecharModalSenha() {
+  fecharModalSenha(): void {
     this.modalSenhaAberto = false;
   }
 
-  salvarSenha() {
+  salvarSenha(): void {
     if (!this.senhaAtual || !this.novaSenha || !this.confirmarSenha) {
       alert('Preencha todos os campos.');
       return;
@@ -93,16 +120,16 @@ export class PerfilFuncionarioComponent {
     this.fecharModalSenha();
   }
 
-  abrirModal2FA() {
+  abrirModal2FA(): void {
     this.modal2FAAberto = true;
     this.codigo2FA = '';
   }
 
-  fecharModal2FA() {
+  fecharModal2FA(): void {
     this.modal2FAAberto = false;
   }
 
-  ativar2FA() {
+  ativar2FA(): void {
     if (!this.codigo2FA) {
       alert('Digite o código de verificação.');
       return;
@@ -118,16 +145,16 @@ export class PerfilFuncionarioComponent {
     this.fecharModal2FA();
   }
 
-  desativar2FA() {
+  desativar2FA(): void {
     this.doisFatoresAtivo = false;
     alert('Autenticação em duas etapas desativada.');
   }
 
-  suporteChat() {
+  suporteChat(): void {
     alert('Abrir suporte via chat.');
   }
 
-  centralAjuda() {
+  centralAjuda(): void {
     alert('Abrir central de ajuda.');
   }
 }

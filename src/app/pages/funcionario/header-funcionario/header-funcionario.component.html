@@ -1,40 +1,130 @@
 <header class="header-funcionario">
+
   <div class="header-container">
 
-    <div class="logo">
+    <div
+      class="logo"
+      routerLink="/funcionario/home"
+      (click)="closeMobileMenu()"
+    >
       <img src="assets/img/logo.png" alt="PetVitaliz">
     </div>
 
     <nav class="navbar" [class.open]="isMobileMenuOpen">
-      <a routerLink="/funcionario/home" routerLinkActive="ativo" (click)="closeMobileMenu()">Home</a>
-      <a routerLink="/funcionario/consultas" routerLinkActive="ativo" (click)="closeMobileMenu()">Consultas</a>
-      <a routerLink="/funcionario/clientes" routerLinkActive="ativo" (click)="closeMobileMenu()">Clientes</a>
-      <a routerLink="/funcionario/pets" routerLinkActive="ativo" (click)="closeMobileMenu()">Pets</a>
-      <a routerLink="/funcionario/perfil" routerLinkActive="ativo" (click)="closeMobileMenu()">Perfil</a>
+
+      <a
+        routerLink="/funcionario/home"
+        routerLinkActive="ativo"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeAllMenus()"
+      >
+        Home
+      </a>
+
+      <a
+        routerLink="/funcionario/consultas"
+        routerLinkActive="ativo"
+        (click)="closeAllMenus()"
+      >
+        Consultas
+      </a>
+
+      <a
+        routerLink="/funcionario/clientes"
+        routerLinkActive="ativo"
+        (click)="closeAllMenus()"
+      >
+        Clientes
+      </a>
+
+      <a
+        routerLink="/funcionario/pets"
+        routerLinkActive="ativo"
+        (click)="closeAllMenus()"
+      >
+        Pets
+      </a>
+
+      <a
+        routerLink="/funcionario/perfil"
+        routerLinkActive="ativo"
+        (click)="closeAllMenus()"
+      >
+        Perfil
+      </a>
+
     </nav>
 
     <div class="user-area">
-      <button class="menu-mobile" type="button" (click)="toggleMobileMenu()">
+
+      <button
+        class="menu-mobile"
+        type="button"
+        (click)="toggleMobileMenu()"
+      >
         ☰
       </button>
 
       <div class="user-info">
-        <strong>Dr. Rogério Souza</strong>
-        <span>Veterinário</span>
+
+        <strong>
+          Dr. Rogério Souza
+        </strong>
+
+        <span>
+          Veterinário
+        </span>
+
       </div>
 
       <div class="perfil-dropdown">
-        <button type="button" class="perfil-btn" (click)="toggleMenu()">
-          <img src="assets/img/DrRogerio.png" alt="Foto Perfil">
-          <span class="arrow" [class.open]="isMenuOpen">▼</span>
+
+        <button
+          type="button"
+          class="perfil-btn"
+          (click)="toggleMenu($event)"
+        >
+
+          <img
+            [src]="fotoPerfil"
+            alt="Funcionário"
+          >
+
+          <span
+            class="arrow"
+            [class.open]="isMenuOpen"
+          >
+            ▼
+          </span>
+
         </button>
 
-        <div class="perfil-menu" *ngIf="isMenuOpen">
-          <a routerLink="/funcionario/perfil" (click)="closeMobileMenu()">Meu Perfil</a>
-          <button type="button" (click)="logout()">Sair</button>
+        <div
+          class="perfil-menu"
+          *ngIf="isMenuOpen"
+          (click)="$event.stopPropagation()"
+        >
+
+          <a
+            routerLink="/funcionario/perfil"
+            (click)="closeAllMenus()"
+          >
+            Meu Perfil
+          </a>
+
+          <button
+            type="button"
+            (click)="logout()"
+          >
+            Sair
+          </button>
+
         </div>
+
       </div>
+
     </div>
 
   </div>
+
 </header>

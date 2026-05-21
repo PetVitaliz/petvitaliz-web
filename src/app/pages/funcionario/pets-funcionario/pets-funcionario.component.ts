@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ConsultasService, ConsultaFuncionario } from '../../../core/services/consultas.service';
 
 @Component({
   selector: 'app-pets-funcionario',
@@ -36,6 +37,8 @@ export class PetsFuncionarioComponent {
     horario: '',
     motivo: ''
   };
+
+  constructor(private consultasService: ConsultasService) {}
 
   pets = [
     {
@@ -177,7 +180,7 @@ export class PetsFuncionarioComponent {
     this.petSelecionado = pet;
 
     this.agendamento = {
-      data: '',
+      data: this.pegarDataHoje(),
       horario: '',
       motivo: ''
     };
@@ -195,10 +198,31 @@ export class PetsFuncionarioComponent {
   }
 
   salvarAgendamento() {
-    if (!this.agendamento.data || !this.agendamento.horario || !this.agendamento.motivo) {
+    if (
+      !this.petSelecionado ||
+      !this.agendamento.data ||
+      !this.agendamento.horario ||
+      !this.agendamento.motivo
+    ) {
       alert('Preencha todos os dados do agendamento.');
       return;
     }
+
+    const consulta: ConsultaFuncionario = {
+      hora: this.agendamento.horario,
+      horario: this.agendamento.horario,
+      periodo: this.definirPeriodo(this.agendamento.horario),
+      pet: this.petSelecionado.nome,
+      idade: this.petSelecionado.idade,
+      tutor: this.petSelecionado.tutor,
+      motivo: this.agendamento.motivo,
+      status: 'AGENDADO',
+      data: this.agendamento.data,
+      imagem: 'assets/pets/pet-default.jpg',
+      tipo: 'gray'
+    };
+
+    this.consultasService.adicionarConsulta(consulta);
 
     alert(`Consulta agendada para ${this.petSelecionado.nome}.`);
     this.fecharModal();
@@ -220,5 +244,19 @@ export class PetsFuncionarioComponent {
     setTimeout(() => {
       window.print();
     }, 200);
+  }
+
+  private definirPeriodo(horario: string): string {
+    const hora = Number(horario.split(':')[0]);
+    return hora >= 12 ? 'PM' : 'AM';
+  }
+
+  private pegarDataHoje(): string {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoje.getDate()).padStart(2, '0');
+
+    return `${ano}-${mes}-${dia}`;
   }
 }

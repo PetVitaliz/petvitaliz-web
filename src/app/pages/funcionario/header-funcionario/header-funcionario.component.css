@@ -16,11 +16,9 @@
   width: 100%;
   height: 82px;
   background: #ffffff;
-  border-bottom: 1px solid #eeeeee;
-
+  border-bottom: 1px solid #edf0f7;
   display: flex;
   align-items: center;
-
   position: sticky;
   top: 0;
   z-index: 999;
@@ -29,36 +27,36 @@
 .header-container {
   width: 100%;
   padding: 0 45px;
-
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
+  gap: 20px;
 }
 
 .logo {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .logo img {
   height: 58px;
   object-fit: contain;
-  cursor: pointer;
 }
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 42px;
+  gap: 38px;
 }
 
 .navbar a {
   text-decoration: none;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 700;
   color: #111111;
-  transition: 0.3s ease;
+  transition: 0.25s ease;
 }
 
 .navbar a:hover,
@@ -66,13 +64,10 @@
   color: #5D6ED3;
 }
 
-.navbar a.ativo {
-  font-weight: 600;
-}
-
 .user-area {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 14px;
 }
 
@@ -84,13 +79,14 @@
 
 .user-info strong {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   color: #111111;
+  white-space: nowrap;
 }
 
 .user-info span {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: #777777;
 }
 
@@ -100,27 +96,26 @@
 
 .perfil-btn {
   border: none;
-  background: transparent;
-
+  background: #f4f6ff;
+  border-radius: 999px;
+  padding: 4px 8px 4px 4px;
   display: flex;
   align-items: center;
   gap: 6px;
-
   cursor: pointer;
 }
 
 .perfil-btn img {
   width: 44px;
   height: 44px;
-
   border-radius: 50%;
-
   object-fit: cover;
+  border: 2px solid #ffffff;
 }
 
 .arrow {
   font-size: 9px;
-  color: #777777;
+  color: #5D6ED3;
   transition: 0.3s ease;
 }
 
@@ -130,50 +125,36 @@
 
 .perfil-menu {
   position: absolute;
-
-  top: 56px;
+  top: 58px;
   right: 0;
-
   width: 190px;
-
   background: #ffffff;
-
   border-radius: 18px;
-
   padding: 10px;
-
   display: flex;
   flex-direction: column;
   gap: 6px;
-
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10);
-
+  border: 1px solid #edf0f7;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
   animation: aparecer 0.2s ease;
+  z-index: 1000;
 }
 
 .perfil-menu a,
 .perfil-menu button {
   width: 100%;
-
   border: none;
   background: transparent;
-
   text-align: left;
   text-decoration: none;
-
   padding: 13px 14px;
-
   border-radius: 12px;
-
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  font-weight: 500;
-
+  font-weight: 700;
   color: #111111;
-
   cursor: pointer;
-
-  transition: 0.3s ease;
+  transition: 0.25s ease;
 }
 
 .perfil-menu a:hover,
@@ -184,14 +165,19 @@
 
 .menu-mobile {
   display: none;
-
+  width: 42px;
+  height: 42px;
   border: none;
-  background: transparent;
-
-  font-size: 28px;
+  border-radius: 14px;
+  background: #f4f6ff;
+  font-size: 24px;
   color: #5D6ED3;
-
   cursor: pointer;
+}
+
+.menu-mobile:hover {
+  background: #5D6ED3;
+  color: #ffffff;
 }
 
 @keyframes aparecer {
@@ -217,29 +203,74 @@
 }
 
 @media (max-width: 992px) {
+  .header-funcionario {
+    height: 80px;
+  }
+
+  .header-container {
+    padding: 0 18px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+  }
+
+  .logo {
+    grid-column: 1;
+  }
+
+  .logo img {
+    height: 50px;
+  }
+
+  .user-area {
+    grid-column: 3;
+    justify-self: end;
+    gap: 8px;
+  }
+
+  .user-info {
+    display: none;
+  }
+
   .menu-mobile {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: 2;
+  }
+
+  .perfil-dropdown {
+    order: 1;
+  }
+
+  .perfil-btn {
+    padding: 4px;
+  }
+
+  .perfil-btn img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .arrow {
+    display: none;
   }
 
   .navbar {
     display: none;
-
     position: absolute;
-    top: 82px;
-    left: 0;
-
-    width: 100%;
-
+    top: 80px;
+    left: 14px;
+    right: 14px;
+    width: auto;
     background: #ffffff;
-
-    padding: 22px 30px;
-
+    padding: 14px;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-
-    border-top: 1px solid #eeeeee;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    align-items: stretch;
+    gap: 8px;
+    border: 1px solid #edf0f7;
+    border-radius: 20px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
   }
 
   .navbar.open {
@@ -248,24 +279,51 @@
 
   .navbar a {
     width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+
+  .navbar a:hover,
+  .navbar a.ativo {
+    background: #f4f6ff;
+    color: #5D6ED3;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 520px) {
   .header-container {
-    padding: 0 20px;
+    padding: 0 14px;
   }
 
   .logo img {
-    height: 50px;
+    height: 44px;
   }
 
-  .user-info {
-    display: none;
+  .menu-mobile {
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
   }
 
   .perfil-btn img {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .perfil-menu {
+    top: 52px;
+    right: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .logo img {
+    height: 39px;
+  }
+
+  .header-container {
+    padding: 0 10px;
+    gap: 6px;
   }
 }

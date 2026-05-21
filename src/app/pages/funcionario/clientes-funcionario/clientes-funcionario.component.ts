@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ConsultasService, ConsultaFuncionario } from '../../../core/services/consultas.service';
 
 @Component({
   selector: 'app-clientes-funcionario',
@@ -12,8 +13,23 @@ import { FormsModule } from '@angular/forms';
 export class ClientesFuncionarioComponent {
 
   clienteEditando: any = null;
+  clienteSelecionado: any = null;
+
   modoNovo = false;
   searchTerm = '';
+  statusFiltro = 'Todos';
+
+  modalDetalhesAberto = false;
+  modalPetsAberto = false;
+  modalAgendarAberto = false;
+
+  novaConsulta = {
+    horario: '',
+    data: '',
+    pet: '',
+    idade: '',
+    motivo: ''
+  };
 
   clientes = [
     {
@@ -25,7 +41,7 @@ export class ClientesFuncionarioComponent {
       ultimaVisita: '12 Out 2023',
       ultimaVisitaData: '2023-10-12',
       status: 'ATIVO',
-      foto: 'assets/img/cliente1.png'
+      petsLista: ['Thor', 'Luna', 'Mel']
     },
     {
       nome: 'Ricardo Santos',
@@ -36,7 +52,7 @@ export class ClientesFuncionarioComponent {
       ultimaVisita: '05 Nov 2023',
       ultimaVisitaData: '2023-11-05',
       status: 'ATIVO',
-      foto: 'assets/img/cliente2.png'
+      petsLista: ['Bob']
     },
     {
       nome: 'Beatriz Mendes',
@@ -47,7 +63,7 @@ export class ClientesFuncionarioComponent {
       ultimaVisita: '15 Jan 2023',
       ultimaVisitaData: '2023-01-15',
       status: 'INATIVO',
-      foto: 'assets/img/cliente3.png'
+      petsLista: ['Max', 'Nina']
     },
     {
       nome: 'Carlos Eduardo',
@@ -58,7 +74,7 @@ export class ClientesFuncionarioComponent {
       ultimaVisita: '01 Dez 2023',
       ultimaVisitaData: '2023-12-01',
       status: 'ATIVO',
-      foto: 'assets/img/cliente4.png'
+      petsLista: ['Cookie']
     },
     {
       nome: 'Felipe',
@@ -69,21 +85,41 @@ export class ClientesFuncionarioComponent {
       ultimaVisita: '01 Dez 2023',
       ultimaVisitaData: '2023-12-01',
       status: 'ATIVO',
-      foto: 'assets/img/cliente5.png'
+      petsLista: ['Lua']
     }
   ];
+
+  constructor(private consultasService: ConsultasService) {}
 
   get clientesFiltrados() {
     const termo = this.searchTerm?.toLowerCase().trim() || '';
 
-    if (!termo) return this.clientes;
+    return this.clientes.filter(cliente => {
+      const matchTexto =
+        !termo ||
+        cliente.nome.toLowerCase().includes(termo) ||
+        cliente.cpf.toLowerCase().includes(termo) ||
+        cliente.telefone.toLowerCase().includes(termo) ||
+        cliente.email.toLowerCase().includes(termo);
 
-    return this.clientes.filter(cliente =>
-      cliente.nome.toLowerCase().includes(termo) ||
-      cliente.cpf.toLowerCase().includes(termo) ||
-      cliente.telefone.toLowerCase().includes(termo) ||
-      cliente.email.toLowerCase().includes(termo)
-    );
+      const matchStatus =
+        this.statusFiltro === 'Todos' ||
+        cliente.status === this.statusFiltro;
+
+      return matchTexto && matchStatus;
+    });
+  }
+
+  get totalAtivos() {
+    return this.clientes.filter(c => c.status === 'ATIVO').length;
+  }
+
+  get totalInativos() {
+    return this.clientes.filter(c => c.status === 'INATIVO').length;
+  }
+
+  get totalPets() {
+    return this.clientes.reduce((total, cliente) => total + Number(cliente.pets), 0);
   }
 
   novoCliente() {
@@ -98,13 +134,84 @@ export class ClientesFuncionarioComponent {
       ultimaVisita: '',
       ultimaVisitaData: '',
       status: 'ATIVO',
-      foto: 'assets/img/cliente1.png'
+      petsLista: []
     };
   }
 
   editar(cliente: any) {
     this.modoNovo = false;
     this.clienteEditando = { ...cliente, original: cliente };
+  }
+
+  abrirDetalhes(cliente: any) {
+    this.clienteSelecionado = cliente;
+    this.modalDetalhesAberto = true;
+  }
+
+  fecharDetalhes() {
+    this.modalDetalhesAberto = false;
+    this.clienteSelecionado = null;
+  }
+
+  verPets(cliente: any) {
+    this.clienteSelecionado = cliente;
+    this.modalPetsAberto = true;
+  }
+
+  fecharPets() {
+    this.modalPetsAberto = false;
+    this.clienteSelecionado = null;
+  }
+
+  agendarConsulta(cliente: any) {
+    this.clienteSelecionado = cliente;
+    this.modalAgendarAberto = true;
+
+    this.novaConsulta = {
+      horario: '',
+      data: this.pegarDataHoje(),
+      pet: '',
+      idade: '',
+      motivo: ''
+    };
+  }
+
+  fecharAgendar() {
+    this.modalAgendarAberto = false;
+    this.clienteSelecionado = null;
+  }
+
+  salvarAgendamento() {
+    if (
+      !this.clienteSelecionado ||
+      !this.novaConsulta.horario ||
+      !this.novaConsulta.data ||
+      !this.novaConsulta.pet ||
+      !this.novaConsulta.idade ||
+      !this.novaConsulta.motivo
+    ) {
+      alert('Preencha todos os campos do agendamento.');
+      return;
+    }
+
+    const consulta: ConsultaFuncionario = {
+      hora: this.novaConsulta.horario,
+      horario: this.novaConsulta.horario,
+      periodo: this.definirPeriodo(this.novaConsulta.horario),
+      pet: this.novaConsulta.pet,
+      idade: this.novaConsulta.idade,
+      tutor: this.clienteSelecionado.nome,
+      motivo: this.novaConsulta.motivo,
+      status: 'AGENDADO',
+      data: this.novaConsulta.data,
+      imagem: 'assets/pets/pet-default.jpg',
+      tipo: 'gray'
+    };
+
+    this.consultasService.adicionarConsulta(consulta);
+
+    this.fecharAgendar();
+    alert('Consulta agendada com sucesso!');
   }
 
   formatarCPF() {
@@ -168,6 +275,10 @@ export class ClientesFuncionarioComponent {
       this.clienteEditando.pets = quantidade < 10 ? `0${quantidade}` : `${quantidade}`;
     }
 
+    if (!this.clienteEditando.petsLista) {
+      this.clienteEditando.petsLista = [];
+    }
+
     if (this.modoNovo) {
       const novoCliente = { ...this.clienteEditando };
       delete novoCliente.original;
@@ -184,5 +295,19 @@ export class ClientesFuncionarioComponent {
   cancelar() {
     this.clienteEditando = null;
     this.modoNovo = false;
+  }
+
+  private definirPeriodo(horario: string): string {
+    const hora = Number(horario.split(':')[0]);
+    return hora >= 12 ? 'PM' : 'AM';
+  }
+
+  private pegarDataHoje(): string {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoje.getDate()).padStart(2, '0');
+
+    return `${ano}-${mes}-${dia}`;
   }
 }

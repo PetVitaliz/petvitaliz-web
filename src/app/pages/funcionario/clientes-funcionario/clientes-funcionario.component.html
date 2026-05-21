@@ -2,31 +2,73 @@
 
   <div class="page-header">
     <div>
+      <span class="eyebrow">CRM VETERINÁRIO</span>
       <h1>Gestão de Clientes</h1>
-      <p>Visualize e gerencie as informações dos tutores e seus pets cadastrados.</p>
+      <p>Visualize e gerencie tutores, contatos, pets e histórico de visitas.</p>
     </div>
 
-    <button class="btn-novo" (click)="novoCliente()">Novo Cliente</button>
+    <button class="btn-novo" type="button" (click)="novoCliente()">
+      + Novo Cliente
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span>CLIENTES</span>
+      <strong>{{ clientes.length }}</strong>
+      <small>Total cadastrado</small>
+    </div>
+
+    <div class="stat-card">
+      <span>ATIVOS</span>
+      <strong>{{ totalAtivos }}</strong>
+      <small>Em acompanhamento</small>
+    </div>
+
+    <div class="stat-card">
+      <span>PETS</span>
+      <strong>{{ totalPets }}</strong>
+      <small>Vinculados aos tutores</small>
+    </div>
+
+    <div class="stat-card danger">
+      <span>INATIVOS</span>
+      <strong>{{ totalInativos }}</strong>
+      <small>Sem acompanhamento</small>
+    </div>
   </div>
 
   <div class="main-card">
 
-    <div class="search-area">
-      <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        placeholder="Buscar por nome do cliente, CPF, telefone ou email..."
-        [(ngModel)]="searchTerm"
-      />
+    <div class="toolbar">
+      <div class="search-area">
+        <span class="search-icon">🔍</span>
+
+        <input
+          type="text"
+          placeholder="Buscar por nome, CPF, telefone ou e-mail..."
+          [(ngModel)]="searchTerm">
+      </div>
+
+      <select class="status-filter" [(ngModel)]="statusFiltro">
+        <option value="Todos">Todos</option>
+        <option value="ATIVO">Ativos</option>
+        <option value="INATIVO">Inativos</option>
+      </select>
     </div>
 
     <div class="clientes-grid">
 
-      <div class="cliente-card" *ngFor="let cliente of clientesFiltrados">
+      <div
+        class="cliente-card"
+        *ngFor="let cliente of clientesFiltrados"
+        [class.inativo-card]="cliente.status === 'INATIVO'">
 
         <div class="card-top">
           <div class="cliente-identidade">
-            <img [src]="cliente.foto" alt="Foto">
+            <div class="cliente-avatar">
+              {{ cliente.nome.charAt(0) }}
+            </div>
 
             <div>
               <h3>{{ cliente.nome }}</h3>
@@ -56,10 +98,31 @@
           </div>
         </div>
 
-        <button class="btn-editar" (click)="editar(cliente)">Editar</button>
+        <div class="card-actions">
+          <button type="button" class="btn-action primary" (click)="abrirDetalhes(cliente)">
+            Ver detalhes
+          </button>
+
+          <button type="button" class="btn-action" (click)="verPets(cliente)">
+            Pets
+          </button>
+
+          <button type="button" class="btn-action" (click)="agendarConsulta(cliente)">
+            Agendar
+          </button>
+
+          <button type="button" class="btn-editar" (click)="editar(cliente)">
+            Editar
+          </button>
+        </div>
 
       </div>
 
+    </div>
+
+    <div class="empty" *ngIf="clientesFiltrados.length === 0">
+      <h3>Nenhum cliente encontrado</h3>
+      <p>Tente buscar por outro nome, CPF, telefone ou e-mail.</p>
     </div>
 
     <div class="lista-footer">
@@ -68,24 +131,154 @@
       </strong>
 
       <div class="paginacao">
-        <button>&lt;</button>
-        <button class="active">1</button>
-        <button>2</button>
-        <button>3</button>
-        <button>...</button>
-        <button>32</button>
-        <button>&gt;</button>
+        <button type="button">&lt;</button>
+        <button type="button" class="active">1</button>
+        <button type="button">&gt;</button>
       </div>
     </div>
 
   </div>
+</div>
 
+<div class="modal-fundo" *ngIf="modalDetalhesAberto && clienteSelecionado">
+  <div class="modal detalhes-modal">
+
+    <button class="fechar-modal" type="button" (click)="fecharDetalhes()">×</button>
+
+    <div class="detalhes-topo">
+      <div class="cliente-avatar grande">
+        {{ clienteSelecionado.nome.charAt(0) }}
+      </div>
+
+      <div>
+        <span class="eyebrow">DETALHES DO TUTOR</span>
+        <h2>{{ clienteSelecionado.nome }}</h2>
+        <p>{{ clienteSelecionado.email }}</p>
+      </div>
+    </div>
+
+    <div class="detalhes-grid">
+      <div>
+        <span>CPF</span>
+        <strong>{{ clienteSelecionado.cpf }}</strong>
+      </div>
+
+      <div>
+        <span>Telefone</span>
+        <strong>{{ clienteSelecionado.telefone }}</strong>
+      </div>
+
+      <div>
+        <span>Pets</span>
+        <strong>{{ clienteSelecionado.pets }}</strong>
+      </div>
+
+      <div>
+        <span>Status</span>
+        <strong>{{ clienteSelecionado.status }}</strong>
+      </div>
+
+      <div class="full">
+        <span>Última visita</span>
+        <strong>{{ clienteSelecionado.ultimaVisita }}</strong>
+      </div>
+    </div>
+
+    <div class="modal-botoes">
+      <button class="btn-cancelar" type="button" (click)="fecharDetalhes()">Fechar</button>
+      <button class="btn-salvar" type="button" (click)="editar(clienteSelecionado); fecharDetalhes()">
+        Editar cliente
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-fundo" *ngIf="modalPetsAberto && clienteSelecionado">
+  <div class="modal detalhes-modal">
+
+    <button class="fechar-modal" type="button" (click)="fecharPets()">×</button>
+
+    <div class="modal-header">
+      <h2>Pets de {{ clienteSelecionado.nome }}</h2>
+      <p>Pets vinculados a este tutor.</p>
+    </div>
+
+    <div class="pets-grid">
+      <div class="pet-mini-card" *ngFor="let pet of clienteSelecionado.petsLista">
+        <span>Pet cadastrado</span>
+        <strong>{{ pet }}</strong>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="!clienteSelecionado.petsLista || clienteSelecionado.petsLista.length === 0">
+      <h3>Nenhum pet vinculado</h3>
+      <p>Cadastre pets para este tutor na página de Pets.</p>
+    </div>
+
+    <div class="modal-botoes">
+      <button class="btn-cancelar" type="button" (click)="fecharPets()">Fechar</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-fundo" *ngIf="modalAgendarAberto && clienteSelecionado">
+  <div class="modal detalhes-modal">
+
+    <button class="fechar-modal" type="button" (click)="fecharAgendar()">×</button>
+
+    <div class="modal-header">
+      <h2>Agendar Consulta</h2>
+      <p>Agendamento para {{ clienteSelecionado.nome }}.</p>
+    </div>
+
+    <div class="form-grid">
+      <div class="campo">
+        <label>Horário</label>
+        <input type="time" [(ngModel)]="novaConsulta.horario">
+      </div>
+
+      <div class="campo">
+        <label>Data</label>
+        <input type="date" [(ngModel)]="novaConsulta.data">
+      </div>
+
+      <div class="campo campo-full">
+        <label>Nome do pet</label>
+        <input type="text" placeholder="Ex: Thor" [(ngModel)]="novaConsulta.pet">
+      </div>
+
+      <div class="campo">
+        <label>Idade</label>
+        <input type="text" placeholder="Ex: 3 anos" [(ngModel)]="novaConsulta.idade">
+      </div>
+
+      <div class="campo">
+        <label>Status</label>
+        <select disabled>
+          <option>AGENDADO</option>
+        </select>
+      </div>
+
+      <div class="campo campo-full">
+        <label>Motivo</label>
+        <input type="text" placeholder="Ex: Consulta de rotina" [(ngModel)]="novaConsulta.motivo">
+      </div>
+    </div>
+
+    <div class="modal-botoes">
+      <button class="btn-cancelar" type="button" (click)="fecharAgendar()">Cancelar</button>
+      <button class="btn-salvar" type="button" (click)="salvarAgendamento()">Salvar agendamento</button>
+    </div>
+
+  </div>
 </div>
 
 <div class="modal-fundo" *ngIf="clienteEditando">
   <div class="modal">
 
-    <button class="fechar-modal" (click)="cancelar()">×</button>
+    <button class="fechar-modal" type="button" (click)="cancelar()">×</button>
 
     <div class="modal-header">
       <h2>{{ modoNovo ? 'Novo Cliente' : 'Editar Cliente' }}</h2>
@@ -95,63 +288,32 @@
     <div class="form-grid">
       <div class="campo campo-full">
         <label>Nome</label>
-        <input
-          type="text"
-          maxlength="60"
-          placeholder="Ex: Ana Paula Oliveira"
-          [(ngModel)]="clienteEditando.nome"
-        >
+        <input type="text" maxlength="60" placeholder="Ex: Ana Paula Oliveira" [(ngModel)]="clienteEditando.nome">
       </div>
 
       <div class="campo">
         <label>CPF</label>
-        <input
-          type="text"
-          maxlength="14"
-          placeholder="000.000.000-00"
-          [(ngModel)]="clienteEditando.cpf"
-          (input)="formatarCPF()"
-        >
+        <input type="text" maxlength="14" placeholder="000.000.000-00" [(ngModel)]="clienteEditando.cpf" (input)="formatarCPF()">
       </div>
 
       <div class="campo">
         <label>Telefone</label>
-        <input
-          type="text"
-          maxlength="15"
-          placeholder="(00) 00000-0000"
-          [(ngModel)]="clienteEditando.telefone"
-          (input)="formatarTelefone()"
-        >
+        <input type="text" maxlength="15" placeholder="(00) 00000-0000" [(ngModel)]="clienteEditando.telefone" (input)="formatarTelefone()">
       </div>
 
       <div class="campo campo-full">
         <label>Email</label>
-        <input
-          type="email"
-          maxlength="80"
-          placeholder="exemplo@email.com"
-          [(ngModel)]="clienteEditando.email"
-        >
+        <input type="email" maxlength="80" placeholder="exemplo@email.com" [(ngModel)]="clienteEditando.email">
       </div>
 
       <div class="campo">
         <label>Quantidade de pets</label>
-        <input
-          type="number"
-          min="0"
-          max="99"
-          placeholder="Ex: 2"
-          [(ngModel)]="clienteEditando.pets"
-        >
+        <input type="number" min="0" max="99" placeholder="Ex: 2" [(ngModel)]="clienteEditando.pets">
       </div>
 
       <div class="campo">
         <label>Última visita</label>
-        <input
-          type="date"
-          [(ngModel)]="clienteEditando.ultimaVisitaData"
-        >
+        <input type="date" [(ngModel)]="clienteEditando.ultimaVisitaData">
       </div>
 
       <div class="campo campo-full">
@@ -164,8 +326,8 @@
     </div>
 
     <div class="modal-botoes">
-      <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
-      <button class="btn-salvar" (click)="salvar()">Salvar</button>
+      <button class="btn-cancelar" type="button" (click)="cancelar()">Cancelar</button>
+      <button class="btn-salvar" type="button" (click)="salvar()">Salvar</button>
     </div>
 
   </div>

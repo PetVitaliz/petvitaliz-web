@@ -53,11 +53,13 @@
         </div>
 
         <div class="botoes-edicao">
-          <button *ngIf="!editando" (click)="habilitarEdicao()">Editar informações</button>
+          <button type="button" *ngIf="!editando" (click)="habilitarEdicao()">
+            Editar informações
+          </button>
 
           <div *ngIf="editando" class="grupo-edicao">
-            <button (click)="salvarEdicao()">Salvar</button>
-            <button class="cancelar" (click)="cancelarEdicao()">Cancelar</button>
+            <button type="button" (click)="salvarEdicao()">Salvar</button>
+            <button type="button" class="cancelar" (click)="cancelarEdicao()">Cancelar</button>
           </div>
         </div>
       </div>
@@ -146,10 +148,10 @@
           </div>
 
           <div class="botoes-config">
-            <button (click)="abrirModalSenha()">Alterar Senha</button>
+            <button type="button" (click)="abrirModalSenha()">Alterar Senha</button>
 
-            <button *ngIf="!doisFatoresAtivo" (click)="abrirModal2FA()">Ativar 2FA</button>
-            <button *ngIf="doisFatoresAtivo" class="ativo" (click)="desativar2FA()">2FA Ativo</button>
+            <button type="button" *ngIf="!doisFatoresAtivo" (click)="abrirModal2FA()">Ativar 2FA</button>
+            <button type="button" *ngIf="doisFatoresAtivo" class="ativo" (click)="desativar2FA()">2FA Ativo</button>
           </div>
         </div>
 
@@ -183,15 +185,15 @@
           dúvida sobre as ferramentas clínicas do PetVital.
         </p>
 
-        <button class="btn-branco" (click)="suporteChat()">☰ Suporte via Chat</button>
-        <button class="btn-azul" (click)="centralAjuda()">ⓘ Central de Ajuda</button>
+        <button type="button" class="btn-branco" (click)="suporteChat()">☰ Suporte via Chat</button>
+        <button type="button" class="btn-azul" (click)="centralAjuda()">ⓘ Central de Ajuda</button>
       </div>
     </div>
   </div>
 
   <div class="modal-fundo" *ngIf="modalSenhaAberto">
     <div class="modal-card">
-      <button class="fechar-modal" (click)="fecharModalSenha()">×</button>
+      <button type="button" class="fechar-modal" (click)="fecharModalSenha()">×</button>
 
       <h2>Alterar Senha</h2>
       <p>Digite sua senha atual e escolha uma nova senha.</p>
@@ -208,15 +210,15 @@
       </div>
 
       <div class="modal-botoes">
-        <button class="btn-cancelar" (click)="fecharModalSenha()">Cancelar</button>
-        <button class="btn-salvar" (click)="salvarSenha()">Salvar senha</button>
+        <button type="button" class="btn-cancelar" (click)="fecharModalSenha()">Cancelar</button>
+        <button type="button" class="btn-salvar" (click)="salvarSenha()">Salvar senha</button>
       </div>
     </div>
   </div>
 
   <div class="modal-fundo" *ngIf="modal2FAAberto">
     <div class="modal-card">
-      <button class="fechar-modal" (click)="fecharModal2FA()">×</button>
+      <button type="button" class="fechar-modal" (click)="fecharModal2FA()">×</button>
 
       <h2>Ativar 2FA</h2>
       <p>Escaneie o código abaixo no aplicativo autenticador e digite o código gerado.</p>
@@ -234,8 +236,8 @@
       </div>
 
       <div class="modal-botoes">
-        <button class="btn-cancelar" (click)="fecharModal2FA()">Cancelar</button>
-        <button class="btn-salvar" (click)="ativar2FA()">Ativar 2FA</button>
+        <button type="button" class="btn-cancelar" (click)="fecharModal2FA()">Cancelar</button>
+        <button type="button" class="btn-salvar" (click)="ativar2FA()">Ativar 2FA</button>
       </div>
     </div>
   </div>

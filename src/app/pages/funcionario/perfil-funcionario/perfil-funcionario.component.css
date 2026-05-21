@@ -1,40 +1,47 @@
-
-
 .perfil-page {
-  min-height: 100vh;
-  background: #eeeeef;
-  padding: 18px 34px 28px;
+  min-height: calc(100vh - 84px);
+  background:
+    radial-gradient(circle at top left, rgba(93, 110, 211, 0.12), transparent 34%),
+    linear-gradient(180deg, #f7f8fc 0%, #eef2f8 100%);
+  padding: 34px 44px;
   font-family: 'Inter', sans-serif;
   color: #1f3b82;
+  box-sizing: border-box;
 }
 
 .perfil-page h1 {
-  margin: 0 0 22px;
-  font-size: 30px;
+  margin: 0 0 24px;
+  font-size: 34px;
   font-weight: 800;
   color: #1f3b82;
-  letter-spacing: -0.5px;
 }
 
 .perfil-container {
-  background: #f8f9fb;
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #edf0f7;
+  border-radius: 26px;
+  padding: 26px;
+  box-shadow: 0 20px 55px rgba(31, 59, 130, 0.10);
+  backdrop-filter: blur(10px);
 }
 
 .topo {
   display: flex;
-  align-items: flex-end;
-  gap: 30px;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 26px;
 }
 
 .foto-area {
-  width: 170px;
-  height: 170px;
+  width: 150px;
+  height: 150px;
   position: relative;
-  border-radius: 6px;
+  border-radius: 24px;
   overflow: hidden;
-  background: white;
+  background: #eef2ff;
   flex-shrink: 0;
+  border: 3px solid #ffffff;
+  box-shadow: 0 16px 34px rgba(93, 110, 211, 0.18);
 }
 
 .foto-area img {
@@ -45,21 +52,24 @@
 
 .btn-foto {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 29px;
-  height: 29px;
-  background: #1f3b82;
+  right: 10px;
+  bottom: 10px;
+  width: 38px;
+  height: 38px;
+  background: #5D6ED3;
   color: white;
-  border-radius: 7px 0 0 0;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: .25s ease;
+  box-shadow: 0 10px 20px rgba(93, 110, 211, 0.28);
 }
 
 .btn-foto:hover {
-  background: #5D6ED3;
+  background: #4a5bc2;
+  transform: translateY(-2px);
 }
 
 .btn-foto input {
@@ -68,27 +78,31 @@
 
 .dados-principais span {
   text-transform: uppercase;
-  font-size: 10px;
-  letter-spacing: 5px;
-  color: #4b5270;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #7a86a1;
+  font-weight: 800;
 }
 
 .dados-principais h2 {
-  font-size: 43px;
-  margin: 3px 0 8px;
+  font-size: 42px;
+  margin: 5px 0 10px;
   line-height: 1;
   color: #1f3b82;
 }
 
 .info-linha {
   display: flex;
-  gap: 24px;
+  gap: 20px;
+  flex-wrap: wrap;
   color: #1f3b82;
 }
 
 .info-linha p {
   margin: 0;
   font-size: 14px;
+  color: #5d6370;
+  font-weight: 700;
 }
 
 .conteudo-principal {
@@ -98,16 +112,18 @@
 }
 
 .card {
-  background: white;
-  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid #edf0f7;
+  border-radius: 22px;
   padding: 28px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 }
 
 .card-titulo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 }
 
 .card h3,
@@ -115,35 +131,42 @@
   margin: 0;
   font-size: 18px;
   color: #1f3b82;
+  font-weight: 800;
+}
+
+.card-titulo span {
+  color: #5D6ED3;
+  font-size: 20px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px 28px;
+  gap: 22px;
 }
 
 .form-grid label {
   display: block;
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 1.4px;
-  font-weight: 700;
-  color: #555b70;
+  letter-spacing: 1px;
+  font-weight: 800;
+  color: #7a86a1;
   margin-bottom: 8px;
 }
 
 .form-grid input {
   width: 100%;
-  height: 47px;
-  border: none;
+  height: 44px;
+  border: 1px solid #d8deee;
   outline: none;
-  background: #f0f0f3;
-  border-radius: 3px;
+  background: #f8fafc;
+  border-radius: 12px;
   padding: 0 14px;
   font-size: 13px;
-  color: #222;
+  color: #111827;
   box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
 }
 
 .form-grid input:disabled {
@@ -152,8 +175,9 @@
 }
 
 .form-grid input:not(:disabled) {
-  background: white;
-  border: 1px solid #5D6ED3;
+  background: #ffffff;
+  border-color: #5D6ED3;
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.10);
 }
 
 .botoes-edicao {
@@ -163,20 +187,23 @@
 }
 
 .botoes-edicao button {
-  height: 36px;
+  height: 40px;
   padding: 0 18px;
   border: none;
-  border-radius: 3px;
-  background: #e7e8eb;
+  border-radius: 12px;
+  background: #e5e7eb;
   color: #1f3b82;
   cursor: pointer;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  transition: .25s ease;
 }
 
 .botoes-edicao button:hover {
   background: #5D6ED3;
   color: white;
+  transform: translateY(-2px);
 }
 
 .grupo-edicao {
@@ -185,13 +212,15 @@
 }
 
 .botoes-edicao .cancelar {
-  background: #dcdde2;
+  background: #eef0f5;
 }
 
 .desempenho {
-  background: #4b5dc6;
+  background: #5D6ED3;
   color: white;
-  padding: 30px 34px;
+  padding: 30px;
+  border: none;
+  box-shadow: 0 16px 34px rgba(93, 110, 211, 0.24);
 }
 
 .desempenho h3 {
@@ -201,7 +230,7 @@
 
 .meta {
   display: grid;
-  grid-template-columns: 1fr 44px;
+  grid-template-columns: 1fr 50px;
   gap: 20px;
   align-items: end;
   margin-bottom: 28px;
@@ -209,8 +238,9 @@
 
 .meta p {
   margin: 0 0 8px;
-  font-size: 11px;
-  opacity: .85;
+  font-size: 12px;
+  opacity: .9;
+  font-weight: 700;
 }
 
 .meta strong {
@@ -220,21 +250,24 @@
 
 .barra {
   width: 100%;
-  height: 3px;
+  height: 5px;
   background: rgba(255, 255, 255, .35);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .barra span {
   height: 100%;
   display: block;
   background: white;
+  border-radius: 999px;
 }
 
 .pacientes {
   display: flex;
   align-items: center;
   gap: 13px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .avatar-list {
@@ -243,21 +276,22 @@
 }
 
 .avatar-list img {
-  width: 27px;
-  height: 27px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
   margin-right: -8px;
-  border: 1px solid #1f3b82;
+  border: 2px solid #5D6ED3;
 }
 
 .avatar-list span {
-  width: 33px;
-  height: 27px;
-  border-radius: 15px;
+  width: 38px;
+  height: 32px;
+  border-radius: 999px;
   background: #1f3b82;
   color: white;
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -265,14 +299,16 @@
 
 .pacientes p {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .credenciais {
-  background: #f0f0f2;
+  background: #ffffff;
+  border: 1px solid #edf0f7;
   margin-top: 24px;
   padding: 28px;
-  border-radius: 5px;
+  border-radius: 22px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
 }
 
 .titulo-secao {
@@ -283,11 +319,11 @@
 }
 
 .titulo-secao span {
-  width: 33px;
-  height: 33px;
-  background: #1f3b82;
+  width: 38px;
+  height: 38px;
+  background: #5D6ED3;
   color: white;
-  border-radius: 3px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -297,29 +333,31 @@
   margin: 0;
   font-size: 18px;
   color: #1f3b82;
+  font-weight: 800;
 }
 
 .credenciais-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 26px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
 }
 
 .mini-card {
-  background: white;
-  padding: 24px;
-  border-radius: 5px;
-  min-height: 95px;
+  background: #f8fafc;
+  border: 1px solid #edf0f7;
+  padding: 22px;
+  border-radius: 18px;
+  min-height: 110px;
 }
 
 .mini-card h4 {
   margin: 0 0 16px;
-  font-size: 12px;
+  font-size: 13px;
   color: #1f3b82;
 }
 
 .mini-card p {
-  margin: 7px 0 2px;
+  margin: 8px 0 2px;
   font-size: 12px;
   color: #1f3b82;
 }
@@ -336,11 +374,12 @@
 }
 
 .tags span {
-  background: #eeeeff;
+  background: #eef2ff;
   color: #1f3b82;
-  border-radius: 12px;
-  padding: 6px 10px;
+  border-radius: 999px;
+  padding: 7px 10px;
   font-size: 10px;
+  font-weight: 800;
 }
 
 .rodape-grid {
@@ -351,7 +390,7 @@
 }
 
 .configuracoes {
-  padding: 30px;
+  padding: 28px;
 }
 
 .config-linha {
@@ -359,40 +398,43 @@
   grid-template-columns: 210px 1fr;
   align-items: center;
   gap: 25px;
-  margin-bottom: 34px;
+  margin-bottom: 30px;
 }
 
 .config-linha h4 {
   margin: 0 0 4px;
-  font-size: 12px;
+  font-size: 13px;
   color: #1f3b82;
 }
 
 .config-linha p {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   color: #5f667a;
 }
 
 .botoes-config {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 14px;
 }
 
 .botoes-config button {
   border: none;
   height: 42px;
-  border-radius: 5px;
-  background: #e7e8eb;
+  border-radius: 12px;
+  background: #e5e7eb;
   color: #1f3b82;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
+  transition: .25s ease;
 }
 
 .botoes-config button:hover {
   background: #5D6ED3;
   color: white;
+  transform: translateY(-2px);
 }
 
 .botoes-config button.ativo {
@@ -411,8 +453,9 @@
   justify-content: space-between;
   align-items: center;
   gap: 14px;
-  font-size: 11px;
+  font-size: 12px;
   color: #1f3b82;
+  font-weight: 700;
 }
 
 .switches input {
@@ -420,8 +463,8 @@
 }
 
 .switches span {
-  width: 34px;
-  height: 18px;
+  width: 38px;
+  height: 20px;
   background: #c9ccd8;
   border-radius: 20px;
   position: relative;
@@ -430,8 +473,8 @@
 
 .switches span::before {
   content: "";
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   background: white;
   border-radius: 50%;
   position: absolute;
@@ -441,43 +484,46 @@
 }
 
 .switches input:checked + span {
-  background: #1f3b82;
+  background: #5D6ED3;
 }
 
 .switches input:checked + span::before {
-  left: 18px;
+  left: 20px;
 }
 
 .ajuda {
-  background: #e2e3e7;
-  border-radius: 5px;
+  background: #1f3b82;
+  color: white;
+  border-radius: 22px;
   padding: 31px;
+  box-shadow: 0 16px 34px rgba(31, 59, 130, 0.18);
 }
 
 .ajuda h3 {
   margin: 0 0 15px;
-  font-size: 16px;
-  color: #1f3b82;
+  font-size: 18px;
+  color: white;
 }
 
 .ajuda p {
   font-size: 12px;
   line-height: 1.6;
-  color: #626a7d;
+  color: rgba(255,255,255,.82);
   margin-bottom: 22px;
 }
 
 .ajuda button {
   width: 100%;
-  height: 38px;
-  border-radius: 3px;
+  height: 40px;
+  border-radius: 12px;
   border: none;
   margin-top: 12px;
   text-transform: uppercase;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 1px;
   cursor: pointer;
+  transition: .25s ease;
 }
 
 .btn-branco {
@@ -486,23 +532,24 @@
 }
 
 .btn-azul {
-  background: #1f3b82;
+  background: #5D6ED3;
   color: white;
 }
 
 .ajuda button:hover {
-  background: #5D6ED3;
-  color: white;
+  background: #eef2ff;
+  color: #1f3b82;
+  transform: translateY(-2px);
 }
 
 .modal-fundo {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, .45);
+  background: rgba(8, 20, 50, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99;
+  z-index: 99999;
   padding: 18px;
 }
 
@@ -510,10 +557,10 @@
   width: 100%;
   max-width: 430px;
   background: white;
-  border-radius: 8px;
+  border-radius: 24px;
   padding: 30px;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+  box-shadow: 0 24px 70px rgba(8, 20, 50, 0.25);
 }
 
 .fechar-modal {
@@ -521,10 +568,18 @@
   right: 18px;
   top: 14px;
   border: none;
-  background: transparent;
+  background: #f4f6ff;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   color: #1f3b82;
-  font-size: 28px;
+  font-size: 24px;
   cursor: pointer;
+}
+
+.fechar-modal:hover {
+  background: #5D6ED3;
+  color: white;
 }
 
 .modal-card h2 {
@@ -550,15 +605,15 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  font-weight: 700;
+  font-weight: 800;
   color: #555b70;
   margin-top: 8px;
 }
 
 .modal-form input {
   height: 44px;
-  border: 1px solid #d9dbe3;
-  border-radius: 4px;
+  border: 1px solid #d8deee;
+  border-radius: 12px;
   outline: none;
   padding: 0 13px;
   font-size: 14px;
@@ -566,6 +621,7 @@
 
 .modal-form input:focus {
   border-color: #5D6ED3;
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.12);
 }
 
 .modal-botoes {
@@ -576,27 +632,27 @@
 }
 
 .modal-botoes button {
-  height: 38px;
+  height: 40px;
   padding: 0 18px;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .btn-cancelar {
-  background: #e7e8eb;
+  background: #e5e7eb;
   color: #1f3b82;
 }
 
 .btn-salvar {
-  background: #1f3b82;
+  background: #5D6ED3;
   color: white;
 }
 
 .btn-cancelar:hover,
 .btn-salvar:hover {
-  background: #5D6ED3;
+  background: #4a5bc2;
   color: white;
 }
 
@@ -647,16 +703,15 @@
   bottom: 24px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .perfil-page {
-    padding: 18px;
+    padding: 26px 18px;
   }
 
   .topo {
     align-items: center;
     flex-direction: column;
     text-align: center;
-    margin-bottom: 22px;
   }
 
   .dados-principais h2 {
@@ -665,7 +720,6 @@
 
   .info-linha {
     justify-content: center;
-    flex-wrap: wrap;
   }
 
   .conteudo-principal,
@@ -674,14 +728,8 @@
     grid-template-columns: 1fr;
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .config-linha {
-    grid-template-columns: 1fr;
-  }
-
+  .form-grid,
+  .config-linha,
   .botoes-config {
     grid-template-columns: 1fr;
   }
@@ -697,6 +745,36 @@
 
   .grupo-edicao button {
     flex: 1;
+  }
+}
+
+@media (max-width: 560px) {
+  .perfil-page {
+    padding: 22px 14px;
+  }
+
+  .perfil-container {
+    padding: 20px;
+  }
+
+  .perfil-page h1 {
+    font-size: 28px;
+  }
+
+  .foto-area {
+    width: 130px;
+    height: 130px;
+  }
+
+  .dados-principais h2 {
+    font-size: 27px;
+  }
+
+  .card,
+  .credenciais,
+  .configuracoes,
+  .ajuda {
+    padding: 22px;
   }
 
   .modal-botoes {
