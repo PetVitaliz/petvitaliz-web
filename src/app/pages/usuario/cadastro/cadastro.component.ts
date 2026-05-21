@@ -26,7 +26,47 @@ export class CadastroComponent {
 
   constructor(private router: Router) {}
 
-  cadastrar() {
+  get forcaSenha(): string {
+    if (!this.senha) {
+      return '';
+    }
+
+    let pontos = 0;
+
+    if (this.senha.length >= 6) pontos++;
+    if (this.senha.length >= 8) pontos++;
+    if (/[A-Z]/.test(this.senha)) pontos++;
+    if (/[0-9]/.test(this.senha)) pontos++;
+    if (/[^A-Za-z0-9]/.test(this.senha)) pontos++;
+
+    if (pontos <= 2) {
+      return 'fraca';
+    }
+
+    if (pontos <= 4) {
+      return 'media';
+    }
+
+    return 'forte';
+  }
+
+  get textoForcaSenha(): string {
+    if (!this.senha) {
+      return '';
+    }
+
+    if (this.forcaSenha === 'fraca') {
+      return 'Segurança fraca';
+    }
+
+    if (this.forcaSenha === 'media') {
+      return 'Segurança média';
+    }
+
+    return 'Segurança alta';
+  }
+
+  cadastrar(): void {
     this.erro = '';
 
     if (

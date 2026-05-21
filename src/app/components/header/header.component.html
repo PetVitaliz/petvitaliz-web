@@ -4,27 +4,98 @@
     <img src="assets/img/logo.png" alt="PetVitaliz" />
   </div>
 
-  <nav class="nav">
-    <a routerLink="/">Home</a>
-    <a routerLink="/servicos">Nossos Serviços</a>
-    <a routerLink="/sobre-nos">Sobre Nós</a>
-    <a routerLink="/contato">Contato</a>
-    <a routerLink="/emergencia">Emergência</a>
-    <a routerLink="/adocao">Adoção</a>
+  <button
+    class="menu-mobile"
+    type="button"
+    (click)="toggleMenu()">
+
+    ☰
+
+  </button>
+
+  <nav
+    class="nav"
+    [class.open]="menuAberto">
+
+    <a
+      routerLink="/"
+      routerLinkActive="ativo"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="fecharMenu()">
+
+      Home
+
+    </a>
+
+    <a
+      routerLink="/servicos"
+      routerLinkActive="ativo"
+      (click)="fecharMenu()">
+
+      Nossos Serviços
+
+    </a>
+
+    <a
+      routerLink="/sobre-nos"
+      routerLinkActive="ativo"
+      (click)="fecharMenu()">
+
+      Sobre Nós
+
+    </a>
+
+    <a
+      routerLink="/contato"
+      routerLinkActive="ativo"
+      (click)="fecharMenu()">
+
+      Contato
+
+    </a>
+
+    <a
+      routerLink="/emergencia"
+      routerLinkActive="ativo"
+      (click)="fecharMenu()">
+
+      Emergência
+
+    </a>
+
+    <a
+      routerLink="/adocao"
+      routerLinkActive="ativo"
+      (click)="fecharMenu()">
+
+      Adoção
+
+    </a>
+
   </nav>
 
-  <div class="buttons">
-    <button class="btn-outline" routerLink="/usuario/cadastro">
+  <div
+    class="buttons"
+    [class.open]="menuAberto">
+
+    <button
+      class="btn-outline"
+      routerLink="/usuario/cadastro"
+      (click)="fecharMenu()">
+
       Registre-se
+
     </button>
 
-    <button class="btn-primary" routerLink="/usuario/login">
+    <button
+      class="btn-primary"
+      routerLink="/usuario/login"
+      (click)="fecharMenu()">
+
       Login
-    </button>
-  </div>
 
-  <button class="menu-mobile" type="button">
-    ☰
-  </button>
+    </button>
+
+  </div>
 
 </header>

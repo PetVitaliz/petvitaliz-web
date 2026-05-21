@@ -2,27 +2,18 @@
 
   <div class="cadastro-card">
 
-    <h2>
-      Criar sua conta
-    </h2>
+    <h2>Criar sua conta</h2>
 
     <p class="subtitle">
       Preencha os dados abaixo para começar sua experiência exclusiva.
     </p>
 
-    <form
-      class="cadastro-form"
-      (ngSubmit)="cadastrar()">
-
-      <!-- NOME -->
+    <form class="cadastro-form" (ngSubmit)="cadastrar()">
 
       <div class="form-row">
 
         <div class="form-group">
-
-          <label for="nome">
-            Nome completo
-          </label>
+          <label for="nome">Nome completo</label>
 
           <input
             type="text"
@@ -30,14 +21,10 @@
             name="nome"
             placeholder="ex: João"
             [(ngModel)]="nome">
-
         </div>
 
         <div class="form-group">
-
-          <label for="sobrenome">
-            Sobrenome
-          </label>
+          <label for="sobrenome">Sobrenome</label>
 
           <input
             type="text"
@@ -45,20 +32,14 @@
             name="sobrenome"
             placeholder="ex: Silva"
             [(ngModel)]="sobrenome">
-
         </div>
 
       </div>
 
-      <!-- CPF -->
-
       <div class="form-row">
 
         <div class="form-group">
-
-          <label for="cpf">
-            CPF
-          </label>
+          <label for="cpf">CPF</label>
 
           <input
             type="text"
@@ -66,14 +47,10 @@
             name="cpf"
             placeholder="000.000.000-00"
             [(ngModel)]="cpf">
-
         </div>
 
         <div class="form-group">
-
-          <label for="nascimento">
-            Data de Nascimento
-          </label>
+          <label for="nascimento">Data de Nascimento</label>
 
           <input
             type="text"
@@ -81,20 +58,14 @@
             name="nascimento"
             placeholder="dd/mm/yyyy"
             [(ngModel)]="nascimento">
-
         </div>
 
       </div>
 
-      <!-- TELEFONE -->
-
       <div class="form-row">
 
         <div class="form-group">
-
-          <label for="telefone">
-            Telefone
-          </label>
+          <label for="telefone">Telefone</label>
 
           <input
             type="text"
@@ -102,49 +73,28 @@
             name="telefone"
             placeholder="(11) 99999-9999"
             [(ngModel)]="telefone">
-
         </div>
 
         <div class="form-group">
-
-          <label for="genero">
-            Gênero
-          </label>
+          <label for="genero">Gênero</label>
 
           <select
             id="genero"
             name="genero"
             [(ngModel)]="genero">
 
-            <option value="">
-              Selecione
-            </option>
-
-            <option value="Feminino">
-              Feminino
-            </option>
-
-            <option value="Masculino">
-              Masculino
-            </option>
-
-            <option value="Prefiro não informar">
-              Prefiro não informar
-            </option>
+            <option value="">Selecione</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Prefiro não informar">Prefiro não informar</option>
 
           </select>
-
         </div>
 
       </div>
 
-      <!-- EMAIL -->
-
       <div class="form-group full">
-
-        <label for="email">
-          E-mail
-        </label>
+        <label for="email">E-mail</label>
 
         <input
           type="email"
@@ -152,16 +102,10 @@
           name="email"
           placeholder="seu@email.com.br"
           [(ngModel)]="email">
-
       </div>
 
-      <!-- SENHA -->
-
       <div class="form-group full">
-
-        <label for="senha">
-          Senha
-        </label>
+        <label for="senha">Senha</label>
 
         <div class="password-wrapper">
 
@@ -169,7 +113,7 @@
             [type]="senhaVisivel ? 'text' : 'password'"
             id="senha"
             name="senha"
-            placeholder="••••••••"
+            placeholder="Digite sua senha"
             [(ngModel)]="senha">
 
           <button
@@ -177,55 +121,42 @@
             class="eye-btn"
             (click)="senhaVisivel = !senhaVisivel">
 
-            👁
+            {{ senhaVisivel ? '🙈' : '👁' }}
 
           </button>
 
         </div>
 
-        <div class="password-strength">
+        <div
+          class="password-strength"
+          *ngIf="senha"
+          [ngClass]="forcaSenha">
 
-          <span class="dot active"></span>
-          <span class="dot active"></span>
+          <div class="strength-bar">
+            <span></span>
+          </div>
 
-          <span class="label">
-            SEGURANÇA MÉDIA
-          </span>
+          <p>
+            {{ textoForcaSenha }}
+          </p>
 
         </div>
-
       </div>
 
-      <!-- ERRO -->
-
-      <p
-        class="erro"
-        *ngIf="erro">
-
+      <p class="erro" *ngIf="erro">
         {{ erro }}
-
       </p>
 
-      <!-- BOTÃO -->
-
-      <button
-        type="submit"
-        class="btn-submit">
-
+      <button type="submit" class="btn-submit">
         Cadastrar
-
       </button>
 
-      <!-- LOGIN -->
-
       <p class="login-link">
-
         Já tem uma conta?
 
         <a routerLink="/usuario/login">
           Entre
         </a>
-
       </p>
 
     </form>
