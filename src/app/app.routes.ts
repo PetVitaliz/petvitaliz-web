@@ -14,6 +14,13 @@ import { SobreNosComponent } from './pages/usuario/sobre-nos/sobre-nos.component
 import { ContatoComponent } from './pages/usuario/contato/contato.component';
 import { AdocaoComponent } from './pages/usuario/adocao/adocao.component';
 import { EmergenciaComponent } from './pages/usuario/emergencia/emergencia.component';
+import { AgendamentoComponent } from './pages/usuario/agendamento/agendamento.component';
+import { CadastroPetComponent } from './pages/usuario/cadastro-pet/cadastro-pet.component';
+import { ListarCadastroPetComponent } from './pages/usuario/listar-cadastro-pet/listar-cadastro-pet.component';
+import { PlanosPetComponent } from './pages/usuario/planos-pet/planos-pet.component';
+import { PagamentoPlanoComponent } from './pages/usuario/pagamento-plano/pagamento-plano.component';
+import { ContratoPlanoComponent } from './pages/usuario/contrato-plano/contrato-plano.component';
+import { PlanoSucessoComponent } from './pages/usuario/plano-sucesso/plano-sucesso.component';
 
 // FUNCIONÁRIO
 import { HomeFuncionarioComponent } from './pages/funcionario/home-funcionario/home-funcionario.component';
@@ -46,6 +53,14 @@ export const routes: Routes = [
   { path: 'contato', component: ContatoComponent },
   { path: 'adocao', component: AdocaoComponent },
   { path: 'emergencia', component: EmergenciaComponent },
+
+  { path: 'cadastro-pet', component: CadastroPetComponent },
+  { path: 'listar-cadastro-pet', component: ListarCadastroPetComponent },
+  { path: 'planos-pet', component: PlanosPetComponent },
+  { path: 'agendamento', component: AgendamentoComponent },
+  { path: 'pagamento-plano', component: PagamentoPlanoComponent },
+  { path: 'contrato-plano', component: ContratoPlanoComponent },
+  { path: 'plano-sucesso', component: PlanoSucessoComponent },
 
   {
     path: 'funcionario/home',

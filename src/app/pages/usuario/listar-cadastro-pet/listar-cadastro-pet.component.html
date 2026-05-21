@@ -1,0 +1,247 @@
+<section class="pet-page">
+
+  <div class="page-inner">
+
+    <div class="page-title">
+      <h1>Informações do seu Pet</h1>
+      <p>
+        Veja os dados cadastrados e acompanhe as informações principais.
+      </p>
+    </div>
+
+    <div class="empty-state" *ngIf="pets.length === 0">
+      <h2>Nenhum pet cadastrado</h2>
+
+      <p>
+        Cadastre um pet para visualizar as informações aqui.
+      </p>
+    </div>
+
+    <main
+      class="pet-card-main"
+      *ngIf="pets.length > 0 && petSelecionado"
+    >
+
+      <aside class="pet-profile">
+
+        <div class="pet-photo">
+
+          <img
+            *ngIf="petSelecionado.foto"
+            [src]="petSelecionado.foto"
+            alt="Foto do pet"
+          >
+
+          <div
+            *ngIf="!petSelecionado.foto"
+            class="photo-empty"
+          >
+            🐾
+          </div>
+
+        </div>
+
+        <h2>{{ petSelecionado.nomePet }}</h2>
+
+        <p>
+          {{ petSelecionado.especie }} •
+          {{ petSelecionado.idade }} anos
+        </p>
+
+        <div class="profile-stats">
+
+          <div>
+            <span>PESO</span>
+            <strong>{{ petSelecionado.peso || '0' }}kg</strong>
+          </div>
+
+          <div>
+            <span>SEXO</span>
+            <strong>{{ petSelecionado.sexo }}</strong>
+          </div>
+
+        </div>
+
+        <div class="vaccine-card">
+
+          <span>PRÓXIMA VACINA</span>
+
+          <strong>V10 - reforço</strong>
+
+          <small>20 Mar 2026</small>
+
+        </div>
+
+      </aside>
+
+      <section class="pet-info">
+
+        <div class="info-header">
+
+          <div>
+            <h2>Dados do Pet</h2>
+
+            <p>
+              Informações cadastradas pelo tutor.
+            </p>
+          </div>
+
+          <span>Perfil verificado</span>
+
+        </div>
+
+        <div class="info-grid">
+
+          <div>
+
+            <small>ESPÉCIE</small>
+
+            <strong *ngIf="!editando">
+              {{ petSelecionado.especie }}
+            </strong>
+
+            <input
+              *ngIf="editando"
+              [(ngModel)]="petSelecionado.especie"
+            >
+
+          </div>
+
+          <div>
+
+            <small>IDADE</small>
+
+            <strong *ngIf="!editando">
+              {{ petSelecionado.idade }} anos
+            </strong>
+
+            <input
+              *ngIf="editando"
+              [(ngModel)]="petSelecionado.idade"
+            >
+
+          </div>
+
+          <div>
+
+            <small>SEXO</small>
+
+            <strong *ngIf="!editando">
+              {{ petSelecionado.sexo }}
+            </strong>
+
+            <input
+              *ngIf="editando"
+              [(ngModel)]="petSelecionado.sexo"
+            >
+
+          </div>
+
+          <div>
+
+            <small>PESO</small>
+
+            <strong *ngIf="!editando">
+              {{ petSelecionado.peso }}kg
+            </strong>
+
+            <input
+              *ngIf="editando"
+              [(ngModel)]="petSelecionado.peso"
+            >
+
+          </div>
+
+          <div>
+
+            <small>COR</small>
+
+            <strong *ngIf="!editando">
+              {{ petSelecionado.cor }}
+            </strong>
+
+            <input
+              *ngIf="editando"
+              [(ngModel)]="petSelecionado.cor"
+            >
+
+          </div>
+
+          <div>
+
+            <small>TUTOR</small>
+
+            <strong *ngIf="!editando">
+              {{ petSelecionado.tutor }}
+            </strong>
+
+            <input
+              *ngIf="editando"
+              [(ngModel)]="petSelecionado.tutor"
+            >
+
+          </div>
+
+        </div>
+
+        <div class="observacao">
+
+          <small>OBSERVAÇÕES</small>
+
+          <p *ngIf="!editando">
+            {{ petSelecionado.observacoes }}
+          </p>
+
+          <textarea
+            *ngIf="editando"
+            [(ngModel)]="petSelecionado.observacoes"
+          ></textarea>
+
+        </div>
+
+        <div class="actions">
+
+          <button
+            type="button"
+            class="btn-edit"
+            (click)="editarPet()"
+            *ngIf="!editando"
+          >
+            Editar informações
+          </button>
+
+          <button
+            type="button"
+            class="btn-save"
+            (click)="salvarEdicao()"
+            *ngIf="editando"
+          >
+            Salvar alterações
+          </button>
+
+          <button
+            type="button"
+            class="btn-cancel"
+            (click)="cancelarEdicao()"
+            *ngIf="editando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="btn-delete"
+            (click)="excluirPet()"
+          >
+            Excluir registro
+          </button>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+</section>

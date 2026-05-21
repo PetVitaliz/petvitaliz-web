@@ -1,0 +1,131 @@
+<section class="cadastro-page">
+
+  <div class="page-inner">
+
+    <div class="page-title">
+      <h1>Cadastro</h1>
+      <p>Preencha os campos abaixo para cadastrar o seu Pet:</p>
+    </div>
+
+    <div class="cadastro-card">
+
+      <aside class="photo-card">
+        <h2>Foto do Pet</h2>
+
+        <label class="photo-upload">
+          <input type="file" accept="image/*" (change)="carregarFoto($event)">
+
+          <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto do pet">
+
+          <div *ngIf="!fotoPreview" class="photo-placeholder">
+            
+          </div>
+
+          <span>+</span>
+        </label>
+
+        <p class="photo-info">
+          Formatos aceitos: JPG, PNG. Máximo 5MB. Prefira fotos nítidas e iluminadas.
+        </p>
+
+        <div class="info-box">
+          <strong>DICA VITAL</strong>
+          <small>O perfil visual ajuda na rápida identificação em emergências.</small>
+        </div>
+
+        <div class="info-box">
+          <strong>PROTEÇÃO DE DADOS</strong>
+          <small>As informações cadastradas são sigilosas.</small>
+        </div>
+      </aside>
+
+      <main class="form-card">
+
+        <div class="form-header">
+          <span>▣</span>
+          <h2>Informações Básicas</h2>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="field full">
+            <label>Nome do Tutor</label>
+            <input type="text" placeholder="Ex: Jadi Borges" [(ngModel)]="tutor">
+          </div>
+
+          <div class="field full">
+            <label>Nome do Pet</label>
+            <input type="text" placeholder="Ex: Maximus Aurelius" [(ngModel)]="nomePet">
+          </div>
+
+          <div class="field">
+            <label>Espécie</label>
+            <select [(ngModel)]="especie">
+              <option value="">Selecione</option>
+              <option value="Cachorro">Cachorro</option>
+              <option value="Gato">Gato</option>
+              <option value="Ave">Ave</option>
+              <option value="Coelho">Coelho</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Idade (Anos)</label>
+            <input type="number" placeholder="Ex: 5" [(ngModel)]="idade">
+          </div>
+
+          <div class="field">
+            <label>Sexo</label>
+
+            <div class="option-row">
+              <button type="button" [class.active]="sexo === 'Masculino'" (click)="selecionarSexo('Masculino')">
+                Masculino
+              </button>
+
+              <button type="button" [class.active]="sexo === 'Feminino'" (click)="selecionarSexo('Feminino')">
+                Feminino
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Peso (kg)</label>
+            <div class="weight-field">
+              <input type="number" placeholder="0.0" [(ngModel)]="peso">
+              <span>KG</span>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label>Cor Predominante</label>
+
+            <div class="color-row">
+              <button type="button" [class.active]="cor === 'Marrom'" (click)="selecionarCor('Marrom')">Marrom</button>
+              <button type="button" [class.active]="cor === 'Preto'" (click)="selecionarCor('Preto')">Preto</button>
+              <button type="button" [class.active]="cor === 'Branco'" (click)="selecionarCor('Branco')">Branco</button>
+              <button type="button" [class.active]="cor === 'Mesclado'" (click)="selecionarCor('Mesclado')">Mesclado</button>
+
+              <input type="text" placeholder="Outra cor..." [(ngModel)]="outraCor">
+            </div>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-cancelar">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-confirmar" (click)="confirmarCadastro()">
+            Salvar
+          </button>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+</section>
