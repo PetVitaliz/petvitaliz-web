@@ -25,10 +25,15 @@ export class PagamentoPlanoComponent implements OnInit {
 
   ngOnInit(): void {
     this.plano = JSON.parse(localStorage.getItem('planoSelecionado') || 'null');
+
+    if (!this.plano) {
+      this.router.navigate(['/usuario/planos-pet']);
+    }
   }
 
   confirmarPagamento(): void {
     localStorage.setItem('pagamentoPlanoConfirmado', 'true');
-    this.router.navigate(['/contrato-plano']);
+
+    this.router.navigate(['/usuario/plano-sucesso']);
   }
 }

@@ -1,0 +1,84 @@
+<header class="header">
+
+  <div class="logo" routerLink="/usuario/home">
+    <img src="assets/img/logo.png" alt="PetVitaliz" />
+  </div>
+
+  <div class="header-actions">
+
+    <div class="avatar-wrapper">
+
+      <button
+        class="avatar"
+        type="button"
+        (click)="toggleAvatarMenu()">
+        {{ inicialUsuario }}
+      </button>
+
+      <div
+        class="avatar-card"
+        *ngIf="avatarMenuAberto">
+
+        <button
+          type="button"
+          (click)="sair()">
+          Sair
+        </button>
+
+      </div>
+
+    </div>
+
+    <button
+      class="menu-mobile"
+      type="button"
+      (click)="toggleMenuMobile()">
+      ☰
+    </button>
+
+  </div>
+
+  <nav
+    class="nav"
+    [class.open]="menuMobileAberto">
+
+    <a routerLink="/usuario/home" (click)="fecharMenus()">Home</a>
+
+    <a routerLink="/usuario/planos-pet" (click)="fecharMenus()">Planos</a>
+
+    <a routerLink="/usuario/agendamento" (click)="fecharMenus()">Agendamentos</a>
+
+    <a routerLink="/usuario/contato" (click)="fecharMenus()">Contato</a>
+
+    <div class="perfil-wrapper">
+
+      <button
+        class="perfil-link"
+        type="button"
+        (click)="togglePerfilMenu()">
+        Perfil ▾
+      </button>
+
+      <div
+        class="perfil-card"
+        *ngIf="perfilMenuAberto">
+
+        <a
+          routerLink="/usuario/cadastro-pet"
+          (click)="fecharMenus()">
+          Cadastrar Pet
+        </a>
+
+        <a
+          routerLink="/usuario/listar-cadastro-pet"
+          (click)="fecharMenus()">
+          Perfil Pet
+        </a>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+</header>

@@ -2,18 +2,21 @@ import { Routes } from '@angular/router';
 
 import { authAdminGuard } from './guards/auth-admin.guard';
 import { authFuncionarioGuard } from './guards/auth-funcionario.guard';
+import { authUsuarioGuard } from './guards/auth-usuario.guard';
+
+// PÚBLICO
+import { HomeUsuarioComponent } from './pages/publico/home-publico/home-usuario.component';
+import { LoginComponent } from './pages/publico/login/login.component';
+import { EsqueciSenhaComponent } from './pages/publico/esqueci-senha/esqueci-senha.component';
+import { CadastroComponent } from './pages/publico/cadastro/cadastro.component';
+import { ResetSenhaComponent } from './pages/publico/reset-senha/reset-senha.component';
+import { ServicosComponent } from './pages/publico/servicos/servicos.component';
+import { SobreNosComponent } from './pages/publico/sobre-nos/sobre-nos.component';
+import { ContatoComponent } from './pages/publico/contato/contato.component';
+import { AdocaoComponent } from './pages/publico/adocao/adocao.component';
+import { EmergenciaComponent } from './pages/publico/emergencia/emergencia.component';
 
 // USUÁRIO
-import { HomeUsuarioComponent } from './pages/usuario/home-usuario/home-usuario.component';
-import { LoginComponent } from './pages/usuario/login/login.component';
-import { EsqueciSenhaComponent } from './pages/usuario/esqueci-senha/esqueci-senha.component';
-import { CadastroComponent } from './pages/usuario/cadastro/cadastro.component';
-import { ResetSenhaComponent } from './pages/usuario/reset-senha/reset-senha.component';
-import { ServicosComponent } from './pages/usuario/servicos/servicos.component';
-import { SobreNosComponent } from './pages/usuario/sobre-nos/sobre-nos.component';
-import { ContatoComponent } from './pages/usuario/contato/contato.component';
-import { AdocaoComponent } from './pages/usuario/adocao/adocao.component';
-import { EmergenciaComponent } from './pages/usuario/emergencia/emergencia.component';
 import { AgendamentoComponent } from './pages/usuario/agendamento/agendamento.component';
 import { CadastroPetComponent } from './pages/usuario/cadastro-pet/cadastro-pet.component';
 import { ListarCadastroPetComponent } from './pages/usuario/listar-cadastro-pet/listar-cadastro-pet.component';
@@ -21,6 +24,7 @@ import { PlanosPetComponent } from './pages/usuario/planos-pet/planos-pet.compon
 import { PagamentoPlanoComponent } from './pages/usuario/pagamento-plano/pagamento-plano.component';
 import { ContratoPlanoComponent } from './pages/usuario/contrato-plano/contrato-plano.component';
 import { PlanoSucessoComponent } from './pages/usuario/plano-sucesso/plano-sucesso.component';
+import { ContatoUsuarioComponent } from './pages/usuario/contato-usuario/contato-usuario.component';
 
 // FUNCIONÁRIO
 import { HomeFuncionarioComponent } from './pages/funcionario/home-funcionario/home-funcionario.component';
@@ -40,28 +44,67 @@ import { FinanceiroAdmComponent } from './pages/adm/financeiro-adm/financeiro-ad
 import { ListarAdminComponent } from './pages/adm/listar-admin/listar-admin.component';
 
 export const routes: Routes = [
+  // PÚBLICO
   { path: '', component: HomeUsuarioComponent },
   { path: 'home', component: HomeUsuarioComponent },
-
-  { path: 'usuario/login', component: LoginComponent },
-  { path: 'usuario/esqueci-senha', component: EsqueciSenhaComponent },
-  { path: 'usuario/cadastro', component: CadastroComponent },
-  { path: 'usuario/reset-senha', component: ResetSenhaComponent },
-
+  { path: 'login', component: LoginComponent },
+  { path: 'esqueci-senha', component: EsqueciSenhaComponent },
+  { path: 'cadastro', component: CadastroComponent },
+  { path: 'reset-senha', component: ResetSenhaComponent },
   { path: 'servicos', component: ServicosComponent },
   { path: 'sobre-nos', component: SobreNosComponent },
   { path: 'contato', component: ContatoComponent },
   { path: 'adocao', component: AdocaoComponent },
   { path: 'emergencia', component: EmergenciaComponent },
 
-  { path: 'cadastro-pet', component: CadastroPetComponent },
-  { path: 'listar-cadastro-pet', component: ListarCadastroPetComponent },
-  { path: 'planos-pet', component: PlanosPetComponent },
-  { path: 'agendamento', component: AgendamentoComponent },
-  { path: 'pagamento-plano', component: PagamentoPlanoComponent },
-  { path: 'contrato-plano', component: ContratoPlanoComponent },
-  { path: 'plano-sucesso', component: PlanoSucessoComponent },
+  // USUÁRIO
+  {
+    path: 'usuario/home',
+    component: HomeUsuarioComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/cadastro-pet',
+    component: CadastroPetComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/listar-cadastro-pet',
+    component: ListarCadastroPetComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/planos-pet',
+    component: PlanosPetComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/agendamento',
+    component: AgendamentoComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/pagamento-plano',
+    component: PagamentoPlanoComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/contrato-plano',
+    component: ContratoPlanoComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/plano-sucesso',
+    component: PlanoSucessoComponent,
+    canActivate: [authUsuarioGuard]
+  },
+  {
+    path: 'usuario/contato',
+    component: ContatoUsuarioComponent,
+    canActivate: [authUsuarioGuard]
+  },
 
+  // FUNCIONÁRIO
   {
     path: 'funcionario/home',
     component: HomeFuncionarioComponent,
@@ -88,6 +131,7 @@ export const routes: Routes = [
     canActivate: [authFuncionarioGuard]
   },
 
+  // ADM
   {
     path: 'adm/home',
     component: HomeAdmComponent,

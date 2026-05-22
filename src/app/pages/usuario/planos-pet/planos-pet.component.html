@@ -17,7 +17,6 @@
       <article
         class="plano-card"
         *ngFor="let plano of planos"
-        [class.featured]="plano.destaque"
       >
 
         <div class="plano-top">
@@ -33,8 +32,11 @@
         <h2>{{ plano.nome }}</h2>
 
         <div class="price">
+
           {{ plano.preco }}
+
           <span>/mês</span>
+
         </div>
 
         <ul>
@@ -84,13 +86,23 @@
         <div class="mini-cards">
 
           <div>
+
             <strong>Certificado</strong>
-            <small>Rede credenciada premium</small>
+
+            <small>
+              Rede credenciada premium
+            </small>
+
           </div>
 
           <div>
+
             <strong>Sempre Online</strong>
-            <small>Chat veterinário 24/7</small>
+
+            <small>
+              Chat veterinário 24/7
+            </small>
+
           </div>
 
         </div>
@@ -101,7 +113,10 @@
 
   </div>
 
-  <div class="modal-overlay" *ngIf="planoSelecionado">
+  <div
+    class="modal-overlay"
+    *ngIf="planoSelecionado"
+  >
 
     <div class="modal-card">
 
@@ -148,7 +163,7 @@
         class="modal-action"
         (click)="concluirPlano()"
       >
-        Concluir plano →
+        Concluir
       </button>
 
     </div>

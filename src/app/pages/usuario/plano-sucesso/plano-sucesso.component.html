@@ -4,11 +4,16 @@
 
     <h1>Plano</h1>
 
-    <p>Parabéns, seu Pet está protegido!</p>
+    <p>
+      Parabéns, seu Pet está protegido!
+    </p>
 
   </div>
 
-  <main class="success-card" *ngIf="plano">
+  <main
+    class="success-card"
+    *ngIf="plano"
+  >
 
     <div class="success-icon">
       ✓
@@ -38,9 +43,11 @@
           </div>
 
           <strong>
+
             {{ plano.preco }}
 
             <span>POR MÊS</span>
+
           </strong>
 
         </div>
@@ -69,7 +76,7 @@
           ***.***.***-**
         </small>
 
-        <button>
+        <button routerLink="/usuario/perfil">
           Editar Dados do Perfil
         </button>
 
@@ -81,7 +88,9 @@
 
       <div>
 
-        <strong>Agendar uma Consulta?</strong>
+        <strong>
+          Agendar uma Consulta?
+        </strong>
 
         <p>
           Sua primeira consulta veterinária é gratuita.
@@ -89,7 +98,7 @@
 
       </div>
 
-      <button routerLink="/agendamento">
+      <button routerLink="/usuario/agendamento">
         Agendar Agora
       </button>
 
@@ -97,14 +106,14 @@
 
     <button
       class="profile-btn"
-      routerLink="/listar-cadastro-pet"
+      routerLink="/usuario/listar-cadastro-pet"
     >
-      Ver perfil do pet 🐾
+      Ver perfil do pet
     </button>
 
     <button
       class="change-btn"
-      routerLink="/planos-pet"
+      routerLink="/usuario/planos-pet"
     >
       Contratar outro plano
     </button>

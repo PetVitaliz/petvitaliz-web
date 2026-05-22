@@ -1,201 +1,232 @@
 <section class="pet-page">
-
   <div class="page-inner">
 
     <div class="page-title">
-      <h1>Informações do seu Pet</h1>
-      <p>
-        Veja os dados cadastrados e acompanhe as informações principais.
-      </p>
+      <h1>Perfil completo</h1>
+      <p>Todos os dados do tutor, plano contratado e pet em um só lugar.</p>
     </div>
 
     <div class="empty-state" *ngIf="pets.length === 0">
       <h2>Nenhum pet cadastrado</h2>
+      <p>Cadastre um pet para visualizar as informações aqui.</p>
 
-      <p>
-        Cadastre um pet para visualizar as informações aqui.
-      </p>
+      <a routerLink="/usuario/cadastro-pet">
+        Cadastrar pet
+      </a>
     </div>
 
-    <main
-      class="pet-card-main"
-      *ngIf="pets.length > 0 && petSelecionado"
-    >
+    <main class="profile-dashboard" *ngIf="pets.length > 0 && petSelecionado">
 
-      <aside class="pet-profile">
+      <aside class="profile-sidebar">
 
         <div class="pet-photo">
-
           <img
             *ngIf="petSelecionado.foto"
             [src]="petSelecionado.foto"
             alt="Foto do pet"
           >
 
-          <div
-            *ngIf="!petSelecionado.foto"
-            class="photo-empty"
-          >
-            🐾
+          <div *ngIf="!petSelecionado.foto" class="photo-empty">
+          
           </div>
-
         </div>
 
         <h2>{{ petSelecionado.nomePet }}</h2>
 
         <p>
-          {{ petSelecionado.especie }} •
-          {{ petSelecionado.idade }} anos
+          {{ petSelecionado.especie }} • {{ petSelecionado.idade }} anos
         </p>
 
-        <div class="profile-stats">
-
+        <div class="sidebar-badges">
           <div>
-            <span>PESO</span>
+            <small>PESO</small>
             <strong>{{ petSelecionado.peso || '0' }}kg</strong>
           </div>
 
           <div>
-            <span>SEXO</span>
+            <small>SEXO</small>
             <strong>{{ petSelecionado.sexo }}</strong>
           </div>
-
         </div>
 
-        <div class="vaccine-card">
+        <div class="plan-mini" *ngIf="planoContratado">
+          <span>Plano ativo</span>
+          <strong>{{ planoContratado.nome }}</strong>
+          <small>{{ planoContratado.preco }} /mês</small>
+        </div>
 
-          <span>PRÓXIMA VACINA</span>
-
-          <strong>V10 - reforço</strong>
-
-          <small>20 Mar 2026</small>
-
+        <div class="plan-mini empty" *ngIf="!planoContratado">
+          <span>Plano ativo</span>
+          <strong>Nenhum plano</strong>
+          <small>Contrate para proteger seu pet</small>
         </div>
 
       </aside>
 
-      <section class="pet-info">
+      <section class="profile-content">
 
-        <div class="info-header">
-
+        <div class="content-header">
           <div>
-            <h2>Dados do Pet</h2>
-
-            <p>
-              Informações cadastradas pelo tutor.
-            </p>
+            <span>ÁREA DO USUÁRIO</span>
+            <h2>Resumo do perfil</h2>
           </div>
 
-          <span>Perfil verificado</span>
-
+          <strong>Perfil verificado</strong>
         </div>
 
-        <div class="info-grid">
+        <div class="profile-sections">
 
-          <div>
+          <article class="section-card">
+            <div class="section-title">
+              <span>01</span>
+              <div>
+                <h3>Dados do Tutor</h3>
+                <p>Informações principais do responsável.</p>
+              </div>
+            </div>
 
-            <small>ESPÉCIE</small>
+            <div class="compact-grid">
+              <div>
+                <small>NOME</small>
+                <strong>{{ nomeTutor }}</strong>
+              </div>
 
-            <strong *ngIf="!editando">
-              {{ petSelecionado.especie }}
-            </strong>
+              <div>
+                <small>E-MAIL</small>
+                <strong>{{ emailTutor }}</strong>
+              </div>
 
-            <input
-              *ngIf="editando"
-              [(ngModel)]="petSelecionado.especie"
-            >
+              <div>
+                <small>STATUS</small>
+                <strong>Perfil ativo</strong>
+              </div>
 
-          </div>
+              <div>
+                <small>CONTA</small>
+                <strong>Usuário PetVitaliz</strong>
+              </div>
+            </div>
+          </article>
 
-          <div>
+          <article class="section-card plan-section" *ngIf="planoContratado">
+            <div class="section-title">
+              <span>02</span>
+              <div>
+                <h3>Plano Contratado</h3>
+                <p>{{ planoContratado.descricao }}</p>
+              </div>
+            </div>
 
-            <small>IDADE</small>
+            <div class="plan-row">
+              <div>
+                <small>PLANO</small>
+                <strong>{{ planoContratado.nome }}</strong>
+              </div>
 
-            <strong *ngIf="!editando">
-              {{ petSelecionado.idade }} anos
-            </strong>
+              <div>
+                <small>VALOR</small>
+                <strong>{{ planoContratado.preco }} /mês</strong>
+              </div>
 
-            <input
-              *ngIf="editando"
-              [(ngModel)]="petSelecionado.idade"
-            >
+              <a routerLink="/usuario/planos-pet">
+                Alterar plano
+              </a>
+            </div>
+          </article>
 
-          </div>
+          <article class="section-card plan-section empty-plan" *ngIf="!planoContratado">
+            <div class="section-title">
+              <span>02</span>
+              <div>
+                <h3>Plano Contratado</h3>
+                <p>Você ainda não possui um plano ativo.</p>
+              </div>
+            </div>
 
-          <div>
+            <div class="plan-row">
+              <div>
+                <small>PLANO</small>
+                <strong>Nenhum plano ativo</strong>
+              </div>
 
-            <small>SEXO</small>
+              <a routerLink="/usuario/planos-pet">
+                Contratar plano
+              </a>
+            </div>
+          </article>
 
-            <strong *ngIf="!editando">
-              {{ petSelecionado.sexo }}
-            </strong>
+          <article class="section-card">
+            <div class="section-title">
+              <span>03</span>
+              <div>
+                <h3>Dados do Pet</h3>
+                <p>Informações cadastradas pelo tutor.</p>
+              </div>
+            </div>
 
-            <input
-              *ngIf="editando"
-              [(ngModel)]="petSelecionado.sexo"
-            >
+            <div class="compact-grid">
 
-          </div>
+              <div>
+                <small>ESPÉCIE</small>
+                <strong *ngIf="!editando">{{ petSelecionado.especie }}</strong>
+                <input *ngIf="editando" [(ngModel)]="petSelecionado.especie">
+              </div>
 
-          <div>
+              <div>
+                <small>IDADE</small>
+                <strong *ngIf="!editando">{{ petSelecionado.idade }} anos</strong>
+                <input *ngIf="editando" [(ngModel)]="petSelecionado.idade">
+              </div>
 
-            <small>PESO</small>
+              <div>
+                <small>SEXO</small>
+                <strong *ngIf="!editando">{{ petSelecionado.sexo }}</strong>
+                <input *ngIf="editando" [(ngModel)]="petSelecionado.sexo">
+              </div>
 
-            <strong *ngIf="!editando">
-              {{ petSelecionado.peso }}kg
-            </strong>
+              <div>
+                <small>PESO</small>
+                <strong *ngIf="!editando">{{ petSelecionado.peso }}kg</strong>
+                <input *ngIf="editando" [(ngModel)]="petSelecionado.peso">
+              </div>
 
-            <input
-              *ngIf="editando"
-              [(ngModel)]="petSelecionado.peso"
-            >
+              <div>
+                <small>COR</small>
+                <strong *ngIf="!editando">{{ petSelecionado.cor }}</strong>
+                <input *ngIf="editando" [(ngModel)]="petSelecionado.cor">
+              </div>
 
-          </div>
+              <div>
+                <small>TUTOR</small>
+                <strong *ngIf="!editando">{{ petSelecionado.tutor }}</strong>
+                <input *ngIf="editando" [(ngModel)]="petSelecionado.tutor">
+              </div>
 
-          <div>
+            </div>
 
-            <small>COR</small>
+            <div class="observacao">
+              <small>OBSERVAÇÕES</small>
 
-            <strong *ngIf="!editando">
-              {{ petSelecionado.cor }}
-            </strong>
+              <p *ngIf="!editando">
+                {{ petSelecionado.observacoes || 'Nenhuma observação cadastrada.' }}
+              </p>
 
-            <input
-              *ngIf="editando"
-              [(ngModel)]="petSelecionado.cor"
-            >
+              <textarea
+                *ngIf="editando"
+                [(ngModel)]="petSelecionado.observacoes"
+              ></textarea>
+            </div>
 
-          </div>
+            <div class="vaccine-strip">
+              <div>
+                <small>PRÓXIMA VACINA</small>
+                <strong>V10 - reforço</strong>
+              </div>
 
-          <div>
+              <span>20 Mar 2026</span>
+            </div>
 
-            <small>TUTOR</small>
-
-            <strong *ngIf="!editando">
-              {{ petSelecionado.tutor }}
-            </strong>
-
-            <input
-              *ngIf="editando"
-              [(ngModel)]="petSelecionado.tutor"
-            >
-
-          </div>
-
-        </div>
-
-        <div class="observacao">
-
-          <small>OBSERVAÇÕES</small>
-
-          <p *ngIf="!editando">
-            {{ petSelecionado.observacoes }}
-          </p>
-
-          <textarea
-            *ngIf="editando"
-            [(ngModel)]="petSelecionado.observacoes"
-          ></textarea>
+          </article>
 
         </div>
 
@@ -243,5 +274,4 @@
     </main>
 
   </div>
-
 </section>

@@ -1,8 +1,22 @@
-<app-header *ngIf="!isFuncionarioRoute() && !isAdmRoute()"></app-header>
+<app-header
+  *ngIf="
+    !isFuncionarioRoute() &&
+    !isAdmRoute() &&
+    !isUsuarioRoute()
+  ">
+</app-header>
 
-<app-header-funcionario *ngIf="isFuncionarioRoute()"></app-header-funcionario>
+<app-header-usuario
+  *ngIf="isUsuarioRoute()">
+</app-header-usuario>
 
-<app-header-adm *ngIf="isAdmRoute()"></app-header-adm>
+<app-header-funcionario
+  *ngIf="isFuncionarioRoute()">
+</app-header-funcionario>
+
+<app-header-adm
+  *ngIf="isAdmRoute()">
+</app-header-adm>
 
 <router-outlet></router-outlet>
 

@@ -1,26 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-listar-cadastro-pet',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './listar-cadastro-pet.component.html',
   styleUrl: './listar-cadastro-pet.component.css'
 })
 export class ListarCadastroPetComponent implements OnInit {
   pets: any[] = [];
   petSelecionado: any = null;
+  planoContratado: any = null;
+  usuarioLogado: any = null;
   editando = false;
 
   ngOnInit(): void {
-    this.carregarPets();
+    this.carregarDados();
   }
 
-  carregarPets(): void {
+  carregarDados(): void {
     this.pets = JSON.parse(localStorage.getItem('petsCadastrados') || '[]');
     this.petSelecionado = this.pets.length > 0 ? this.pets[0] : null;
+
+    this.planoContratado = JSON.parse(localStorage.getItem('planoSelecionado') || 'null');
+    this.usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || 'null');
+  }
+
+  get nomeTutor(): string {
+    return this.usuarioLogado?.nome || this.usuarioLogado?.nomeCompleto || this.petSelecionado?.tutor || 'Tutor';
+  }
+
+  get emailTutor(): string {
+    return this.usuarioLogado?.email || 'E-mail não informado';
   }
 
   editarPet(): void {
@@ -34,7 +48,7 @@ export class ListarCadastroPetComponent implements OnInit {
   }
 
   cancelarEdicao(): void {
-    this.carregarPets();
+    this.carregarDados();
     this.editando = false;
   }
 

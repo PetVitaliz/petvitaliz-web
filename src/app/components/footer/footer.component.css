@@ -1,108 +1,88 @@
-:host {
-  display: block;
-  width: 100%;
-}
-
 .footer {
   position: relative;
-  width: 100%;
-  min-height: 360px;
-  padding: 36px 56px;
-  box-sizing: border-box;
-  background: #1b1b1b;
-  border-radius: 22px 22px 0 0;
+  min-height: 280px;
+  background: #1c1c1c;
+  border-radius: 18px;
+  padding: 34px 56px;
   overflow: hidden;
   color: #ffffff;
+  font-family: 'Inter', sans-serif;
 }
 
-.footer-logo {
-  position: relative;
+.footer-brand {
+  position: absolute;
+  top: 32px;
+  left: 34px;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .footer-logo img {
-  width: 28px;
-  height: 28px;
+  width: 88px;
   object-fit: contain;
 }
 
-.footer-logo span {
-  font-size: 20px;
-  font-weight: 800;
+.footer-paw-big {
+  position: absolute;
+  left: -14px;
+  bottom: -24px;
+  width: 190px;
+  opacity: 0.95;
+  z-index: 1;
 }
 
 .footer-links {
-  position: relative;
-  z-index: 2;
-  margin-left: auto;
-  max-width: 560px;
+  position: absolute;
+  top: 50px;
+  left: 46%;
+  right: 7%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
+  gap: 44px;
+  z-index: 2;
 }
 
 .footer-links h3 {
-  margin: 0 0 18px;
+  margin: 0 0 22px;
+  color: #ffffff;
   font-size: 13px;
   font-weight: 800;
 }
 
 .footer-links a {
   display: block;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   color: #ffffff;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 .footer-links a:hover {
-  color: #6572de;
+  color: #5d6ed3;
 }
 
-.footer-paw-big {
+.footer-bottom {
   position: absolute;
-  left: -45px;
-  bottom: -75px;
-  width: 260px;
-  z-index: 1;
-}
-
-.footer-paw-small {
-  position: absolute;
-  left: 180px;
-  top: 125px;
-  width: 120px;
-  z-index: 1;
-}
-
-.footer-copy {
-  position: absolute;
-  left: 50%;
-  bottom: 34px;
-  transform: translateX(-50%);
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
+  left: 47%;
+  right: 7%;
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   z-index: 2;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .footer-social {
-  position: absolute;
-  right: 56px;
-  bottom: 26px;
-  z-index: 2;
   display: flex;
-  gap: 16px;
-}
-
-.footer-social a,
-.footer-social img {
-  width: 38px;
-  height: 38px;
+  align-items: center;
+  gap: 14px;
 }
 
 .footer-social a {
@@ -111,89 +91,46 @@
   justify-content: center;
 }
 
-.footer-social a:hover {
-  transform: translateY(-3px);
+.footer-social img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
-@media (max-width: 1024px) {
-  .footer {
-    padding: 34px 32px 110px;
-  }
-
-  .footer-links {
-    margin-top: 42px;
-    margin-left: 0;
-    max-width: 100%;
-    grid-template-columns: repeat(4, minmax(110px, 1fr));
-  }
-
-  .footer-copy {
-    left: 32px;
-    transform: none;
-  }
-
-  .footer-social {
-    right: 32px;
-  }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .footer {
     min-height: auto;
-    padding: 32px 24px;
+    padding: 34px 28px 42px;
+  }
+
+  .footer-brand,
+  .footer-links,
+  .footer-bottom {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+  }
+
+  .footer-brand {
+    margin-bottom: 32px;
   }
 
   .footer-links {
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px 24px;
+    gap: 28px;
+    margin-bottom: 34px;
   }
 
-  .footer-paw-big,
-  .footer-paw-small {
-    opacity: 0.25;
+  .footer-bottom {
+    flex-direction: column;
+    gap: 24px;
+    align-items: flex-start;
   }
 
-  .footer-copy {
-    position: relative;
-    left: auto;
-    bottom: auto;
-    margin-top: 36px;
-  }
-
-  .footer-social {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    margin-top: 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer {
-    padding: 30px 20px;
-    border-radius: 18px 18px 0 0;
-  }
-
-  .footer-links {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-
-  .footer-links h3 {
-    margin-bottom: 10px;
-  }
-
-  .footer-links a {
-    margin-bottom: 10px;
-  }
-
-  .footer-paw-big,
-  .footer-paw-small {
-    display: none;
-  }
-
-  .footer-social {
-    gap: 12px;
-    flex-wrap: wrap;
+  .footer-paw-big {
+    width: 150px;
+    opacity: 0.45;
   }
 }

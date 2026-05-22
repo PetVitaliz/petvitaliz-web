@@ -17,17 +17,17 @@ export class PlanosPetComponent {
     {
       tag: 'BÁSICO',
       nome: 'Plano Inicial',
-      preco: 'R$1,00',
-      destaque: false,
       recomendado: false,
-      descricao:
-        'Ideal para quem quer começar a cuidar melhor do pet.',
+      preco: 'R$1,00',
 
       beneficios: [
         'Basic Care',
         'Vacinas anuais',
         'Suporte via chat'
       ],
+
+      descricao:
+        'Ideal para quem quer começar a cuidar melhor do pet.',
 
       detalhes: [
         'Acompanhamento básico do pet',
@@ -40,17 +40,17 @@ export class PlanosPetComponent {
     {
       tag: 'POPULAR',
       nome: 'Cuidados Essenciais',
-      preco: 'R$2,00',
-      destaque: false,
       recomendado: false,
-      descricao:
-        'Plano equilibrado para rotina preventiva.',
+      preco: 'R$2,00',
 
       beneficios: [
         'Tudo do inicial',
         'Consultas ilimitadas',
         'Exames de sangue'
       ],
+
+      descricao:
+        'Plano equilibrado para rotina preventiva.',
 
       detalhes: [
         'Consultas ilimitadas',
@@ -63,11 +63,8 @@ export class PlanosPetComponent {
     {
       tag: 'MAIS COMPLETO',
       nome: 'Plano Abrangente',
-      preco: 'R$3,00',
-      destaque: true,
       recomendado: true,
-      descricao:
-        'A melhor escolha para acompanhamento completo.',
+      preco: 'R$3,00',
 
       beneficios: [
         'Tudo do Essencial',
@@ -75,6 +72,9 @@ export class PlanosPetComponent {
         'Especialistas gratuitos',
         'Limpeza de tártaro'
       ],
+
+      descricao:
+        'A melhor escolha para acompanhamento completo.',
 
       detalhes: [
         'Hospitalização 24h',
@@ -88,11 +88,8 @@ export class PlanosPetComponent {
     {
       tag: 'VIP',
       nome: 'Saúde Premium',
-      preco: 'R$4,00',
-      destaque: false,
       recomendado: false,
-      descricao:
-        'Plano premium para pets que precisam de atenção total.',
+      preco: 'R$4,00',
 
       beneficios: [
         'Cobertura total',
@@ -100,6 +97,9 @@ export class PlanosPetComponent {
         'Banho e tosa incluso',
         'Seguro viagem pet'
       ],
+
+      descricao:
+        'Plano premium para pets que precisam de atenção total.',
 
       detalhes: [
         'Cobertura total',
@@ -122,6 +122,7 @@ export class PlanosPetComponent {
   }
 
   concluirPlano(): void {
+
     if (!this.planoSelecionado) return;
 
     localStorage.setItem(
@@ -129,6 +130,6 @@ export class PlanosPetComponent {
       JSON.stringify(this.planoSelecionado)
     );
 
-    this.router.navigate(['/pagamento-plano']);
+    this.router.navigate(['/usuario/pagamento-plano']);
   }
 }

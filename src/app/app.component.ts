@@ -4,8 +4,10 @@ import { Router, RouterOutlet } from '@angular/router';
 
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+
 import { HeaderFuncionarioComponent } from './pages/funcionario/header-funcionario/header-funcionario.component';
 import { HeaderAdmComponent } from './pages/adm/header-adm/header-adm.component';
+import { HeaderUsuarioComponent } from './pages/usuario/header-usuario/header-usuario.component';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +16,7 @@ import { HeaderAdmComponent } from './pages/adm/header-adm/header-adm.component'
     RouterOutlet,
     NgIf,
     HeaderComponent,
+    HeaderUsuarioComponent,
     HeaderFuncionarioComponent,
     HeaderAdmComponent,
     FooterComponent
@@ -22,6 +25,7 @@ import { HeaderAdmComponent } from './pages/adm/header-adm/header-adm.component'
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+
   constructor(private router: Router) {}
 
   isFuncionarioRoute(): boolean {
@@ -30,5 +34,9 @@ export class AppComponent {
 
   isAdmRoute(): boolean {
     return this.router.url.includes('/adm');
+  }
+
+  isUsuarioRoute(): boolean {
+    return this.router.url.includes('/usuario');
   }
 }
