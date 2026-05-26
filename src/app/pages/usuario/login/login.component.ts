@@ -2,15 +2,13 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // Importar o HttpClient
+import { environment } from '../../../environments/environment'; // Importar seu ambiente
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink
-  ],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -18,13 +16,11 @@ export class LoginComponent {
 
   email = '';
   senha = '';
-
   erro = '';
-
   lembrar = false;
   senhaVisivel = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   entrar() {
     this.erro = '';
@@ -37,55 +33,55 @@ export class LoginComponent {
     const emailDigitado = this.email.trim().toLowerCase();
     const senhaDigitada = this.senha.trim();
 
-    if (
-      emailDigitado === 'admin@petvitaliz.com' &&
-      senhaDigitada === 'admin123'
-    ) {
+    if (emailDigitado === 'admin@petvitaliz.com' && senhaDigitada === 'admin123') {
       localStorage.setItem('usuarioLogado', JSON.stringify({
         nome: 'Dr. Ricardo Silva',
         email: emailDigitado,
         tipo: 'admin'
       }));
-
       this.router.navigate(['/adm/home']);
       return;
     }
 
-    if (
-      emailDigitado === 'funcionario@petvitaliz.com' &&
-      senhaDigitada === 'func123'
-    ) {
+    if (emailDigitado === 'funcionario@petvitaliz.com' && senhaDigitada === 'func123') {
       localStorage.setItem('usuarioLogado', JSON.stringify({
         nome: 'Funcionário PetVitaliz',
         email: emailDigitado,
         tipo: 'funcionario'
       }));
-
       this.router.navigate(['/funcionario/home']);
       return;
     }
 
-    const usuarioSalvo = localStorage.getItem('usuarioCadastro');
+    const dadosLogin = {
+      email: emailDigitado,
+      senha: senhaDigitada
+    };
 
-    if (usuarioSalvo) {
-      const usuario = JSON.parse(usuarioSalvo);
-
-      if (
-        usuario.email?.toLowerCase() === emailDigitado &&
-        usuario.senha === senhaDigitada
-      ) {
-        localStorage.setItem('usuarioLogado', JSON.stringify({
-          nome: `${usuario.nome} ${usuario.sobrenome}`,
-          email: usuario.email,
-          tipo: 'usuario'
-        }));
-
+    this.http.post(`${environment.apiUrl}/user/login`, dadosLogin, {
+      withCredentials: true
+    })
+    .subscribe({
+      next: (response: any) => {
+        localStorage.setItem('usuarioLogado', JSON.stringify(response.usuario));
+        
         this.router.navigate(['/home']);
-        return;
+      },
+      error: (err) => {
+        console.error("Erro no fluxo de login:", err);
+        
+        if (err.error) {
+          this.erro = err.error.mensagem || err.error.message;
+        } 
+        
+        if (!this.erro && typeof err.error === 'string') {
+          this.erro = err.error;
+        } 
+        
+        if (!this.erro) {
+          this.erro = 'Não foi possível conectar ao servidor.';
+        }
       }
-    }
-
-    this.erro = 'E-mail ou senha inválidos.';
+    });
   }
-
 }

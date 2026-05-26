@@ -36,10 +36,10 @@ export const routes: Routes = [
   { path: '', component: HomeUsuarioComponent },
   { path: 'home', component: HomeUsuarioComponent },
 
-  { path: 'usuario/login', component: LoginComponent },
-  { path: 'usuario/esqueci-senha', component: EsqueciSenhaComponent },
-  { path: 'usuario/cadastro', component: CadastroComponent },
-  { path: 'usuario/reset-senha', component: ResetSenhaComponent },
+  { path: 'user/login', component: LoginComponent },
+  { path: 'user/esqueci-senha', component: EsqueciSenhaComponent },
+  { path: 'user/cadastro', component: CadastroComponent },
+  { path: 'user/reset-senha', component: ResetSenhaComponent },
 
   { path: 'servicos', component: ServicosComponent },
   { path: 'sobre-nos', component: SobreNosComponent },

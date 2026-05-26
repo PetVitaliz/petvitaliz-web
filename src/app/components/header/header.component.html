@@ -13,15 +13,53 @@
     <a routerLink="/adocao">Adoção</a>
   </nav>
 
-  <div class="buttons">
-    <button class="btn-outline" routerLink="/usuario/cadastro">
-      Registre-se
-    </button>
+  @if (usuario) {
+    <div class="user-logged-info">
+      
+      <div class="user-menu-container">
+        
+        <div class="avatar-inicial" (click)="toggleDropdown()" title="{{ usuario.nome }}">
+          {{ inicialNome }}
+        </div>
 
-    <button class="btn-primary" routerLink="/usuario/login">
-      Login
-    </button>
-  </div>
+        @if (dropdownAberto) {
+          <div class="dropdown-menu">
+            <div class="dropdown-header">Olá, {{ usuario.nome.split(' ')[0] }}!</div>
+            <hr class="dropdown-divider">
+            
+            @if (usuario.tipo === 'usuario') {
+              <a routerLink="/user/listar/pet" (click)="dropdownAberto = false">
+                <span class="material-icons dropdown-icon">pets</span> Meus pets
+              </a>
+              <a routerLink="/user/planos" (click)="dropdownAberto = false">
+                <span class="material-icons dropdown-icon">credit_card</span> Meus planos
+              </a>
+            } @else if (usuario.tipo === 'admin') {
+              <a routerLink="/adm/home" (click)="dropdownAberto = false">
+                <span class="material-icons dropdown-icon">admin_panel_settings</span> Painel ADM
+              </a>
+            }
+
+            <hr class="dropdown-divider">
+            <button class="dropdown-item-logout" (click)="logout()">
+              <span class="material-icons dropdown-icon text-danger">logout</span> Sair
+            </button>
+          </div>
+        }
+      </div>
+
+    </div>
+  } @else {
+    <div class="buttons">
+      <button class="btn-outline" routerLink="/user/cadastro">
+        Registre-se
+      </button>
+
+      <button class="btn-primary" routerLink="/user/login">
+        Login
+      </button>
+    </div>
+  }
 
   <button class="menu-mobile" type="button">
     ☰

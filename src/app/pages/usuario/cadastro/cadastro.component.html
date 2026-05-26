@@ -79,8 +79,10 @@
             type="text"
             id="nascimento"
             name="nascimento"
+            [(ngModel)]="nascimento"
             placeholder="dd/mm/yyyy"
-            [(ngModel)]="nascimento">
+            appDataMask
+            maxlength="10">
 
         </div>
 
@@ -198,13 +200,17 @@
 
       <!-- ERRO -->
 
-      <p
-        class="erro"
-        *ngIf="erro">
+      @if (erro) {
+        <div class="erro" *ngIf="erro">
+          {{ erro }}
+        </div>
+      }
 
-        {{ erro }}
-
-      </p>
+      @if (sucesso) {
+        <div class="alerta-sucesso">
+          {{ sucesso }}
+        </div>
+      }
 
       <!-- BOTÃO -->
 
@@ -227,7 +233,7 @@
         </a>
 
       </p>
-
+      
     </form>
 
   </div>
