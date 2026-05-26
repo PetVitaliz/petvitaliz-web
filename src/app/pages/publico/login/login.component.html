@@ -7,10 +7,14 @@
     <form (ngSubmit)="entrar()">
 
       <div class="form-group">
+
         <label for="email">E-mail</label>
 
         <div class="input-box">
-          <span class="input-icon">✉</span>
+
+          <span class="material-icons input-icon">
+            mail
+          </span>
 
           <input
             type="email"
@@ -18,21 +22,32 @@
             name="email"
             placeholder="Digite seu e-mail"
             [(ngModel)]="email">
+
         </div>
+
       </div>
 
       <div class="form-group">
 
         <div class="label-row">
+
           <label for="senha">Senha</label>
 
-          <a routerLink="/usuario/esqueci-senha">
+          <a
+            routerLink="/esqueci-senha"
+            class="forgot-password">
+
             Esqueci minha senha
+
           </a>
+
         </div>
 
         <div class="input-box">
-          <span class="input-icon">🔒</span>
+
+          <span class="material-icons input-icon">
+            lock
+          </span>
 
           <input
             [type]="senhaVisivel ? 'text' : 'password'"
@@ -46,24 +61,56 @@
             class="eye-btn"
             (click)="senhaVisivel = !senhaVisivel">
 
-            {{ senhaVisivel ? '🙈' : '👁' }}
+            <span
+              class="material-icons"
+              *ngIf="!senhaVisivel">
+
+              visibility
+
+            </span>
+
+            <span
+              class="material-icons"
+              *ngIf="senhaVisivel">
+
+              visibility_off
+
+            </span>
 
           </button>
+
         </div>
+
       </div>
 
       <label class="remember">
-        <input type="checkbox" name="lembrar" [(ngModel)]="lembrar">
-        <span>Lembrar-me neste dispositivo</span>
+
+        <input
+          type="checkbox"
+          name="lembrar"
+          [(ngModel)]="lembrar">
+
+        <span>
+          Lembrar-me neste dispositivo
+        </span>
+
       </label>
 
-      <p class="erro" *ngIf="erro">
+      <p
+        class="erro"
+        *ngIf="erro">
+
         {{ erro }}
+
       </p>
 
-      <button type="submit" class="btn-login">
+      <button
+        type="submit"
+        class="btn-login">
+
         Entrar
         <span>→</span>
+
       </button>
 
     </form>
@@ -71,23 +118,36 @@
     <div class="security-box">
 
       <div class="security-icon">
-        🔒
+
+        <span class="material-icons">
+          verified_user
+        </span>
+
       </div>
 
       <div class="security-content">
-        <strong>AMBIENTE SEGURO</strong>
+
+        <strong>
+          AMBIENTE SEGURO
+        </strong>
 
         <p>
           Este portal é de uso exclusivo de colaboradores autorizados.
           Todo acesso é monitorado para garantir a segurança dos dados dos nossos pacientes e protocolos internos.
         </p>
+
       </div>
 
     </div>
 
-    <button class="btn-register" type="button" routerLink="/usuario/cadastro">
+    <button
+      class="btn-register"
+      type="button"
+      routerLink="/cadastro">
+
       Cadastre-se
       <span>→</span>
+
     </button>
 
   </div>

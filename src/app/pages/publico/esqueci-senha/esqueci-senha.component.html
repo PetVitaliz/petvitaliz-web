@@ -2,7 +2,9 @@
 
   <div class="esqueci-card">
 
-    <h2>Esqueceu sua senha?</h2>
+    <h2>
+      Esqueceu sua senha?
+    </h2>
 
     <p class="subtitle">
       Insira seu e-mail cadastrado e enviaremos as instruções para criar uma nova senha.
@@ -11,10 +13,16 @@
     <form (ngSubmit)="enviarLink()">
 
       <div class="form-group">
-        <label for="email">E-mail</label>
+
+        <label for="email">
+          E-mail
+        </label>
 
         <div class="input-box">
-          <span>✉</span>
+
+          <span class="material-icons input-icon">
+            mail
+          </span>
 
           <input
             type="email"
@@ -22,34 +30,73 @@
             name="email"
             placeholder="Coloque seu e-mail"
             [(ngModel)]="email">
+
         </div>
+
       </div>
 
-      <p class="erro" *ngIf="erro">{{ erro }}</p>
+      <p
+        class="erro"
+        *ngIf="erro">
 
-      <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+        {{ erro }}
 
-      <button type="submit" class="btn-submit">
+      </p>
+
+      <p
+        class="sucesso"
+        *ngIf="sucesso">
+
+        {{ sucesso }}
+
+      </p>
+
+      <button
+        type="submit"
+        class="btn-submit">
+
         Enviar link
         <span>→</span>
+
       </button>
 
     </form>
 
-    <a routerLink="/usuario/login" class="back-login">
-      ‹ Voltar para o login
+    <a
+      routerLink="/login"
+      class="back-login">
+
+      <span class="material-icons">
+        arrow_back
+      </span>
+
+      Voltar para o login
+
     </a>
 
     <div class="security-box">
-      <div class="security-icon">♡</div>
 
-      <div>
-        <strong>AMBIENTE SEGURO</strong>
+      <div class="security-icon">
+
+        <span class="material-icons">
+          verified_user
+        </span>
+
+      </div>
+
+      <div class="security-content">
+
+        <strong>
+          AMBIENTE SEGURO
+        </strong>
+
         <p>
           Este portal é de uso exclusivo de colaboradores autorizados.
           Todo acesso é monitorado para garantir a segurança dos dados dos nossos pacientes e protocolos internos.
         </p>
+
       </div>
+
     </div>
 
   </div>
