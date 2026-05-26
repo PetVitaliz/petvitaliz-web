@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConsultasService, ConsultaFuncionario } from '../../../core/services/consultas.service';
@@ -10,7 +10,8 @@ import { ConsultasService, ConsultaFuncionario } from '../../../core/services/co
   templateUrl: './pets-funcionario.component.html',
   styleUrl: './pets-funcionario.component.css'
 })
-export class PetsFuncionarioComponent {
+export class PetsFuncionarioComponent implements OnInit {
+
   filtroEspecie = 'Todos';
   filtroStatus = 'Ativo';
 
@@ -18,29 +19,22 @@ export class PetsFuncionarioComponent {
 
   modalTipo = '';
   petSelecionado: any = null;
+  petEditandoOriginal: any = null;
 
   paginaAtual = 1;
   itensPorPagina = 8;
 
-  novoPet: any = {
-    nome: '',
-    especie: 'Cão',
-    raca: '',
-    idade: '',
-    status: 'Ativo',
-    tutor: '',
-    prontuario: ''
-  };
+  novoPet: any = this.criarPetVazio();
 
-  agendamento: any = {
+  agendamento = {
     data: '',
     horario: '',
-    motivo: ''
+    motivo: 'Consulta de rotina'
   };
 
-  constructor(private consultasService: ConsultasService) {}
+  pets: any[] = [];
 
-  pets = [
+  petsPadrao = [
     {
       nome: 'Bento',
       especie: 'Cão',
@@ -115,89 +109,144 @@ export class PetsFuncionarioComponent {
     }
   ];
 
-  get petsFiltrados() {
+  constructor(private consultasService: ConsultasService) {}
+
+  ngOnInit(): void {
+    this.carregarPets();
+  }
+
+  carregarPets(): void {
+    const petsSalvos = localStorage.getItem('pets');
+
+    if (petsSalvos) {
+      this.pets = JSON.parse(petsSalvos);
+      return;
+    }
+
+    this.pets = [...this.petsPadrao];
+    this.salvarPets();
+  }
+
+  salvarPets(): void {
+    localStorage.setItem('pets', JSON.stringify(this.pets));
+  }
+
+  get petsFiltrados(): any[] {
     return this.pets.filter(pet => {
-      const especieOk = this.filtroEspecie === 'Todos' || pet.especie === this.filtroEspecie;
-      const statusOk = this.filtroStatus === 'Todos' || pet.status === this.filtroStatus;
+      const especieOk =
+        this.filtroEspecie === 'Todos' ||
+        pet.especie === this.filtroEspecie;
+
+      const statusOk =
+        this.filtroStatus === 'Todos' ||
+        pet.status === this.filtroStatus;
+
       return especieOk && statusOk;
     });
   }
 
-  get totalPaginas() {
-    return Math.ceil(this.petsFiltrados.length / this.itensPorPagina);
+  get totalPaginas(): number {
+    return Math.max(
+      Math.ceil(this.petsFiltrados.length / this.itensPorPagina),
+      1
+    );
   }
 
-  get paginas() {
+  get paginas(): number[] {
     return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
   }
 
-  get petsPaginados() {
+  get petsPaginados(): any[] {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
     return this.petsFiltrados.slice(inicio, inicio + this.itensPorPagina);
   }
 
-  alterarEspecie(especie: string) {
+  alterarEspecie(especie: string): void {
     this.filtroEspecie = especie;
     this.paginaAtual = 1;
   }
 
-  alterarStatus(status: string) {
+  alterarStatus(status: string): void {
     this.filtroStatus = status;
     this.paginaAtual = 1;
   }
 
-  alternarVisualizacao() {
+  alternarVisualizacao(): void {
     this.visualizacao = this.visualizacao === 'grid' ? 'lista' : 'grid';
   }
 
-  mudarPagina(pagina: number) {
+  mudarPagina(pagina: number): void {
     if (pagina < 1 || pagina > this.totalPaginas) return;
     this.paginaAtual = pagina;
   }
 
-  abrirNovoPaciente() {
+  abrirNovoPaciente(): void {
     this.modalTipo = 'novo';
     this.petSelecionado = null;
-
-    this.novoPet = {
-      nome: '',
-      especie: 'Cão',
-      raca: '',
-      idade: '',
-      status: 'Ativo',
-      tutor: '',
-      prontuario: 'Novo paciente cadastrado.'
-    };
+    this.petEditandoOriginal = null;
+    this.novoPet = this.criarPetVazio();
   }
 
-  abrirProntuario(pet: any) {
+  abrirEdicao(pet: any): void {
+    this.modalTipo = 'editar';
+    this.petSelecionado = pet;
+    this.petEditandoOriginal = pet;
+    this.novoPet = { ...pet };
+  }
+
+  salvarPet(): void {
+    if (
+      !this.novoPet.nome ||
+      !this.novoPet.especie ||
+      !this.novoPet.raca ||
+      !this.novoPet.idade ||
+      !this.novoPet.tutor
+    ) {
+      alert('Preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    if (this.modalTipo === 'editar' && this.petEditandoOriginal) {
+      Object.assign(this.petEditandoOriginal, this.novoPet);
+    } else {
+      this.pets.unshift({ ...this.novoPet });
+    }
+
+    this.salvarPets();
+    this.paginaAtual = 1;
+    this.fecharModal();
+  }
+
+  excluirPet(pet: any): void {
+    const confirmar = confirm(`Deseja excluir o paciente ${pet.nome}?`);
+
+    if (!confirmar) return;
+
+    this.pets = this.pets.filter(item => item !== pet);
+    this.salvarPets();
+
+    if (this.paginaAtual > this.totalPaginas) {
+      this.paginaAtual = this.totalPaginas;
+    }
+  }
+
+  abrirProntuario(pet: any): void {
     this.modalTipo = 'prontuario';
     this.petSelecionado = pet;
   }
 
-  abrirAgendamento(pet: any) {
+  abrirAgendamento(pet: any): void {
     this.modalTipo = 'agendar';
     this.petSelecionado = pet;
 
     this.agendamento = {
       data: this.pegarDataHoje(),
       horario: '',
-      motivo: ''
+      motivo: 'Consulta de rotina'
     };
   }
 
-  salvarNovoPaciente() {
-    if (!this.novoPet.nome || !this.novoPet.raca || !this.novoPet.idade || !this.novoPet.tutor) {
-      alert('Preencha todos os campos obrigatórios.');
-      return;
-    }
-
-    this.pets.unshift({ ...this.novoPet });
-    this.paginaAtual = 1;
-    this.fecharModal();
-  }
-
-  salvarAgendamento() {
+  salvarAgendamento(): void {
     if (
       !this.petSelecionado ||
       !this.agendamento.data ||
@@ -218,7 +267,7 @@ export class PetsFuncionarioComponent {
       motivo: this.agendamento.motivo,
       status: 'AGENDADO',
       data: this.agendamento.data,
-      imagem: 'assets/pets/pet-default.jpg',
+      imagem: '',
       tipo: 'gray'
     };
 
@@ -228,22 +277,27 @@ export class PetsFuncionarioComponent {
     this.fecharModal();
   }
 
-  fecharModal() {
+  inicialPet(pet: any): string {
+    if (!pet || !pet.nome) return 'P';
+    return pet.nome.charAt(0).toUpperCase();
+  }
+
+  fecharModal(): void {
     this.modalTipo = '';
     this.petSelecionado = null;
+    this.petEditandoOriginal = null;
   }
 
-  exportarLista() {
-    alert('Lista exportada com sucesso!');
-  }
-
-  imprimirRelatorio(pet: any) {
-    this.petSelecionado = pet;
-    this.modalTipo = 'imprimir';
-
-    setTimeout(() => {
-      window.print();
-    }, 200);
+  private criarPetVazio(): any {
+    return {
+      nome: '',
+      especie: 'Cão',
+      raca: '',
+      idade: '',
+      status: 'Ativo',
+      tutor: '',
+      prontuario: 'Novo paciente cadastrado.'
+    };
   }
 
   private definirPeriodo(horario: string): string {

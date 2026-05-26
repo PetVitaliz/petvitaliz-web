@@ -40,7 +40,7 @@
 }
 
 .logo img {
-  height: 58px;
+  height: 46px;
   object-fit: contain;
 }
 
@@ -54,9 +54,10 @@
 .navbar a {
   text-decoration: none;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   color: #111111;
   transition: 0.25s ease;
+  position: relative;
 }
 
 .navbar a:hover,
@@ -79,14 +80,14 @@
 
 .user-info strong {
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
   color: #111111;
   white-space: nowrap;
 }
 
 .user-info span {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: #777777;
 }
 
@@ -103,6 +104,11 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.perfil-btn:hover {
+  background: #ebefff;
 }
 
 .perfil-btn img {
@@ -151,7 +157,7 @@
   border-radius: 12px;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: #111111;
   cursor: pointer;
   transition: 0.25s ease;
@@ -173,6 +179,7 @@
   font-size: 24px;
   color: #5D6ED3;
   cursor: pointer;
+  transition: 0.25s ease;
 }
 
 .menu-mobile:hover {
@@ -219,7 +226,7 @@
   }
 
   .logo img {
-    height: 50px;
+    height: 42px;
   }
 
   .user-area {
@@ -297,7 +304,7 @@
   }
 
   .logo img {
-    height: 44px;
+    height: 38px;
   }
 
   .menu-mobile {
@@ -319,7 +326,7 @@
 
 @media (max-width: 380px) {
   .logo img {
-    height: 39px;
+    height: 34px;
   }
 
   .header-container {

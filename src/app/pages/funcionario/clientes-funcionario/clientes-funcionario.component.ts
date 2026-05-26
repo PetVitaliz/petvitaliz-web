@@ -28,7 +28,7 @@ export class ClientesFuncionarioComponent {
     data: '',
     pet: '',
     idade: '',
-    motivo: ''
+    motivo: 'Consulta de rotina'
   };
 
   clientes = [
@@ -92,7 +92,7 @@ export class ClientesFuncionarioComponent {
   constructor(private consultasService: ConsultasService) {}
 
   get clientesFiltrados() {
-    const termo = this.searchTerm?.toLowerCase().trim() || '';
+    const termo = this.searchTerm.toLowerCase().trim();
 
     return this.clientes.filter(cliente => {
       const matchTexto =
@@ -110,19 +110,32 @@ export class ClientesFuncionarioComponent {
     });
   }
 
-  get totalAtivos() {
+  get totalAtivos(): number {
     return this.clientes.filter(c => c.status === 'ATIVO').length;
   }
 
-  get totalInativos() {
+  get totalInativos(): number {
     return this.clientes.filter(c => c.status === 'INATIVO').length;
   }
 
-  get totalPets() {
+  get totalPets(): number {
     return this.clientes.reduce((total, cliente) => total + Number(cliente.pets), 0);
   }
 
-  novoCliente() {
+  inicialCliente(cliente: any): string {
+    if (!cliente || !cliente.nome) {
+      return 'C';
+    }
+
+    return cliente.nome.charAt(0).toUpperCase();
+  }
+
+  limparBusca(): void {
+    this.searchTerm = '';
+    this.statusFiltro = 'Todos';
+  }
+
+  novoCliente(): void {
     this.modoNovo = true;
 
     this.clienteEditando = {
@@ -138,50 +151,50 @@ export class ClientesFuncionarioComponent {
     };
   }
 
-  editar(cliente: any) {
+  editar(cliente: any): void {
     this.modoNovo = false;
     this.clienteEditando = { ...cliente, original: cliente };
   }
 
-  abrirDetalhes(cliente: any) {
+  abrirDetalhes(cliente: any): void {
     this.clienteSelecionado = cliente;
     this.modalDetalhesAberto = true;
   }
 
-  fecharDetalhes() {
+  fecharDetalhes(): void {
     this.modalDetalhesAberto = false;
     this.clienteSelecionado = null;
   }
 
-  verPets(cliente: any) {
+  verPets(cliente: any): void {
     this.clienteSelecionado = cliente;
     this.modalPetsAberto = true;
   }
 
-  fecharPets() {
+  fecharPets(): void {
     this.modalPetsAberto = false;
     this.clienteSelecionado = null;
   }
 
-  agendarConsulta(cliente: any) {
+  agendarConsulta(cliente: any): void {
     this.clienteSelecionado = cliente;
     this.modalAgendarAberto = true;
 
     this.novaConsulta = {
       horario: '',
       data: this.pegarDataHoje(),
-      pet: '',
+      pet: cliente.petsLista?.[0] || '',
       idade: '',
-      motivo: ''
+      motivo: 'Consulta de rotina'
     };
   }
 
-  fecharAgendar() {
+  fecharAgendar(): void {
     this.modalAgendarAberto = false;
     this.clienteSelecionado = null;
   }
 
-  salvarAgendamento() {
+  salvarAgendamento(): void {
     if (
       !this.clienteSelecionado ||
       !this.novaConsulta.horario ||
@@ -204,7 +217,7 @@ export class ClientesFuncionarioComponent {
       motivo: this.novaConsulta.motivo,
       status: 'AGENDADO',
       data: this.novaConsulta.data,
-      imagem: 'assets/pets/pet-default.jpg',
+      imagem: '',
       tipo: 'gray'
     };
 
@@ -214,11 +227,10 @@ export class ClientesFuncionarioComponent {
     alert('Consulta agendada com sucesso!');
   }
 
-  formatarCPF() {
+  formatarCPF(): void {
     let valor = this.clienteEditando.cpf.replace(/\D/g, '');
 
     valor = valor.slice(0, 11);
-
     valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
     valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
     valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
@@ -226,7 +238,7 @@ export class ClientesFuncionarioComponent {
     this.clienteEditando.cpf = valor;
   }
 
-  formatarTelefone() {
+  formatarTelefone(): void {
     let valor = this.clienteEditando.telefone.replace(/\D/g, '');
 
     valor = valor.slice(0, 11);
@@ -242,7 +254,7 @@ export class ClientesFuncionarioComponent {
     this.clienteEditando.telefone = valor;
   }
 
-  formatarDataParaExibicao(data: string) {
+  formatarDataParaExibicao(data: string): string {
     if (!data) return '';
 
     const [ano, mes, dia] = data.split('-');
@@ -265,7 +277,12 @@ export class ClientesFuncionarioComponent {
     return `${dia} ${meses[mes]} ${ano}`;
   }
 
-  salvar() {
+  salvar(): void {
+    if (!this.clienteEditando.nome || !this.clienteEditando.cpf || !this.clienteEditando.telefone) {
+      alert('Preencha nome, CPF e telefone do cliente.');
+      return;
+    }
+
     if (this.clienteEditando.ultimaVisitaData) {
       this.clienteEditando.ultimaVisita = this.formatarDataParaExibicao(this.clienteEditando.ultimaVisitaData);
     }
@@ -292,7 +309,7 @@ export class ClientesFuncionarioComponent {
     this.modoNovo = false;
   }
 
-  cancelar() {
+  cancelar(): void {
     this.clienteEditando = null;
     this.modoNovo = false;
   }

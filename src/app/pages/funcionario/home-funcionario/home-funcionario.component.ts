@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ConsultasService, ConsultaFuncionario } from '../../../core/services/consultas.service';
 
 @Component({
   selector: 'app-home-funcionario',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './home-funcionario.component.html',
   styleUrl: './home-funcionario.component.css'
 })
 export class HomeFuncionarioComponent implements OnInit {
 
   filtroAberto = false;
-  modalConsultaAberto = false;
   prontuarioAberto = false;
   dialogoAberto = false;
 
@@ -23,20 +23,14 @@ export class HomeFuncionarioComponent implements OnInit {
   filtroSelecionado = 'Todos';
   consultaSelecionada: ConsultaFuncionario | null = null;
 
-  novaConsulta = {
-    horario: '',
-    pet: '',
-    tutor: '',
-    idade: '',
-    motivo: ''
-  };
-
+  dataAtual = '';
   consultas: ConsultaFuncionario[] = [];
 
-  constructor(private consultasService: ConsultasService) {}
+  constructor(private consultasService: ConsultasService) { }
 
   ngOnInit(): void {
     this.carregarConsultas();
+    this.definirDataAtual();
   }
 
   carregarConsultas(): void {
@@ -49,7 +43,31 @@ export class HomeFuncionarioComponent implements OnInit {
       return this.consultas;
     }
 
-    return this.consultas.filter(consulta => consulta.status === this.filtroSelecionado);
+    return this.consultas.filter(
+      consulta => consulta.status === this.filtroSelecionado
+    );
+  }
+
+  get totalHoje(): number {
+    return this.consultas.length;
+  }
+
+  get urgenciasHoje(): number {
+    return this.consultas.filter(
+      consulta => consulta.status === 'URGENTE'
+    ).length;
+  }
+
+  get cirurgiasHoje(): number {
+    return this.consultas.filter(
+      consulta => consulta.motivo.toLowerCase().includes('cirurgia')
+    ).length;
+  }
+
+  get laudosPendentes(): number {
+    return this.consultas.filter(
+      consulta => consulta.status === 'EM ESPERA'
+    ).length;
   }
 
   abrirDialogo(titulo: string, mensagem: string): void {
@@ -67,7 +85,6 @@ export class HomeFuncionarioComponent implements OnInit {
   }
 
   abrirFiltros(): void {
-    this.carregarConsultas();
     this.filtroAberto = true;
   }
 
@@ -81,67 +98,39 @@ export class HomeFuncionarioComponent implements OnInit {
     this.filtroAberto = false;
   }
 
-  abrirNovaConsulta(): void {
-    this.modalConsultaAberto = true;
-    this.novaConsulta = {
-      horario: '',
-      pet: '',
-      tutor: '',
-      idade: '',
-      motivo: ''
-    };
-  }
-
-  fecharNovaConsulta(): void {
-    this.modalConsultaAberto = false;
-  }
-
-  salvarNovaConsulta(): void {
-    if (
-      !this.novaConsulta.horario ||
-      !this.novaConsulta.pet ||
-      !this.novaConsulta.tutor ||
-      !this.novaConsulta.idade ||
-      !this.novaConsulta.motivo
-    ) {
-      this.abrirDialogo('Campos obrigatórios', 'Preencha horário, pet, tutor, idade e motivo antes de salvar a consulta.');
-      return;
-    }
-
-    const novaConsulta: ConsultaFuncionario = {
-      hora: this.novaConsulta.horario,
-      horario: this.novaConsulta.horario,
-      periodo: this.definirPeriodo(this.novaConsulta.horario),
-      pet: this.novaConsulta.pet,
-      tutor: this.novaConsulta.tutor,
-      idade: this.novaConsulta.idade,
-      motivo: this.novaConsulta.motivo,
-      imagem: 'assets/pets/pet-default.jpg',
-      status: 'AGENDADO',
-      data: this.pegarDataHoje(),
-      tipo: 'gray'
-    };
-
-    this.consultasService.adicionarConsulta(novaConsulta);
-    this.carregarConsultas();
-
-    this.fecharNovaConsulta();
-    this.abrirDialogo('Consulta cadastrada', 'A nova consulta foi adicionada à agenda com sucesso.');
-  }
-
   iniciarConsulta(): void {
     if (!this.consultaSelecionada) {
-      this.abrirDialogo('Consulta não selecionada', 'Selecione uma consulta da agenda primeiro.');
+      this.abrirDialogo(
+        'Consulta não selecionada',
+        'Selecione uma consulta da agenda primeiro.'
+      );
+
       return;
     }
 
+    this.consultasService.atualizarStatus(
+      this.consultaSelecionada,
+      'EM ATENDIMENTO'
+    );
+
+    this.consultaSelecionada.status = 'EM ATENDIMENTO';
+    this.consultaSelecionada.tipo = 'blue';
+
     this.prontuarioAberto = false;
-    this.abrirDialogo('Consulta iniciada', `Consulta iniciada: ${this.consultaSelecionada.pet}`);
+
+    this.abrirDialogo(
+      'Atendimento iniciado',
+      `O atendimento de ${this.consultaSelecionada.pet} foi iniciado com sucesso.`
+    );
   }
 
   abrirProntuario(): void {
     if (!this.consultaSelecionada) {
-      this.abrirDialogo('Prontuário indisponível', 'Selecione uma consulta para ver o prontuário.');
+      this.abrirDialogo(
+        'Prontuário indisponível',
+        'Selecione uma consulta para ver o prontuário.'
+      );
+
       return;
     }
 
@@ -152,22 +141,20 @@ export class HomeFuncionarioComponent implements OnInit {
     this.prontuarioAberto = false;
   }
 
-  private definirPeriodo(horario: string): string {
-    const hora = Number(horario.split(':')[0]);
-
-    if (hora >= 12) {
-      return 'PM';
+  inicialPet(consulta: ConsultaFuncionario | null): string {
+    if (!consulta || !consulta.pet) {
+      return 'P';
     }
 
-    return 'AM';
+    return consulta.pet.charAt(0).toUpperCase();
   }
 
-  private pegarDataHoje(): string {
+  private definirDataAtual(): void {
     const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-    const dia = String(hoje.getDate()).padStart(2, '0');
 
-    return `${ano}-${mes}-${dia}`;
+    this.dataAtual = hoje.toLocaleDateString('pt-BR', {
+      day: 'numeric',
+      month: 'long'
+    });
   }
 }

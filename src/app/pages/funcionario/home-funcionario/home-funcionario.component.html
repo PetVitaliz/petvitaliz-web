@@ -1,57 +1,72 @@
 <div class="page">
+
   <div class="top">
     <div class="left">
       <h1>Bom dia, Dr. Rodrigo.</h1>
-      <p>Aqui estão seus casos clínicos para hoje, <strong>23 de Outubro.</strong></p>
+      <p>
+        Aqui estão seus casos clínicos para hoje,
+        <strong>{{ dataAtual }}.</strong>
+      </p>
     </div>
 
     <div class="stats">
       <div class="box">
         <span>ATENDIMENTOS HOJE</span>
-        <h2>14</h2>
-        <small class="green-text">+2 vs. ontem</small>
+        <h2>{{ totalHoje }}</h2>
       </div>
 
       <div class="box">
         <span>LAUDOS PENDENTES</span>
-        <h2>05</h2>
+        <h2>{{ laudosPendentes }}</h2>
       </div>
 
       <div class="box">
         <span>CIRURGIAS AGENDADAS</span>
-        <h2>02</h2>
+        <h2>{{ cirurgiasHoje }}</h2>
       </div>
 
       <div class="box danger-box">
         <span>URGÊNCIAS</span>
-        <h2>01 *</h2>
+        <h2>{{ urgenciasHoje }}</h2>
       </div>
     </div>
   </div>
 
   <div class="card">
     <div class="card-header">
-      <h2>Agenda do Dia</h2>
+      <div>
+        <h2>Agenda do Dia</h2>
+        <p class="card-subtitle">
+          Selecione uma consulta para iniciar atendimento ou abrir o prontuário.
+        </p>
+      </div>
 
       <div class="buttons">
-        <button class="btn-outline" (click)="abrirFiltros()">Filtros</button>
-        <button class="btn-main" (click)="abrirNovaConsulta()">Nova Consulta</button>
+        <button class="btn-outline" type="button" (click)="abrirFiltros()">
+          Filtros
+        </button>
+
+        <button class="btn-main" type="button" routerLink="/funcionario/consultas">
+          Ver Agenda Completa
+        </button>
       </div>
     </div>
 
-    <div 
+    <div
       class="row"
       *ngFor="let consulta of consultasFiltradas"
-      [class.alert]="consulta.tipo === 'red'"
+      [class.alert]="consulta.status === 'URGENTE'"
       [class.selecionada]="consultaSelecionada === consulta"
-      (click)="selecionarConsulta(consulta)"
-    >
+      (click)="selecionarConsulta(consulta)">
+
       <div class="time">
-        <strong>{{ consulta.horario }}</strong>
+        <strong>{{ consulta.horario || consulta.hora }}</strong>
         <span>{{ consulta.periodo }}</span>
       </div>
 
-      <img class="pet-img" [src]="consulta.imagem" alt="Foto">
+      <div class="pet-avatar">
+        {{ inicialPet(consulta) }}
+      </div>
 
       <div class="content">
         <h3>{{ consulta.pet }}</h3>
@@ -61,75 +76,62 @@
       <div class="tag" [ngClass]="consulta.tipo">
         {{ consulta.status }}
       </div>
+
+      <div class="row-actions">
+        <button
+          type="button"
+          class="mini-btn"
+          (click)="selecionarConsulta(consulta); abrirProntuario(); $event.stopPropagation()">
+          Prontuário
+        </button>
+
+        <button
+          type="button"
+          class="mini-btn primary"
+          (click)="selecionarConsulta(consulta); iniciarConsulta(); $event.stopPropagation()">
+          Iniciar
+        </button>
+      </div>
     </div>
 
-    <div class="footer-actions">
-      <button 
-        class="btn-main large" 
-        [class.disabled]="!consultaSelecionada"
-        (click)="iniciarConsulta()"
-      >
-        Iniciar Consulta
-      </button>
+    <div class="empty-state" *ngIf="consultasFiltradas.length === 0">
+      <div class="empty-icon">✓</div>
 
-      <button 
-        class="btn-outline large"
-        [class.disabled-outline]="!consultaSelecionada"
-        (click)="abrirProntuario()"
-      >
-        Ver Prontuário
+      <h3>Nenhuma consulta para este filtro</h3>
+      <p>Você pode limpar os filtros ou acessar a agenda completa.</p>
+
+      <button class="btn-main" type="button" (click)="aplicarFiltro('Todos')">
+        Ver todas
       </button>
     </div>
   </div>
 
   <div class="modal-fundo" *ngIf="filtroAberto">
     <div class="modal-card pequeno">
-      <button class="fechar-modal" (click)="fecharFiltros()">×</button>
+      <button class="fechar-modal" type="button" (click)="fecharFiltros()">×</button>
 
       <h2>Filtros</h2>
       <p>Escolha quais consultas deseja visualizar.</p>
 
       <div class="opcoes-filtro">
-        <button (click)="aplicarFiltro('Todos')">Todos</button>
-        <button (click)="aplicarFiltro('EM ESPERA')">Em espera</button>
-        <button (click)="aplicarFiltro('CONFIRMADO')">Confirmados</button>
-        <button (click)="aplicarFiltro('URGENTE')">Urgentes</button>
-        <button (click)="aplicarFiltro('AGENDADO')">Agendados</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-fundo" *ngIf="modalConsultaAberto">
-    <div class="modal-card">
-      <button class="fechar-modal" (click)="fecharNovaConsulta()">×</button>
-
-      <h2>Nova Consulta</h2>
-      <p>Cadastre um novo atendimento na agenda do dia.</p>
-
-      <div class="modal-form">
-        <label>Horário</label>
-        <input type="text" placeholder="Ex: 15:30" [(ngModel)]="novaConsulta.horario">
-
-        <label>Pet</label>
-        <input type="text" placeholder="Ex: Mel (Poodle)" [(ngModel)]="novaConsulta.pet">
-
-        <label>Motivo</label>
-        <input type="text" placeholder="Ex: Consulta de rotina" [(ngModel)]="novaConsulta.motivo">
-      </div>
-
-      <div class="modal-botoes">
-        <button class="btn-cancelar" (click)="fecharNovaConsulta()">Cancelar</button>
-        <button class="btn-salvar" (click)="salvarNovaConsulta()">Salvar</button>
+        <button type="button" (click)="aplicarFiltro('Todos')">Todos</button>
+        <button type="button" (click)="aplicarFiltro('EM ESPERA')">Em espera</button>
+        <button type="button" (click)="aplicarFiltro('CONFIRMADO')">Confirmados</button>
+        <button type="button" (click)="aplicarFiltro('EM ATENDIMENTO')">Em atendimento</button>
+        <button type="button" (click)="aplicarFiltro('URGENTE')">Urgentes</button>
+        <button type="button" (click)="aplicarFiltro('AGENDADO')">Agendados</button>
       </div>
     </div>
   </div>
 
   <div class="modal-fundo" *ngIf="prontuarioAberto">
     <div class="modal-card prontuario-modal">
-      <button class="fechar-modal" (click)="fecharProntuario()">×</button>
+      <button class="fechar-modal" type="button" (click)="fecharProntuario()">×</button>
 
       <div class="prontuario-topo" *ngIf="consultaSelecionada">
-        <img class="prontuario-foto" [src]="consultaSelecionada.imagem" alt="Foto do pet">
+        <div class="prontuario-avatar">
+          {{ inicialPet(consultaSelecionada) }}
+        </div>
 
         <div>
           <h2>Prontuário</h2>
@@ -140,6 +142,7 @@
       <div class="prontuario-card" *ngIf="consultaSelecionada">
         <div class="prontuario-nome">
           <h3>{{ consultaSelecionada.pet }}</h3>
+
           <span class="tag" [ngClass]="consultaSelecionada.tipo">
             {{ consultaSelecionada.status }}
           </span>
@@ -153,7 +156,10 @@
 
           <div>
             <small>Horário</small>
-            <strong>{{ consultaSelecionada.horario }} {{ consultaSelecionada.periodo }}</strong>
+            <strong>
+              {{ consultaSelecionada.horario || consultaSelecionada.hora }}
+              {{ consultaSelecionada.periodo }}
+            </strong>
           </div>
 
           <div>
@@ -163,31 +169,42 @@
 
           <div>
             <small>Data</small>
-            <strong>23 de Outubro</strong>
+            <strong>{{ dataAtual }}</strong>
           </div>
         </div>
 
         <div class="prontuario-observacao">
           <small>Observações</small>
-          <p>Paciente selecionado para acompanhamento clínico. Verifique histórico, sintomas e conduta médica antes de iniciar o atendimento.</p>
+          <p>
+            Paciente selecionado para acompanhamento clínico.
+            Verifique histórico, sintomas e conduta médica antes de iniciar o atendimento.
+          </p>
         </div>
       </div>
 
       <div class="modal-botoes">
-        <button class="btn-cancelar" (click)="fecharProntuario()">Cancelar</button>
-        <button class="btn-salvar" (click)="iniciarConsulta()">Iniciar Consulta</button>
+        <button class="btn-cancelar" type="button" (click)="fecharProntuario()">
+          Cancelar
+        </button>
+
+        <button class="btn-salvar" type="button" (click)="iniciarConsulta()">
+          Iniciar Consulta
+        </button>
       </div>
     </div>
   </div>
 
   <div class="modal-fundo" *ngIf="dialogoAberto">
     <div class="dialogo-card">
-      <div class="dialogo-icone">🐾</div>
+      <div class="dialogo-icone">✓</div>
 
       <h2>{{ dialogoTitulo }}</h2>
       <p>{{ dialogoMensagem }}</p>
 
-      <button class="btn-dialogo" (click)="fecharDialogo()">OK</button>
+      <button class="btn-dialogo" type="button" (click)="fecharDialogo()">
+        OK
+      </button>
     </div>
   </div>
+
 </div>
