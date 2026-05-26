@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
-
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderFuncionarioComponent } from './pages/funcionario/header-funcionario/header-funcionario.component';
