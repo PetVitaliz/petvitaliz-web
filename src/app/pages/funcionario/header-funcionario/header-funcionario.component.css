@@ -57,7 +57,6 @@
   font-weight: 600;
   color: #111111;
   transition: 0.25s ease;
-  position: relative;
 }
 
 .navbar a:hover,
@@ -72,57 +71,56 @@
   gap: 14px;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.user-info strong {
-  font-size: 14px;
-  font-weight: 700;
-  color: #111111;
-  white-space: nowrap;
-}
-
-.user-info span {
-  font-size: 12px;
-  font-weight: 500;
-  color: #777777;
-}
-
 .perfil-dropdown {
   position: relative;
 }
 
 .perfil-btn {
   border: none;
-  background: #f4f6ff;
-  border-radius: 999px;
-  padding: 4px 8px 4px 4px;
+  background: transparent;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   cursor: pointer;
   transition: 0.25s ease;
+  font-family: 'Inter', sans-serif;
 }
 
-.perfil-btn:hover {
-  background: #ebefff;
+.perfil-btn:hover .perfil-nome {
+  color: #5D6ED3;
 }
 
 .perfil-btn img {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #ffffff;
+  border: 2px solid #edf1ff;
+}
+
+.perfil-nome {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111111;
+  white-space: nowrap;
+  transition: 0.25s ease;
 }
 
 .arrow {
-  font-size: 9px;
+  width: 16px;
+  height: 16px;
   color: #5D6ED3;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  fill: none;
   transition: 0.3s ease;
+}
+
+.arrow path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .arrow.open {
@@ -131,7 +129,7 @@
 
 .perfil-menu {
   position: absolute;
-  top: 58px;
+  top: 60px;
   right: 0;
   width: 190px;
   background: #ffffff;
@@ -216,13 +214,8 @@
 
   .header-container {
     padding: 0 18px;
-    display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 10px;
-  }
-
-  .logo {
-    grid-column: 1;
   }
 
   .logo img {
@@ -230,13 +223,8 @@
   }
 
   .user-area {
-    grid-column: 3;
     justify-self: end;
     gap: 8px;
-  }
-
-  .user-info {
-    display: none;
   }
 
   .menu-mobile {
@@ -251,7 +239,7 @@
   }
 
   .perfil-btn {
-    padding: 4px;
+    gap: 0;
   }
 
   .perfil-btn img {
@@ -259,6 +247,7 @@
     height: 40px;
   }
 
+  .perfil-nome,
   .arrow {
     display: none;
   }
@@ -296,6 +285,10 @@
     background: #f4f6ff;
     color: #5D6ED3;
   }
+
+  .perfil-menu {
+    top: 52px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -319,7 +312,7 @@
   }
 
   .perfil-menu {
-    top: 52px;
+    width: 175px;
     right: 0;
   }
 }

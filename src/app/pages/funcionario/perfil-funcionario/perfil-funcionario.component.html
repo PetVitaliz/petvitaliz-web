@@ -1,244 +1,389 @@
 <section class="perfil-page">
+
   <h1>Meu Perfil</h1>
 
   <div class="perfil-container">
+
     <div class="topo">
+
       <div class="foto-area">
+
         <img [src]="fotoPerfil" alt="Foto do funcionário">
 
         <label class="btn-foto">
-          ✎
+
+          <svg viewBox="0 0 24 24">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>
+
           <input type="file" accept="image/*" (change)="alterarFoto($event)">
+
         </label>
+
       </div>
 
       <div class="dados-principais">
+
         <span>Clinical Guardian</span>
+
         <h2>{{ funcionario.nome }}</h2>
 
         <div class="info-linha">
-          <p>✚ {{ funcionario.cargo }}</p>
-          <p>⚕ CRMV: {{ funcionario.crmv }}</p>
+
+          <p>
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21a8 8 0 0 0-16 0" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            {{ funcionario.cargo }}
+          </p>
+
+          <p>
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2v20" />
+              <path d="M2 12h20" />
+            </svg>
+            CRMV: {{ funcionario.crmv }}
+          </p>
+
         </div>
+
       </div>
+
     </div>
 
     <div class="conteudo-principal">
+
       <div class="card info-pessoais">
+
         <div class="card-titulo">
+
           <h3>Informações Pessoais</h3>
-          <span>♙</span>
+
+          <span class="icon-box">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21a8 8 0 0 0-16 0" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+
         </div>
 
         <div class="form-grid">
+
           <div>
             <label>Nome completo</label>
+
             <input type="text" [(ngModel)]="dadosTemp.nome" [disabled]="!editando">
           </div>
 
           <div>
             <label>E-mail profissional</label>
+
             <input type="email" [(ngModel)]="dadosTemp.email" [disabled]="!editando">
           </div>
 
           <div>
             <label>Telefone de contato</label>
+
             <input type="text" [(ngModel)]="dadosTemp.telefone" [disabled]="!editando">
           </div>
 
           <div>
             <label>Data de nascimento</label>
+
             <input type="text" [(ngModel)]="dadosTemp.nascimento" [disabled]="!editando">
           </div>
+
         </div>
 
         <div class="botoes-edicao">
+
           <button type="button" *ngIf="!editando" (click)="habilitarEdicao()">
             Editar informações
           </button>
 
           <div *ngIf="editando" class="grupo-edicao">
-            <button type="button" (click)="salvarEdicao()">Salvar</button>
-            <button type="button" class="cancelar" (click)="cancelarEdicao()">Cancelar</button>
+
+            <button type="button" (click)="salvarEdicao()">
+              Salvar
+            </button>
+
+            <button type="button" class="cancelar" (click)="cancelarEdicao()">
+              Cancelar
+            </button>
+
           </div>
+
         </div>
+
       </div>
 
       <div class="card desempenho">
-        <h3>Desempenho Mensal</h3>
+
+        <div class="card-titulo">
+
+          <h3>Desempenho Mensal</h3>
+
+          <span class="icon-box">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3v18h18" />
+              <path d="M7 15l4-4 3 3 5-6" />
+            </svg>
+          </span>
+
+        </div>
 
         <div class="meta">
+
           <div>
             <p>Consultas Realizadas</p>
+
             <div class="barra">
               <span style="width: 90%;"></span>
             </div>
           </div>
+
           <strong>142</strong>
+
         </div>
 
         <div class="meta">
+
           <div>
             <p>Cirurgias de Sucesso</p>
+
             <div class="barra">
               <span style="width: 78%;"></span>
             </div>
           </div>
+
           <strong>28</strong>
+
         </div>
 
         <div class="pacientes">
+
           <div class="avatar-list">
-            <img src="assets/img/pet1.png" alt="Pet">
-            <img src="assets/img/pet2.png" alt="Pet">
+
+            <div class="avatar-letter">
+              L
+            </div>
+
+            <div class="avatar-letter">
+              M
+            </div>
+
             <span>+15</span>
+
           </div>
+
           <p>Pacientes atendidos hoje</p>
+
         </div>
+
       </div>
+
     </div>
 
     <div class="credenciais">
+
       <div class="titulo-secao">
-        <span>▣</span>
-        <h3>Credenciais Clínicas</h3>
+
+        <div class="titulo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2v20" />
+            <path d="M2 12h20" />
+          </svg>
+        </div>
+
+        <div>
+          <span class="section-mini-title">Área Clínica</span>
+          <h3>Credenciais Clínicas</h3>
+        </div>
+
       </div>
 
       <div class="credenciais-grid">
+
         <div class="mini-card">
-          <h4>⊕ Especialidades</h4>
+
+          <h4>
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7Z" />
+            </svg>
+            Especialidades
+          </h4>
 
           <div class="tags">
             <span>Cirurgia de Pequenos Animais</span>
             <span>Ortopedia</span>
             <span>Diagnóstico por Imagem</span>
           </div>
+
         </div>
 
         <div class="mini-card">
-          <h4>⊕ Formação Acadêmica</h4>
+
+          <h4>
+            <svg viewBox="0 0 24 24">
+              <path d="M22 10L12 4 2 10l10 6 10-6Z" />
+              <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
+            </svg>
+            Formação Acadêmica
+          </h4>
 
           <p><b>Medicina Veterinária</b></p>
           <small>Universidade de São Paulo, 2005</small>
 
           <p><b>Mestrado em Clínica Cirúrgica</b></p>
           <small>Unesp Botucatu, 2009</small>
+
         </div>
 
         <div class="mini-card">
-          <h4>⊕ Certificações</h4>
 
-          <p>✔ Board Certified Surgeon (AVS)</p>
-          <p>✔ Especialista em Anestesiologia Pet</p>
+          <h4>
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7Z" />
+              <path d="M9 12l2 2 4-5" />
+            </svg>
+            Certificações
+          </h4>
+
+          <p>
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+            Board Certified Surgeon (AVS)
+          </p>
+
+          <p>
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+            Especialista em Anestesiologia Pet
+          </p>
+
         </div>
+
       </div>
+
     </div>
 
     <div class="rodape-grid">
+
       <div class="card configuracoes">
+
         <div class="card-titulo">
+
           <h3>Configurações da Conta</h3>
-          <span>⚙</span>
+
+          <span class="icon-box">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+              <path
+                d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.8 1.8 0 0 0 15 19.4a1.8 1.8 0 0 0-1 .6 1.8 1.8 0 0 0-.5 1.3V21a2 2 0 1 1-4 0v-.1A1.8 1.8 0 0 0 8 19.4a1.8 1.8 0 0 0-1.98.36l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.8 1.8 0 0 0 4.6 15a1.8 1.8 0 0 0-.6-1 1.8 1.8 0 0 0-1.3-.5H2.6a2 2 0 1 1 0-4h.1A1.8 1.8 0 0 0 4.6 8a1.8 1.8 0 0 0-.36-1.98l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.8 1.8 0 0 0 9 4.6a1.8 1.8 0 0 0 1-.6 1.8 1.8 0 0 0 .5-1.3V2.6a2 2 0 1 1 4 0v.1A1.8 1.8 0 0 0 16 4.6a1.8 1.8 0 0 0 1.98-.36l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.8 1.8 0 0 0 19.4 9c.2.4.5.8.9 1 .4.3.8.5 1.3.5h.1a2 2 0 1 1 0 4h-.1a1.8 1.8 0 0 0-1.3.5c-.4.2-.7.6-.9 1Z" />
+            </svg>
+          </span>
+
         </div>
 
         <div class="config-linha">
-          <div>
-            <h4>Segurança</h4>
-            <p>Gerencie sua senha e acessos.</p>
+
+          <div class="config-info">
+
+            <span class="config-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7Z" />
+              </svg>
+            </span>
+
+            <div>
+              <h4>Segurança</h4>
+              <p>Gerencie senha, acessos e autenticação.</p>
+            </div>
+
           </div>
 
           <div class="botoes-config">
-            <button type="button" (click)="abrirModalSenha()">Alterar Senha</button>
 
-            <button type="button" *ngIf="!doisFatoresAtivo" (click)="abrirModal2FA()">Ativar 2FA</button>
-            <button type="button" *ngIf="doisFatoresAtivo" class="ativo" (click)="desativar2FA()">2FA Ativo</button>
+            <button type="button" (click)="abrirModalSenha()">
+              Alterar senha
+            </button>
+
+            <button type="button" *ngIf="!doisFatoresAtivo" (click)="abrirModal2FA()">
+              Ativar 2FA
+            </button>
+
+            <button type="button" *ngIf="doisFatoresAtivo" class="ativo" (click)="desativar2FA()">
+              2FA ativo
+            </button>
+
           </div>
+
         </div>
 
         <div class="config-linha notificacoes">
-          <div>
-            <h4>Notificações</h4>
-            <p>Preferências do sistema.</p>
+
+          <div class="config-info">
+
+            <span class="config-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7" />
+                <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+              </svg>
+            </span>
+
+            <div>
+              <h4>Notificações</h4>
+              <p>Preferências de alertas do sistema.</p>
+            </div>
+
           </div>
 
           <div class="switches">
+
             <label>
-              E-mails de novos agendamentos
+              <span>E-mails de novos agendamentos</span>
               <input type="checkbox" checked>
-              <span></span>
+              <i></i>
             </label>
 
             <label>
-              Alertas de urgência no celular
+              <span>Alertas de urgência no celular</span>
               <input type="checkbox" checked>
-              <span></span>
+              <i></i>
             </label>
+
           </div>
+
         </div>
+
       </div>
 
       <div class="ajuda">
+
         <h3>Precisa de ajuda?</h3>
 
         <p>
-          Nossa equipe de suporte técnico está disponível para auxiliar você com qualquer
-          dúvida sobre as ferramentas clínicas do PetVital.
+          Nossa equipe de suporte técnico está disponível para auxiliar você
+          com qualquer dúvida sobre as ferramentas clínicas do PetVitaliz.
         </p>
 
-        <button type="button" class="btn-branco" (click)="suporteChat()">☰ Suporte via Chat</button>
-        <button type="button" class="btn-azul" (click)="centralAjuda()">ⓘ Central de Ajuda</button>
+        <button type="button" class="btn-branco" (click)="suporteChat()">
+          Suporte via Chat
+        </button>
+
+        <button type="button" class="btn-azul" (click)="centralAjuda()">
+          Central de Ajuda
+        </button>
+
       </div>
+
     </div>
+
   </div>
 
-  <div class="modal-fundo" *ngIf="modalSenhaAberto">
-    <div class="modal-card">
-      <button type="button" class="fechar-modal" (click)="fecharModalSenha()">×</button>
-
-      <h2>Alterar Senha</h2>
-      <p>Digite sua senha atual e escolha uma nova senha.</p>
-
-      <div class="modal-form">
-        <label>Senha atual</label>
-        <input type="password" [(ngModel)]="senhaAtual">
-
-        <label>Nova senha</label>
-        <input type="password" [(ngModel)]="novaSenha">
-
-        <label>Confirmar nova senha</label>
-        <input type="password" [(ngModel)]="confirmarSenha">
-      </div>
-
-      <div class="modal-botoes">
-        <button type="button" class="btn-cancelar" (click)="fecharModalSenha()">Cancelar</button>
-        <button type="button" class="btn-salvar" (click)="salvarSenha()">Salvar senha</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-fundo" *ngIf="modal2FAAberto">
-    <div class="modal-card">
-      <button type="button" class="fechar-modal" (click)="fecharModal2FA()">×</button>
-
-      <h2>Ativar 2FA</h2>
-      <p>Escaneie o código abaixo no aplicativo autenticador e digite o código gerado.</p>
-
-      <div class="qr-code">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-
-      <div class="modal-form">
-        <label>Código de verificação</label>
-        <input type="text" maxlength="6" [(ngModel)]="codigo2FA" placeholder="000000">
-      </div>
-
-      <div class="modal-botoes">
-        <button type="button" class="btn-cancelar" (click)="fecharModal2FA()">Cancelar</button>
-        <button type="button" class="btn-salvar" (click)="ativar2FA()">Ativar 2FA</button>
-      </div>
-    </div>
-  </div>
 </section>
