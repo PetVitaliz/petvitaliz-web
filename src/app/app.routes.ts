@@ -64,12 +64,12 @@ export const routes: Routes = [
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'user/cadastar/pet',
+    path: 'user/listar/pet/cadastar',
     component: CadastroPetComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'user/listar-cadastro-pet',
+    path: 'user/listar/pet',
     component: ListarCadastroPetComponent,
     canActivate: [authUsuarioGuard]
   },

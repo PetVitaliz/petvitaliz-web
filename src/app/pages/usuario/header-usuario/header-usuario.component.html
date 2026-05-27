@@ -1,6 +1,6 @@
 <header class="header">
 
-  <div class="logo" routerLink="/usuario/home">
+  <div class="logo" routerLink="/user/home">
     <img src="assets/img/logo.png" alt="PetVitaliz" />
   </div>
 
@@ -26,11 +26,11 @@
         <div class="dropdown-header">Olá, {{ usuario?.nome?.split(' ')[0] || 'Usuário' }}!</div>
         <hr class="dropdown-divider">
 
-        <a routerLink="/user/cadastro-pet" (click)="fecharMenus()">
+        <a routerLink="/user/listar/pet/cadastar" (click)="fecharMenus()">
           <span class="material-icons dropdown-icon">add_circle_outline</span> Cadastrar Pet
         </a>
 
-        <a routerLink="/user/listar-cadastro-pet" (click)="fecharMenus()">
+        <a routerLink="/user/listar/pet" (click)="fecharMenus()">
           <span class="material-icons dropdown-icon">pets</span> Perfil Pet
         </a>
 
