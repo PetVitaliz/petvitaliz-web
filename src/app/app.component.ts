@@ -37,6 +37,6 @@ export class AppComponent {
   }
 
   isUsuarioRoute(): boolean {
-    return this.router.url.includes('/usuario');
+    return this.router.url.includes('/user');
   }
 }

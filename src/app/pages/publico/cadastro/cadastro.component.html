@@ -37,7 +37,14 @@
         <div class="form-group">
           <label for="nascimento">Data de Nascimento</label>
 
-          <input type="text" id="nascimento" name="nascimento" placeholder="dd/mm/yyyy" [(ngModel)]="nascimento">
+          <input
+            type="text"
+            id="nascimento"
+            name="nascimento"
+            placeholder="dd/mm/yyyy"
+            [(ngModel)]="nascimento"
+            appDataMask
+            maxlength="10">
         </div>
 
       </div>
@@ -105,6 +112,10 @@
         {{ erro }}
       </p>
 
+      <p class="sucesso" *ngIf="sucesso">
+        {{ sucesso }}
+      </p>
+
       <button type="submit" class="btn-submit">
         Cadastrar
       </button>
@@ -112,7 +123,7 @@
       <p class="login-link">
         Já tem uma conta?
 
-        <a routerLink="/usuario/login">
+        <a routerLink="/login">
           Entre
         </a>
       </p>
