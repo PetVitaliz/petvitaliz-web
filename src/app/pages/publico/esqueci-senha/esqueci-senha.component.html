@@ -24,36 +24,25 @@
             mail
           </span>
 
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Coloque seu e-mail"
-            [(ngModel)]="email">
+          <input type="email" id="email" name="email" placeholder="Coloque seu e-mail" [(ngModel)]="email">
 
         </div>
 
       </div>
 
-      <p
-        class="erro"
-        *ngIf="erro">
+      <p class="erro" *ngIf="erro">
 
         {{ erro }}
 
       </p>
 
-      <p
-        class="sucesso"
-        *ngIf="sucesso">
+      <p class="sucesso" *ngIf="sucesso">
 
         {{ sucesso }}
 
       </p>
 
-      <button
-        type="submit"
-        class="btn-submit">
+      <button type="submit" class="btn-submit">
 
         Enviar link
         <span>→</span>
@@ -62,9 +51,7 @@
 
     </form>
 
-    <a
-      routerLink="/login"
-      class="back-login">
+    <a routerLink="/login" class="back-login">
 
       <span class="material-icons">
         arrow_back
@@ -91,8 +78,8 @@
         </strong>
 
         <p>
-          Este portal é de uso exclusivo de colaboradores autorizados.
-          Todo acesso é monitorado para garantir a segurança dos dados dos nossos pacientes e protocolos internos.
+          Utilizamos protocolos avançados de segurança para proteger suas informações
+          e garantir uma experiência confiável dentro da plataforma PetVitaliz.
         </p>
 
       </div>

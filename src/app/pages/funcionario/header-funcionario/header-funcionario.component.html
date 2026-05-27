@@ -45,14 +45,6 @@
         Pets
       </a>
 
-      <a
-        routerLink="/funcionario/perfil"
-        routerLinkActive="ativo"
-        (click)="closeAllMenus()"
-      >
-        Perfil
-      </a>
-
     </nav>
 
     <div class="user-area">
@@ -64,18 +56,6 @@
       >
         ☰
       </button>
-
-      <div class="user-info">
-
-        <strong>
-          Dr. Rogério Souza
-        </strong>
-
-        <span>
-          Veterinário
-        </span>
-
-      </div>
 
       <div class="perfil-dropdown">
 
@@ -90,12 +70,17 @@
             alt="Funcionário"
           >
 
-          <span
+          <span class="perfil-nome">
+            Dr. Rogério Souza
+          </span>
+
+          <svg
             class="arrow"
             [class.open]="isMenuOpen"
+            viewBox="0 0 24 24"
           >
-            ▼
-          </span>
+            <path d="M6 9l6 6 6-6" />
+          </svg>
 
         </button>
 
