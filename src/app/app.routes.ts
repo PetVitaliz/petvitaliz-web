@@ -59,47 +59,47 @@ export const routes: Routes = [
 
   // USUÁRIO
   {
-    path: 'usuario/home',
+    path: 'user/home',
     component: HomeUsuarioComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/cadastro-pet',
+    path: 'user/listar/pet/cadastar',
     component: CadastroPetComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/listar-cadastro-pet',
+    path: 'user/listar/pet',
     component: ListarCadastroPetComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/planos-pet',
+    path: 'user/planos-pet',
     component: PlanosPetComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/agendamento',
+    path: 'user/agendamento',
     component: AgendamentoComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/pagamento-plano',
+    path: 'user/pagamento-plano',
     component: PagamentoPlanoComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/contrato-plano',
+    path: 'user/contrato-plano',
     component: ContratoPlanoComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/plano-sucesso',
+    path: 'user/plano-sucesso',
     component: PlanoSucessoComponent,
     canActivate: [authUsuarioGuard]
   },
   {
-    path: 'usuario/contato',
+    path: 'user/contato',
     component: ContatoUsuarioComponent,
     canActivate: [authUsuarioGuard]
   },
