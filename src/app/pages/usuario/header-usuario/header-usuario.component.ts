@@ -11,49 +11,40 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class HeaderUsuarioComponent {
   menuMobileAberto = false;
-  perfilMenuAberto = false;
   avatarMenuAberto = false;
-  inicialUsuario = 'U';
 
-  constructor(private router: Router) {
-    this.carregarInicialUsuario();
+  constructor(private router: Router) {}
+
+  get usuario() {
+    const usuarioLogado = localStorage.getItem('usuarioLogado');
+    return usuarioLogado ? JSON.parse(usuarioLogado) : null;
   }
 
-  carregarInicialUsuario(): void {
-    const usuarioLogado = localStorage.getItem('usuarioLogado');
-
-    if (!usuarioLogado) return;
-
-    const usuario = JSON.parse(usuarioLogado);
-    const nome = usuario.nome || usuario.nomeCompleto || usuario.email || 'Usuario';
-
-    this.inicialUsuario = nome.charAt(0).toUpperCase();
+  get inicialUsuario(): string {
+    if (!this.usuario) return 'U';
+    const nome = this.usuario.nome || this.usuario.nomeCompleto || this.usuario.email || 'Usuario';
+    return nome.trim().charAt(0).toUpperCase();
   }
 
   toggleMenuMobile(): void {
     this.menuMobileAberto = !this.menuMobileAberto;
-    this.perfilMenuAberto = false;
-    this.avatarMenuAberto = false;
-  }
-
-  togglePerfilMenu(): void {
-    this.perfilMenuAberto = !this.perfilMenuAberto;
     this.avatarMenuAberto = false;
   }
 
   toggleAvatarMenu(): void {
     this.avatarMenuAberto = !this.avatarMenuAberto;
-    this.perfilMenuAberto = false;
   }
 
   fecharMenus(): void {
     this.menuMobileAberto = false;
-    this.perfilMenuAberto = false;
     this.avatarMenuAberto = false;
   }
 
   sair(): void {
-    localStorage.removeItem('usuarioLogado');
-    this.router.navigate(['/']);
+    if (confirm('Deseja realmente fazer logout?')) {
+      this.fecharMenus();
+      localStorage.removeItem('usuarioLogado');
+      this.router.navigate(['/']);
+    }
   }
 }

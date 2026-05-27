@@ -4,6 +4,12 @@
     <img src="assets/img/logo.png" alt="PetVitaliz" />
   </div>
 
+  <nav class="nav" [class.open]="menuMobileAberto">
+    <a routerLink="/user/home" (click)="fecharMenus()">Home</a>
+    <a routerLink="/user/agendamento" (click)="fecharMenus()">Agendamentos</a>
+    <a routerLink="/user/contato" (click)="fecharMenus()">Contato</a>
+  </nav>
+
   <div class="header-actions">
 
     <div class="avatar-wrapper">
@@ -15,14 +21,27 @@
         {{ inicialUsuario }}
       </button>
 
-      <div
-        class="avatar-card"
-        *ngIf="avatarMenuAberto">
+      <div class="avatar-card" *ngIf="avatarMenuAberto">
+        
+        <div class="dropdown-header">Olá, {{ usuario?.nome?.split(' ')[0] || 'Usuário' }}!</div>
+        <hr class="dropdown-divider">
 
-        <button
-          type="button"
-          (click)="sair()">
-          Sair
+        <a routerLink="/user/cadastro-pet" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">add_circle_outline</span> Cadastrar Pet
+        </a>
+
+        <a routerLink="/user/listar-cadastro-pet" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">pets</span> Perfil Pet
+        </a>
+
+        <a routerLink="/user/planos-pet" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">credit_card</span> Meus Planos
+        </a>
+
+        <hr class="dropdown-divider">
+
+        <button type="button" class="btn-dropdown-logout" (click)="sair()">
+          <span class="material-icons dropdown-icon text-danger">logout</span> Sair
         </button>
 
       </div>
@@ -37,48 +56,5 @@
     </button>
 
   </div>
-
-  <nav
-    class="nav"
-    [class.open]="menuMobileAberto">
-
-    <a routerLink="/usuario/home" (click)="fecharMenus()">Home</a>
-
-    <a routerLink="/usuario/planos-pet" (click)="fecharMenus()">Planos</a>
-
-    <a routerLink="/usuario/agendamento" (click)="fecharMenus()">Agendamentos</a>
-
-    <a routerLink="/usuario/contato" (click)="fecharMenus()">Contato</a>
-
-    <div class="perfil-wrapper">
-
-      <button
-        class="perfil-link"
-        type="button"
-        (click)="togglePerfilMenu()">
-        Perfil ▾
-      </button>
-
-      <div
-        class="perfil-card"
-        *ngIf="perfilMenuAberto">
-
-        <a
-          routerLink="/usuario/cadastro-pet"
-          (click)="fecharMenus()">
-          Cadastrar Pet
-        </a>
-
-        <a
-          routerLink="/usuario/listar-cadastro-pet"
-          (click)="fecharMenus()">
-          Perfil Pet
-        </a>
-
-      </div>
-
-    </div>
-
-  </nav>
 
 </header>
