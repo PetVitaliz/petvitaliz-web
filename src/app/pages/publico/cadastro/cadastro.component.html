@@ -1,7 +1,5 @@
 <section class="cadastro-page">
-
   <div class="cadastro-card">
-
     <h2>Criar sua conta</h2>
 
     <p class="subtitle">
@@ -9,29 +7,47 @@
     </p>
 
     <form class="cadastro-form" (ngSubmit)="cadastrar()">
-
       <div class="form-row">
-
         <div class="form-group">
           <label for="nome">Nome completo</label>
 
-          <input type="text" id="nome" name="nome" placeholder="ex: João" [(ngModel)]="nome">
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="ex: João"
+            [(ngModel)]="nome"
+          />
         </div>
 
         <div class="form-group">
           <label for="sobrenome">Sobrenome</label>
 
-          <input type="text" id="sobrenome" name="sobrenome" placeholder="ex: Silva" [(ngModel)]="sobrenome">
+          <input
+            type="text"
+            id="sobrenome"
+            name="sobrenome"
+            placeholder="ex: Silva"
+            [(ngModel)]="sobrenome"
+          />
         </div>
-
       </div>
 
       <div class="form-row">
-
         <div class="form-group">
           <label for="cpf">CPF</label>
 
-          <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" [(ngModel)]="cpf">
+          <input
+            type="text"
+            id="cpf"
+            name="cpf"
+            placeholder="000.000.000-00"
+            maxlength="14"
+            inputmode="numeric"
+            autocomplete="off"
+            [(ngModel)]="cpf"
+            (input)="formatarCpf()"
+          />
         </div>
 
         <div class="form-group">
@@ -41,62 +57,81 @@
             type="text"
             id="nascimento"
             name="nascimento"
-            placeholder="dd/mm/yyyy"
+            placeholder="dd/mm/aaaa"
+            maxlength="10"
+            inputmode="numeric"
+            autocomplete="off"
             [(ngModel)]="nascimento"
-            appDataMask
-            maxlength="10">
+            (input)="formatarNascimento()"
+          />
         </div>
-
       </div>
 
       <div class="form-row">
-
         <div class="form-group">
           <label for="telefone">Telefone</label>
 
-          <input type="text" id="telefone" name="telefone" placeholder="(11) 99999-9999" [(ngModel)]="telefone">
+          <input
+            type="text"
+            id="telefone"
+            name="telefone"
+            placeholder="(00) 00000-0000"
+            maxlength="15"
+            inputmode="numeric"
+            autocomplete="off"
+            [(ngModel)]="telefone"
+            (input)="formatarTelefone()"
+          />
         </div>
 
         <div class="form-group">
           <label for="genero">Gênero</label>
 
           <select id="genero" name="genero" [(ngModel)]="genero">
-
-            <option value="">Selecione</option>
             <option value="Feminino">Feminino</option>
             <option value="Masculino">Masculino</option>
             <option value="Prefiro não informar">Prefiro não informar</option>
-
           </select>
         </div>
-
       </div>
 
       <div class="form-group full">
         <label for="email">E-mail</label>
 
-        <input type="email" id="email" name="email" placeholder="seu@email.com.br" [(ngModel)]="email">
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="seu@email.com.br"
+          [(ngModel)]="email"
+        />
       </div>
 
       <div class="form-group full">
         <label for="senha">Senha</label>
 
         <div class="password-wrapper">
+          <input
+            [type]="senhaVisivel ? 'text' : 'password'"
+            id="senha"
+            name="senha"
+            placeholder="Digite sua senha"
+            [(ngModel)]="senha"
+          />
 
-          <input [type]="senhaVisivel ? 'text' : 'password'" id="senha" name="senha" placeholder="Digite sua senha"
-            [(ngModel)]="senha">
-
-          <button type="button" class="eye-btn" (click)="senhaVisivel = !senhaVisivel">
-
-            <i class="bi" [ngClass]="senhaVisivel ? 'bi-eye-slash' : 'bi-eye'">
-            </i>
-
+          <button
+            type="button"
+            class="eye-btn"
+            (click)="alternarSenha()"
+          >
+            <i
+              class="bi"
+              [ngClass]="senhaVisivel ? 'bi-eye-slash' : 'bi-eye'"
+            ></i>
           </button>
-
         </div>
 
         <div class="password-strength" *ngIf="senha" [ngClass]="forcaSenha">
-
           <div class="strength-bar">
             <span></span>
           </div>
@@ -104,7 +139,6 @@
           <p>
             {{ textoForcaSenha }}
           </p>
-
         </div>
       </div>
 
@@ -127,9 +161,6 @@
           Entre
         </a>
       </p>
-
     </form>
-
   </div>
-
 </section>
