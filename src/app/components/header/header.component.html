@@ -1,85 +1,30 @@
 <header class="header">
-
   <div class="logo" routerLink="/">
     <img src="assets/img/logo.png" alt="PetVitaliz" />
   </div>
 
-  <button
-    class="menu-mobile"
-    type="button"
-    (click)="toggleMenu()">
+  <button class="menu-mobile" type="button" (click)="toggleMenu()">
     ☰
   </button>
 
-  <nav
-    class="nav"
-    [class.open]="menuAberto">
+  <div class="menu-area" [class.open]="menuAberto">
+    <nav class="nav">
+      <a routerLink="/" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" (click)="fecharMenu()">Home</a>
+      <a routerLink="/servicos" routerLinkActive="ativo" (click)="fecharMenu()">Nossos Serviços</a>
+      <a routerLink="/sobre-nos" routerLinkActive="ativo" (click)="fecharMenu()">Sobre Nós</a>
+      <a routerLink="/contato" routerLinkActive="ativo" (click)="fecharMenu()">Contato</a>
+      <a routerLink="/emergencia" routerLinkActive="ativo" (click)="fecharMenu()">Emergência</a>
+      <a routerLink="/adocao" routerLinkActive="ativo" (click)="fecharMenu()">Adoção</a>
+    </nav>
 
-    <a
-      routerLink="/"
-      routerLinkActive="ativo"
-      [routerLinkActiveOptions]="{ exact: true }"
-      (click)="fecharMenu()">
-      Home
-    </a>
+    <div class="buttons">
+      <button class="btn-outline" type="button" routerLink="/cadastro" (click)="fecharMenu()">
+        Cadastre-se
+      </button>
 
-    <a
-      routerLink="/servicos"
-      routerLinkActive="ativo"
-      (click)="fecharMenu()">
-      Nossos Serviços
-    </a>
-
-    <a
-      routerLink="/sobre-nos"
-      routerLinkActive="ativo"
-      (click)="fecharMenu()">
-      Sobre Nós
-    </a>
-
-    <a
-      routerLink="/contato"
-      routerLinkActive="ativo"
-      (click)="fecharMenu()">
-      Contato
-    </a>
-
-    <a
-      routerLink="/emergencia"
-      routerLinkActive="ativo"
-      (click)="fecharMenu()">
-      Emergência
-    </a>
-
-    <a
-      routerLink="/adocao"
-      routerLinkActive="ativo"
-      (click)="fecharMenu()">
-      Adoção
-    </a>
-
-  </nav>
-
-  <div
-    class="buttons"
-    [class.open]="menuAberto">
-
-    <button
-      class="btn-outline"
-      type="button"
-      routerLink="/cadastro"
-      (click)="fecharMenu()">
-      Registre-se
-    </button>
-
-    <button
-      class="btn-primary"
-      type="button"
-      routerLink="/login"
-      (click)="fecharMenu()">
-      Login
-    </button>
-
+      <button class="btn-primary" type="button" routerLink="/login" (click)="fecharMenu()">
+        Entrar
+      </button>
+    </div>
   </div>
-
 </header>

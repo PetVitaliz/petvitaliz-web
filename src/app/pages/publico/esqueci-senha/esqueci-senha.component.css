@@ -12,61 +12,66 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 20px;
+  padding: 64px 20px;
 }
 
 .esqueci-card {
   width: 100%;
-  max-width: 382px;
+  max-width: 500px;
   background: #ffffff;
-  border-radius: 24px;
-  padding: 34px 36px 32px;
+  border-radius: 28px;
+  padding: 44px 48px 38px;
   border: 1px solid #e4e9f4;
-  box-shadow: 0 18px 50px rgba(10, 37, 86, 0.06);
+  box-shadow: 0 22px 60px rgba(10, 37, 86, 0.08);
 }
 
 .esqueci-card h2 {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   text-align: center;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 800;
   color: #08245f;
 }
 
 .subtitle {
-  width: 90%;
-  margin: 0 auto 22px;
+  width: 92%;
+  margin: 0 auto 28px;
   text-align: center;
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.65;
   color: #5f6675;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 12px;
-  font-weight: 500;
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 600;
   color: #202020;
 }
 
 .input-box {
-  height: 52px;
+  height: 58px;
   border: 1px solid #8d94a6;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #ffffff;
   display: flex;
   align-items: center;
-  padding: 0 14px;
-  gap: 10px;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.input-box:focus-within {
+  border-color: #4758c8;
+  box-shadow: 0 0 0 4px rgba(71, 88, 200, 0.1);
 }
 
 .input-box span {
-  font-size: 16px;
+  font-size: 17px;
   color: #7a8294;
 }
 
@@ -76,39 +81,52 @@
   border: none;
   outline: none;
   background: transparent;
-  font-size: 13px;
+  font-size: 14px;
   font-family: 'Inter', sans-serif;
   color: #111827;
 }
 
+.input-box input::placeholder {
+  color: #9ca3af;
+}
+
 .erro {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
+  padding: 11px 16px;
   text-align: center;
   color: #dc2626;
-  font-size: 13px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 30px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .sucesso {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
+  padding: 11px 16px;
   text-align: center;
-  color: #16a34a;
-  font-size: 13px;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 30px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .btn-submit {
   width: 100%;
-  height: 48px;
+  height: 56px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #4758c8;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
-  box-shadow: 0 10px 18px rgba(71, 88, 200, 0.26);
+  box-shadow: 0 12px 22px rgba(71, 88, 200, 0.28);
+  transition: 0.3s ease;
 }
 
 .btn-submit span {
@@ -116,43 +134,82 @@
   font-size: 18px;
 }
 
+.btn-submit:hover {
+  background: #3547b7;
+  transform: translateY(-2px);
+}
+
 .back-login {
-  margin: 30px 0;
+  margin: 32px 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #4254c5;
 }
 
+.back-login:hover {
+  color: #283593;
+}
+
 .security-box {
-  padding: 18px;
+  padding: 22px;
   background: #eef2f8;
-  border-radius: 12px;
+  border-radius: 16px;
   display: flex;
-  gap: 12px;
+  gap: 14px;
 }
 
 .security-icon {
   color: #293f9f;
-  font-size: 20px;
+  font-size: 22px;
+  line-height: 1;
 }
 
 .security-box strong {
   display: block;
   margin-bottom: 8px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   color: #08245f;
 }
 
 .security-box p {
   margin: 0;
-  font-size: 11px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 1.65;
   color: #5f6675;
+}
+
+@media (max-width: 620px) {
+  .esqueci-page {
+    min-height: calc(100vh - 82px);
+    padding: 36px 18px;
+  }
+
+  .esqueci-card {
+    max-width: 100%;
+    padding: 34px 24px 30px;
+    border-radius: 24px;
+  }
+
+  .esqueci-card h2 {
+    font-size: 23px;
+  }
+
+  .subtitle {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .input-box {
+    height: 54px;
+  }
+
+  .btn-submit {
+    height: 52px;
+  }
 }
