@@ -8,8 +8,13 @@
       </h1>
 
       <div class="hero-buttons">
-        <a routerLink="/agendamento" class="btn-primary">Agendar Consulta</a>
-        <a href="#home-support" class="btn-secondary">Comece</a>
+        <a routerLink="/login" class="btn-primary">
+          Agendar Consulta
+        </a>
+
+        <a routerLink="/login" class="btn-secondary">
+          Comece
+        </a>
       </div>
 
       <p>
@@ -20,10 +25,14 @@
 
     <div class="hero-images">
       <img class="paw-image" [src]="imgPataFundo" alt="Pata decorativa" />
-      <img class="img img-cat" [src]="imgGatoAmarelo" alt="Gato" />
+
+      <img class="img img-cat" [src]="imgGatoDeitado" alt="Gato deitado" />
+
       <img class="img img-dogs" [src]="imgCachorros" alt="Cachorros brincando" />
+
       <img class="img img-dog-heart" [src]="imgCachorroCoracao" alt="Cachorro com coração" />
-      <img class="img img-cat-laying" [src]="imgGatoDeitado" alt="Gato deitado" />
+
+      <img class="img img-cat-laying" [src]="imgGatoAmarelo" alt="Gato" />
 
       <div class="wave"></div>
     </div>
@@ -87,11 +96,8 @@
       <div class="home-services-preview">
         <div class="home-services-line"></div>
 
-        <img
-          class="home-services-main-img"
-          [src]="servicosHome[servicoSelecionado].imagem"
-          [alt]="servicosHome[servicoSelecionado].titulo"
-        />
+        <img class="home-services-main-img" [src]="servicosHome[servicoSelecionado].imagem"
+          [alt]="servicosHome[servicoSelecionado].titulo" />
 
         <div class="home-services-main-title">
           {{ servicosHome[servicoSelecionado].titulo }}
@@ -104,28 +110,20 @@
         <h2>Nossos serviços</h2>
 
         @for (servico of servicosHome; track servico.titulo; let i = $index) {
-          <button
-            type="button"
-            class="home-service-item"
-            [class.home-service-item-active]="servicoSelecionado === i"
-            (click)="selecionarServico(i)"
-          >
-            <img
-              class="home-service-thumb"
-              [src]="servico.imagem"
-              [alt]="servico.titulo"
-            />
+        <button type="button" class="home-service-item" [class.home-service-item-active]="servicoSelecionado === i"
+          (click)="selecionarServico(i)">
+          <img class="home-service-thumb" [src]="servico.imagem" [alt]="servico.titulo" />
 
-            <div class="home-service-info">
-              <h3>{{ servico.titulo }}</h3>
+          <div class="home-service-info">
+            <h3>{{ servico.titulo }}</h3>
 
-              <div class="home-service-tags">
-                @for (tag of servico.tags; track tag) {
-                  <span>{{ tag }}</span>
-                }
-              </div>
+            <div class="home-service-tags">
+              @for (tag of servico.tags; track tag) {
+              <span>{{ tag }}</span>
+              }
             </div>
-          </button>
+          </div>
+        </button>
         }
       </div>
     </div>
@@ -229,22 +227,18 @@
 
     <div class="home-team-grid">
       @for (doutor of doutores; track doutor.nome) {
-        <div class="home-team-card">
-          <img
-            class="home-team-image"
-            [src]="doutor.imagem"
-            [alt]="doutor.nome"
-          />
+      <div class="home-team-card">
+        <img class="home-team-image" [src]="doutor.imagem" [alt]="doutor.nome" />
 
-          <div class="home-team-overlay">
-            <div class="home-team-info">
-              <h3>{{ doutor.nome }}</h3>
-              <span>⌚ {{ doutor.experiencia }}</span>
-            </div>
-
-            <button type="button">↗</button>
+        <div class="home-team-overlay">
+          <div class="home-team-info">
+            <h3>{{ doutor.nome }}</h3>
+            <span>⌚ {{ doutor.experiencia }}</span>
           </div>
+
+          <button type="button">↗</button>
         </div>
+      </div>
       }
     </div>
   </section>
@@ -254,15 +248,15 @@
 
     <div class="home-feedback-grid">
       @for (avaliacao of avaliacoes; track avaliacao.texto) {
-        <div class="home-feedback-card">
-          <span class="home-feedback-user">
-            {{ avaliacao.nome }}
-          </span>
+      <div class="home-feedback-card">
+        <span class="home-feedback-user">
+          {{ avaliacao.nome }}
+        </span>
 
-          <p>
-            {{ avaliacao.texto }}
-          </p>
-        </div>
+        <p>
+          {{ avaliacao.texto }}
+        </p>
+      </div>
       }
     </div>
   </section>
