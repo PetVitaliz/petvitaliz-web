@@ -84,6 +84,7 @@ export class PlanosAdmComponent {
 
     if (this.modoEdicao) {
       const index = this.planos.findIndex(p => p.id === this.planoSelecionado.id);
+
       if (index !== -1) {
         this.planos[index] = { ...this.planoSelecionado };
       }

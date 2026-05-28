@@ -20,10 +20,7 @@
         </div>
       </div>
 
-      <button
-        type="button"
-        class="btn-primary nova-consulta"
-        (click)="abrirNovaConsulta()">
+      <button type="button" class="btn-primary nova-consulta" (click)="abrirNovaConsulta()">
         Nova Consulta
       </button>
     </div>
@@ -35,17 +32,12 @@
 
       <div class="input-group pet-filter">
         <label>Buscar pet</label>
-        <input
-          type="text"
-          [(ngModel)]="filtros.pet"
-          placeholder="Digite o nome do pet">
+        <input type="text" [(ngModel)]="filtros.pet" placeholder="Digite o nome do pet">
       </div>
 
       <div class="input-group">
         <label>Data</label>
-        <input
-          type="date"
-          [(ngModel)]="filtros.data">
+        <input type="date" [(ngModel)]="filtros.data">
       </div>
 
       <div class="input-group">
@@ -63,17 +55,11 @@
       </div>
 
       <div class="filter-actions">
-        <button
-          class="btn-primary"
-          type="button"
-          (click)="aplicarFiltros()">
+        <button class="btn-primary" type="button" (click)="aplicarFiltros()">
           Aplicar filtros
         </button>
 
-        <button
-          class="btn-secondary"
-          type="button"
-          (click)="limparFiltros()">
+        <button class="btn-secondary" type="button" (click)="limparFiltros()">
           Limpar
         </button>
       </div>
@@ -123,32 +109,21 @@
           <strong>{{ consulta.motivo }}</strong>
         </div>
 
-        <div
-          class="status"
-          [ngClass]="statusClasse(consulta.status)">
+        <div class="status" [ngClass]="statusClasse(consulta.status)">
           {{ consulta.status }}
         </div>
 
         <div class="actions">
 
-          <button
-            type="button"
-            class="action-btn ver"
-            (click)="abrirDetalhes(consulta)">
+          <button type="button" class="action-btn ver" (click)="abrirDetalhes(consulta)">
             Ver
           </button>
 
-          <button
-            type="button"
-            class="action-btn editar"
-            (click)="abrirEdicao(consulta)">
+          <button type="button" class="action-btn editar" (click)="abrirEdicao(consulta)">
             Editar
           </button>
 
-          <button
-            type="button"
-            class="action-btn iniciar"
-            (click)="iniciarConsulta(consulta)">
+          <button type="button" class="action-btn iniciar" (click)="iniciarConsulta(consulta)">
             Iniciar
           </button>
 
@@ -166,10 +141,7 @@
             <option value="CANCELADO">Cancelado</option>
           </select>
 
-          <button
-            type="button"
-            class="action-btn excluir"
-            (click)="excluirConsulta(consulta)">
+          <button type="button" class="action-btn excluir" (click)="excluirConsulta(consulta)">
             Excluir
           </button>
 
@@ -184,10 +156,7 @@
       <h3>Nenhuma consulta encontrada</h3>
       <p>Tente limpar os filtros ou cadastrar uma nova consulta.</p>
 
-      <button
-        type="button"
-        class="btn-primary"
-        (click)="abrirNovaConsulta()">
+      <button type="button" class="btn-primary" (click)="abrirNovaConsulta()">
         Nova Consulta
       </button>
     </div>
@@ -198,10 +167,7 @@
       </span>
 
       <div class="pagination" *ngIf="totalPaginas > 1">
-        <button
-          type="button"
-          [disabled]="paginaAtual === 1"
-          (click)="mudarPagina(paginaAtual - 1)">
+        <button type="button" [disabled]="paginaAtual === 1" (click)="mudarPagina(paginaAtual - 1)">
           Anterior
         </button>
 
@@ -213,10 +179,7 @@
           {{ p }}
         </button>
 
-        <button
-          type="button"
-          [disabled]="paginaAtual === totalPaginas"
-          (click)="mudarPagina(paginaAtual + 1)">
+        <button type="button" [disabled]="paginaAtual === totalPaginas" (click)="mudarPagina(paginaAtual + 1)">
           Próxima
         </button>
       </div>
@@ -227,10 +190,7 @@
   <div class="modal-fundo" *ngIf="modalNovaConsultaAberto">
     <div class="modal-card">
 
-      <button
-        class="fechar-modal"
-        type="button"
-        (click)="fecharNovaConsulta()">
+      <button class="fechar-modal" type="button" (click)="fecharNovaConsulta()">
         ×
       </button>
 
@@ -243,17 +203,20 @@
         <label>Data</label>
         <input
           type="date"
+          [min]="dataMinima"
           [(ngModel)]="novaConsulta.data">
 
-        <label>Horário</label>
-        <input
-          type="time"
-          [(ngModel)]="novaConsulta.hora">
+        <label>Horário disponível</label>
+        <select [(ngModel)]="novaConsulta.hora">
+          <option value="">Selecione um horário</option>
+          <option *ngFor="let horario of horariosLivres" [value]="horario">
+            {{ horario }}
+          </option>
+        </select>
 
         <label>Período</label>
         <select [(ngModel)]="novaConsulta.periodo">
-          <option>AM</option>
-          <option>PM</option>
+          <option value="AM">AM</option>
         </select>
 
         <label>Pet</label>
@@ -265,8 +228,11 @@
         <label>Idade</label>
         <input
           type="text"
-          placeholder="Ex: 2 anos"
-          [(ngModel)]="novaConsulta.idade">
+          inputmode="numeric"
+          maxlength="2"
+          placeholder="Ex: 2"
+          [(ngModel)]="novaConsulta.idade"
+          (input)="validarIdade()">
 
         <label>Tutor</label>
         <input
@@ -287,17 +253,11 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="btn-secondary"
-          (click)="fecharNovaConsulta()">
+        <button type="button" class="btn-secondary" (click)="fecharNovaConsulta()">
           Cancelar
         </button>
 
-        <button
-          type="button"
-          class="btn-primary"
-          (click)="salvarNovaConsulta()">
+        <button type="button" class="btn-primary" (click)="salvarNovaConsulta()">
           Salvar consulta
         </button>
       </div>
@@ -308,10 +268,7 @@
   <div class="modal-fundo" *ngIf="modalDetalhesAberto && consultaSelecionada">
     <div class="modal-card">
 
-      <button
-        class="fechar-modal"
-        type="button"
-        (click)="fecharDetalhes()">
+      <button class="fechar-modal" type="button" (click)="fecharDetalhes()">
         ×
       </button>
 
@@ -365,17 +322,11 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="btn-secondary"
-          (click)="fecharDetalhes()">
+        <button type="button" class="btn-secondary" (click)="fecharDetalhes()">
           Fechar
         </button>
 
-        <button
-          type="button"
-          class="btn-primary"
-          (click)="abrirEdicao(consultaSelecionada); fecharDetalhes()">
+        <button type="button" class="btn-primary" (click)="abrirEdicao(consultaSelecionada); fecharDetalhes()">
           Editar consulta
         </button>
       </div>
@@ -386,10 +337,7 @@
   <div class="modal-fundo" *ngIf="modalEdicaoAberto">
     <div class="modal-card">
 
-      <button
-        class="fechar-modal"
-        type="button"
-        (click)="fecharEdicao()">
+      <button class="fechar-modal" type="button" (click)="fecharEdicao()">
         ×
       </button>
 
@@ -402,33 +350,34 @@
         <label>Data</label>
         <input
           type="date"
+          [min]="dataMinima"
           [(ngModel)]="consultaEditando.data">
 
         <label>Horário</label>
-        <input
-          type="time"
-          [(ngModel)]="consultaEditando.hora">
+        <select [(ngModel)]="consultaEditando.hora">
+          <option value="">Selecione um horário</option>
+          <option *ngFor="let horario of horariosDisponiveis" [value]="horario">
+            {{ horario }}
+          </option>
+        </select>
 
         <label>Período</label>
         <select [(ngModel)]="consultaEditando.periodo">
-          <option>AM</option>
-          <option>PM</option>
+          <option value="AM">AM</option>
         </select>
 
         <label>Pet</label>
-        <input
-          type="text"
-          [(ngModel)]="consultaEditando.pet">
+        <input type="text" [(ngModel)]="consultaEditando.pet">
 
         <label>Idade</label>
         <input
           type="text"
+          inputmode="numeric"
+          maxlength="2"
           [(ngModel)]="consultaEditando.idade">
 
         <label>Tutor</label>
-        <input
-          type="text"
-          [(ngModel)]="consultaEditando.tutor">
+        <input type="text" [(ngModel)]="consultaEditando.tutor">
 
         <label>Tipo de atendimento</label>
         <select [(ngModel)]="consultaEditando.motivo">
@@ -454,10 +403,7 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="btn-secondary"
-          (click)="fecharEdicao()">
+        <button type="button" class="btn-secondary" (click)="fecharEdicao()">
           Cancelar
         </button>
 
@@ -469,10 +415,7 @@
           Excluir consulta
         </button>
 
-        <button
-          type="button"
-          class="btn-primary"
-          (click)="salvarEdicao()">
+        <button type="button" class="btn-primary" (click)="salvarEdicao()">
           Salvar alterações
         </button>
       </div>

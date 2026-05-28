@@ -15,6 +15,7 @@ export class FinanceiroAdmComponent {
   modalAberto = false;
   menuAberto: number | null = null;
   periodoFluxo = 'Mensal';
+  cardAtivo = '';
 
   novaTransacao = {
     data: '',
@@ -32,6 +33,10 @@ export class FinanceiroAdmComponent {
     { data: '14 Out, 2024', descricao: 'Consulta Clínica Geral - Luna', cliente: 'Cliente: Maria Oliveira', categoria: 'Serviço', valor: 180, tipo: 'Receita', status: 'Pago' },
     { data: '13 Out, 2024', descricao: 'Manutenção Ar Condicionado', cliente: 'Empresa: ClimaCool', categoria: 'Infra', valor: -350, tipo: 'Despesa', status: 'Pago' }
   ];
+
+  selecionarCard(card: string) {
+    this.cardAtivo = card;
+  }
 
   get transacoesFiltradas() {
     return this.transacoes.filter(t => {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 export interface ConsultaFuncionario {
+    id?: number;
     hora: string;
     horario: string;
     periodo: string;
@@ -30,6 +31,7 @@ export class ConsultasService {
     private consultasIniciais(): ConsultaFuncionario[] {
         return [
             {
+                id: 1,
                 hora: '09:00',
                 horario: '09:00',
                 periodo: 'AM',
@@ -43,6 +45,7 @@ export class ConsultasService {
                 tipo: 'green'
             },
             {
+                id: 2,
                 hora: '10:00',
                 horario: '10:00',
                 periodo: 'AM',
@@ -56,6 +59,7 @@ export class ConsultasService {
                 tipo: 'green'
             },
             {
+                id: 3,
                 hora: '11:00',
                 horario: '11:00',
                 periodo: 'AM',
@@ -69,6 +73,7 @@ export class ConsultasService {
                 tipo: 'green'
             },
             {
+                id: 4,
                 hora: '14:00',
                 horario: '14:00',
                 periodo: 'PM',
@@ -101,17 +106,27 @@ export class ConsultasService {
     }
 
     listarConsultas(): ConsultaFuncionario[] {
-        return this.consultas;
+        const dadosSalvos = localStorage.getItem(this.storageKey);
+
+        if (dadosSalvos) {
+            this.consultas = JSON.parse(dadosSalvos);
+        }
+
+        return [...this.consultas];
     }
 
     adicionarConsulta(consulta: ConsultaFuncionario): void {
+        consulta.id = this.gerarNovoId();
+
         this.consultas.push(consulta);
+
         this.salvarNoStorage();
     }
 
     atualizarStatus(consulta: ConsultaFuncionario, status: string): void {
         consulta.status = status;
         consulta.tipo = this.definirTipo(status);
+
         this.salvarNoStorage();
     }
 
@@ -128,5 +143,13 @@ export class ConsultasService {
     removerConsulta(consulta: ConsultaFuncionario): void {
         this.consultas = this.consultas.filter(c => c !== consulta);
         this.salvarNoStorage();
+    }
+
+    private gerarNovoId(): number {
+        if (this.consultas.length === 0) {
+            return 1;
+        }
+
+        return Math.max(...this.consultas.map(c => c.id || 0)) + 1;
     }
 }

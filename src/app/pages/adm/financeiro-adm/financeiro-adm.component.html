@@ -4,17 +4,22 @@
 
     <div>
       <h1>Visão Financeira</h1>
-      <p>Gestão de fluxo e saúde econômica da clínica.</p>
+
+      <p>
+        Gestão de fluxo e saúde econômica da clínica.
+      </p>
     </div>
 
     <div class="actions">
-      <button class="btn-light" (click)="exportarRelatorio()">
-        ⇩ Exportar Relatório
-      </button>
 
-      <button class="btn-primary" (click)="abrirModal()">
+      <button
+        class="btn-primary"
+        type="button"
+        (click)="abrirModal()"
+      >
         + Nova Transação
       </button>
+
     </div>
 
   </div>
@@ -25,45 +30,127 @@
 
       <section class="cards-resumo">
 
-        <div class="resumo-card">
+        <div
+          class="resumo-card"
+          [class.ativo]="cardAtivo === 'receita'"
+          (click)="selecionarCard('receita')"
+        >
+
           <div class="resumo-topo">
-            <div class="icon azul">▣</div>
-            <span class="tag verde">+12.5%</span>
+
+            <span class="icon azul">
+
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 1V23"></path>
+                <path d="M17 5H9.5A3.5 3.5 0 0 0 9.5 12H14.5A3.5 3.5 0 0 1 14.5 19H6"></path>
+              </svg>
+
+            </span>
+
+            <span class="tag verde">
+              +12.5%
+            </span>
+
           </div>
 
-          <small>RECEITA TOTAL</small>
-          <h2>{{ formatarMoeda(receitaTotal) }}</h2>
+          <small>
+            RECEITA TOTAL
+          </small>
+
+          <h2>
+            {{ formatarMoeda(receitaTotal) }}
+          </h2>
+
         </div>
 
-        <div class="resumo-card">
+        <div
+          class="resumo-card"
+          [class.ativo]="cardAtivo === 'despesa'"
+          (click)="selecionarCard('despesa')"
+        >
+
           <div class="resumo-topo">
-            <div class="icon vermelho">⌁</div>
-            <span class="tag vermelho-tag">+21%</span>
+
+            <span class="icon vermelho">
+
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3V21H21"></path>
+                <path d="M7 9L12 14L21 5"></path>
+              </svg>
+
+            </span>
+
+            <span class="tag vermelho-tag">
+              +21%
+            </span>
+
           </div>
 
-          <small>DESPESAS</small>
-          <h2 class="vermelho-texto">{{ formatarMoeda(despesasTotal) }}</h2>
+          <small>
+            DESPESAS
+          </small>
+
+          <h2 class="vermelho-texto">
+            {{ formatarMoeda(despesasTotal) }}
+          </h2>
+
         </div>
 
-        <div class="saldo-card">
-          <small>SALDO</small>
-          <h2>{{ formatarMoeda(saldoTotal) }}</h2>
+        <div
+          class="saldo-card"
+          [class.ativo]="cardAtivo === 'saldo'"
+          (click)="selecionarCard('saldo')"
+        >
+
+          <small>
+            SALDO
+          </small>
+
+          <h2>
+            {{ formatarMoeda(saldoTotal) }}
+          </h2>
 
           <div class="saldo-barra">
             <div></div>
           </div>
 
-          <span>75%</span>
+          <span>
+            75%
+          </span>
+
         </div>
 
-        <div class="resumo-card">
+        <div
+          class="resumo-card"
+          [class.ativo]="cardAtivo === 'pendente'"
+          (click)="selecionarCard('pendente')"
+        >
+
           <div class="resumo-topo">
-            <div class="icon cinza">◴</div>
-            <span class="tag laranja">8 itens</span>
+
+            <span class="icon cinza">
+
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7V12L15 15"></path>
+              </svg>
+
+            </span>
+
+            <span class="tag laranja">
+              8 itens
+            </span>
+
           </div>
 
-          <small>PAGAMENTOS PENDENTES</small>
-          <h2>{{ formatarMoeda(pendentesTotal) }}</h2>
+          <small>
+            PAGAMENTOS PENDENTES
+          </small>
+
+          <h2>
+            {{ formatarMoeda(pendentesTotal) }}
+          </h2>
+
         </div>
 
       </section>
@@ -73,15 +160,27 @@
         <div class="fluxo-card">
 
           <div class="card-header">
+
             <div>
-              <h3>Fluxo de Caixa</h3>
+
+              <h3>
+                Fluxo de Caixa
+              </h3>
+
               <p>
-                {{ periodoFluxo === 'Mensal' ? 'Movimentação mensal consolidada' : 'Movimentação anual consolidada' }}
+                {{
+                  periodoFluxo === 'Mensal'
+                    ? 'Movimentação mensal consolidada'
+                    : 'Movimentação anual consolidada'
+                }}
               </p>
+
             </div>
 
             <div class="tabs">
+
               <button
+                type="button"
                 [class.ativo]="periodoFluxo === 'Mensal'"
                 (click)="alterarPeriodoFluxo('Mensal')"
               >
@@ -89,18 +188,25 @@
               </button>
 
               <button
+                type="button"
                 [class.ativo]="periodoFluxo === 'Anual'"
                 (click)="alterarPeriodoFluxo('Anual')"
               >
                 Anual
               </button>
+
             </div>
+
           </div>
 
           <div class="grafico">
+
+            <div class="linha-grafico"></div>
+            <div class="linha-grafico"></div>
+            <div class="linha-grafico"></div>
             <div class="linha-grafico"></div>
 
-            <div class="meses" *ngIf="periodoFluxo === 'Mensal'">
+            <div class="meses">
               <span>JAN</span>
               <span>FEV</span>
               <span>MAR</span>
@@ -109,50 +215,87 @@
               <span>JUN</span>
             </div>
 
-            <div class="meses" *ngIf="periodoFluxo === 'Anual'">
-              <span>2021</span>
-              <span>2022</span>
-              <span>2023</span>
-              <span>2024</span>
-              <span>2025</span>
-              <span>2026</span>
-            </div>
           </div>
 
           <div class="legenda">
-            <span><b class="bolinha azul-b"></b> Receitas</span>
-            <span><b class="bolinha cinza-b"></b> Despesas</span>
+
+            <span>
+              <i class="bolinha azul-b"></i>
+              Receitas
+            </span>
+
+            <span>
+              <i class="bolinha cinza-b"></i>
+              Despesas
+            </span>
+
           </div>
 
         </div>
 
-        <aside class="categorias-card">
-          <h3>Gastos por Categoria</h3>
+        <div class="categorias-card">
+
+          <h3>
+            Gastos por Categoria
+          </h3>
 
           <div class="categoria">
-            <p>Medicamentos <span>45%</span></p>
-            <div class="barra"><div style="width:45%"></div></div>
+
+            <p>
+              Medicamentos
+              <span>45%</span>
+            </p>
+
+            <div class="barra">
+              <div style="width: 45%;"></div>
+            </div>
+
           </div>
 
           <div class="categoria">
-            <p>Salários <span>30%</span></p>
-            <div class="barra"><div style="width:30%"></div></div>
+
+            <p>
+              Salários
+              <span>30%</span>
+            </p>
+
+            <div class="barra">
+              <div style="width: 30%;"></div>
+            </div>
+
           </div>
 
           <div class="categoria">
-            <p>Infraestrutura <span>15%</span></p>
-            <div class="barra"><div style="width:15%"></div></div>
+
+            <p>
+              Infraestrutura
+              <span>15%</span>
+            </p>
+
+            <div class="barra">
+              <div style="width: 15%;"></div>
+            </div>
+
           </div>
 
           <div class="categoria">
-            <p>Marketing <span>10%</span></p>
-            <div class="barra"><div style="width:10%"></div></div>
+
+            <p>
+              Marketing
+              <span>10%</span>
+            </p>
+
+            <div class="barra">
+              <div style="width: 10%;"></div>
+            </div>
+
           </div>
 
           <div class="dica">
             A economia em medicamentos este mês foi de 8% em relação ao período anterior.
           </div>
-        </aside>
+
+        </div>
 
       </section>
 
@@ -161,39 +304,69 @@
         <div class="transacoes">
 
           <div class="transacoes-header">
-            <h3>Transações Recentes</h3>
+
+            <h3>
+              Transações Recentes
+            </h3>
 
             <div class="busca">
-              <span>⌕</span>
+
+              <span class="busca-icon">
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21 21L16.65 16.65"></path>
+                  <circle cx="11" cy="11" r="8"></circle>
+                </svg>
+
+              </span>
+
               <input
                 type="text"
-                placeholder="Filtrar transações..."
+                placeholder="Buscar transação..."
                 [(ngModel)]="busca"
               >
+
             </div>
+
           </div>
 
           <div class="tabela">
 
             <div class="linha cabecalho">
+
               <span>Data</span>
               <span>Descrição</span>
               <span>Categoria</span>
               <span>Valor</span>
               <span>Status</span>
               <span></span>
+
             </div>
 
-            <div class="linha" *ngFor="let t of transacoesFiltradas; let i = index">
+            <div
+              class="linha"
+              *ngFor="let t of transacoesFiltradas; let i = index"
+            >
 
-              <span>{{ t.data }}</span>
+              <span>
+                {{ t.data }}
+              </span>
 
               <div>
-                <strong>{{ t.descricao }}</strong>
-                <small>{{ t.cliente }}</small>
+
+                <strong>
+                  {{ t.descricao }}
+                </strong>
+
+                <small>
+                  {{ t.cliente }}
+                </small>
+
               </div>
 
-              <span class="categoria-tag">{{ t.categoria }}</span>
+              <span class="categoria-tag">
+                {{ t.categoria }}
+              </span>
 
               <span
                 class="valor"
@@ -210,13 +383,43 @@
               </span>
 
               <div class="acoes">
-                <button (click)="abrirMenu(i)">⋮</button>
 
-                <div class="menu-acoes" *ngIf="menuAberto === i">
-                  <button (click)="marcarComoPago(t)">Marcar como pago</button>
-                  <button (click)="marcarComoPendente(t)">Marcar pendente</button>
-                  <button class="perigo" (click)="excluirTransacao(t)">Excluir</button>
+                <button
+                  type="button"
+                  (click)="abrirMenu(i)"
+                >
+                  ⋮
+                </button>
+
+                <div
+                  class="menu-acoes"
+                  *ngIf="menuAberto === i"
+                >
+
+                  <button
+                    type="button"
+                    (click)="marcarComoPago(t)"
+                  >
+                    Marcar como pago
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="marcarComoPendente(t)"
+                  >
+                    Marcar pendente
+                  </button>
+
+                  <button
+                    type="button"
+                    class="perigo"
+                    (click)="excluirTransacao(t)"
+                  >
+                    Excluir
+                  </button>
+
                 </div>
+
               </div>
 
             </div>
@@ -226,13 +429,29 @@
         </div>
 
         <div class="performance">
-          <h3>Performance Mensal</h3>
 
-          <p>Metas de Vendas (Planos) <span>82%</span></p>
-          <div class="barra-dark"><div style="width:82%"></div></div>
+          <h3>
+            Performance Mensal
+          </h3>
 
-          <p>Capacidade Clínica <span>65%</span></p>
-          <div class="barra-dark"><div style="width:65%"></div></div>
+          <p>
+            Metas de Vendas (Planos)
+            <span>82%</span>
+          </p>
+
+          <div class="barra-dark">
+            <div style="width: 82%;"></div>
+          </div>
+
+          <p>
+            Capacidade Clínica
+            <span>65%</span>
+          </p>
+
+          <div class="barra-dark">
+            <div style="width: 65%;"></div>
+          </div>
+
         </div>
 
       </section>
@@ -241,42 +460,78 @@
 
   </div>
 
-  <div class="modal-fundo" *ngIf="modalAberto">
+  <div
+    class="modal-fundo"
+    *ngIf="modalAberto"
+  >
 
     <div class="modal">
 
       <div class="modal-header">
-        <h2>Nova Transação</h2>
-        <button (click)="fecharModal()">×</button>
+
+        <h2>
+          Nova Transação
+        </h2>
+
+        <button
+          type="button"
+          (click)="fecharModal()"
+        >
+          ×
+        </button>
+
       </div>
 
       <div class="form-grid">
 
         <label>
+
           Data
-          <input type="date" [(ngModel)]="novaTransacao.data">
+
+          <input
+            type="date"
+            [(ngModel)]="novaTransacao.data"
+          >
+
         </label>
 
         <label>
+
           Tipo
+
           <select [(ngModel)]="novaTransacao.tipo">
             <option>Receita</option>
             <option>Despesa</option>
           </select>
+
         </label>
 
-        <label>
+        <label class="campo-full">
+
           Descrição
-          <input type="text" [(ngModel)]="novaTransacao.descricao">
+
+          <input
+            type="text"
+            [(ngModel)]="novaTransacao.descricao"
+          >
+
         </label>
 
         <label>
+
           Cliente/Fornecedor
-          <input type="text" [(ngModel)]="novaTransacao.cliente">
+
+          <input
+            type="text"
+            [(ngModel)]="novaTransacao.cliente"
+          >
+
         </label>
 
         <label>
+
           Categoria
+
           <select [(ngModel)]="novaTransacao.categoria">
             <option>Serviço</option>
             <option>Procedimento</option>
@@ -285,26 +540,51 @@
             <option>Salários</option>
             <option>Marketing</option>
           </select>
+
         </label>
 
         <label>
+
           Status
+
           <select [(ngModel)]="novaTransacao.status">
             <option>Pago</option>
             <option>Pendente</option>
           </select>
+
         </label>
 
-        <label class="campo-full">
+        <label>
+
           Valor
-          <input type="number" [(ngModel)]="novaTransacao.valor">
+
+          <input
+            type="number"
+            [(ngModel)]="novaTransacao.valor"
+          >
+
         </label>
 
       </div>
 
       <div class="modal-actions">
-        <button class="btn-light" (click)="fecharModal()">Cancelar</button>
-        <button class="btn-primary" (click)="salvarTransacao()">Salvar Transação</button>
+
+        <button
+          class="btn-light"
+          type="button"
+          (click)="fecharModal()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          class="btn-primary"
+          type="button"
+          (click)="salvarTransacao()"
+        >
+          Salvar Transação
+        </button>
+
       </div>
 
     </div>

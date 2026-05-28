@@ -1,6 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {
+  ConsultasService,
+  ConsultaFuncionario
+} from '../../../core/services/consultas.service';
+
+interface ConsultaAdm extends ConsultaFuncionario {
+  dataObj: Date;
+  vet: string;
+  procedimento: string;
+}
 
 @Component({
   selector: 'app-consultas-adm',
@@ -9,12 +19,12 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './consultas-adm.component.html',
   styleUrl: './consultas-adm.component.css'
 })
-export class ConsultasAdmComponent {
+export class ConsultasAdmComponent implements OnInit, DoCheck {
 
   termoBusca = '';
   statusSelecionado = 'Todos';
   vetSelecionado = 'Todos';
-  periodoSelecionado = 'Hoje';
+  periodoSelecionado = 'Todos';
 
   paginaAtual = 1;
   itensPorPagina = 5;
@@ -26,63 +36,47 @@ export class ConsultasAdmComponent {
   mesAtual = this.hoje.getMonth();
   anoAtual = this.hoje.getFullYear();
 
+  consultas: ConsultaAdm[] = [];
+
+  private totalConsultasAnterior = 0;
+
   meses = [
     'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
     'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
   ];
 
-  consultas = [
-    {
-      hora: '09:30',
-      data: this.formatarData(new Date()),
-      dataObj: new Date(),
-      pet: 'Max',
-      tutor: 'Ana Paula',
-      vet: 'Dr. Ricardo Silva',
-      procedimento: 'Check-up Geral',
-      status: 'Confirmada'
-    },
-    {
-      hora: '10:45',
-      data: this.formatarData(new Date()),
-      dataObj: new Date(),
-      pet: 'Luna',
-      tutor: 'Marcos Mendes',
-      vet: 'Dra. Marina Costa',
-      procedimento: 'Vacinação',
-      status: 'Em andamento'
-    },
-    {
-      hora: '13:15',
-      data: this.formatarData(new Date()),
-      dataObj: new Date(),
-      pet: 'Bolinha',
-      tutor: 'Pedro Rocha',
-      vet: 'Dr. Ricardo Silva',
-      procedimento: 'Ortopedia',
-      status: 'Pendente'
-    },
-    {
-      hora: '14:00',
-      data: this.formatarData(this.adicionarDias(1)),
-      dataObj: this.adicionarDias(1),
-      pet: 'Thor',
-      tutor: 'Camila Souza',
-      vet: 'Dra. Marina Costa',
-      procedimento: 'Retorno',
-      status: 'Confirmada'
-    },
-    {
-      hora: '15:30',
-      data: this.formatarData(this.adicionarDias(2)),
-      dataObj: this.adicionarDias(2),
-      pet: 'Mel',
-      tutor: 'Fernanda Lima',
-      vet: 'Dr. Ricardo Silva',
-      procedimento: 'Exames',
-      status: 'Pendente'
+  constructor(private consultasService: ConsultasService) { }
+
+  ngOnInit(): void {
+
+    this.carregarConsultas();
+
+  }
+
+  ngDoCheck(): void {
+    const totalAtual = this.consultasService.listarConsultas().length;
+
+    if (totalAtual !== this.totalConsultasAnterior) {
+      this.carregarConsultas();
     }
-  ];
+  }
+
+  carregarConsultas(): void {
+    const lista = this.consultasService.listarConsultas();
+
+    this.totalConsultasAnterior = lista.length;
+
+    this.consultas = lista.map((consulta: ConsultaFuncionario) => {
+      const dataObj = this.criarDataObj(consulta.data);
+
+      return {
+        ...consulta,
+        dataObj,
+        vet: 'Dr. Rogério Souza',
+        procedimento: consulta.motivo
+      };
+    });
+  }
 
   get diasCalendario() {
     const primeiroDia = new Date(this.anoAtual, this.mesAtual, 1);
@@ -92,7 +86,6 @@ export class ConsultasAdmComponent {
     const diaSemanaInicio = primeiroDia.getDay();
 
     const dias: any[] = [];
-
     const ultimoDiaMesAnterior = new Date(this.anoAtual, this.mesAtual, 0).getDate();
 
     for (let i = diaSemanaInicio - 1; i >= 0; i--) {
@@ -121,18 +114,18 @@ export class ConsultasAdmComponent {
     return dias;
   }
 
-  get consultasFiltradas() {
-    return this.consultas.filter(c => {
+  get consultasFiltradas(): ConsultaAdm[] {
+    return this.consultas.filter((c: ConsultaAdm) => {
       const busca = this.termoBusca.toLowerCase();
 
       const passaBusca =
         c.pet.toLowerCase().includes(busca) ||
         c.tutor.toLowerCase().includes(busca) ||
-        c.procedimento.toLowerCase().includes(busca);
+        c.motivo.toLowerCase().includes(busca);
 
       const passaStatus =
         this.statusSelecionado === 'Todos' ||
-        c.status === this.statusSelecionado;
+        this.normalizarStatus(c.status) === this.normalizarStatus(this.statusSelecionado);
 
       const passaVet =
         this.vetSelecionado === 'Todos' ||
@@ -144,93 +137,82 @@ export class ConsultasAdmComponent {
     });
   }
 
-  get consultasPaginadas() {
+  get consultasPaginadas(): ConsultaAdm[] {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
     return this.consultasFiltradas.slice(inicio, inicio + this.itensPorPagina);
   }
 
-  get totalPaginas() {
-    return Math.ceil(this.consultasFiltradas.length / this.itensPorPagina);
+  get totalPaginas(): number {
+    return Math.max(Math.ceil(this.consultasFiltradas.length / this.itensPorPagina), 1);
   }
 
-  get paginas() {
+  get paginas(): number[] {
     return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
   }
 
-  get totalPendentes() {
-    return this.consultas.filter(c => c.status === 'Pendente').length;
+  get totalPendentes(): number {
+    return this.consultas.filter((c: ConsultaAdm) => this.normalizarStatus(c.status) === 'Pendente').length;
   }
 
-  get temUrgentes() {
-    return this.totalPendentes > 0;
+  get temUrgentes(): boolean {
+    return this.consultas.some((c: ConsultaAdm) => c.tipo === 'red' || this.normalizarStatus(c.status) === 'Urgente');
   }
 
-  get consultasHoje() {
-    return this.consultas.filter(c => this.ehMesmaData(c.dataObj, this.hoje)).length;
+  get consultasHoje(): number {
+    return this.consultas.filter((c: ConsultaAdm) => this.ehMesmaData(c.dataObj, this.hoje)).length;
   }
 
-  aplicarFiltros() {
+  aplicarFiltros(): void {
     this.paginaAtual = 1;
     this.menuAberto = null;
+    this.carregarConsultas();
   }
 
-  mudarPagina(p: number) {
+  mudarPagina(p: number): void {
     if (p >= 1 && p <= this.totalPaginas) {
       this.paginaAtual = p;
       this.menuAberto = null;
     }
   }
 
-  abrirMenu(i: number) {
+  abrirMenu(i: number): void {
     this.menuAberto = this.menuAberto === i ? null : i;
   }
 
-  confirmar(c: any) {
-    c.status = 'Confirmada';
+  confirmar(c: ConsultaAdm): void {
+    this.consultasService.atualizarStatus(c, 'CONFIRMADO');
+    c.status = 'CONFIRMADO';
+    c.tipo = this.consultasService.definirTipo('CONFIRMADO');
     this.menuAberto = null;
+    this.carregarConsultas();
   }
 
-  cancelar(c: any) {
-    c.status = 'Cancelada';
+  cancelar(c: ConsultaAdm): void {
+    this.consultasService.atualizarStatus(c, 'CANCELADO');
+    c.status = 'CANCELADO';
+    c.tipo = this.consultasService.definirTipo('CANCELADO');
     this.menuAberto = null;
+    this.carregarConsultas();
   }
 
-  finalizar(c: any) {
-    c.status = 'Finalizada';
+  finalizar(c: ConsultaAdm): void {
+    this.consultasService.atualizarStatus(c, 'FINALIZADO');
+    c.status = 'FINALIZADO';
+    c.tipo = this.consultasService.definirTipo('FINALIZADO');
     this.menuAberto = null;
+    this.carregarConsultas();
   }
 
-  encaixarEmergencia() {
-    const agora = new Date();
-
-    this.consultas.unshift({
-      hora: 'Agora',
-      data: this.formatarData(agora),
-      dataObj: agora,
-      pet: 'Emergência',
-      tutor: 'Aguardando confirmação',
-      vet: 'Plantão',
-      procedimento: 'Urgência',
-      status: 'Pendente'
-    });
-
-    this.periodoSelecionado = 'Hoje';
-    this.paginaAtual = 1;
-  }
-
-  selecionarDia(dia: any) {
+  selecionarDia(dia: any): void {
     if (dia.outroMes) return;
 
     this.diaSelecionado = dia.numero;
-
-    const dataSelecionada = new Date(this.anoAtual, this.mesAtual, dia.numero);
     this.periodoSelecionado = 'Dia selecionado';
-
-    this.consultas = this.consultas.map(c => c);
     this.paginaAtual = 1;
+    this.carregarConsultas();
   }
 
-  mesAnterior() {
+  mesAnterior(): void {
     if (this.mesAtual === 0) {
       this.mesAtual = 11;
       this.anoAtual--;
@@ -241,7 +223,7 @@ export class ConsultasAdmComponent {
     this.diaSelecionado = 1;
   }
 
-  proximoMes() {
+  proximoMes(): void {
     if (this.mesAtual === 11) {
       this.mesAtual = 0;
       this.anoAtual++;
@@ -252,31 +234,44 @@ export class ConsultasAdmComponent {
     this.diaSelecionado = 1;
   }
 
-  filtrarPorPeriodo(data: Date) {
-    const hoje = new Date();
+  filtrarPorPeriodo(data: Date): boolean {
+    if (this.periodoSelecionado === 'Todos') {
+      return true;
+    }
+
+    const hoje = this.inicioDoDia(new Date());
+    const dataConsulta = this.inicioDoDia(data);
 
     if (this.periodoSelecionado === 'Hoje') {
-      return this.ehMesmaData(data, hoje);
+      return this.ehMesmaData(dataConsulta, hoje);
     }
 
     if (this.periodoSelecionado === 'Dia selecionado') {
-      const selecionada = new Date(this.anoAtual, this.mesAtual, this.diaSelecionado);
-      return this.ehMesmaData(data, selecionada);
+      const selecionada = new Date(
+        this.anoAtual,
+        this.mesAtual,
+        this.diaSelecionado
+      );
+
+      return this.ehMesmaData(dataConsulta, selecionada);
     }
 
     if (this.periodoSelecionado === 'Semana') {
       const seteDias = this.adicionarDias(7);
-      return data >= this.inicioDoDia(hoje) && data <= seteDias;
+      return dataConsulta >= hoje && dataConsulta <= seteDias;
     }
 
     if (this.periodoSelecionado === 'Mês') {
-      return data.getMonth() === hoje.getMonth() && data.getFullYear() === hoje.getFullYear();
+      return (
+        dataConsulta.getMonth() === this.mesAtual &&
+        dataConsulta.getFullYear() === this.anoAtual
+      );
     }
 
     return true;
   }
 
-  ehMesmaData(data1: Date, data2: Date) {
+  ehMesmaData(data1: Date, data2: Date): boolean {
     return (
       data1.getDate() === data2.getDate() &&
       data1.getMonth() === data2.getMonth() &&
@@ -284,21 +279,67 @@ export class ConsultasAdmComponent {
     );
   }
 
-  adicionarDias(dias: number) {
+  adicionarDias(dias: number): Date {
     const data = new Date();
     data.setDate(data.getDate() + dias);
     return data;
   }
 
-  inicioDoDia(data: Date) {
+  inicioDoDia(data: Date): Date {
     return new Date(data.getFullYear(), data.getMonth(), data.getDate());
   }
 
-  formatarData(data: Date) {
+  formatarData(data: Date): string {
     const dia = data.getDate().toString().padStart(2, '0');
     const mes = this.meses[data.getMonth()].substring(0, 3);
     const ano = data.getFullYear();
 
     return `${dia} ${mes} ${ano}`;
+  }
+
+  criarDataObj(data: string): Date {
+    if (!data) {
+      return new Date();
+    }
+
+    if (data.includes('/')) {
+      const partes = data.split('/');
+
+      const dia = Number(partes[0]);
+      const mes = Number(partes[1]) - 1;
+      const ano = Number(partes[2]);
+
+      return new Date(ano, mes, dia);
+    }
+
+    if (data.includes('-')) {
+      const partes = data.split('-');
+
+      const ano = Number(partes[0]);
+      const mes = Number(partes[1]) - 1;
+      const dia = Number(partes[2]);
+
+      return new Date(ano, mes, dia);
+    }
+
+    return new Date();
+  }
+
+  normalizarStatus(status: string): string {
+    const texto = status
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase();
+
+    if (texto === 'CONFIRMADO' || texto === 'CONFIRMADA') return 'Confirmada';
+    if (texto === 'CANCELADO' || texto === 'CANCELADA') return 'Cancelada';
+    if (texto === 'FINALIZADO' || texto === 'FINALIZADA') return 'Finalizada';
+    if (texto === 'PENDENTE') return 'Pendente';
+    if (texto === 'URGENTE') return 'Urgente';
+    if (texto === 'AGENDADO' || texto === 'AGENDADA') return 'Agendado';
+    if (texto === 'EM ANDAMENTO' || texto === 'EM ATENDIMENTO') return 'Em andamento';
+
+    return status;
   }
 }

@@ -36,6 +36,15 @@ export class ConsultasFuncionarioComponent {
 
   consultaEditando: ConsultaFuncionario = this.criarConsultaVazia();
 
+  dataMinima = this.pegarDataHoje();
+
+  horariosDisponiveis = [
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00'
+  ];
+
   novaConsulta = {
     hora: '',
     periodo: 'AM',
@@ -66,7 +75,7 @@ export class ConsultasFuncionarioComponent {
 
       const matchStatus =
         this.filtrosAplicados.status === 'Todos os Status' ||
-        consulta.status === statusFiltro;
+        this.normalizarStatus(consulta.status) === statusFiltro;
 
       return matchPet && matchData && matchStatus;
     });
@@ -83,6 +92,16 @@ export class ConsultasFuncionarioComponent {
   get consultasPaginadas(): ConsultaFuncionario[] {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
     return this.consultasFiltradas.slice(inicio, inicio + this.itensPorPagina);
+  }
+
+  get horariosLivres(): string[] {
+    return this.horariosDisponiveis.filter(horario => {
+      return !this.consultas.some(consulta =>
+        consulta.data === this.novaConsulta.data &&
+        consulta.hora === horario &&
+        this.normalizarStatus(consulta.status) !== 'CANCELADO'
+      );
+    });
   }
 
   aplicarFiltros(): void {
@@ -107,6 +126,8 @@ export class ConsultasFuncionarioComponent {
   }
 
   abrirNovaConsulta(): void {
+    this.dataMinima = this.pegarDataHoje();
+
     this.novaConsulta = {
       hora: '',
       periodo: 'AM',
@@ -124,7 +145,15 @@ export class ConsultasFuncionarioComponent {
     this.modalNovaConsultaAberto = false;
   }
 
+  validarIdade(): void {
+    this.novaConsulta.idade = this.novaConsulta.idade
+      .replace(/\D/g, '')
+      .slice(0, 2);
+  }
+
   salvarNovaConsulta(): void {
+    this.validarIdade();
+
     if (
       !this.novaConsulta.hora ||
       !this.novaConsulta.pet ||
@@ -137,15 +166,37 @@ export class ConsultasFuncionarioComponent {
       return;
     }
 
+    if (this.dataJaPassou(this.novaConsulta.data)) {
+      alert('Não é possível marcar consulta em uma data que já passou.');
+      return;
+    }
+
+    if (!this.horariosDisponiveis.includes(this.novaConsulta.hora)) {
+      alert('Selecione um horário válido disponível na agenda.');
+      return;
+    }
+
+    const horarioOcupado = this.consultas.some(consulta =>
+      consulta.data === this.novaConsulta.data &&
+      consulta.hora === this.novaConsulta.hora &&
+      this.normalizarStatus(consulta.status) !== 'CANCELADO'
+    );
+
+    if (horarioOcupado) {
+      alert('Esse horário já está ocupado. Escolha outro horário disponível.');
+      return;
+    }
+
     const consulta: ConsultaFuncionario = {
+      id: 0,
       hora: this.novaConsulta.hora,
       horario: this.novaConsulta.hora,
-      periodo: this.novaConsulta.periodo,
+      periodo: 'AM',
       pet: this.novaConsulta.pet,
-      idade: this.novaConsulta.idade,
+      idade: `${this.novaConsulta.idade} anos`,
       tutor: this.novaConsulta.tutor,
       motivo: this.novaConsulta.tipoAtendimento,
-      status: 'AGENDADO',
+      status: 'PENDENTE',
       data: this.novaConsulta.data,
       imagem: '',
       tipo: 'gray'
@@ -153,6 +204,7 @@ export class ConsultasFuncionarioComponent {
 
     this.consultasService.adicionarConsulta(consulta);
     this.consultas = this.consultasService.listarConsultas();
+    this.paginaAtual = 1;
     this.fecharNovaConsulta();
   }
 
@@ -187,6 +239,7 @@ export class ConsultasFuncionarioComponent {
     });
 
     this.consultasService.salvarAlteracoes();
+    this.consultas = this.consultasService.listarConsultas();
     this.fecharEdicao();
   }
 
@@ -233,9 +286,11 @@ export class ConsultasFuncionarioComponent {
   private definirTipoStatus(status: string): string {
     const statusNormalizado = this.normalizarStatus(status);
 
-    if (statusNormalizado === 'CONFIRMADO') return 'green';
-    if (statusNormalizado === 'URGENTE' || statusNormalizado === 'CANCELADO') return 'red';
+    if (statusNormalizado === 'CONFIRMADO' || statusNormalizado === 'CONFIRMADA') return 'green';
+    if (statusNormalizado === 'URGENTE' || statusNormalizado === 'CANCELADO' || statusNormalizado === 'CANCELADA') return 'red';
     if (statusNormalizado === 'EM ATENDIMENTO') return 'blue';
+    if (statusNormalizado === 'FINALIZADO' || statusNormalizado === 'FINALIZADA') return 'blue';
+    if (statusNormalizado === 'PENDENTE') return 'gray';
 
     return 'gray';
   }
@@ -257,6 +312,13 @@ export class ConsultasFuncionarioComponent {
     return `${ano}-${mes}-${dia}`;
   }
 
+  private dataJaPassou(data: string): boolean {
+    const hoje = new Date(this.pegarDataHoje() + 'T00:00:00');
+    const selecionada = new Date(data + 'T00:00:00');
+
+    return selecionada < hoje;
+  }
+
   formatarData(data: string): string {
     if (!data) {
       return 'Data não informada';
@@ -273,6 +335,7 @@ export class ConsultasFuncionarioComponent {
 
   private criarConsultaVazia(): ConsultaFuncionario {
     return {
+      id: 0,
       hora: '',
       horario: '',
       periodo: '',

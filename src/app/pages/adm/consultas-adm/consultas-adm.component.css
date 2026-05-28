@@ -460,6 +460,54 @@
   }
 }
 
+.avatar-pet {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #eef2ff;
+  color: #5D6ED3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  flex-shrink: 0;
+}
+
+.paciente {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.status.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status.red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status.gray {
+  background: #eceff4;
+  color: #5f6675;
+}
+
+.status.blue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status.yellow {
+  background: #fef3c7;
+  color: #d97706;
+}
+
 @media (max-width: 800px) {
   .consultas-page {
     padding: 26px 18px;
