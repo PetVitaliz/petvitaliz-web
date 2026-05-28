@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment'; 
+import { environment } from '../../../environments/environment.prod'; 
 import { DataMaskDirective } from './data-mask.directive';
 
 @Component({
