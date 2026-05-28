@@ -57,6 +57,15 @@ export class ListarAdminComponent {
     return this.adminsFiltrados.slice(inicio, fim);
   }
 
+  getIniciais(nome: string): string {
+    return nome
+      .split(' ')
+      .map(parte => parte.charAt(0))
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
+  }
+
   alterarFiltro(status: string) {
     this.filtroStatus = status;
     this.paginaAtual = 1;
