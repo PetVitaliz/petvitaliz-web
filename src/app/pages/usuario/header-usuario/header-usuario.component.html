@@ -6,8 +6,14 @@
 
   <nav class="nav" [class.open]="menuMobileAberto">
     <a routerLink="/user/home" (click)="fecharMenus()">Home</a>
-    <a routerLink="/user/agendamento" (click)="fecharMenus()">Agendamentos</a>
+    <a routerLink="/servicos" (click)="fecharMenus()">Nossos Serviços</a>
+
+    <a routerLink="user/sobre-nos" routerLinkActive="ativo" (click)="fecharMenus()">Sobre Nós</a>
     <a routerLink="/user/contato" (click)="fecharMenus()">Contato</a>
+    <a routerLink="user/emergencia" routerLinkActive="ativo" (click)="fecharMenus()">Emergência</a>
+    <a routerLink="user/adocao" routerLinkActive="ativo" (click)="fecharMenus()">Adoção</a>
+    
+    <a routerLink="/user/agendamento" (click)="fecharMenus()">Agendamentos</a>
   </nav>
 
   <div class="header-actions">
@@ -26,12 +32,12 @@
         <div class="dropdown-header">Olá, {{ usuario?.nome?.split(' ')[0] || 'Usuário' }}!</div>
         <hr class="dropdown-divider">
 
-        <a routerLink="/user/listar/pet/cadastar" (click)="fecharMenus()">
-          <span class="material-icons dropdown-icon">add_circle_outline</span> Cadastrar Pet
+        <a routerLink="/user/listar/pet" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">pets</span> Meus Pets
         </a>
 
-        <a routerLink="/user/listar/pet" (click)="fecharMenus()">
-          <span class="material-icons dropdown-icon">pets</span> Perfil Pet
+        <a routerLink="/user/listar/pet/cadastar" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">add_circle_outline</span> Cadastrar Pet
         </a>
 
         <a routerLink="/user/planos-pet" (click)="fecharMenus()">
