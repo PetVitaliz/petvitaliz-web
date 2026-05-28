@@ -30,42 +30,23 @@ export class CadastroComponent {
   constructor(private router: Router, private http: HttpClient) {}
 
   get forcaSenha(): string {
-    if (!this.senha) {
-      return '';
-    }
-
+    if (!this.senha) return '';
     let pontos = 0;
-
     if (this.senha.length >= 6) pontos++;
     if (this.senha.length >= 8) pontos++;
     if (/[A-Z]/.test(this.senha)) pontos++;
     if (/[0-9]/.test(this.senha)) pontos++;
     if (/[^A-Za-z0-9]/.test(this.senha)) pontos++;
 
-    if (pontos <= 2) {
-      return 'fraca';
-    }
-
-    if (pontos <= 4) {
-      return 'media';
-    }
-
+    if (pontos <= 2) return 'fraca';
+    if (pontos <= 4) return 'media';
     return 'forte';
   }
 
   get textoForcaSenha(): string {
-    if (!this.senha) {
-      return '';
-    }
-
-    if (this.forcaSenha === 'fraca') {
-      return 'Segurança fraca';
-    }
-
-    if (this.forcaSenha === 'media') {
-      return 'Segurança média';
-    }
-
+    if (!this.senha) return '';
+    if (this.forcaSenha === 'fraca') return 'Segurança fraca';
+    if (this.forcaSenha === 'media') return 'Segurança média';
     return 'Segurança alta';
   }
 
@@ -73,21 +54,13 @@ export class CadastroComponent {
     this.senhaVisivel = !this.senhaVisivel;
   }
 
-
   formatarTelefone(): void {
     const numeros = this.telefone.replace(/\D/g, '').slice(0, 11);
-
     if (numeros.length <= 10) {
-      this.telefone = numeros
-        .replace(/(\d{2})(\d)/, '($1) $2')
-        .replace(/(\d{4})(\d)/, '$1-$2');
-
+      this.telefone = numeros.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
       return;
     }
-
-    this.telefone = numeros
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d)/, '$1-$2');
+    this.telefone = numeros.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
   }
 
   formatarNascimento(): void {
@@ -99,27 +72,25 @@ export class CadastroComponent {
   }
 
   private limparNumeros(valor: string): string {
-    return valor.replace(/\D/g, '');
+    return valor ? valor.replace(/\D/g, '') : '';
   }
 
- formatarCpf(): void {
+  formatarCpf(): void {
     let valor = this.cpf.replace(/\D/g, '');
 
     if (valor.length > 11) {
       valor = valor.slice(0, 11);
     }
 
-    setTimeout(() => {
-      if (valor.length <= 3) {
-        this.cpf = valor;
-      } else if (valor.length <= 6) {
-        this.cpf = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
-      } else if (valor.length <= 9) {
-        this.cpf = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-      } else {
-        this.cpf = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
-      }
-    });
+    if (valor.length <= 3) {
+      this.cpf = valor;
+    } else if (valor.length <= 6) {
+      this.cpf = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+    } else if (valor.length <= 9) {
+      this.cpf = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+    } else {
+      this.cpf = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+    }
   }
 
   private validarCpf(cpf: string): boolean {
@@ -136,7 +107,6 @@ export class CadastroComponent {
     let soma = 0;
     let resto;
 
-    // Validação do primeiro dígito verificador
     for (let i = 1; i <= 9; i++) {
       soma = soma + parseInt(numeros.substring(i - 1, i), 10) * (11 - i);
     }
@@ -165,9 +135,7 @@ export class CadastroComponent {
   private converterNascimentoParaISO(): string | null {
     const partesData = this.nascimento.trim().split('/');
 
-    if (partesData.length !== 3) {
-      return null;
-    }
+    if (partesData.length !== 3) return null;
 
     const dia = parseInt(partesData[0], 10);
     const mes = parseInt(partesData[1], 10);
@@ -194,15 +162,8 @@ export class CadastroComponent {
 
   private formatarGenero(): string {
     const generoLower = this.genero.toLowerCase().trim();
-
-    if (generoLower === 'masculino' || generoLower === 'm') {
-      return 'M';
-    }
-
-    if (generoLower === 'feminino' || generoLower === 'f') {
-      return 'F';
-    }
-
+    if (generoLower === 'masculino' || generoLower === 'm') return 'M';
+    if (generoLower === 'feminino' || generoLower === 'f') return 'F';
     return 'O';
   }
 
@@ -257,22 +218,18 @@ export class CadastroComponent {
     }).subscribe({
       next: (response: any) => {
         this.sucesso = response.mensagem || 'Cadastro realizado com sucesso';
-
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2500);
       },
       error: (err) => {
         console.error('Erro no fluxo de cadastro:', err);
-
         if (err.error) {
           this.erro = err.error.mensagem || err.error.message;
         }
-
         if (!this.erro && typeof err.error === 'string') {
           this.erro = err.error;
         }
-
         if (!this.erro) {
           this.erro = 'Erro interno ao conectar com o servidor.';
         }
