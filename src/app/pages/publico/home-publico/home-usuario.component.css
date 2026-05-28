@@ -1047,3 +1047,25 @@
     font-size: 32px;
   }
 }
+
+.home-support-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: #eef2ff;
+  color: #5D6ED3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  transition: .3s ease;
+}
+
+.home-support-icon .material-icons {
+  font-size: 28px;
+}
+
+.home-support-card:hover .home-support-icon {
+  background: #ffffff;
+  color: #5D6ED3;
+}

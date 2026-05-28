@@ -25,13 +25,9 @@
 
     <div class="hero-images">
       <img class="paw-image" [src]="imgPataFundo" alt="Pata decorativa" />
-
       <img class="img img-cat" [src]="imgGatoDeitado" alt="Gato deitado" />
-
       <img class="img img-dogs" [src]="imgCachorros" alt="Cachorros brincando" />
-
       <img class="img img-dog-heart" [src]="imgCachorroCoracao" alt="Cachorro com coração" />
-
       <img class="img img-cat-laying" [src]="imgGatoAmarelo" alt="Gato" />
 
       <div class="wave"></div>
@@ -54,8 +50,12 @@
 
     <div class="home-support-cards">
       <div class="home-support-card">
-        <div class="home-support-icon">⌂</div>
+        <div class="home-support-icon">
+          <span class="material-icons">pets</span>
+        </div>
+
         <h3>Cuidados Excepcionais Para Seu Pet</h3>
+
         <p>
           Tratamos seus peludos, emplumados ou com escamas como se fossem da família.
           Nossa equipe dedicada garante que cada pet receba o amor e a atenção que merece.
@@ -63,8 +63,12 @@
       </div>
 
       <div class="home-support-card">
-        <div class="home-support-icon">🐱</div>
+        <div class="home-support-icon">
+          <span class="material-icons">medical_services</span>
+        </div>
+
         <h3>Conselhos de Especialistas</h3>
+
         <p>
           Nossa equipe experiente está aqui para ajudar você com dicas, recomendações
           e soluções adaptadas às necessidades do seu pet.
@@ -72,8 +76,12 @@
       </div>
 
       <div class="home-support-card">
-        <div class="home-support-icon">♙</div>
+        <div class="home-support-icon">
+          <span class="material-icons">shield</span>
+        </div>
+
         <h3>Ambiente Seguro</h3>
+
         <p>
           A segurança do seu pet é nossa prioridade. Mantemos um espaço limpo,
           seguro e acolhedor para todos os animais.
@@ -81,8 +89,12 @@
       </div>
 
       <div class="home-support-card">
-        <div class="home-support-icon">♡</div>
+        <div class="home-support-icon">
+          <span class="material-icons">favorite</span>
+        </div>
+
         <h3>Serviço Orientado Para A Comunidade</h3>
+
         <p>
           Como amantes de pet, somos apaixonados por construir uma comunidade
           de pets e donos felizes.
@@ -96,8 +108,11 @@
       <div class="home-services-preview">
         <div class="home-services-line"></div>
 
-        <img class="home-services-main-img" [src]="servicosHome[servicoSelecionado].imagem"
-          [alt]="servicosHome[servicoSelecionado].titulo" />
+        <img
+          class="home-services-main-img"
+          [src]="servicosHome[servicoSelecionado].imagem"
+          [alt]="servicosHome[servicoSelecionado].titulo"
+        />
 
         <div class="home-services-main-title">
           {{ servicosHome[servicoSelecionado].titulo }}
@@ -110,20 +125,28 @@
         <h2>Nossos serviços</h2>
 
         @for (servico of servicosHome; track servico.titulo; let i = $index) {
-        <button type="button" class="home-service-item" [class.home-service-item-active]="servicoSelecionado === i"
-          (click)="selecionarServico(i)">
-          <img class="home-service-thumb" [src]="servico.imagem" [alt]="servico.titulo" />
+          <button
+            type="button"
+            class="home-service-item"
+            [class.home-service-item-active]="servicoSelecionado === i"
+            (click)="selecionarServico(i)"
+          >
+            <img
+              class="home-service-thumb"
+              [src]="servico.imagem"
+              [alt]="servico.titulo"
+            />
 
-          <div class="home-service-info">
-            <h3>{{ servico.titulo }}</h3>
+            <div class="home-service-info">
+              <h3>{{ servico.titulo }}</h3>
 
-            <div class="home-service-tags">
-              @for (tag of servico.tags; track tag) {
-              <span>{{ tag }}</span>
-              }
+              <div class="home-service-tags">
+                @for (tag of servico.tags; track tag) {
+                  <span>{{ tag }}</span>
+                }
+              </div>
             </div>
-          </div>
-        </button>
+          </button>
         }
       </div>
     </div>
@@ -227,18 +250,22 @@
 
     <div class="home-team-grid">
       @for (doutor of doutores; track doutor.nome) {
-      <div class="home-team-card">
-        <img class="home-team-image" [src]="doutor.imagem" [alt]="doutor.nome" />
+        <div class="home-team-card">
+          <img
+            class="home-team-image"
+            [src]="doutor.imagem"
+            [alt]="doutor.nome"
+          />
 
-        <div class="home-team-overlay">
-          <div class="home-team-info">
-            <h3>{{ doutor.nome }}</h3>
-            <span>⌚ {{ doutor.experiencia }}</span>
+          <div class="home-team-overlay">
+            <div class="home-team-info">
+              <h3>{{ doutor.nome }}</h3>
+              <span>⌚ {{ doutor.experiencia }}</span>
+            </div>
+
+            <button type="button">↗</button>
           </div>
-
-          <button type="button">↗</button>
         </div>
-      </div>
       }
     </div>
   </section>
@@ -248,15 +275,15 @@
 
     <div class="home-feedback-grid">
       @for (avaliacao of avaliacoes; track avaliacao.texto) {
-      <div class="home-feedback-card">
-        <span class="home-feedback-user">
-          {{ avaliacao.nome }}
-        </span>
+        <div class="home-feedback-card">
+          <span class="home-feedback-user">
+            {{ avaliacao.nome }}
+          </span>
 
-        <p>
-          {{ avaliacao.texto }}
-        </p>
-      </div>
+          <p>
+            {{ avaliacao.texto }}
+          </p>
+        </div>
       }
     </div>
   </section>
@@ -276,7 +303,7 @@
         Tudo para a sua felicidade e a do seu pet.
       </p>
 
-      <a routerLink="/agendamento" class="home-final-button">
+      <a routerLink="/login" class="home-final-button">
         Comece
       </a>
     </div>

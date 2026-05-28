@@ -22,7 +22,7 @@ export class HomeUsuarioComponent {
   imgGatoDeitado = 'assets/img/gato.png';
   imgPataFundo = 'assets/img/banner.png';
   imgPataPlanos = '';
-  imgFinalHome = '';
+  imgFinalHome = 'assets/img/cachorro-feliz.png';
 
   servicoSelecionado = 0;
 
