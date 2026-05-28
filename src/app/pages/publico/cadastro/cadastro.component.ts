@@ -54,55 +54,15 @@ export class CadastroComponent {
     this.senhaVisivel = !this.senhaVisivel;
   }
 
-  formatarTelefone(): void {
-    const numeros = this.telefone.replace(/\D/g, '').slice(0, 11);
-    if (numeros.length <= 10) {
-      this.telefone = numeros.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
-      return;
-    }
-    this.telefone = numeros.replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
-  }
-
-  formatarNascimento(): void {
-    this.nascimento = this.nascimento
-      .replace(/\D/g, '')
-      .slice(0, 8)
-      .replace(/(\d{2})(\d)/, '$1/$2')
-      .replace(/(\d{2})(\d)/, '$1/$2');
-  }
-
   private limparNumeros(valor: string): string {
     return valor ? valor.replace(/\D/g, '') : '';
-  }
-
-  formatarCpf(): void {
-    let valor = this.cpf.replace(/\D/g, '');
-
-    if (valor.length > 11) {
-      valor = valor.slice(0, 11);
-    }
-
-    if (valor.length <= 3) {
-      this.cpf = valor;
-    } else if (valor.length <= 6) {
-      this.cpf = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
-    } else if (valor.length <= 9) {
-      this.cpf = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-    } else {
-      this.cpf = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
-    }
   }
 
   private validarCpf(cpf: string): boolean {
     const numeros = cpf.replace(/\D/g, '').trim();
 
-    if (numeros.length !== 11) {
-      return false;
-    }
-
-    if (/^(\d)\1{10}$/.test(numeros)) {
-      return false;
-    }
+    if (numeros.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(numeros)) return false;
 
     let soma = 0;
     let resto;
@@ -134,7 +94,6 @@ export class CadastroComponent {
 
   private converterNascimentoParaISO(): string | null {
     const partesData = this.nascimento.trim().split('/');
-
     if (partesData.length !== 3) return null;
 
     const dia = parseInt(partesData[0], 10);
@@ -196,7 +155,6 @@ export class CadastroComponent {
     }
 
     const dataFinalISO = this.converterNascimentoParaISO();
-
     if (!dataFinalISO) {
       this.erro = 'Insira uma data de nascimento válida no formato DD/MM/AAAA.';
       return;
