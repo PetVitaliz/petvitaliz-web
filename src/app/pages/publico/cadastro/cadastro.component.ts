@@ -73,14 +73,6 @@ export class CadastroComponent {
     this.senhaVisivel = !this.senhaVisivel;
   }
 
-  formatarCpf(): void {
-    this.cpf = this.cpf
-      .replace(/\D/g, '')
-      .slice(0, 11)
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-  }
 
   formatarTelefone(): void {
     const numeros = this.telefone.replace(/\D/g, '').slice(0, 11);
@@ -110,8 +102,28 @@ export class CadastroComponent {
     return valor.replace(/\D/g, '');
   }
 
+ formatarCpf(): void {
+    let valor = this.cpf.replace(/\D/g, '');
+
+    if (valor.length > 11) {
+      valor = valor.slice(0, 11);
+    }
+
+    setTimeout(() => {
+      if (valor.length <= 3) {
+        this.cpf = valor;
+      } else if (valor.length <= 6) {
+        this.cpf = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+      } else if (valor.length <= 9) {
+        this.cpf = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+      } else {
+        this.cpf = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+      }
+    });
+  }
+
   private validarCpf(cpf: string): boolean {
-    const numeros = this.limparNumeros(cpf.trim());
+    const numeros = cpf.replace(/\D/g, '').trim();
 
     if (numeros.length !== 11) {
       return false;
@@ -122,28 +134,27 @@ export class CadastroComponent {
     }
 
     let soma = 0;
+    let resto;
 
-    for (let i = 0; i < 9; i++) {
-      soma += parseInt(numeros.charAt(i), 10) * (10 - i);
+    // Validação do primeiro dígito verificador
+    for (let i = 1; i <= 9; i++) {
+      soma = soma + parseInt(numeros.substring(i - 1, i), 10) * (11 - i);
     }
+    resto = (soma * 10) % 11;
 
-    let resto = (soma * 10) % 11;
-    if (resto === 10) resto = 0;
-
-    if (resto !== parseInt(numeros.charAt(9), 10)) {
-      return false;
-    }
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(numeros.substring(9, 10), 10)) return false;
 
     soma = 0;
-
-    for (let i = 0; i < 10; i++) {
-      soma += parseInt(numeros.charAt(i), 10) * (11 - i);
+    for (let i = 1; i <= 10; i++) {
+      soma = soma + parseInt(numeros.substring(i - 1, i), 10) * (12 - i);
     }
-
     resto = (soma * 10) % 11;
-    if (resto === 10) resto = 0;
 
-    return resto === parseInt(numeros.charAt(10), 10);
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(numeros.substring(10, 11), 10)) return false;
+
+    return true;
   }
 
   private validarTelefone(telefone: string): boolean {
