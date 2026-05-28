@@ -111,7 +111,7 @@ export class CadastroComponent {
   }
 
   private validarCpf(cpf: string): boolean {
-    const numeros = this.limparNumeros(cpf);
+    const numeros = this.limparNumeros(cpf.trim());
 
     if (numeros.length !== 11) {
       return false;
