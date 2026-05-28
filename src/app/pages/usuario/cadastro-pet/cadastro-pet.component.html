@@ -14,13 +14,8 @@
 
         <label class="photo-upload">
           <input type="file" accept="image/*" (change)="carregarFoto($event)">
-
           <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto do pet">
-
-          <div *ngIf="!fotoPreview" class="photo-placeholder">
-            
-          </div>
-
+          <div *ngIf="!fotoPreview" class="photo-placeholder"></div>
           <span>+</span>
         </label>
 
@@ -49,11 +44,6 @@
         <div class="form-grid">
 
           <div class="field full">
-            <label>Nome do Tutor</label>
-            <input type="text" placeholder="Ex: Jadi Borges" [(ngModel)]="tutor">
-          </div>
-
-          <div class="field full">
             <label>Nome do Pet</label>
             <input type="text" placeholder="Ex: Maximus Aurelius" [(ngModel)]="nomePet">
           </div>
@@ -66,23 +56,36 @@
               <option value="Gato">Gato</option>
               <option value="Ave">Ave</option>
               <option value="Coelho">Coelho</option>
-              <option value="Outro">Outro</option>
-            </select>
+              <option value="Outro">Outro</option> </select>
+          </div>
+
+          <div class="field" *ngIf="especie === 'Outro'">
+            <label>Qual a espécie?</label>
+            <input type="text" placeholder="Ex: Porquinho da índia" [(ngModel)]="outraEspecie">
           </div>
 
           <div class="field">
-            <label>Idade (Anos)</label>
-            <input type="number" placeholder="Ex: 5" [(ngModel)]="idade">
+            <label>Data de Nascimento</label>
+            <input 
+              type="text" 
+              placeholder="dd/mm/yyyy" 
+              [(ngModel)]="dataNascimento" 
+              (input)="calcularIdadeAutomaticamente()"
+              appDataMask 
+              maxlength="10">
+          </div>
+
+          <div class="field">
+            <label>Idade</label>
+            <input type="text" [value]="idade" disabled placeholder="Preenchido automaticamente">
           </div>
 
           <div class="field">
             <label>Sexo</label>
-
             <div class="option-row">
               <button type="button" [class.active]="sexo === 'Masculino'" (click)="selecionarSexo('Masculino')">
                 Masculino
               </button>
-
               <button type="button" [class.active]="sexo === 'Feminino'" (click)="selecionarSexo('Feminino')">
                 Feminino
               </button>
@@ -97,28 +100,22 @@
             </div>
           </div>
 
-          <div class="field full">
-            <label>Cor Predominante</label>
-
-            <div class="color-row">
-              <button type="button" [class.active]="cor === 'Marrom'" (click)="selecionarCor('Marrom')">Marrom</button>
-              <button type="button" [class.active]="cor === 'Preto'" (click)="selecionarCor('Preto')">Preto</button>
-              <button type="button" [class.active]="cor === 'Branco'" (click)="selecionarCor('Branco')">Branco</button>
-              <button type="button" [class.active]="cor === 'Mesclado'" (click)="selecionarCor('Mesclado')">Mesclado</button>
-
-              <input type="text" placeholder="Outra cor..." [(ngModel)]="outraCor">
-            </div>
-          </div>
-
         </div>
+        
+        <br>
+        <p class="erro" *ngIf="erro">
+          {{ erro }}
+        </p>
+        <p class="sucesso" *ngIf="sucesso">
+          {{ sucesso }}
+        </p>
 
         <div class="actions">
-          <button type="button" class="btn-cancelar">
+          <button type="button" class="btn-cancelar" routerLink="/user/listar/pet">
             Cancelar
           </button>
-
-          <button type="button" class="btn-confirmar" (click)="confirmarCadastro()">
-            Salvar
+          <button type="submit" class="btn-confirmar" [disabled]="salvando" (click)="confirmarCadastro()">
+            {{ salvando ? 'Cadastrando...' : 'Salvar' }}
           </button>
         </div>
 

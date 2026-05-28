@@ -20,6 +20,7 @@ export class HeaderUsuarioComponent {
     return usuarioLogado ? JSON.parse(usuarioLogado) : null;
   }
 
+  // Gera a letra inicial (Ex: "João" -> "J")
   get inicialUsuario(): string {
     if (!this.usuario) return 'U';
     const nome = this.usuario.nome || this.usuario.nomeCompleto || this.usuario.email || 'Usuario';
@@ -33,6 +34,7 @@ export class HeaderUsuarioComponent {
 
   toggleAvatarMenu(): void {
     this.avatarMenuAberto = !this.avatarMenuAberto;
+    this.menuMobileAberto = false;
   }
 
   fecharMenus(): void {
