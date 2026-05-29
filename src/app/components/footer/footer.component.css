@@ -1,0 +1,136 @@
+.footer {
+  position: relative;
+  min-height: 280px;
+  background: #1c1c1c;
+  border-radius: 18px;
+  padding: 34px 56px;
+  overflow: hidden;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+}
+
+.footer-brand {
+  position: absolute;
+  top: 32px;
+  left: 34px;
+  z-index: 2;
+}
+
+.footer-logo img {
+  width: 88px;
+  object-fit: contain;
+}
+
+.footer-paw-big {
+  position: absolute;
+  left: -14px;
+  bottom: -24px;
+  width: 190px;
+  opacity: 0.95;
+  z-index: 1;
+}
+
+.footer-links {
+  position: absolute;
+  top: 50px;
+  left: 46%;
+  right: 7%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 44px;
+  z-index: 2;
+}
+
+.footer-links h3 {
+  margin: 0 0 22px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.footer-links a {
+  display: block;
+  margin-bottom: 16px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  color: #5d6ed3;
+}
+
+.footer-bottom {
+  position: absolute;
+  left: 47%;
+  right: 7%;
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-social img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+@media (max-width: 900px) {
+  .footer {
+    min-height: auto;
+    padding: 34px 28px 42px;
+  }
+
+  .footer-brand,
+  .footer-links,
+  .footer-bottom {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+  }
+
+  .footer-brand {
+    margin-bottom: 32px;
+  }
+
+  .footer-links {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    margin-bottom: 34px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .footer-paw-big {
+    width: 150px;
+    opacity: 0.45;
+  }
+}

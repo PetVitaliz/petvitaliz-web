@@ -1,0 +1,374 @@
+:host {
+  display: block;
+  background: #ffffff;
+}
+
+.contato-page {
+  width: 100%;
+  background: #ffffff;
+}
+
+.contato-section {
+  width: 100%;
+  min-height: calc(100vh - 90px);
+  padding: 45px 5%;
+  box-sizing: border-box;
+}
+
+.contato-title {
+  margin-bottom: 42px;
+}
+
+.contato-title h1 {
+  margin: 0 0 8px;
+  font-size: clamp(36px, 4vw, 54px);
+  color: #082b57;
+  font-weight: 700;
+}
+
+.contato-title p {
+  margin: 0;
+  font-size: 18px;
+  color: #444b58;
+}
+
+.contato-content {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 28px;
+}
+
+.contato-info {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.contato-info-card {
+  min-height: 140px;
+  border: 1px solid #cfd5df;
+  border-radius: 8px;
+  padding: 18px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+.contato-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: #b7ccfb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.contato-icon-box img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.contato-icon-box img[src=""] {
+  visibility: hidden;
+}
+
+.contato-info-card h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  color: #082b57;
+  font-weight: 700;
+}
+
+.contato-info-card p {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #333333;
+}
+
+.contato-info-card a {
+  font-size: 15px;
+  color: #082b57;
+  text-decoration: none;
+}
+
+.contato-info-card a:hover {
+  text-decoration: underline;
+}
+
+.contato-form {
+  border: 1px solid #cfd5df;
+  border-radius: 8px;
+  padding: 32px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+.contato-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.contato-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 22px;
+}
+
+.contato-field label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #111111;
+}
+
+.contato-field input,
+.contato-field select,
+.contato-field textarea {
+  width: 100%;
+  border: 1px solid #cfd5df;
+  border-radius: 6px;
+  background: #f8f9fb;
+  padding: 0 14px;
+  box-sizing: border-box;
+  font-size: 15px;
+  color: #222222;
+  outline: none;
+}
+
+.contato-field input,
+.contato-field select {
+  height: 42px;
+}
+
+.contato-field textarea {
+  height: 120px;
+  padding-top: 14px;
+  resize: none;
+}
+
+.contato-field input:focus,
+.contato-field select:focus,
+.contato-field textarea:focus {
+  border-color: #082b57;
+  background: #ffffff;
+}
+
+.contato-button {
+  width: 210px;
+  height: 46px;
+  border: none;
+  border-radius: 6px;
+  background: #082b57;
+  color: #ffffff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 8px 18px rgba(8, 43, 87, 0.18);
+}
+
+.contato-button:hover {
+  background: #283593;
+  transform: translateY(-2px);
+}
+
+/* RESPONSIVO */
+@media (max-width: 1000px) {
+  .contato-content {
+    grid-template-columns: 1fr;
+  }
+
+  .contato-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 750px) {
+  .contato-section {
+    padding: 40px 20px;
+  }
+
+  .contato-info {
+    grid-template-columns: 1fr;
+  }
+
+  .contato-form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .contato-form {
+    padding: 22px;
+  }
+
+  .contato-button {
+    width: 100%;
+  }
+}
+
+/* ÚLTIMA PARTE */
+.contato-location-section {
+  width: 100%;
+  padding: 0 5% 80px;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.contato-location-left,
+.contato-location-right {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.contato-location-left {
+  border-radius: 12px 0 0 12px;
+  background-color: #dcdcdc;
+}
+
+.contato-location-right {
+  border-radius: 0 12px 12px 0;
+  text-decoration: none;
+  background-color: #ececec;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.3s ease;
+}
+
+.contato-location-right:hover {
+  transform: scale(1.01);
+}
+
+.contato-location-overlay {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+
+  width: 340px;
+
+  padding: 20px;
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(12px);
+}
+
+.contato-location-overlay h2 {
+  margin: 0 0 10px;
+  font-size: 38px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.contato-location-overlay p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #ffffff;
+}
+
+.contato-map-overlay {
+  width: 100%;
+  height: 100%;
+
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(2px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.contato-map-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+
+  background: #082b57;
+  color: #ffffff;
+
+  font-size: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+}
+
+.contato-map-overlay h2 {
+  margin: 0 0 12px;
+  font-size: 48px;
+  font-weight: 700;
+  color: #082b57;
+}
+
+.contato-map-overlay p {
+  max-width: 360px;
+  margin: 0 0 24px;
+
+  font-size: 17px;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.contato-map-overlay span {
+  font-size: 16px;
+  font-weight: 600;
+  color: #082b57;
+}
+
+@media (max-width: 900px) {
+  .contato-location-section {
+    grid-template-columns: 1fr;
+  }
+
+  .contato-location-left {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .contato-location-right {
+    border-radius: 0 0 12px 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .contato-location-section {
+    padding: 0 20px 60px;
+  }
+
+  .contato-location-left,
+  .contato-location-right {
+    min-height: 280px;
+  }
+
+  .contato-location-overlay {
+    width: calc(100% - 36px);
+  }
+
+  .contato-location-overlay h2 {
+    font-size: 30px;
+  }
+
+  .contato-map-overlay h2 {
+    font-size: 34px;
+  }
+}

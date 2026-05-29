@@ -1,0 +1,555 @@
+<div class="clientes-page">
+
+  <div class="page-header">
+
+    <div>
+      <span class="eyebrow">CRM VETERINÁRIO</span>
+
+      <h1>Gestão de Clientes</h1>
+
+      <p>
+        Visualize tutores, pets, consultas e histórico clínico.
+      </p>
+    </div>
+
+    <button
+      class="btn-novo"
+      type="button"
+      (click)="novoCliente()">
+
+      Novo Cliente
+
+    </button>
+
+  </div>
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <span>CLIENTES</span>
+      <strong>{{ clientes.length }}</strong>
+      <small>Total cadastrado</small>
+    </div>
+
+    <div class="stat-card">
+      <span>ATIVOS</span>
+      <strong>{{ totalAtivos }}</strong>
+      <small>Em acompanhamento</small>
+    </div>
+
+    <div class="stat-card">
+      <span>PETS</span>
+      <strong>{{ totalPets }}</strong>
+      <small>Vinculados</small>
+    </div>
+
+    <div class="stat-card danger">
+      <span>INATIVOS</span>
+      <strong>{{ totalInativos }}</strong>
+      <small>Sem acompanhamento</small>
+    </div>
+
+  </div>
+
+  <div class="main-card">
+
+    <div class="toolbar">
+
+      <div class="search-area">
+        <span class="search-icon">⌕</span>
+
+        <input
+          type="text"
+          placeholder="Buscar cliente..."
+          [(ngModel)]="searchTerm">
+      </div>
+
+      <select
+        class="status-filter"
+        [(ngModel)]="statusFiltro">
+
+        <option value="Todos">Todos os status</option>
+        <option value="ATIVO">Ativos</option>
+        <option value="INATIVO">Inativos</option>
+
+      </select>
+
+    </div>
+
+    <div class="clientes-grid">
+
+      <div
+        class="cliente-card"
+        *ngFor="let cliente of clientesFiltrados"
+        [class.inativo-card]="cliente.status === 'INATIVO'">
+
+        <div class="card-top">
+
+          <div class="cliente-identidade">
+
+            <div class="cliente-avatar">
+              {{ inicialCliente(cliente) }}
+            </div>
+
+            <div class="cliente-info">
+
+              <div class="cliente-nome-status">
+
+                <h3>{{ cliente.nome }}</h3>
+
+                <span
+                  class="status"
+                  [class.inativo]="cliente.status === 'INATIVO'">
+
+                  {{ cliente.status }}
+
+                </span>
+
+              </div>
+
+              <p>{{ cliente.email }}</p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="cliente-dados">
+
+          <div class="dado-item">
+            <span>CPF</span>
+            <strong>{{ cliente.cpf }}</strong>
+          </div>
+
+          <div class="dado-item">
+            <span>Telefone</span>
+            <strong>{{ cliente.telefone }}</strong>
+          </div>
+
+          <div class="dado-item">
+            <span>Pets</span>
+            <strong>{{ cliente.pets }}</strong>
+          </div>
+
+          <div class="dado-item">
+            <span>Última visita</span>
+            <strong>{{ cliente.ultimaVisita }}</strong>
+          </div>
+
+        </div>
+
+        <div class="card-actions">
+
+          <button
+            type="button"
+            class="btn-action primary"
+            (click)="abrirDetalhes(cliente)">
+
+            Ver detalhes
+
+          </button>
+
+          <button
+            type="button"
+            class="btn-action"
+            (click)="verPets(cliente)">
+
+            Pets
+
+          </button>
+
+          <button
+            type="button"
+            class="btn-action"
+            (click)="agendarConsulta(cliente)">
+
+            Agendar
+
+          </button>
+
+          <button
+            type="button"
+            class="btn-editar"
+            (click)="editar(cliente)">
+
+            Editar
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      class="empty"
+      *ngIf="clientesFiltrados.length === 0">
+
+      <h3>Nenhum cliente encontrado</h3>
+
+      <p>
+        Tente pesquisar por outro nome, CPF ou telefone.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  class="modal-fundo"
+  *ngIf="modalDetalhesAberto && clienteSelecionado">
+
+  <div class="modal detalhes-modal">
+
+    <button
+      class="fechar-modal"
+      type="button"
+      (click)="fecharDetalhes()">
+
+      ×
+
+    </button>
+
+    <div class="detalhes-topo">
+
+      <div class="cliente-avatar grande">
+        {{ inicialCliente(clienteSelecionado) }}
+      </div>
+
+      <div>
+
+        <span class="eyebrow">DETALHES DO CLIENTE</span>
+
+        <h2>{{ clienteSelecionado.nome }}</h2>
+
+        <p>{{ clienteSelecionado.email }}</p>
+
+      </div>
+
+    </div>
+
+    <div class="detalhes-grid">
+
+      <div>
+        <span>CPF</span>
+        <strong>{{ clienteSelecionado.cpf }}</strong>
+      </div>
+
+      <div>
+        <span>Telefone</span>
+        <strong>{{ clienteSelecionado.telefone }}</strong>
+      </div>
+
+      <div>
+        <span>Pets</span>
+        <strong>{{ clienteSelecionado.pets }}</strong>
+      </div>
+
+      <div>
+        <span>Status</span>
+        <strong>{{ clienteSelecionado.status }}</strong>
+      </div>
+
+      <div class="full">
+        <span>Última visita</span>
+        <strong>{{ clienteSelecionado.ultimaVisita }}</strong>
+      </div>
+
+    </div>
+
+    <div class="modal-botoes">
+
+      <button
+        class="btn-cancelar"
+        type="button"
+        (click)="fecharDetalhes()">
+
+        Fechar
+
+      </button>
+
+      <button
+        class="btn-salvar"
+        type="button"
+        (click)="editar(clienteSelecionado); fecharDetalhes()">
+
+        Editar cliente
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal-fundo" *ngIf="modalPetsAberto && clienteSelecionado">
+
+  <div class="modal detalhes-modal">
+
+    <button
+      class="fechar-modal"
+      type="button"
+      (click)="fecharPets()">
+
+      ×
+
+    </button>
+
+    <div class="modal-header">
+
+      <h2>Pets de {{ clienteSelecionado.nome }}</h2>
+
+      <p>Pets vinculados a este tutor.</p>
+
+    </div>
+
+    <div class="pets-grid">
+
+      <div
+        class="pet-mini-card"
+        *ngFor="let pet of clienteSelecionado.petsLista">
+
+        <span>Pet cadastrado</span>
+        <strong>{{ pet }}</strong>
+
+      </div>
+
+    </div>
+
+    <div
+      class="empty"
+      *ngIf="!clienteSelecionado.petsLista || clienteSelecionado.petsLista.length === 0">
+
+      <h3>Nenhum pet vinculado</h3>
+
+      <p>
+        Cadastre pets para este tutor na página de Pets.
+      </p>
+
+    </div>
+
+    <div class="modal-botoes">
+
+      <button
+        class="btn-cancelar"
+        type="button"
+        (click)="fecharPets()">
+
+        Fechar
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal-fundo" *ngIf="modalAgendarAberto && clienteSelecionado">
+
+  <div class="modal detalhes-modal">
+
+    <button
+      class="fechar-modal"
+      type="button"
+      (click)="fecharAgendar()">
+
+      ×
+
+    </button>
+
+    <div class="modal-header">
+
+      <h2>Agendar Consulta</h2>
+
+      <p>
+        Agendamento para {{ clienteSelecionado.nome }}.
+      </p>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="campo">
+        <label>Horário</label>
+        <input type="time" [(ngModel)]="novaConsulta.horario">
+      </div>
+
+      <div class="campo">
+        <label>Data</label>
+        <input type="date" [(ngModel)]="novaConsulta.data">
+      </div>
+
+      <div class="campo campo-full">
+        <label>Nome do pet</label>
+        <input type="text" [(ngModel)]="novaConsulta.pet">
+      </div>
+
+      <div class="campo">
+        <label>Idade</label>
+        <input type="text" [(ngModel)]="novaConsulta.idade">
+      </div>
+
+      <div class="campo campo-full">
+        <label>Motivo</label>
+
+        <select [(ngModel)]="novaConsulta.motivo">
+          <option>Consulta de rotina</option>
+          <option>Retorno</option>
+          <option>Vacinação</option>
+          <option>Cirurgia</option>
+          <option>Urgência</option>
+          <option>Exame</option>
+        </select>
+
+      </div>
+
+    </div>
+
+    <div class="modal-botoes">
+
+      <button
+        class="btn-cancelar"
+        type="button"
+        (click)="fecharAgendar()">
+
+        Cancelar
+
+      </button>
+
+      <button
+        class="btn-salvar"
+        type="button"
+        (click)="salvarAgendamento()">
+
+        Salvar agendamento
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal-fundo" *ngIf="clienteEditando">
+
+  <div class="modal">
+
+    <button
+      class="fechar-modal"
+      type="button"
+      (click)="cancelar()">
+
+      ×
+
+    </button>
+
+    <div class="modal-header">
+
+      <h2>
+        {{ modoNovo ? 'Novo Cliente' : 'Editar Cliente' }}
+      </h2>
+
+      <p>
+        Preencha os dados do tutor com atenção.
+      </p>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="campo campo-full">
+        <label>Nome</label>
+
+        <input
+          type="text"
+          [(ngModel)]="clienteEditando.nome">
+      </div>
+
+      <div class="campo">
+        <label>CPF</label>
+
+        <input
+          type="text"
+          [(ngModel)]="clienteEditando.cpf"
+          (input)="formatarCPF()">
+      </div>
+
+      <div class="campo">
+        <label>Telefone</label>
+
+        <input
+          type="text"
+          [(ngModel)]="clienteEditando.telefone"
+          (input)="formatarTelefone()">
+      </div>
+
+      <div class="campo campo-full">
+        <label>Email</label>
+
+        <input
+          type="email"
+          [(ngModel)]="clienteEditando.email">
+      </div>
+
+      <div class="campo">
+        <label>Quantidade de pets</label>
+
+        <input
+          type="number"
+          [(ngModel)]="clienteEditando.pets">
+      </div>
+
+      <div class="campo">
+        <label>Última visita</label>
+
+        <input
+          type="date"
+          [(ngModel)]="clienteEditando.ultimaVisitaData">
+      </div>
+
+      <div class="campo campo-full">
+        <label>Status</label>
+
+        <select [(ngModel)]="clienteEditando.status">
+
+          <option value="ATIVO">ATIVO</option>
+          <option value="INATIVO">INATIVO</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+    <div class="modal-botoes">
+
+      <button
+        class="btn-cancelar"
+        type="button"
+        (click)="cancelar()">
+
+        Cancelar
+
+      </button>
+
+      <button
+        class="btn-salvar"
+        type="button"
+        (click)="salvar()">
+
+        Salvar
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

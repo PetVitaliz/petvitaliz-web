@@ -1,0 +1,23 @@
+<app-header
+  *ngIf="
+    !isFuncionarioRoute() &&
+    !isAdmRoute() &&
+    !isUsuarioRoute()
+  ">
+</app-header>
+
+<app-header-usuario
+  *ngIf="isUsuarioRoute()">
+</app-header-usuario>
+
+<app-header-funcionario
+  *ngIf="isFuncionarioRoute()">
+</app-header-funcionario>
+
+<app-header-adm
+  *ngIf="isAdmRoute()">
+</app-header-adm>
+
+<router-outlet></router-outlet>
+
+<app-footer></app-footer>

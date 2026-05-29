@@ -1,0 +1,63 @@
+<header class="header-adm">
+  <div class="header-container">
+
+    <div class="logo">
+      <img src="assets/img/logo.png" alt="PetVitaliz">
+    </div>
+
+    <button class="hamburguer" type="button" (click)="toggleMenu($event)">
+      ☰
+    </button>
+
+    <nav class="navbar" [class.menu-aberto]="menuAberto">
+
+      <a routerLink="/adm/home" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" (click)="fecharMenus()">
+        Home
+      </a>
+
+      <a routerLink="/adm/consultas" routerLinkActive="ativo" (click)="fecharMenus()">
+        Consultas
+      </a>
+
+      <a routerLink="/adm/clientes" routerLinkActive="ativo" (click)="fecharMenus()">
+        Clientes
+      </a>
+
+      <a routerLink="/adm/financeiro" routerLinkActive="ativo" (click)="fecharMenus()">
+        Financeiro
+      </a>
+
+      <div class="admin-dropdown">
+        <button type="button" (click)="toggleAdmins($event)">
+          Admins ▾
+        </button>
+
+        <div class="dropdown-menu" *ngIf="adminsAberto" (click)="$event.stopPropagation()">
+          <a routerLink="/adm/listar-admin" (click)="fecharMenus()">Listar / Editar Admin</a>
+          <a routerLink="/adm/equipe-funcionarios" (click)="fecharMenus()">Equipe e Funcionários</a>
+          <a routerLink="/adm/planos" (click)="fecharMenus()">Planos</a>
+          <a routerLink="/adm/consultas-agendadas" (click)="fecharMenus()">Consultas Agendadas</a>
+        </div>
+      </div>
+
+    </nav>
+
+    <div class="user-area">
+      <div class="user-info">
+        <strong>Dr. Ricardo Silva</strong>
+        <span>Administrador</span>
+      </div>
+
+      <div class="perfil-dropdown">
+        <button type="button" class="perfil-btn" (click)="togglePerfil($event)">
+          <img src="assets/img/perfil.png" alt="Perfil">
+        </button>
+
+        <div class="perfil-menu" *ngIf="perfilAberto" (click)="$event.stopPropagation()">
+          <button type="button" (click)="logout()">Sair</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>

@@ -1,0 +1,123 @@
+<section class="success-page">
+
+  <div class="page-header">
+
+    <h1>Plano</h1>
+
+    <p>
+      Parabéns, seu Pet está protegido!
+    </p>
+
+  </div>
+
+  <main
+    class="success-card"
+    *ngIf="plano"
+  >
+
+    <div class="success-icon">
+      ✓
+    </div>
+
+    <h2>Plano ativo com sucesso!</h2>
+
+    <p class="success-description">
+      Seu Pet agora está protegido com o plano escolhido.
+      Acompanhe todos os detalhes abaixo.
+    </p>
+
+    <div class="plan-wrapper">
+
+      <div class="plan-info">
+
+        <div class="plan-top">
+
+          <div>
+
+            <h3>{{ plano.nome }}</h3>
+
+            <small>
+              Início imediato • Maio 2026
+            </small>
+
+          </div>
+
+          <strong>
+
+            {{ plano.preco }}
+
+            <span>POR MÊS</span>
+
+          </strong>
+
+        </div>
+
+        <div class="benefits">
+
+          <div *ngFor="let item of plano.detalhes">
+            ✓ {{ item }}
+          </div>
+
+        </div>
+
+      </div>
+
+      <aside class="tutor-card">
+
+        <span>Dados do Titular</span>
+
+        <strong>Jadi Borges</strong>
+
+        <small>
+          CPF mascarado
+        </small>
+
+        <small>
+          ***.***.***-**
+        </small>
+
+        <button routerLink="/usuario/perfil">
+          Editar Dados do Perfil
+        </button>
+
+      </aside>
+
+    </div>
+
+    <div class="consultation-box">
+
+      <div>
+
+        <strong>
+          Agendar uma Consulta?
+        </strong>
+
+        <p>
+          Sua primeira consulta veterinária é gratuita.
+        </p>
+
+      </div>
+
+      <button routerLink="/usuario/agendamento">
+        Agendar Agora
+      </button>
+
+    </div>
+
+    <button
+      class="profile-btn"
+      routerLink="/usuario/listar-cadastro-pet"
+    >
+      Ver perfil do pet
+    </button>
+
+    <button
+      class="change-btn"
+      routerLink="/usuario/planos-pet"
+    >
+      Contratar outro plano
+    </button>
+
+  </main>
+
+</section>

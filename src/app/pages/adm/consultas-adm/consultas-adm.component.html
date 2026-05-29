@@ -1,0 +1,237 @@
+<section class="consultas-page">
+
+  <div class="topo">
+    <h1>Gestão de Consultas</h1>
+    <p>Controle total dos agendamentos e histórico clínico do dia.</p>
+  </div>
+
+  <div class="consultas-box">
+
+    <div class="layout">
+
+      <main class="principal">
+
+        <section class="filtros">
+
+          <div class="campo busca">
+            <label>Paciente ou tutor</label>
+
+            <input type="text" placeholder="Nome do pet ou tutor..." [(ngModel)]="termoBusca"
+              (input)="aplicarFiltros()">
+          </div>
+
+          <div class="campo">
+            <label>Status</label>
+
+            <select [(ngModel)]="statusSelecionado" (change)="aplicarFiltros()">
+              <option>Todos</option>
+              <option>Confirmada</option>
+              <option>Em andamento</option>
+              <option>Pendente</option>
+              <option>Cancelada</option>
+              <option>Finalizada</option>
+              <option>Urgente</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label>Veterinário</label>
+
+            <select [(ngModel)]="vetSelecionado" (change)="aplicarFiltros()">
+              <option>Todos</option>
+              <option>Dr. Rogério Souza</option>
+              <option>Dra. Carla Mendes</option>
+              <option>Plantão</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label>Período</label>
+
+            <select [(ngModel)]="periodoSelecionado" (change)="aplicarFiltros()">
+              <option>Todos</option>
+              <option>Hoje</option>
+              <option>Semana</option>
+              <option>Mês</option>
+              <option>Dia selecionado</option>
+            </select>
+          </div>
+
+        </section>
+
+        <section class="tabela-card">
+
+          <div class="linha cabecalho">
+            <span>Horário/Data</span>
+            <span>Paciente</span>
+            <span>Veterinário</span>
+            <span>Procedimento</span>
+            <span>Status</span>
+            <span></span>
+          </div>
+
+          <div class="linha" *ngFor="let c of consultasPaginadas; let i = index">
+
+            <div class="horario">
+              <strong>{{ c.hora }}</strong>
+              <small>{{ formatarData(c.dataObj) }}</small>
+            </div>
+
+            <div class="paciente">
+
+              <div class="avatar-pet">
+                {{ c.pet.charAt(0) }}
+              </div>
+
+              <div>
+                <strong>{{ c.pet }}</strong>
+                <small>Tutor: {{ c.tutor }}</small>
+              </div>
+
+            </div>
+
+            <div class="vet">
+              {{ c.vet }}
+            </div>
+
+            <div>
+              <span class="procedimento">
+                {{ c.motivo }}
+              </span>
+            </div>
+
+            <div>
+              <span class="status" [ngClass]="c.tipo">
+                {{ normalizarStatus(c.status) }}
+              </span>
+            </div>
+
+            <div class="acoes">
+
+              <button type="button" class="menu-btn" (click)="abrirMenu(i)">
+                ⋮
+              </button>
+
+              <div class="menu" *ngIf="menuAberto === i">
+
+                <button type="button" (click)="confirmar(c)">
+                  Confirmar
+                </button>
+
+                <button type="button" (click)="finalizar(c)">
+                  Finalizar
+                </button>
+
+                <button type="button" (click)="cancelar(c)">
+                  Cancelar
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="vazio" *ngIf="consultasFiltradas.length === 0">
+            Nenhuma consulta encontrada para esse período.
+          </div>
+
+        </section>
+
+        <section class="paginacao">
+
+          <span>
+            Mostrando {{ consultasPaginadas.length }} de {{ consultasFiltradas.length }} agendamentos
+          </span>
+
+          <div class="paginas" *ngIf="totalPaginas > 1">
+
+            <button type="button" (click)="mudarPagina(paginaAtual - 1)">
+              ‹
+            </button>
+
+            <button type="button" *ngFor="let p of paginas" [class.ativo]="p === paginaAtual" (click)="mudarPagina(p)">
+              {{ p }}
+            </button>
+
+            <button type="button" (click)="mudarPagina(paginaAtual + 1)">
+              ›
+            </button>
+
+          </div>
+
+        </section>
+
+      </main>
+
+      <aside class="sidebar">
+
+        <div class="calendario">
+
+          <div class="calendario-topo">
+            <h4>Calendário</h4>
+
+            <div>
+              <button type="button" (click)="mesAnterior()">
+                ‹
+              </button>
+
+              <button type="button" (click)="proximoMes()">
+                ›
+              </button>
+            </div>
+          </div>
+
+          <h5>{{ meses[mesAtual] }} {{ anoAtual }}</h5>
+
+          <div class="dias semana">
+            <span>D</span>
+            <span>S</span>
+            <span>T</span>
+            <span>Q</span>
+            <span>Q</span>
+            <span>S</span>
+            <span>S</span>
+          </div>
+
+          <div class="dias">
+            <button type="button" *ngFor="let dia of diasCalendario" [class.outro-mes]="dia.outroMes"
+              [class.selecionado]="dia.numero === diaSelecionado && !dia.outroMes"
+              [class.hoje]="dia.numero === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear() && !dia.outroMes"
+              (click)="selecionarDia(dia)">
+              {{ dia.numero }}
+            </button>
+          </div>
+
+        </div>
+
+        <div class="resumo azul">
+          <small>Consultas hoje</small>
+
+          <div>
+            <h2>{{ consultasHoje | number:'2.0' }}</h2>
+            <span>↗ +15%</span>
+          </div>
+        </div>
+
+        <div class="resumo claro" *ngIf="temUrgentes">
+          <div>
+            <small>Aguardando confirmação</small>
+            <h2>{{ totalPendentes | number:'2.0' }}</h2>
+          </div>
+
+          <span>Urgente</span>
+        </div>
+
+        <div class="lembrete">
+          <h4>Lembretes Clínicos</h4>
+          <p>Confirmar retornos pós-cirúrgicos agendados para amanhã.</p>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+</section>

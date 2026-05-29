@@ -1,0 +1,115 @@
+<header class="header-funcionario">
+
+  <div class="header-container">
+
+    <div
+      class="logo"
+      routerLink="/funcionario/home"
+      (click)="closeMobileMenu()"
+    >
+      <img src="assets/img/logo.png" alt="PetVitaliz">
+    </div>
+
+    <nav class="navbar" [class.open]="isMobileMenuOpen">
+
+      <a
+        routerLink="/funcionario/home"
+        routerLinkActive="ativo"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeAllMenus()"
+      >
+        Home
+      </a>
+
+      <a
+        routerLink="/funcionario/consultas"
+        routerLinkActive="ativo"
+        (click)="closeAllMenus()"
+      >
+        Consultas
+      </a>
+
+      <a
+        routerLink="/funcionario/clientes"
+        routerLinkActive="ativo"
+        (click)="closeAllMenus()"
+      >
+        Clientes
+      </a>
+
+      <a
+        routerLink="/funcionario/pets"
+        routerLinkActive="ativo"
+        (click)="closeAllMenus()"
+      >
+        Pets
+      </a>
+
+    </nav>
+
+    <div class="user-area">
+
+      <button
+        class="menu-mobile"
+        type="button"
+        (click)="toggleMobileMenu()"
+      >
+        ☰
+      </button>
+
+      <div class="perfil-dropdown">
+
+        <button
+          type="button"
+          class="perfil-btn"
+          (click)="toggleMenu($event)"
+        >
+
+          <img
+            [src]="fotoPerfil"
+            alt="Funcionário"
+          >
+
+          <span class="perfil-nome">
+            Dr. Rogério Souza
+          </span>
+
+          <svg
+            class="arrow"
+            [class.open]="isMenuOpen"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+
+        </button>
+
+        <div
+          class="perfil-menu"
+          *ngIf="isMenuOpen"
+          (click)="$event.stopPropagation()"
+        >
+
+          <a
+            routerLink="/funcionario/perfil"
+            (click)="closeAllMenus()"
+          >
+            Meu Perfil
+          </a>
+
+          <button
+            type="button"
+            (click)="logout()"
+          >
+            Sair
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>

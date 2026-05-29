@@ -1,0 +1,255 @@
+<section class="pet-page">
+  <div class="page-inner">
+
+    <div class="page-title">
+      <h1>Perfil completo</h1>
+      <p>Todos os dados do tutor, plano contratado e pet em um só lugar.</p>
+    </div>
+
+    <p class="erro" *ngIf="erro">{{ erro }}</p>
+    <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+
+    <div class="empty-state" *ngIf="pets.length === 0">
+      <h2>Nenhum pet cadastrado</h2>
+      <p>Cadastre um pet para visualizar as informações aqui.</p>
+      <a routerLink="/user/listar/pet/cadastar">Cadastrar pet</a>
+    </div>
+
+    <main class="profile-dashboard" *ngIf="pets.length > 0 && petSelecionado">
+
+      <aside class="profile-sidebar">
+        <div class="pet-photo">
+          <img *ngIf="petSelecionado.foto_url" [src]="petSelecionado.foto_url" alt="Foto do pet">
+          <div *ngIf="!petSelecionado.foto_url" class="photo-empty">🐾</div>
+        </div>
+
+        <h2>{{ petSelecionado.nome }}</h2>
+
+        <p>
+          {{ petSelecionado.especie === 'outro' ? petSelecionado.outra_especie : petSelecionado.especie }} 
+          • {{ petSelecionado.idade }} anos
+        </p>
+
+        <div class="sidebar-badges">
+          <div>
+            <small>PESO</small>
+            <strong>{{ petSelecionado.peso || petSelecionado.Peso || '0' }}kg</strong>
+          </div>
+
+          <div>
+            <small>SEXO</small>
+            <strong>{{ petSelecionado.sexo === 'M' ? 'Masculino' : 'Feminino' }}</strong>
+          </div>
+        </div>
+
+        <div class="plan-mini" *ngIf="planoContratado">
+          <span>Plano ativo</span>
+          <strong>{{ planoContratado.nome }}</strong>
+          <small>{{ planoContratado.preco }} /mês</small>
+        </div>
+
+        <div class="plan-mini empty" *ngIf="!planoContratado">
+          <span>Plano ativo</span>
+          <strong>Nenhum plano</strong>
+          <small>Contrate para proteger seu pet</small>
+        </div>
+
+        <div class="pet-selector" *ngIf="pets.length > 1" style="margin-top: 20px;">
+          <small >MEUS PETS</small>
+          <select [(ngModel)]="petSelecionado" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+            <option *ngFor="let p of pets" [ngValue]="p">{{ p.nome }}</option>
+          </select>
+        </div>
+      </aside>
+
+      <section class="profile-content">
+        <div class="content-header">
+          <div>
+            <span>ÁREA DO USUÁRIO</span>
+            <h2>Resumo do perfil</h2>
+          </div>
+          <strong>Perfil verificado</strong>
+        </div>
+
+        <div class="profile-sections">
+          <article class="section-card">
+            <div class="section-title">
+              <span>01</span>
+              <div>
+                <h3>Dados do Tutor</h3>
+                <p>Informações principais do responsável.</p>
+              </div>
+            </div>
+            <div class="compact-grid">
+              <div><small>NOME</small><strong>{{ nomeTutor }}</strong></div>
+              <div><small>E-MAIL</small><strong>{{ emailTutor }}</strong></div>
+              <div><small>STATUS</small><strong>Perfil ativo</strong></div>
+              <div><small>CONTA</small><strong>Usuário PetVitaliz</strong></div>
+            </div>
+          </article>
+
+          <article class="section-card plan-section" *ngIf="planoContratado">
+            <div class="section-title">
+              <span>02</span>
+              <div>
+                <h3>Plano Contratado</h3>
+                <p>{{ planoContratado.descricao }}</p>
+              </div>
+            </div>
+            <div class="plan-row">
+              <div><small>PLANO</small><strong>{{ planoContratado.nome }}</strong></div>
+              <div><small>VALOR</small><strong>{{ planoContratado.preco }} /mês</strong></div>
+              <a routerLink="/usuario/planos-pet">Alterar plano</a>
+            </div>
+          </article>
+
+          <article class="section-card plan-section empty-plan" *ngIf="!planoContratado">
+            <div class="section-title">
+              <span>02</span>
+              <div>
+                <h3>Plano Contratado</h3>
+                <p>Você ainda não possui um plano ativo.</p>
+              </div>
+            </div>
+            <div class="plan-row">
+              <div><small>PLANO</small><strong>Nenhum plano ativo</strong></div>
+              <a routerLink="/usuario/planos-pet">Contratar plano</a>
+            </div>
+          </article>
+
+          <article class="section-card">
+            <div class="section-title">
+              <span>03</span>
+              <div>
+                <h3>Dados do Pet</h3>
+                <p>Informações cadastradas pelo tutor.</p>
+              </div>
+            </div>
+
+            <div class="compact-grid">
+              <div>
+                <small>NOME DO PET</small>
+                <strong>{{ petSelecionado.nome }}</strong>
+              </div>
+              <div>
+                <small>ESPÉCIE</small>
+                <strong style="text-transform: capitalize;">{{ petSelecionado.especie }}</strong>
+              </div>
+              <div>
+                <small>IDADE</small>
+                <strong>{{ petSelecionado.idade }} anos</strong>
+              </div>
+              <div>
+                <small>PESO ATUAL</small>
+                <strong>{{ petSelecionado.peso || petSelecionado.Peso || '0' }} kg</strong>
+              </div>
+              <div>
+                <small>SEXO</small>
+                <strong>{{ petSelecionado.sexo === 'M' ? 'Masculino' : 'Feminino' }}</strong>
+              </div>
+              <div *ngIf="petSelecionado.especie === 'outro'">
+                <small>QUAL ESPÉCIE?</small>
+                <strong>{{ petSelecionado.outra_especie }}</strong>
+              </div>
+            </div>
+
+            <div class="observacao">
+              <small>OBSERVAÇÕES</small>
+              <p>{{ petSelecionado.observacoes || 'Nenhuma observação registrada...' }}</p>
+            </div>
+
+            <div class="vaccine-strip">
+              <div>
+                <small>PRÓXIMA VACINA</small>
+                <strong>V10 - reforço</strong>
+              </div>
+              <span>20 Mar 2026</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-edit" (click)="editarPet()">Editar informações</button>
+          <button type="button" class="btn-delete" (click)="excluirPet()">Excluir registro</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal-overlay" *ngIf="editando">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>Editar Dados de {{ petForm.nome }}</h2>
+          <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-grid">
+            <div class="modal-field">
+              <small>NOME DO PET</small>
+              <input type="text" [(ngModel)]="petForm.nome" class="edit-input">
+            </div>
+
+            <div class="modal-field">
+              <small>ESPÉCIE</small>
+              <select [(ngModel)]="petForm.especie" class="edit-input">
+                <option value="cachorro">Cachorro</option>
+                <option value="gato">Gato</option>
+                <option value="ave">Ave</option>
+                <option value="coelho">Coelho</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+
+            <div class="modal-field" *ngIf="petForm.especie === 'outro'">
+              <small>QUAL ESPÉCIE?</small>
+              <input type="text" [(ngModel)]="petForm.outra_especie" class="edit-input">
+            </div>
+
+            <div class="modal-field">
+              <small>PESO (KG)</small>
+              <input type="number" [(ngModel)]="petForm.peso" class="edit-input">
+            </div>
+
+            <div class="modal-field">
+              <small>SEXO</small>
+              <select [(ngModel)]="petForm.sexo" class="edit-input">
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+              </select>
+            </div>
+
+            <div class="modal-field">
+              <small>DATA DE NASCIMENTO</small>
+              <input 
+                type="text" 
+                placeholder="dd/mm/yyyy"
+                [(ngModel)]="petForm.data_nascimento" 
+                (input)="recalcularIdadeNoModal()"
+                appDataMask 
+                maxlength="10"
+                class="edit-input">
+            </div>
+            
+            <div class="modal-field">
+              <small>IDADE (ANOS)</small>
+              <input 
+                type="number" 
+                [(ngModel)]="petForm.idade" 
+                disabled 
+                class="edit-input" 
+                placeholder="Calculada automaticamente" 
+                style="background-color: #eef2ff; cursor: not-allowed; color: #6b7280;">
+            </div>
+          </div> <div class="modal-field full-width">
+            <small>OBSERVAÇÕES</small>
+            <textarea [(ngModel)]="petForm.observacoes" class="edit-textarea"></textarea>
+          </div>
+        </div> <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
+          <button type="button" class="btn-save" (click)="salvarEdicao()">Salvar alterações</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

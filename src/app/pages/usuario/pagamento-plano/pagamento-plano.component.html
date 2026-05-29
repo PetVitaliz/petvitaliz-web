@@ -1,0 +1,93 @@
+<section class="pagamento-page">
+
+  <div class="page-header">
+    <h1>Pagamento do Plano</h1>
+    <p>Preencha as informações para continuar.</p>
+  </div>
+
+  <main class="payment-card" *ngIf="plano">
+
+    <section class="form-section">
+      <div class="section-title">
+        <span>♙</span>
+        <h2>Dados Pessoais</h2>
+      </div>
+
+      <div class="form-box">
+        <div class="field">
+          <label>Nome Completo</label>
+          <input type="text" placeholder="Ex: Jadi Silva" [(ngModel)]="nomeCompleto">
+        </div>
+
+        <div class="field">
+          <label>CPF</label>
+          <input type="text" placeholder="000.000.000-00" [(ngModel)]="cpf">
+        </div>
+
+        <div class="field full">
+          <label>E-mail para confirmação</label>
+          <input type="email" placeholder="joao@email.com" [(ngModel)]="email">
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="section-title">
+        <span>▣</span>
+        <h2>Pagamento</h2>
+      </div>
+
+      <div class="form-box">
+        <div class="field full">
+          <label>Número do Cartão</label>
+          <input type="text" placeholder="0000 0000 0000 0000" [(ngModel)]="numeroCartao">
+        </div>
+
+        <div class="field">
+          <label>Validade</label>
+          <input type="text" placeholder="MM/AA" [(ngModel)]="validade">
+        </div>
+
+        <div class="field">
+          <label>CVV</label>
+          <input type="text" placeholder="123" [(ngModel)]="cvv">
+        </div>
+
+        <div class="field full">
+          <label>Nome no Cartão</label>
+          <input type="text" placeholder="Como impresso no cartão" [(ngModel)]="nomeCartao">
+        </div>
+
+        <div class="cards-row">
+          <span>💳</span>
+          <span>🏦</span>
+          <span>🔒</span>
+          <small>Pagamento 100% criptografado</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="summary-box">
+      <div>
+        <span>PLANO SELECIONADO</span>
+        <h3>{{ plano.nome }}</h3>
+        <p>{{ plano.descricao }}</p>
+      </div>
+
+      <strong>
+        {{ plano.preco }}
+        <small>/mês</small>
+      </strong>
+    </section>
+
+    <div class="secure-note">
+      Ao clicar em “Confirmar pagamento”, você concorda com nossos termos e será redirecionado para o contrato.
+    </div>
+
+    <button type="button" class="confirm-btn" (click)="confirmarPagamento()">
+      Confirmar
+    </button>
+
+  </main>
+
+</section>
