@@ -1,53 +1,33 @@
 <section class="page-container">
 
   <div class="hero">
-
     <div>
       <span>AGENDAMENTO</span>
-
-      <h1>
-        Agende um horário para seu Pet
-      </h1>
-
-      <p>
-        Cuidados profissionais e carinhosos que o seu pet merece.
-      </p>
+      <h1>Agende um horário para seu Pet</h1>
+      <p>Cuidados profissionais e carinhosos que o seu pet merece.</p>
     </div>
-
   </div>
 
   <div class="stepper-card">
 
     <div class="stepper-top">
 
-      <div
-        class="step"
-        [class.active]="etapaAtual >= 1"
-      >
+      <div class="step" [class.active]="etapaAtual >= 1">
         <div class="circle">1</div>
         <span>Selecionar Pet</span>
       </div>
 
-      <div
-        class="step"
-        [class.active]="etapaAtual >= 2"
-      >
+      <div class="step" [class.active]="etapaAtual >= 2">
         <div class="circle">2</div>
         <span>Escolher Serviço</span>
       </div>
 
-      <div
-        class="step"
-        [class.active]="etapaAtual >= 3"
-      >
+      <div class="step" [class.active]="etapaAtual >= 3">
         <div class="circle">3</div>
         <span>Data e Horário</span>
       </div>
 
-      <div
-        class="step"
-        [class.active]="etapaAtual >= 4"
-      >
+      <div class="step" [class.active]="etapaAtual >= 4">
         <div class="circle">4</div>
         <span>Confirmação</span>
       </div>
@@ -56,16 +36,19 @@
 
     <div class="content-box">
 
-      <!-- ETAPA 1 -->
+      <div class="alert-error" *ngIf="mensagemErro">
+        {{ mensagemErro }}
+      </div>
+
+      <div class="alert-success" *ngIf="mensagemSucesso">
+        {{ mensagemSucesso }}
+      </div>
 
       <div *ngIf="etapaAtual === 1">
 
         <div class="section-title">
           <h2>Para qual pet é o atendimento?</h2>
-
-          <p>
-            Selecione um de seus pets cadastrados.
-          </p>
+          <p>Selecione um de seus pets cadastrados.</p>
         </div>
 
         <div class="pets-grid">
@@ -76,57 +59,39 @@
             [class.selected]="petSelecionado === pet.nome"
             (click)="selecionarPet(pet.nome)"
           >
+            <div class="check">✓</div>
 
-            <div class="check">
-              ✓
-            </div>
-
-            <img
-              [src]="pet.foto"
-              [alt]="pet.nome"
-            >
+            <img [src]="pet.foto" [alt]="pet.nome">
 
             <h3>{{ pet.nome }}</h3>
-
-            <small>
-              {{ pet.tipo }} • {{ pet.idade }}
-            </small>
-
+            <small>{{ pet.tipo }} • {{ pet.idade }}</small>
           </div>
 
-          <div class="pet-card add-card">
-
-            <div class="plus">
-              +
-            </div>
-
+          <button
+            type="button"
+            class="pet-card add-card"
+            (click)="irParaCadastroPet()"
+          >
+            <div class="plus">+</div>
             <h3>Novo Pet</h3>
-
-            <small>
-              Cadastrar animal
-            </small>
-
-          </div>
+            <small>Cadastrar Pet</small>
+          </button>
 
         </div>
 
       </div>
 
-      <!-- ETAPA 2 -->
-
       <div *ngIf="etapaAtual === 2">
 
         <div class="section-title">
           <h2>Escolha o serviço</h2>
-
-          <p>
-            Selecione o tipo de atendimento desejado.
-          </p>
+          <p>Selecione o tipo de atendimento desejado.</p>
         </div>
 
         <div class="services-grid">
 
           <button
+            type="button"
             *ngFor="let servico of servicos"
             [class.active]="servicoSelecionado === servico"
             (click)="selecionarServico(servico)"
@@ -138,28 +103,28 @@
 
       </div>
 
-      <!-- ETAPA 3 -->
-
       <div *ngIf="etapaAtual === 3">
 
         <div class="section-title">
           <h2>Escolha a data e horário</h2>
-
-          <p>
-            Horários disponíveis para atendimento.
-          </p>
+          <p>Horários disponíveis para atendimento.</p>
         </div>
 
         <input
           type="date"
+          name="dataSelecionada"
           [(ngModel)]="dataSelecionada"
+          [min]="obterDataMinima()"
+          (change)="aoAlterarData()"
         >
 
         <div class="horarios-grid">
 
           <button
+            type="button"
             *ngFor="let horario of horarios"
             [class.active]="horarioSelecionado === horario"
+            [disabled]="horarioIndisponivel(horario)"
             (click)="selecionarHorario(horario)"
           >
             {{ horario }}
@@ -169,21 +134,14 @@
 
       </div>
 
-      <!-- ETAPA 4 -->
-
       <div *ngIf="etapaAtual === 4">
 
         <div class="confirmacao">
 
-          <div class="success-icon">
-            ✓
-          </div>
+          <div class="success-icon">✓</div>
 
           <h2>Agendamento confirmado!</h2>
-
-          <p>
-            Seu horário foi reservado com sucesso.
-          </p>
+          <p>Seu horário foi reservado com sucesso.</p>
 
           <div class="summary">
 
@@ -198,6 +156,11 @@
             </div>
 
             <div>
+              <span>Data</span>
+              <strong>{{ dataSelecionada }}</strong>
+            </div>
+
+            <div>
               <span>Horário</span>
               <strong>{{ horarioSelecionado }}</strong>
             </div>
@@ -208,12 +171,10 @@
 
       </div>
 
-      <div
-        class="bottom-actions"
-        *ngIf="etapaAtual < 4"
-      >
+      <div class="bottom-actions" *ngIf="etapaAtual < 4">
 
         <button
+          type="button"
           class="btn-secondary"
           *ngIf="etapaAtual > 1"
           (click)="voltar()"
@@ -222,11 +183,12 @@
         </button>
 
         <button
+          type="button"
           class="btn-primary"
           [disabled]="!podeContinuar()"
           (click)="continuar()"
         >
-          Continuar →
+          Continuar
         </button>
 
       </div>

@@ -25,6 +25,7 @@ import { PagamentoPlanoComponent } from './pages/usuario/pagamento-plano/pagamen
 import { ContratoPlanoComponent } from './pages/usuario/contrato-plano/contrato-plano.component';
 import { PlanoSucessoComponent } from './pages/usuario/plano-sucesso/plano-sucesso.component';
 import { ContatoUsuarioComponent } from './pages/usuario/contato-usuario/contato-usuario.component';
+import { MeuPlanoComponent } from './pages/usuario/meu-plano/meu-plano.component';
 
 // FUNCIONÁRIO
 import { HomeFuncionarioComponent } from './pages/funcionario/home-funcionario/home-funcionario.component';
@@ -57,52 +58,77 @@ export const routes: Routes = [
   { path: 'adocao', component: AdocaoComponent },
   { path: 'emergencia', component: EmergenciaComponent },
 
-  // USUÁRIO
-  {
-    path: 'user/home',
-    component: HomeUsuarioComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/listar/pet/cadastar',
-    component: CadastroPetComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/listar/pet',
-    component: ListarCadastroPetComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/planos-pet',
-    component: PlanosPetComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/agendamento',
-    component: AgendamentoComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/pagamento-plano',
-    component: PagamentoPlanoComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/contrato-plano',
-    component: ContratoPlanoComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/plano-sucesso',
-    component: PlanoSucessoComponent,
-    canActivate: [authUsuarioGuard]
-  },
-  {
-    path: 'user/contato',
-    component: ContatoUsuarioComponent,
-    canActivate: [authUsuarioGuard]
-  },
+// USUÁRIO
+{
+  path: 'user/home',
+  component: HomeUsuarioComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/servicos',
+  component: ServicosComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/sobre-nos',
+  component: SobreNosComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/adocao',
+  component: AdocaoComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/emergencia',
+  component: EmergenciaComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/contato',
+  component: ContatoUsuarioComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/listar/pet/cadastar',
+  component: CadastroPetComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/listar/pet',
+  component: ListarCadastroPetComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/planos-pet',
+  component: PlanosPetComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/meu-plano',
+  component: MeuPlanoComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/agendamento',
+  component: AgendamentoComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/pagamento-plano',
+  component: PagamentoPlanoComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/contrato-plano',
+  component: ContratoPlanoComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/plano-sucesso',
+  component: PlanoSucessoComponent,
+  canActivate: [authUsuarioGuard]
+},
 
   // FUNCIONÁRIO
   {

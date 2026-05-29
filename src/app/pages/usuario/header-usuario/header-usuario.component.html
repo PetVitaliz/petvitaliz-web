@@ -5,59 +5,87 @@
   </div>
 
   <nav class="nav" [class.open]="menuMobileAberto">
-    <a routerLink="/user/home" (click)="fecharMenus()">Home</a>
-    <a routerLink="/servicos" (click)="fecharMenus()">Nossos Serviços</a>
+    <a routerLink="/user/home" routerLinkActive="ativo" (click)="fecharMenus()">
+      Home
+    </a>
 
-    <a routerLink="user/sobre-nos" routerLinkActive="ativo" (click)="fecharMenus()">Sobre Nós</a>
-    <a routerLink="/user/contato" (click)="fecharMenus()">Contato</a>
-    <a routerLink="user/emergencia" routerLinkActive="ativo" (click)="fecharMenus()">Emergência</a>
-    <a routerLink="user/adocao" routerLinkActive="ativo" (click)="fecharMenus()">Adoção</a>
-    
-    <a routerLink="/user/agendamento" (click)="fecharMenus()">Agendamentos</a>
+    <a routerLink="/user/servicos" routerLinkActive="ativo" (click)="fecharMenus()">
+      Serviços
+    </a>
+
+    <a routerLink="/user/emergencia" routerLinkActive="ativo" (click)="fecharMenus()">
+      Emergência
+    </a>
+
+    <a routerLink="/user/adocao" routerLinkActive="ativo" (click)="fecharMenus()">
+      Adoção
+    </a>
+
+    <a routerLink="/user/agendamento" routerLinkActive="ativo" (click)="fecharMenus()">
+      Agendamentos
+    </a>
   </nav>
 
   <div class="header-actions">
 
     <div class="avatar-wrapper">
 
-      <button
-        class="avatar"
-        type="button"
-        (click)="toggleAvatarMenu()">
+      <button class="avatar" type="button" (click)="toggleAvatarMenu()">
         {{ inicialUsuario }}
       </button>
 
       <div class="avatar-card" *ngIf="avatarMenuAberto">
-        
-        <div class="dropdown-header">Olá, {{ usuario?.nome?.split(' ')[0] || 'Usuário' }}!</div>
+
+        <div class="dropdown-header">
+          Olá, {{ usuario?.nome?.split(' ')[0] || 'Usuário' }}!
+        </div>
+
         <hr class="dropdown-divider">
 
         <a routerLink="/user/listar/pet" (click)="fecharMenus()">
-          <span class="material-icons dropdown-icon">pets</span> Meus Pets
+          <span class="material-icons dropdown-icon">pets</span>
+          Meus Pets
         </a>
 
         <a routerLink="/user/listar/pet/cadastar" (click)="fecharMenus()">
-          <span class="material-icons dropdown-icon">add_circle_outline</span> Cadastrar Pet
+          <span class="material-icons dropdown-icon">add_circle_outline</span>
+          Cadastrar Pet
         </a>
 
         <a routerLink="/user/planos-pet" (click)="fecharMenus()">
-          <span class="material-icons dropdown-icon">credit_card</span> Meus Planos
+          <span class="material-icons dropdown-icon">volunteer_activism</span>
+          Contratar Plano
+        </a>
+
+        <a routerLink="/user/meu-plano" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">verified</span>
+          Meu Plano
+        </a>
+
+        <hr class="dropdown-divider">
+
+        <a routerLink="/user/sobre-nos" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">info</span>
+          Sobre Nós
+        </a>
+
+        <a routerLink="/user/contato" (click)="fecharMenus()">
+          <span class="material-icons dropdown-icon">mail</span>
+          Contato
         </a>
 
         <hr class="dropdown-divider">
 
         <button type="button" class="btn-dropdown-logout" (click)="sair()">
-          <span class="material-icons dropdown-icon text-danger">logout</span> Sair
+          <span class="material-icons dropdown-icon text-danger">logout</span>
+          Sair
         </button>
 
       </div>
 
     </div>
 
-    <button
-      class="menu-mobile"
-      type="button"
-      (click)="toggleMenuMobile()">
+    <button class="menu-mobile" type="button" (click)="toggleMenuMobile()">
       ☰
     </button>
 
