@@ -120,6 +120,28 @@
   min-height: 430px;
 }
 
+.alert-error,
+.alert-success {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 22px;
+}
+
+.alert-error {
+  background: #fff1f2;
+  color: #b42318;
+  border: 1px solid #fecaca;
+}
+
+.alert-success {
+  background: #ecfdf3;
+  color: #027a48;
+  border: 1px solid #bbf7d0;
+}
+
 .section-title {
   margin-bottom: 30px;
 }
@@ -308,6 +330,23 @@ input[type="date"]:focus {
   color: #ffffff;
   border-color: transparent;
   transform: translateY(-3px);
+}
+
+.horarios-grid button:disabled {
+  background: #eef1f6;
+  color: #9aa3b8;
+  border-color: #e1e6f0;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.75;
+  transform: none;
+}
+
+.horarios-grid button:disabled:hover {
+  background: #eef1f6;
+  color: #9aa3b8;
+  border-color: #e1e6f0;
+  transform: none;
 }
 
 .bottom-actions {

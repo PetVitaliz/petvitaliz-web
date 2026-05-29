@@ -111,7 +111,7 @@ export class PlanosPetComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   abrirDetalhes(plano: any): void {
     this.planoSelecionado = plano;
@@ -130,6 +130,6 @@ export class PlanosPetComponent {
       JSON.stringify(this.planoSelecionado)
     );
 
-    this.router.navigate(['/usuario/pagamento-plano']);
+    this.router.navigate(['/user/pagamento-plano']);
   }
 }
