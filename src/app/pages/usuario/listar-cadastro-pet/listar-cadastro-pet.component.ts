@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment.prod'; 
-import { DataMaskDirective } from './data-mask.directive';
+import { environment } from '../../../environments/environment.prod';
 
 @Component({
   selector: 'app-listar-cadastro-pet',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, DataMaskDirective],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './listar-cadastro-pet.component.html',
   styleUrl: './listar-cadastro-pet.component.css'
 })
@@ -18,14 +17,26 @@ export class ListarCadastroPetComponent implements OnInit {
   petSelecionado: any = null;
   planoContratado: any = null;
   usuarioLogado: any = null;
-  
+
   editando = false;
+  modalCadastroAberto = false;
+  salvando = false;
+
   petForm: any = {};
+
+  nomePet = '';
+  especie = '';
+  outraEspecie = '';
+  idade = '';
+  sexo = '';
+  peso: number | null = null;
+  fotoPreview: string | ArrayBuffer | null = null;
+  fotoArquivo: File | null = null;
 
   erro = '';
   sucesso = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.carregarDadosLocais();
@@ -39,6 +50,7 @@ export class ListarCadastroPetComponent implements OnInit {
 
   buscarPetsDoBanco(): void {
     this.erro = '';
+
     this.http.get(`${environment.apiUrl}/user/listar/pet`, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
@@ -60,45 +72,124 @@ export class ListarCadastroPetComponent implements OnInit {
     return this.usuarioLogado?.email || 'E-mail não informado';
   }
 
-  editarPet(): void {
-    this.petForm = { ...this.petSelecionado };
-    
-    if (this.petForm.data_nascimento) {
-      const apenasData = this.petForm.data_nascimento.split('T')[0];
-      const partes = apenasData.split('-');
-      if (partes.length === 3) {
-        this.petForm.data_nascimento = `${partes[2]}/${partes[1]}/${partes[0]}`;
-      }
-    }
-    
-    this.editando = true;
+  abrirCadastroPet(): void {
+    this.limparFormularioCadastro();
+    this.modalCadastroAberto = true;
   }
 
-  recalcularIdadeNoModal(): void {
-    if (this.petForm.data_nascimento && this.petForm.data_nascimento.length === 10) {
-      const partes = this.petForm.data_nascimento.split('/');
-      if (partes.length === 3) {
-        const dia = parseInt(partes[0], 10);
-        const mes = parseInt(partes[1], 10) - 1;
-        const ano = parseInt(partes[2], 10);
+  fecharCadastroPet(): void {
+    this.modalCadastroAberto = false;
+    this.limparFormularioCadastro();
+  }
 
-        const dataNasc = new Date(ano, mes, dia);
-        const hoje = new Date();
+  limparFormularioCadastro(): void {
+    this.nomePet = '';
+    this.especie = '';
+    this.outraEspecie = '';
+    this.idade = '';
+    this.sexo = '';
+    this.peso = null;
+    this.fotoPreview = null;
+    this.fotoArquivo = null;
+    this.erro = '';
+    this.sucesso = '';
+    this.salvando = false;
+  }
 
-        if (!isNaN(dataNasc.getTime())) {
-          let anosCalculados = hoje.getFullYear() - dataNasc.getFullYear();
-          const m = hoje.getMonth() - dataNasc.getMonth();
+  carregarFoto(event: Event): void {
+    const input = event.target as HTMLInputElement;
 
-          if (m < 0 || (m === 0 && hoje.getDate() < dataNasc.getDate())) {
-            anosCalculados--;
-          }
+    if (!input.files || input.files.length === 0) return;
 
-          this.petForm.idade = anosCalculados >= 0 ? anosCalculados : 0;
-        }
-      }
-    } else {
-      this.petForm.idade = ''; 
+    const arquivo = input.files[0];
+
+    if (!arquivo.type.startsWith('image/')) {
+      this.erro = 'Selecione uma imagem válida.';
+      return;
     }
+
+    if (arquivo.size > 5 * 1024 * 1024) {
+      this.erro = 'A imagem deve ter no máximo 5MB.';
+      return;
+    }
+
+    this.fotoArquivo = arquivo;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fotoPreview = reader.result;
+    };
+
+    reader.readAsDataURL(arquivo);
+  }
+
+  confirmarCadastro(): void {
+    this.erro = '';
+    this.sucesso = '';
+
+    if (!this.nomePet.trim()) {
+      this.erro = 'Informe o nome do pet.';
+      return;
+    }
+
+    if (!this.especie) {
+      this.erro = 'Selecione a espécie do pet.';
+      return;
+    }
+
+    if (this.especie === 'Outro' && !this.outraEspecie.trim()) {
+      this.erro = 'Informe qual é a espécie do pet.';
+      return;
+    }
+
+    if (!this.idade.trim()) {
+      this.erro = 'Informe a idade aproximada do pet.';
+      return;
+    }
+
+    if (!this.sexo) {
+      this.erro = 'Selecione o sexo do pet.';
+      return;
+    }
+
+    if (this.peso !== null && Number(this.peso) < 0) {
+      this.erro = 'O peso não pode ser negativo.';
+      return;
+    }
+
+    this.salvando = true;
+
+    const dadosPet = {
+      nome: this.nomePet.trim(),
+      especie: this.especie === 'Outro' ? 'outro' : this.especie,
+      outra_especie: this.especie === 'Outro' ? this.outraEspecie.trim() : null,
+      idade: this.idade,
+      sexo: this.sexo === 'Macho' ? 'M' : 'F',
+      peso: this.peso !== null ? Number(this.peso) : null,
+      foto_url: this.fotoPreview || null
+    };
+
+    this.http.post(`${environment.apiUrl}/user/listar/pet/cadastar`, dadosPet, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          this.sucesso = 'Pet cadastrado com sucesso.';
+          this.modalCadastroAberto = false;
+          this.limparFormularioCadastro();
+          this.buscarPetsDoBanco();
+        },
+        error: (err) => {
+          console.error('Erro ao cadastrar pet:', err);
+          this.erro = err.error?.mensagem || 'Erro ao cadastrar o pet.';
+          this.salvando = false;
+        }
+      });
+  }
+
+  editarPet(): void {
+    if (!this.petSelecionado) return;
+
+    this.petForm = { ...this.petSelecionado };
+    this.editando = true;
   }
 
   salvarEdicao(): void {
@@ -107,49 +198,32 @@ export class ListarCadastroPetComponent implements OnInit {
 
     if (!this.petForm) return;
 
-    const partes = this.petForm.data_nascimento.split('/');
-    if (partes.length !== 3) {
-      this.erro = 'Data de nascimento inválida. Use o formato DD/MM/AAAA.';
+    if (!this.petForm.nome?.trim()) {
+      this.erro = 'Informe o nome do pet.';
       return;
     }
 
-    const dia = parseInt(partes[0], 10);
-    const mes = parseInt(partes[1], 10) - 1; 
-    const ano = parseInt(partes[2], 10);
-
-    const dataTeste = new Date(ano, mes, dia);
-    const anoAtual = new Date().getFullYear();
-
-    if (
-      dataTeste.getFullYear() !== ano ||
-      dataTeste.getMonth() !== mes ||
-      dataTeste.getDate() !== dia ||
-      ano < 1900 || 
-      ano > anoAtual
-    ) {
-      this.erro = 'Data de nascimento inválida ou impossível.';
+    if (this.petForm.peso !== null && Number(this.petForm.peso) < 0) {
+      this.erro = 'O peso não pode ser negativo.';
       return;
     }
-
-    const dataFinalISO = `${ano}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}T00:00:00.000Z`;
 
     const dadosAtualizados = {
       nome: this.petForm.nome,
       especie: this.petForm.especie,
       outra_especie: this.petForm.outra_especie,
       sexo: this.petForm.sexo,
-      data_nascimento: dataFinalISO,
-      idade: Number(this.petForm.idade),
+      idade: this.petForm.idade,
       peso: this.petForm.peso ? Number(this.petForm.peso) : null,
       observacoes: this.petForm.observacoes
     };
 
     this.http.put(`${environment.apiUrl}/user/listar/pet/editar/${this.petForm.id_pet}`, dadosAtualizados, { withCredentials: true })
       .subscribe({
-        next: (response: any) => {
-          this.sucesso = 'Informações atualizadas com sucesso';
+        next: () => {
+          this.sucesso = 'Informações atualizadas com sucesso.';
           this.editando = false;
-          this.buscarPetsDoBanco(); 
+          this.buscarPetsDoBanco();
         },
         error: (err) => {
           console.error('Erro ao editar pet:', err);
@@ -171,9 +245,9 @@ export class ListarCadastroPetComponent implements OnInit {
 
     this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${this.petSelecionado.id_pet}`, { withCredentials: true })
       .subscribe({
-        next: (response: any) => {
-          alert('Pet removido com sucesso.');
-          this.buscarPetsDoBanco(); 
+        next: () => {
+          this.sucesso = 'Pet removido com sucesso.';
+          this.buscarPetsDoBanco();
         },
         error: (err) => {
           console.error('Erro ao excluir pet:', err);
