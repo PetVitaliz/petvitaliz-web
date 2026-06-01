@@ -182,21 +182,22 @@
   width: 54px;
   height: 54px;
   border-radius: 16px;
-  background: #eef2ff;
-  border: 2px solid #d8deee;
-  color: #5D6ED3;
+  background: linear-gradient(135deg, #5D6ED3 0%, #4557E8 100%);
+  border: none;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 900;
   flex-shrink: 0;
+  box-shadow: 0 10px 22px rgba(69, 87, 232, 0.22);
 }
 
 .cliente-avatar.grande {
   width: 74px;
   height: 74px;
-  font-size: 30px;
+  font-size: 26px;
 }
 
 .cliente-info {
