@@ -10,7 +10,6 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './home-adm.component.css'
 })
 export class HomeAdmComponent {
-
   modalLogsAberto = false;
 
   constructor(private router: Router) {}
@@ -51,6 +50,12 @@ export class HomeAdmComponent {
     { id: 1, nome: 'Ana Souza', email: 'ana.souza@petvitaliz.com', cargo: 'TI / Infra', inicial: 'AS', ultimo: 'Hoje, 09:15' },
     { id: 2, nome: 'Marcos Lima', email: 'marcos@petvitaliz.com', cargo: 'Gerente Geral', inicial: 'ML', ultimo: 'Ontem, 18:40' },
     { id: 3, nome: 'Marcos Lima', email: 'marcos.l@petvitaliz.com', cargo: 'Gerente Geral', inicial: 'ML', ultimo: 'Ontem, 18:40' }
+  ];
+
+  equipeResumo = [
+    { titulo: 'Total de Funcionários', valor: '6', detalhe: '', status: '' },
+    { titulo: 'Veterinários', valor: '2', detalhe: '', status: 'Ativos' },
+    { titulo: 'Equipe de Apoio', valor: '3', detalhe: '', status: 'Ativos' }
   ];
 
   logs = [
