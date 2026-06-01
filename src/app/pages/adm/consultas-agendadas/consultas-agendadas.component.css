@@ -95,6 +95,16 @@
   justify-content: center;
 }
 
+.resumo-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .resumo-card.azul .resumo-icon {
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
@@ -207,15 +217,15 @@
 }
 
 .consulta-card {
-  background: #fcfdff;
+  background: #ffffff;
   border: 1px solid #e8edf8;
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: 26px;
+  padding: 26px;
   display: grid;
-  grid-template-columns: 90px 170px 220px 1fr 120px 180px;
+  grid-template-columns: 90px 170px 220px 1fr 120px 230px;
   align-items: center;
   gap: 20px;
-  min-height: 96px;
+  min-height: 100px;
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
   transition: 0.25s ease;
 }
@@ -229,7 +239,7 @@
 .horario strong {
   display: block;
   color: #1f3b82;
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 800;
   line-height: 1;
 }
@@ -237,9 +247,9 @@
 .horario span {
   display: block;
   text-align: right;
-  color: #1f3b82;
+  color: #64748b;
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .pet-area {
@@ -249,24 +259,30 @@
 }
 
 .pet-avatar {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   border-radius: 16px;
-  background:
-    radial-gradient(circle at top left, rgba(83, 109, 254, 0.20), transparent 38%),
-    linear-gradient(135deg, #eef2ff, #e6eaf5);
-  position: relative;
-}
 
-.pet-avatar::after {
-  content: '🐾';
-  position: absolute;
-  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #536dfe 0%,
+    #4055c8 100%
+  );
+
+  color: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-size: 18px;
-  opacity: 0.45;
+  font-weight: 800;
+
+  flex-shrink: 0;
+
+  position: relative;
+
+  box-shadow: 0 10px 22px rgba(64, 85, 200, 0.25);
 }
 
 .pet-area strong,
@@ -287,7 +303,9 @@
 }
 
 .status {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: #eef2ff;
   color: #4055c8;
   padding: 7px 11px;
@@ -311,24 +329,55 @@
 .acoes {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 10px;
 }
 
 .acoes button {
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   border: none;
-  border-radius: 12px;
-  background: #f4f6ff;
-  color: #4055c8;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-weight: 800;
-  font-size: 12px;
-  transition: 0.25s ease;
+  transition: .25s ease;
 }
 
-.acoes button:hover {
-  background: #4055c8;
+.acoes svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.btn-ver,
+.btn-confirmar,
+.btn-editar {
+  background: #eef2ff;
+  color: #536dfe;
+}
+
+.btn-cancelar-consulta,
+.btn-excluir {
+  background: #fff1f3;
+  color: #ff4d6d;
+}
+
+.btn-ver:hover,
+.btn-confirmar:hover,
+.btn-editar:hover {
+  background: #536dfe;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn-cancelar-consulta:hover,
+.btn-excluir:hover {
+  background: #ff4d6d;
   color: #ffffff;
   transform: translateY(-2px);
 }

@@ -106,7 +106,9 @@
 
                 <div class="employee">
 
-                  <img [src]="funcionario.avatar" alt="Funcionário">
+                  <span class="employee-avatar">
+                    {{ funcionario.nome.charAt(0) }}
+                  </span>
 
                   <div>
                     <strong>{{ funcionario.nome }}</strong>
@@ -136,17 +138,21 @@
               </td>
 
               <td>
-
                 <button class="action edit" (click)="editarFuncionario(funcionario)">
-
-                  ✎
-
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 20H21"></path>
+                    <path d="M16.5 3.5A2.12 2.12 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z"></path>
+                  </svg>
                 </button>
 
                 <button class="action delete" (click)="excluirFuncionario(funcionario)">
-
-                  🗑
-
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 6H21"></path>
+                    <path d="M8 6V4H16V6"></path>
+                    <path d="M19 6L18 20H6L5 6"></path>
+                    <path d="M10 11V17"></path>
+                    <path d="M14 11V17"></path>
+                  </svg>
                 </button>
 
               </td>
@@ -284,7 +290,7 @@
           </p>
 
           <button (click)="abrirManual()">
-            Ver manual do colaborador →
+            Ver manual do colaborador
           </button>
 
         </div>
@@ -308,5 +314,60 @@
     </div>
 
   </section>
+
+  <div class="rh-overlay" *ngIf="modalRHAberto">
+
+    <div class="rh-card">
+
+      <button class="rh-close" type="button" (click)="fecharModalRH()">
+        ×
+      </button>
+
+      <div class="rh-icon">
+        ⓘ
+      </div>
+
+      <h2>Central de RH</h2>
+
+      <p class="rh-text">
+        Nossa equipe está pronta para ajudar com dúvidas, solicitações internas
+        e suporte administrativo.
+      </p>
+
+      <div class="rh-info">
+        <div>
+          <span>☎</span>
+          <p>
+            <strong>Telefone</strong>
+            (11) 99999-9999
+          </p>
+        </div>
+
+        <div>
+          <span>✉</span>
+          <p>
+            <strong>E-mail</strong>
+            rh&#64;petvitaliz.com
+          </p>
+        </div>
+
+        <div>
+          <span>◷</span>
+          <p>
+            <strong>Atendimento</strong>
+            Segunda a Sexta • 08h às 18h
+          </p>
+        </div>
+      </div>
+
+      <div class="rh-actions">
+        <button class="rh-secondary" type="button" (click)="fecharModalRH()">
+          Fechar
+        </button>
+      </div>
+
+    </div>
+
+  </div>
 
 </div>

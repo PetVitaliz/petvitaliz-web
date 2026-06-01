@@ -166,6 +166,16 @@ export class EquipeFuncionariosComponent {
     this.fecharModal();
   }
 
+  modalRHAberto = false;
+
+  falarComRH(): void {
+    this.modalRHAberto = true;
+  }
+
+  fecharModalRH(): void {
+    this.modalRHAberto = false;
+  }
+
   excluirFuncionario(funcionario: Funcionario): void {
     const confirmar = confirm(`Deseja excluir ${funcionario.nome}?`);
 
@@ -193,10 +203,6 @@ export class EquipeFuncionariosComponent {
 
   fecharModal(): void {
     this.modalAberto = false;
-  }
-
-  falarComRH(): void {
-    alert('Solicitação enviada para o RH.');
   }
 
   abrirManual(): void {
