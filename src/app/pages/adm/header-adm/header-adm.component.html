@@ -1,7 +1,7 @@
 <header class="header-adm">
   <div class="header-container">
 
-    <div class="logo">
+    <div class="logo" routerLink="/adm/home" style="cursor: pointer;">
       <img src="assets/img/logo.png" alt="PetVitaliz">
     </div>
 
@@ -33,7 +33,7 @@
         </button>
 
         <div class="dropdown-menu" *ngIf="adminsAberto" (click)="$event.stopPropagation()">
-          <a routerLink="/adm/listar-admin" (click)="fecharMenus()">Listar / Editar Admin</a>
+          <a routerLink="/adm/listar/adm/cadastrar" (click)="fecharMenus()">Ver Administradores</a>
           <a routerLink="/adm/equipe-funcionarios" (click)="fecharMenus()">Equipe e Funcionários</a>
           <a routerLink="/adm/planos" (click)="fecharMenus()">Planos</a>
           <a routerLink="/adm/consultas-agendadas" (click)="fecharMenus()">Consultas Agendadas</a>
@@ -44,17 +44,23 @@
 
     <div class="user-area">
       <div class="user-info">
-        <strong>Dr. Ricardo Silva</strong>
+        <strong>{{ nomeAdmin }}</strong>
         <span>Administrador</span>
       </div>
 
       <div class="perfil-dropdown">
-        <button type="button" class="perfil-btn" (click)="togglePerfil($event)">
-          <img src="assets/img/perfil.png" alt="Perfil">
+        <button type="button" class="perfil-btn" (click)="togglePerfil($event)" [class.com-foto]="fotoAdmin">
+          
+          <img *ngIf="fotoAdmin" [src]="fotoAdmin" alt="Perfil">
+          
+          <span *ngIf="!fotoAdmin" class="header-fallback-text">
+            {{ nomeAdmin.substring(0, 2).toUpperCase() }}
+          </span>
+
         </button>
 
         <div class="perfil-menu" *ngIf="perfilAberto" (click)="$event.stopPropagation()">
-          <button type="button" (click)="logout()">Sair</button>
+          <button type="button" (click)="logout()">Sair da Conta</button>
         </div>
       </div>
     </div>

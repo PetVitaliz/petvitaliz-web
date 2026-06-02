@@ -1,6 +1,8 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header-adm',
@@ -9,36 +11,46 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
   templateUrl: './header-adm.component.html',
   styleUrl: './header-adm.component.css'
 })
-export class HeaderAdmComponent {
+export class HeaderAdmComponent implements OnInit {
 
   adminsAberto = false;
   perfilAberto = false;
   menuAberto = false;
 
-  constructor(private router: Router) {}
+  nomeAdmin = 'Administrador';
+  emailAdmin = '';
+  fotoAdmin = '';
+
+  constructor(private router: Router, private http: HttpClient) {}
+
+  ngOnInit(): void {
+    const usuarioSalvo = localStorage.getItem('usuarioLogado');
+    if (usuarioSalvo) {
+      const usuario = JSON.parse(usuarioSalvo);
+      if (usuario.tipo === 'admin') {
+        this.nomeAdmin = usuario.nome;
+        this.emailAdmin = usuario.email;
+        this.fotoAdmin = usuario.foto_url || usuario.ADM_FOTO_URL || '';
+      }
+    }
+  }
 
   toggleMenu(event: Event) {
     event.stopPropagation();
-
     this.menuAberto = !this.menuAberto;
-
     this.adminsAberto = false;
     this.perfilAberto = false;
   }
 
   toggleAdmins(event: Event) {
     event.stopPropagation();
-
     this.adminsAberto = !this.adminsAberto;
-
     this.perfilAberto = false;
   }
 
   togglePerfil(event: Event) {
     event.stopPropagation();
-
     this.perfilAberto = !this.perfilAberto;
-
     this.adminsAberto = false;
   }
 
@@ -49,8 +61,22 @@ export class HeaderAdmComponent {
   }
 
   logout() {
+    this.fecharMenus();
+
+    this.http.get(`${environment.apiUrl}/user/logout`, { withCredentials: true }).subscribe({
+      next: () => {
+        this.limparSessaoLocal();
+      },
+      error: (err) => {
+        console.error('Erro ao realizar logout no servidor:', err);
+        this.limparSessaoLocal();
+      }
+    });
+  }
+
+  private limparSessaoLocal() {
     localStorage.removeItem('usuarioLogado');
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   @HostListener('document:click')

@@ -161,83 +161,37 @@
       Inscreva-se hoje mesmo para receber cuidados especializados.
     </h2>
 
-    <div class="plans-grid">
-      <div class="plan-card plan-featured">
-        <span class="popular-label">Mais Popular</span>
+    <div *ngIf="carregandoPlanos" style="text-align: center; color: #ffffff; font-weight: bold; padding: 40px;">
+      Carregando planos de saúde PetVitaliz...
+    </div>
+
+    <div class="plans-grid" *ngIf="!carregandoPlanos">
+      <div class="plans-grid" *ngIf="!carregandoPlanos">
+      <div 
+        class="plan-card" 
+        *ngFor="let plano of planos" 
+        [class.plan-featured]="plano.tag === 'RECOMENDADO'"
+      >
+        <span class="popular-label" *ngIf="plano.tag === 'RECOMENDADO'">Mais Popular</span>
 
         <div class="plan-left">
-          <span class="plan-name">Plano Inicial</span>
-          <h3>R$1.00 <small>/Mês</small></h3>
-          <p>Cuidados acessíveis para as necessidades básicas do Pet.</p>
-          <a routerLink="/planos-pet">Inscreva-se agora</a>
+          <span class="plan-name">{{ plano.nome }}</span>
+          <h3>R$ {{ plano.preco }} <small>/Mês</small></h3>
+          <p>{{ plano.descricao }}</p>
+          
+          <a (click)="inscreverNoPlano(plano)" style="cursor: pointer;">Inscreva-se agora</a>
         </div>
 
         <ul>
-          <li>Plano de Cuidados Básicos</li>
-          <li>Plano Bem-Estar Plus</li>
-          <li>Plano Para Pets Sênior</li>
-          <li>Plano Inicial Para Cãezinhos & Gatinhos</li>
-          <li>Plano de Cuidados Premium</li>
-          <li>Plano de Pacote Familiar</li>
-          <li>Plano de Cuidados Personalizados</li>
+          <li *ngFor="let beneficio of plano.beneficiosArray">
+            {{ beneficio }}
+          </li>
         </ul>
       </div>
+    </div>
 
-      <div class="plan-card">
-        <div class="plan-left">
-          <span class="plan-name">Plano Abrangente</span>
-          <h3>R$3.00 <small>/Mês</small></h3>
-          <p>Cuidado completo para a saúde e felicidade do seu Pet.</p>
-          <a routerLink="/planos-pet">Inscreva-se agora</a>
-        </div>
-
-        <ul>
-          <li>Check-ups de saúde de rotina</li>
-          <li>Vacinas principais</li>
-          <li>Prevenção contra parasitas</li>
-          <li>Aconselhamento nutricional</li>
-          <li>Corte de unhas</li>
-          <li>Sessão básica de higiene</li>
-          <li>10% de desconto em serviços adicionais</li>
-        </ul>
-      </div>
-
-      <div class="plan-card">
-        <div class="plan-left">
-          <span class="plan-name">Plano de Cuidados Essenciais</span>
-          <h3>R$2.00 <small>/Mês</small></h3>
-          <p>Para aqueles que querem dar um pontapé no seu plano.</p>
-          <a routerLink="/planos-pet">Inscreva-se agora</a>
-        </div>
-
-        <ul>
-          <li>Check-ups de saúde ilimitados</li>
-          <li>Cobertura de atendimento de emergência</li>
-          <li>Plano avançado de bem-estar</li>
-          <li>Prevenção e tratamento de parasitas</li>
-          <li>Plano de dieta personalizado</li>
-          <li>Plano de atendimento de emergência</li>
-          <li>Plano premium com tudo incluído</li>
-        </ul>
-      </div>
-
-      <div class="plan-card">
-        <div class="plan-left">
-          <span class="plan-name">Plano de Saúde Premium</span>
-          <h3>R$4.00 <small>/Mês</small></h3>
-          <p>O plano definitivo para sua total tranquilidade.</p>
-          <a routerLink="/planos-pet">Inscreva-se agora</a>
-        </div>
-
-        <ul>
-          <li>Exame anual de saúde de corpo inteiro</li>
-          <li>Vacinação avançada com reforços</li>
-          <li>Consulta de atendimento odontológico</li>
-          <li>Programa de controle de peso</li>
-          <li>Acesso prioritário a serviços de higiene</li>
-          <li>Consultas comportamentais</li>
-          <li>20% de desconto em produtos para Pets</li>
-        </ul>
+      <div *ngIf="planos.length === 0" style="grid-column: 1 / -1; text-align: center; color: #ffffff; padding: 20px;">
+        Nenhum plano disponível no momento. Volte mais tarde!
       </div>
     </div>
   </section>

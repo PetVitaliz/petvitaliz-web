@@ -2,13 +2,14 @@
 
 .header-adm {
   width: 100%;
-  height: 82px;
-  background: #ffffff;
+  height: 84px;
+  background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid #edf0f7;
   font-family: 'Inter', sans-serif;
   position: sticky;
   top: 0;
   z-index: 1000;
+  backdrop-filter: blur(12px);
 }
 
 .header-container {
@@ -16,7 +17,7 @@
   height: 100%;
   padding: 0 45px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 260px 1fr 260px;
   align-items: center;
   gap: 20px;
   box-sizing: border-box;
@@ -29,7 +30,7 @@
 }
 
 .logo img {
-  height: 46px;
+  height: 48px;
   display: block;
   object-fit: contain;
 }
@@ -38,16 +39,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 38px;
+  gap: 34px;
 }
 
 .navbar a,
 .admin-dropdown button {
   border: none;
   background: transparent;
-  color: #111111;
+  color: #111827;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
@@ -57,7 +58,7 @@
 .navbar a:hover,
 .navbar a.ativo,
 .admin-dropdown button:hover {
-  color: #5D6ED3;
+  color: #536dfe;
 }
 
 .admin-dropdown {
@@ -66,9 +67,9 @@
 
 .dropdown-menu {
   position: absolute;
-  top: 38px;
+  top: 42px;
   left: 0;
-  width: 240px;
+  width: 250px;
   background: #ffffff;
   border: 1px solid #edf0f7;
   border-radius: 18px;
@@ -104,8 +105,8 @@
 
 .user-info strong {
   font-size: 14px;
-  font-weight: 700;
-  color: #111111;
+  font-weight: 800;
+  color: #111827;
   white-space: nowrap;
 }
 
@@ -120,10 +121,10 @@
 }
 
 .perfil-btn {
-  width: 44px;
-  height: 44px;
-  border: none;
-  background: #f4f6ff;
+  width: 46px;
+  height: 46px;
+  border: 1px solid #edf0f7;
+  background: #f8faff;
   border-radius: 999px;
   padding: 4px;
   cursor: pointer;
@@ -131,7 +132,8 @@
 }
 
 .perfil-btn:hover {
-  background: #ebefff;
+  background: #eef2ff;
+  border-color: #dfe5ff;
 }
 
 .perfil-btn img {
@@ -144,7 +146,7 @@
 
 .perfil-menu {
   position: absolute;
-  top: 55px;
+  top: 58px;
   right: 0;
   width: 150px;
   background: #ffffff;
@@ -160,10 +162,10 @@
   height: 42px;
   border: none;
   border-radius: 12px;
-  background: #fff1f1;
-  color: #d93025;
+  background: #fff1f3;
+  color: #ff4d6d;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
 }
@@ -172,25 +174,15 @@
   display: none;
 }
 
-@media (max-width: 1200px) {
-  .header-container {
-    padding: 0 30px;
-  }
-
-  .navbar {
-    gap: 24px;
-  }
-}
-
 @media (max-width: 950px) {
   .header-adm {
-    height: 80px;
+    height: 76px;
   }
 
   .header-container {
     padding: 0 18px;
     grid-template-columns: auto 1fr auto;
-    gap: 10px;
+    gap: 12px;
   }
 
   .logo img {
@@ -198,24 +190,30 @@
   }
 
   .hamburguer {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: end;
     border: none;
     background: #f4f6ff;
-    color: #5D6ED3;
+    color: #536dfe;
     width: 42px;
     height: 42px;
-    border-radius: 12px;
+    border-radius: 14px;
     font-size: 22px;
     cursor: pointer;
+  }
+
+  .user-area {
+    justify-self: end;
   }
 
   .navbar {
     display: none;
     position: absolute;
-    top: 80px;
+    top: 76px;
     left: 14px;
     right: 14px;
-    width: auto;
     background: #ffffff;
     border: 1px solid #edf0f7;
     border-radius: 20px;
@@ -243,7 +241,7 @@
   .navbar a.ativo,
   .admin-dropdown button:hover {
     background: #f4f6ff;
-    color: #5D6ED3;
+    color: #536dfe;
   }
 
   .dropdown-menu {
@@ -278,19 +276,7 @@
   }
 
   .hamburguer {
-    width: 38px;
-    height: 38px;
-    font-size: 22px;
-  }
-}
-
-@media (max-width: 380px) {
-  .logo img {
-    height: 34px;
-  }
-
-  .header-container {
-    padding: 0 10px;
-    gap: 6px;
+    width: 40px;
+    height: 40px;
   }
 }

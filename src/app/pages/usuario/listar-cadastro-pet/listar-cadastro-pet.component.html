@@ -1,9 +1,15 @@
 <section class="pet-page">
   <div class="page-inner">
 
-    <div class="page-title">
-      <h1>Perfil completo</h1>
-      <p>Todos os dados do tutor, plano contratado e pet em um só lugar.</p>
+    <div class="page-title-row">
+      <div class="page-title">
+        <h1>Meus Pets</h1>
+        <p>Gerencie os pets cadastrados, planos e informações do tutor.</p>
+      </div>
+
+      <button type="button" class="btn-add-pet" (click)="abrirCadastroPet()">
+        + Adicionar pet
+      </button>
     </div>
 
     <p class="erro" *ngIf="erro">{{ erro }}</p>
@@ -12,7 +18,10 @@
     <div class="empty-state" *ngIf="pets.length === 0">
       <h2>Nenhum pet cadastrado</h2>
       <p>Cadastre um pet para visualizar as informações aqui.</p>
-      <a routerLink="/user/listar/pet/cadastar">Cadastrar pet</a>
+
+      <button type="button" (click)="abrirCadastroPet()">
+        Cadastrar pet
+      </button>
     </div>
 
     <main class="profile-dashboard" *ngIf="pets.length > 0 && petSelecionado">
@@ -20,25 +29,45 @@
       <aside class="profile-sidebar">
         <div class="pet-photo">
           <img *ngIf="petSelecionado.foto_url" [src]="petSelecionado.foto_url" alt="Foto do pet">
-          <div *ngIf="!petSelecionado.foto_url" class="photo-empty">🐾</div>
+          <div *ngIf="!petSelecionado.foto_url" class="photo-empty"></div>
         </div>
 
         <h2>{{ petSelecionado.nome }}</h2>
 
         <p>
-          {{ petSelecionado.especie === 'outro' ? petSelecionado.outra_especie : petSelecionado.especie }} 
+          {{ petSelecionado.especie === 'outro' ? petSelecionado.outra_especie : petSelecionado.especie }}
           • {{ petSelecionado.idade }} anos
         </p>
 
         <div class="sidebar-badges">
           <div>
             <small>PESO</small>
-            <strong>{{ petSelecionado.peso || petSelecionado.Peso || '0' }}kg</strong>
+            <strong>{{ petSelecionado.peso }}kg</strong>
           </div>
 
           <div>
             <small>SEXO</small>
-            <strong>{{ petSelecionado.sexo === 'M' ? 'Masculino' : 'Feminino' }}</strong>
+            <strong>{{ petSelecionado.sexo === 'M' ? 'Macho' : 'Fêmea' }}</strong>
+          </div>
+        </div>
+
+        <div class="pet-selector" *ngIf="pets.length > 1">
+          <small>MEUS PETS</small>
+          
+          <div class="pet-avatars-grid">
+            <button 
+              type="button" 
+              class="pet-avatar-card" 
+              *ngFor="let p of pets"
+              [class.selecionado]="p.id_pet === petSelecionado?.id_pet"
+              (click)="petSelecionado = p; erro = ''; sucesso = ''"
+            >
+              <div class="avatar-img-wrapper">
+                <img *ngIf="p.foto_url" [src]="p.foto_url" alt="Foto de {{ p.nome }}">
+                <div *ngIf="!p.foto_url" class="avatar-empty-placeholder"></div>
+              </div>
+              <span class="avatar-pet-name">{{ p.nome }}</span>
+            </button>
           </div>
         </div>
 
@@ -53,13 +82,6 @@
           <strong>Nenhum plano</strong>
           <small>Contrate para proteger seu pet</small>
         </div>
-
-        <div class="pet-selector" *ngIf="pets.length > 1" style="margin-top: 20px;">
-          <small >MEUS PETS</small>
-          <select [(ngModel)]="petSelecionado" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
-            <option *ngFor="let p of pets" [ngValue]="p">{{ p.nome }}</option>
-          </select>
-        </div>
       </aside>
 
       <section class="profile-content">
@@ -68,58 +90,94 @@
             <span>ÁREA DO USUÁRIO</span>
             <h2>Resumo do perfil</h2>
           </div>
+
           <strong>Perfil verificado</strong>
         </div>
 
         <div class="profile-sections">
+
           <article class="section-card">
             <div class="section-title">
               <span>01</span>
+
               <div>
                 <h3>Dados do Tutor</h3>
                 <p>Informações principais do responsável.</p>
               </div>
             </div>
+
             <div class="compact-grid">
-              <div><small>NOME</small><strong>{{ nomeTutor }}</strong></div>
-              <div><small>E-MAIL</small><strong>{{ emailTutor }}</strong></div>
-              <div><small>STATUS</small><strong>Perfil ativo</strong></div>
-              <div><small>CONTA</small><strong>Usuário PetVitaliz</strong></div>
+              <div>
+                <small>NOME</small>
+                <strong>{{ nomeTutor }}</strong>
+              </div>
+
+              <div>
+                <small>E-MAIL</small>
+                <strong>{{ emailTutor }}</strong>
+              </div>
+
+              <div>
+                <small>STATUS</small>
+                <strong>Perfil ativo</strong>
+              </div>
+
+              <div>
+                <small>CONTA</small>
+                <strong>Usuário PetVitaliz</strong>
+              </div>
             </div>
           </article>
 
           <article class="section-card plan-section" *ngIf="planoContratado">
             <div class="section-title">
               <span>02</span>
+
               <div>
                 <h3>Plano Contratado</h3>
                 <p>{{ planoContratado.descricao }}</p>
               </div>
             </div>
+
             <div class="plan-row">
-              <div><small>PLANO</small><strong>{{ planoContratado.nome }}</strong></div>
-              <div><small>VALOR</small><strong>{{ planoContratado.preco }} /mês</strong></div>
-              <a routerLink="/usuario/planos-pet">Alterar plano</a>
+              <div>
+                <small>PLANO</small>
+                <strong>{{ planoContratado.nome }}</strong>
+              </div>
+
+              <div>
+                <small>VALOR</small>
+                <strong>{{ planoContratado.preco }} /mês</strong>
+              </div>
+
+              <a routerLink="/user/planos-pet">Alterar plano</a>
             </div>
           </article>
 
           <article class="section-card plan-section empty-plan" *ngIf="!planoContratado">
             <div class="section-title">
               <span>02</span>
+
               <div>
                 <h3>Plano Contratado</h3>
                 <p>Você ainda não possui um plano ativo.</p>
               </div>
             </div>
+
             <div class="plan-row">
-              <div><small>PLANO</small><strong>Nenhum plano ativo</strong></div>
-              <a routerLink="/usuario/planos-pet">Contratar plano</a>
+              <div>
+                <small>PLANO</small>
+                <strong>Nenhum plano ativo</strong>
+              </div>
+
+              <a routerLink="/user/planos-pet">Contratar plano</a>
             </div>
           </article>
 
           <article class="section-card">
             <div class="section-title">
               <span>03</span>
+
               <div>
                 <h3>Dados do Pet</h3>
                 <p>Informações cadastradas pelo tutor.</p>
@@ -131,22 +189,27 @@
                 <small>NOME DO PET</small>
                 <strong>{{ petSelecionado.nome }}</strong>
               </div>
+
               <div>
                 <small>ESPÉCIE</small>
-                <strong style="text-transform: capitalize;">{{ petSelecionado.especie }}</strong>
+                <strong>{{ petSelecionado.especie }}</strong>
               </div>
+
               <div>
                 <small>IDADE</small>
                 <strong>{{ petSelecionado.idade }} anos</strong>
               </div>
+
               <div>
                 <small>PESO ATUAL</small>
                 <strong>{{ petSelecionado.peso || petSelecionado.Peso || '0' }} kg</strong>
               </div>
+
               <div>
                 <small>SEXO</small>
-                <strong>{{ petSelecionado.sexo === 'M' ? 'Masculino' : 'Feminino' }}</strong>
+                <strong>{{ petSelecionado.sexo === 'M' || petSelecionado.sexo === 'Macho' ? 'Macho' : 'Fêmea' }}</strong>
               </div>
+
               <div *ngIf="petSelecionado.especie === 'outro'">
                 <small>QUAL ESPÉCIE?</small>
                 <strong>{{ petSelecionado.outra_especie }}</strong>
@@ -155,15 +218,7 @@
 
             <div class="observacao">
               <small>OBSERVAÇÕES</small>
-              <p>{{ petSelecionado.observacoes || 'Nenhuma observação registrada...' }}</p>
-            </div>
-
-            <div class="vaccine-strip">
-              <div>
-                <small>PRÓXIMA VACINA</small>
-                <strong>V10 - reforço</strong>
-              </div>
-              <span>20 Mar 2026</span>
+              <p>{{ petSelecionado.observacoes || 'Nenhuma observação registrada.' }}</p>
             </div>
           </article>
         </div>
@@ -175,11 +230,102 @@
       </section>
     </main>
 
+    <div class="modal-overlay" *ngIf="modalCadastroAberto">
+      <div class="pet-modal-card">
+
+        <div class="pet-modal-header">
+          <h2>Cadastrar Pet</h2>
+
+          <button type="button" class="btn-close-modal" (click)="fecharCadastroPet()">
+            ×
+          </button>
+        </div>
+
+        <div class="pet-modal-body">
+
+          <label class="modal-photo-upload">
+            <input type="file" accept="image/*" (change)="carregarFoto($event)">
+
+            <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto do pet">
+
+            <div *ngIf="!fotoPreview" class="modal-photo-placeholder">
+              <span>Adicionar foto</span>
+            </div>
+
+            <strong>+</strong>
+          </label>
+
+          <div class="modal-form-grid">
+            <div class="modal-field full">
+              <label>Nome do Pet</label>
+              <input type="text" placeholder="Ex: Thor" [(ngModel)]="nomePet">
+            </div>
+
+            <div class="modal-field">
+              <label>Espécie</label>
+
+              <select [(ngModel)]="especie">
+                <option value="">Selecione</option>
+                <option value="Cachorro">Cachorro</option>
+                <option value="Gato">Gato</option>
+                <option value="Ave">Ave</option>
+                <option value="Coelho">Coelho</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+
+            <div class="modal-field">
+              <label>Sexo</label>
+
+              <select [(ngModel)]="sexo">
+                <option value="">Selecione</option>
+                <option value="Macho">Macho</option>
+                <option value="Fêmea">Fêmea</option>
+              </select>
+            </div>
+
+            <div class="modal-field full" *ngIf="especie === 'Outro'">
+              <label>Qual a espécie?</label>
+              <input type="text" placeholder="Ex: Porquinho-da-índia" [(ngModel)]="outraEspecie">
+            </div>
+
+            <div class="modal-field">
+              <label>Idade</label>
+              <input type="text" placeholder="Ex: 3 anos" [(ngModel)]="idade">
+            </div>
+
+            <div class="modal-field">
+              <label>Peso (kg)</label>
+
+              <div class="modal-weight-field">
+                <input type="number" min="0.1" max="100" step="0.1" placeholder="Ex: 12.5" [(ngModel)]="peso">
+                <span>KG</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pet-modal-actions">
+          <button type="button" class="btn-modal-cancel" (click)="fecharCadastroPet()">
+            Cancelar
+          </button>
+
+          <button type="button" class="btn-modal-save" [disabled]="salvando" (click)="confirmarCadastro()">
+            {{ salvando ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
     <div class="modal-overlay" *ngIf="editando">
       <div class="modal-card">
         <div class="modal-header">
           <h2>Editar Dados de {{ petForm.nome }}</h2>
-          <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">×</button>
+
+          <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">
+            ×
+          </button>
         </div>
 
         <div class="modal-body">
@@ -206,45 +352,31 @@
             </div>
 
             <div class="modal-field">
+              <small>IDADE</small>
+              <input type="text" [(ngModel)]="petForm.idade" class="edit-input">
+            </div>
+
+            <div class="modal-field">
               <small>PESO (KG)</small>
-              <input type="number" [(ngModel)]="petForm.peso" class="edit-input">
+              <input type="number" min="0.1" max="100" step="0.1" [(ngModel)]="petForm.peso" class="edit-input">
             </div>
 
             <div class="modal-field">
               <small>SEXO</small>
               <select [(ngModel)]="petForm.sexo" class="edit-input">
-                <option value="M">Masculino</option>
-                <option value="F">Feminino</option>
+                <option value="M">Macho</option>
+                <option value="F">Fêmea</option>
               </select>
             </div>
+          </div>
 
-            <div class="modal-field">
-              <small>DATA DE NASCIMENTO</small>
-              <input 
-                type="text" 
-                placeholder="dd/mm/yyyy"
-                [(ngModel)]="petForm.data_nascimento" 
-                (input)="recalcularIdadeNoModal()"
-                appDataMask 
-                maxlength="10"
-                class="edit-input">
-            </div>
-            
-            <div class="modal-field">
-              <small>IDADE (ANOS)</small>
-              <input 
-                type="number" 
-                [(ngModel)]="petForm.idade" 
-                disabled 
-                class="edit-input" 
-                placeholder="Calculada automaticamente" 
-                style="background-color: #eef2ff; cursor: not-allowed; color: #6b7280;">
-            </div>
-          </div> <div class="modal-field full-width">
+          <div class="modal-field full-width">
             <small>OBSERVAÇÕES</small>
             <textarea [(ngModel)]="petForm.observacoes" class="edit-textarea"></textarea>
           </div>
-        </div> <div class="modal-actions">
+        </div>
+
+        <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
           <button type="button" class="btn-save" (click)="salvarEdicao()">Salvar alterações</button>
         </div>

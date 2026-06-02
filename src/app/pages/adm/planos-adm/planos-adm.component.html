@@ -7,36 +7,30 @@
   </div>
 
   <div class="page-header">
-
     <div>
       <h1>Planos de Assinatura</h1>
-
       <p>
         Gerencie configurações de níveis, preços e disponibilidade para o
-        ecossistema de saúde PetVital.
+        ecossistema de saúde PetVital. Mostrando {{ planos.length }} de 4 planos permitidos.
       </p>
     </div>
 
-    <button class="btn-novo" type="button" (click)="novoPlano()">
+    <button class="btn-novo" type="button" (click)="novoPlano()" [style.opacity]="planos.length >= 4 ? '0.5' : '1'">
       <span class="icon-plus">+</span>
       Criar Novo Plano
     </button>
-
   </div>
 
   <div class="content-card">
 
     <div class="planos-grid">
-
       <div
         class="plano-card"
         *ngFor="let plano of planos"
         [class.recomendado]="plano.tag === 'RECOMENDADO'"
       >
-
         <div class="plano-top">
           <span class="tag">{{ plano.tag }}</span>
-
           <span class="status">
             <span class="status-dot"></span>
             {{ plano.status }}
@@ -46,7 +40,7 @@
         <h2>{{ plano.nome }}</h2>
 
         <p class="plano-descricao">
-          {{ plano.detalhes }}
+          {{ plano.descricao }}
         </p>
 
         <div class="preco">
@@ -54,7 +48,7 @@
         </div>
 
         <ul class="beneficios-preview">
-          <li *ngFor="let beneficio of plano.beneficios">
+          <li *ngFor="let beneficio of plano.beneficiosArray">
             <span class="beneficio-check">✓</span>
             {{ beneficio }}
           </li>
@@ -63,9 +57,7 @@
         <div class="linha"></div>
 
         <div class="plano-actions">
-
           <div class="action-buttons">
-
             <button
               type="button"
               class="action-btn edit"
@@ -82,7 +74,7 @@
               type="button"
               class="action-btn delete"
               title="Excluir"
-              (click)="excluirPlano(plano.id)"
+              (click)="excluirPlano(plano.id_produto)"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 6H21"></path>
@@ -92,7 +84,6 @@
                 <path d="M14 11V17"></path>
               </svg>
             </button>
-
           </div>
 
           <button
@@ -102,17 +93,12 @@
           >
             Ver Detalhes
           </button>
-
         </div>
-
       </div>
-
     </div>
 
     <div class="stats">
-
       <div class="stat-card">
-
         <div class="stat-icon">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -121,32 +107,26 @@
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
         </div>
-
         <div>
           <span>TOTAL DE ASSINANTES</span>
           <strong>12.482</strong>
         </div>
-
       </div>
 
       <div class="stat-card">
-
         <div class="stat-icon yellow">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M3 17L9 11L13 15L21 7"></path>
             <path d="M14 7H21V14"></path>
           </svg>
         </div>
-
         <div>
           <span>CRESCIMENTO (MÊS)</span>
           <strong>+18.4%</strong>
         </div>
-
       </div>
 
       <div class="stat-card">
-
         <div class="stat-icon">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M21 12A9 9 0 1 1 12 3"></path>
@@ -154,63 +134,53 @@
             <path d="M21 3L12 12"></path>
           </svg>
         </div>
-
         <div>
           <span>TAXA DE RENOVAÇÃO</span>
           <strong>94.2%</strong>
         </div>
-
       </div>
-
     </div>
-
   </div>
 
   <div class="modal-overlay" *ngIf="modalAberto">
-
     <div class="modal">
-
       <h2>
         {{ modoEdicao ? 'Editar Plano' : 'Criar Novo Plano' }}
       </h2>
 
+      <div class="feedback-msg erro" *ngIf="mensagemErro">
+        <span>⚠️</span> {{ mensagemErro }}
+      </div>
+      <div class="feedback-msg sucesso" *ngIf="mensagemSucesso">
+        <span>✅</span> {{ mensagemSucesso }}
+      </div>
+
       <label>Nome do Plano</label>
-      <input type="text" [(ngModel)]="planoSelecionado.nome">
+      <input type="text" [(ngModel)]="planoSelecionado.nome" placeholder="Ex: Cuidados Essenciais" [disabled]="salvando">
 
-      <label>Categoria</label>
-      <input type="text" [(ngModel)]="planoSelecionado.tag">
-
-      <label>Preço Mensal</label>
-      <input type="text" [(ngModel)]="planoSelecionado.preco">
-
-      <label>Status</label>
-
-      <select [(ngModel)]="planoSelecionado.status">
-        <option value="Ativo">Ativo</option>
-        <option value="Inativo">Inativo</option>
+      <label>Tag de Exibição</label>
+      <select [(ngModel)]="planoSelecionado.tag" [disabled]="salvando">
+        <option value="NÍVEL DE ENTRADA">NÍVEL DE ENTRADA</option>
+        <option value="ESCOLHA POPULAR">ESCOLHA POPULAR</option>
+        <option value="RECOMENDADO">RECOMENDADO</option>
+        <option value="NÍVEL ELITE">NÍVEL ELITE</option>
       </select>
 
-      <label>Detalhes</label>
+      <label>Preço Mensal (Apenas Números)</label>
+      <input type="number" [(ngModel)]="planoSelecionado.preco" placeholder="Ex: 89.90" [disabled]="salvando">
 
-      <textarea [(ngModel)]="planoSelecionado.detalhes"></textarea>
+      <label>Descrição do Nível</label>
+      <textarea [(ngModel)]="planoSelecionado.descricao" placeholder="Escreva um breve resumo sobre a cobertura..." [disabled]="salvando"></textarea>
 
-      <label class="check">
-
-        <input
-          type="checkbox"
-          [(ngModel)]="planoSelecionado.destaque"
-        >
-
-        Plano em destaque
-
-      </label>
+      <label>Benefícios Inclusos (Separe por vírgula)</label>
+      <textarea style="height: 70px;" [(ngModel)]="planoSelecionado.beneficios" placeholder="Ex: Consultas de rotina, Vacinas inclusas, Banho e Tosa" [disabled]="salvando"></textarea>
 
       <div class="modal-actions">
-
         <button
           type="button"
           class="btn-cancelar"
           (click)="fecharModal()"
+          [disabled]="salvando"
         >
           Cancelar
         </button>
@@ -219,34 +189,22 @@
           type="button"
           class="btn-salvar"
           (click)="salvarPlano()"
+          [disabled]="salvando"
         >
-          Salvar
+          {{ salvando ? 'Salvando...' : 'Salvar Plano' }}
         </button>
-
       </div>
-
     </div>
-
   </div>
 
-  <div
-    class="modal-overlay"
-    *ngIf="modalDetalhesAberto && planoDetalhes"
-  >
-
+  <div class="modal-overlay" *ngIf="modalDetalhesAberto && planoDetalhes">
     <div class="modal-detalhes">
-
       <div class="detalhes-topo">
-
         <div>
           <span>{{ planoDetalhes.tag }}</span>
           <h2>{{ planoDetalhes.nome }}</h2>
         </div>
-
-        <button type="button" (click)="fecharDetalhes()">
-          ×
-        </button>
-
+        <button type="button" (click)="fecharDetalhes()">×</button>
       </div>
 
       <div class="detalhes-preco">
@@ -254,20 +212,17 @@
       </div>
 
       <p class="detalhes-texto">
-        {{ planoDetalhes.detalhes }}
+        {{ planoDetalhes.descricao }}
       </p>
 
       <div class="beneficios">
-
         <h3>Benefícios inclusos</h3>
-
         <ul>
-          <li *ngFor="let beneficio of planoDetalhes.beneficios">
+          <li *ngFor="let beneficio of planoDetalhes.beneficiosArray">
             <span>✓</span>
             {{ beneficio }}
           </li>
         </ul>
-
       </div>
 
       <button
@@ -275,11 +230,8 @@
         class="btn-fechar-detalhes"
         (click)="fecharDetalhes()"
       >
-        Fechar
+        Fechar Painel
       </button>
-
     </div>
-
   </div>
-
 </section>
