@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +23,7 @@ export class LoginComponent {
   erro = '';
   lembrar = false;
   senhaVisivel = false;
+  carregando = false;
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -30,68 +31,80 @@ export class LoginComponent {
     this.erro = '';
 
     if (!this.email || !this.senha) {
-      this.erro = 'Preencha e-mail e senha.';
+      this.erro = 'Preencha as credenciais de acesso e a senha.';
       return;
     }
 
-    const emailDigitado = this.email.trim().toLowerCase();
+    const entradaDigitada = this.email.trim().toLowerCase();
     const senhaDigitada = this.senha.trim();
+    this.carregando = true;
 
-    if (emailDigitado === 'admin@petvitaliz.com' && senhaDigitada === 'admin123') {
-      localStorage.setItem('usuarioLogado', JSON.stringify({
-        nome: 'Dr. Ricardo Silva',
-        email: emailDigitado,
-        tipo: 'admin'
-      }));
-      this.router.navigate(['/adm/home']);
+    if (entradaDigitada.endsWith('@petvitaliz.com') && (entradaDigitada.startsWith('adm') || entradaDigitada.includes('admin'))) {
+      this.http.post(`${environment.apiUrl}/user/login/adm`, { email: entradaDigitada, senha: senhaDigitada }, { withCredentials: true })
+        .subscribe({
+          next: (response: any) => {
+            this.carregando = false;
+            const usuarioParaSalvar = response.usuario || {
+              nome: entradaDigitada.split('@')[0],
+              email: entradaDigitada,
+              tipo: 'admin'
+            };
+            localStorage.setItem('usuarioLogado', JSON.stringify(usuarioParaSalvar));
+            this.router.navigate(['/adm/home']);
+          },
+          error: (err) => this.tratarErro(err)
+        });
       return;
     }
 
-    if (emailDigitado === 'funcionario@petvitaliz.com' && senhaDigitada === 'func123') {
-      localStorage.setItem('usuarioLogado', JSON.stringify({
-        nome: 'Funcionário PetVitaliz',
-        email: emailDigitado,
-        tipo: 'funcionario'
-      }));
-      this.router.navigate(['/funcionario/home']);
+    if (entradaDigitada.endsWith('@petvitalizfuncionario.com')) {
+      this.http.post(`${environment.apiUrl}/user/login/funcionario`, { email: entradaDigitada, senha: senhaDigitada }, { withCredentials: true })
+        .subscribe({
+          next: (response: any) => {
+            this.carregando = false;
+            localStorage.setItem('usuarioLogado', JSON.stringify({
+              nome: response.nome || 'Colaborador PetVitaliz',
+              email: entradaDigitada,
+              tipo: 'funcionario'
+            }));
+            this.router.navigate(['/funcionario/home']);
+          },
+          error: (err) => this.tratarErro(err)
+        });
       return;
     }
 
     const dadosLogin = {
-      email: emailDigitado,
+      email: entradaDigitada,
       senha: senhaDigitada
     };
 
-    this.http.post(`${environment.apiUrl}/user/login`, dadosLogin, {
-      withCredentials: true
-    })
-    .subscribe({
-      next: (response: any) => {
-        const usuarioParaSalvar = response.usuario || {
-          nome: emailDigitado.split('@')[0],
-          email: emailDigitado,
-          tipo: 'usuario'
-        };
+    this.http.post(`${environment.apiUrl}/user/login`, dadosLogin, { withCredentials: true })
+      .subscribe({
+        next: (response: any) => {
+          this.carregando = false;
+          const usuarioParaSalvar = response.usuario || {
+            nome: response.nome || entradaDigitada.split('@')[0],
+            email: entradaDigitada,
+            tipo: 'usuario'
+          };
+          localStorage.setItem('usuarioLogado', JSON.stringify(usuarioParaSalvar));
+          this.router.navigate(['/user/home']); 
+        },
+        error: (err) => this.tratarErro(err)
+      });
+  }
 
-        localStorage.setItem('usuarioLogado', JSON.stringify(usuarioParaSalvar));
-        
-        this.router.navigate(['/user/home']); 
-      },
-      error: (err) => {
-        console.error("Erro no fluxo de login:", err);
-        
-        if (err.error) {
-          this.erro = err.error.mensagem || err.error.message;
-        } 
-        
-        if (!this.erro && typeof err.error === 'string') {
-          this.erro = err.error;
-        } 
-        
-        if (!this.erro) {
-          this.erro = 'Não foi possível conectar ao servidor do PetVitaliz.';
-        }
-      }
-    });
+  private tratarErro(err: any) {
+    this.carregando = false;
+    console.error("Erro no fluxo de autenticação:", err);
+    
+    if (err.error) {
+      this.erro = err.error.mensagem || err.error.message || (typeof err.error === 'string' ? err.error : '');
+    } 
+    
+    if (!this.erro) {
+      this.erro = 'Credenciais incorretas ou servidor indisponível.';
+    }
   }
 }

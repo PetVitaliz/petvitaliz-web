@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 import { DataMaskDirective } from './data-mask.directive';
 
 @Component({
@@ -26,6 +26,7 @@ export class CadastroComponent {
   senhaVisivel = false;
   erro = '';
   sucesso = '';
+  salvando = false;
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -58,11 +59,16 @@ export class CadastroComponent {
     return valor ? valor.replace(/\D/g, '') : '';
   }
 
-  private validarCpf(cpf: string): boolean {
+  private obterErroCpf(cpf: string): string | null {
     const numeros = cpf.replace(/\D/g, '').trim();
 
-    if (numeros.length !== 11) return false;
-    if (/^(\d)\1{10}$/.test(numeros)) return false;
+    if (numeros.length !== 11) {
+      return 'CPF incompleto.';
+    }
+
+    if (/^(\d)\1{10}$/.test(numeros)) {
+      return 'Este CPF é invalido.';
+    }
 
     let soma = 0;
     let resto;
@@ -73,7 +79,9 @@ export class CadastroComponent {
     resto = (soma * 10) % 11;
 
     if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(numeros.substring(9, 10), 10)) return false;
+    if (resto !== parseInt(numeros.substring(9, 10), 10)) {
+      return 'Este CPF é invalido.';
+    }
 
     soma = 0;
     for (let i = 1; i <= 10; i++) {
@@ -82,9 +90,11 @@ export class CadastroComponent {
     resto = (soma * 10) % 11;
 
     if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(numeros.substring(10, 11), 10)) return false;
+    if (resto !== parseInt(numeros.substring(10, 11), 10)) {
+      return 'Este CPF é invalido';
+    }
 
-    return true;
+    return null;
   }
 
   private validarTelefone(telefone: string): boolean {
@@ -127,6 +137,8 @@ export class CadastroComponent {
   }
 
   cadastrar(): void {
+    if (this.salvando) return;
+
     this.erro = '';
     this.sucesso = '';
 
@@ -144,8 +156,9 @@ export class CadastroComponent {
       return;
     }
 
-    if (!this.validarCpf(this.cpf)) {
-      this.erro = 'CPF inválido. Use o formato 000.000.000-00.';
+    const erroCpfEncontrado = this.obterErroCpf(this.cpf);
+    if (erroCpfEncontrado) {
+      this.erro = erroCpfEncontrado;
       return;
     }
 
@@ -156,9 +169,11 @@ export class CadastroComponent {
 
     const dataFinalISO = this.converterNascimentoParaISO();
     if (!dataFinalISO) {
-      this.erro = 'Insira uma data de nascimento válida no formato DD/MM/AAAA.';
+      this.erro = 'Insira uma data de nascimento válida.';
       return;
     }
+
+    this.salvando = true;
 
     const dadosFormulario = {
       nome: this.nome.trim(),
@@ -182,6 +197,8 @@ export class CadastroComponent {
       },
       error: (err) => {
         console.error('Erro no fluxo de cadastro:', err);
+        this.salvando = false;
+
         if (err.error) {
           this.erro = err.error.mensagem || err.error.message;
         }

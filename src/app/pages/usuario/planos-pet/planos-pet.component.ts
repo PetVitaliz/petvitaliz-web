@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-planos-pet',
@@ -9,109 +11,52 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './planos-pet.component.html',
   styleUrl: './planos-pet.component.css'
 })
-export class PlanosPetComponent {
+export class PlanosPetComponent implements OnInit {
 
   planoSelecionado: any = null;
+  planos: any[] = [];
+  carregandoPlanos = true;
 
-  planos = [
-    {
-      tag: 'BÁSICO',
-      nome: 'Plano Inicial',
-      recomendado: false,
-      preco: 'R$1,00',
+  constructor(private router: Router, private http: HttpClient) { }
 
-      beneficios: [
-        'Basic Care',
-        'Vacinas anuais',
-        'Suporte via chat'
-      ],
+  ngOnInit(): void {
+    this.buscarPlanosDoBanco();
+  }
 
-      descricao:
-        'Ideal para quem quer começar a cuidar melhor do pet.',
+  buscarPlanosDoBanco(): void {
+    this.carregandoPlanos = true;
+    this.http.get(`${environment.apiUrl}/adm/listar/produtos`, { withCredentials: true }).subscribe({
+      next: (response: any) => {
+        if (response && response.produtos) {
+          this.planos = response.produtos.map((p: any, index: number) => {
+            const partesNome = p.nome.split(' | ');
+            const nomeReal = partesNome[0];
+            const tagReal = partesNome[1] || 'ATIVO';
 
-      detalhes: [
-        'Acompanhamento básico do pet',
-        'Histórico de consultas',
-        'Notificações importantes',
-        'Suporte pelo chat'
-      ]
-    },
+            const beneficiosListados = p.beneficios 
+              ? p.beneficios.split(/[\n,;]+/).map((b: string) => b.trim()).filter((b: string) => b.length > 0)
+              : [];
 
-    {
-      tag: 'POPULAR',
-      nome: 'Cuidados Essenciais',
-      recomendado: false,
-      preco: 'R$2,00',
-
-      beneficios: [
-        'Tudo do inicial',
-        'Consultas ilimitadas',
-        'Exames de sangue'
-      ],
-
-      descricao:
-        'Plano equilibrado para rotina preventiva.',
-
-      detalhes: [
-        'Consultas ilimitadas',
-        'Controle de vacinas',
-        'Exames laboratoriais',
-        'Suporte prioritário'
-      ]
-    },
-
-    {
-      tag: 'MAIS COMPLETO',
-      nome: 'Plano Abrangente',
-      recomendado: true,
-      preco: 'R$3,00',
-
-      beneficios: [
-        'Tudo do Essencial',
-        'Hospitalização 24h',
-        'Especialistas gratuitos',
-        'Limpeza de tártaro'
-      ],
-
-      descricao:
-        'A melhor escolha para acompanhamento completo.',
-
-      detalhes: [
-        'Hospitalização 24h',
-        'Especialistas veterinários',
-        'Limpeza de tártaro',
-        'Atendimento prioritário',
-        'Suporte avançado'
-      ]
-    },
-
-    {
-      tag: 'VIP',
-      nome: 'Saúde Premium',
-      recomendado: false,
-      preco: 'R$4,00',
-
-      beneficios: [
-        'Cobertura total',
-        'Pet concierge 24/7',
-        'Banho e tosa incluso',
-        'Seguro viagem pet'
-      ],
-
-      descricao:
-        'Plano premium para pets que precisam de atenção total.',
-
-      detalhes: [
-        'Cobertura total',
-        'Seguro viagem',
-        'Banho e tosa',
-        'Atendimento VIP',
-        'Acompanhamento completo'
-      ]
-    }
-  ];
-
-  constructor(private router: Router) { }
+            return {
+              id_produto: p.id_produto,
+              tag: tagReal,
+              nome: nomeReal,
+              preco: `R$ ${p.preco}`,
+              descricao: p.descricao || 'Plano de saúde preventivo adaptado para as necessidades do seu pet.',
+              recomendado: tagReal === 'RECOMENDADO' || index === 2,
+              beneficios: beneficiosListados,
+              detalhes: beneficiosListados.length > 0 ? beneficiosListados : ['Atendimento Clínico', 'Suporte Especializado']
+            };
+          });
+        }
+        this.carregandoPlanos = false;
+      },
+      error: (err) => {
+        console.error('Erro ao listar produtos na tela planos-pet:', err);
+        this.carregandoPlanos = false;
+      }
+    });
+  }
 
   abrirDetalhes(plano: any): void {
     this.planoSelecionado = plano;
@@ -122,7 +67,6 @@ export class PlanosPetComponent {
   }
 
   concluirPlano(): void {
-
     if (!this.planoSelecionado) return;
 
     localStorage.setItem(
@@ -130,6 +74,6 @@ export class PlanosPetComponent {
       JSON.stringify(this.planoSelecionado)
     );
 
-    this.router.navigate(['/user/pagamento-plano']);
+    this.router.navigate(['/user/contrato-plano']);
   }
 }

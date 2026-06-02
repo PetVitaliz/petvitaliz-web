@@ -42,12 +42,32 @@
         <div class="sidebar-badges">
           <div>
             <small>PESO</small>
-            <strong>{{ petSelecionado.peso || petSelecionado.Peso || '0' }}kg</strong>
+            <strong>{{ petSelecionado.peso }}kg</strong>
           </div>
 
           <div>
             <small>SEXO</small>
-            <strong>{{ petSelecionado.sexo === 'M' || petSelecionado.sexo === 'Macho' ? 'Macho' : 'Fêmea' }}</strong>
+            <strong>{{ petSelecionado.sexo === 'M' ? 'Macho' : 'Fêmea' }}</strong>
+          </div>
+        </div>
+
+        <div class="pet-selector" *ngIf="pets.length > 1">
+          <small>MEUS PETS</small>
+          
+          <div class="pet-avatars-grid">
+            <button 
+              type="button" 
+              class="pet-avatar-card" 
+              *ngFor="let p of pets"
+              [class.selecionado]="p.id_pet === petSelecionado?.id_pet"
+              (click)="petSelecionado = p; erro = ''; sucesso = ''"
+            >
+              <div class="avatar-img-wrapper">
+                <img *ngIf="p.foto_url" [src]="p.foto_url" alt="Foto de {{ p.nome }}">
+                <div *ngIf="!p.foto_url" class="avatar-empty-placeholder"></div>
+              </div>
+              <span class="avatar-pet-name">{{ p.nome }}</span>
+            </button>
           </div>
         </div>
 
@@ -62,6 +82,8 @@
           <strong>Nenhum plano</strong>
           <small>Contrate para proteger seu pet</small>
         </div>
+<<<<<<< HEAD
+=======
 
         <div class="pet-selector" *ngIf="pets.length > 1">
           <small>MEUS PETS</small>
@@ -72,6 +94,7 @@
             </option>
           </select>
         </div>
+>>>>>>> main
       </aside>
 
       <section class="profile-content">
@@ -140,7 +163,11 @@
                 <strong>{{ planoContratado.preco }} /mês</strong>
               </div>
 
+<<<<<<< HEAD
+              <a routerLink="/user/planos-pet">Alterar plano</a>
+=======
               <a routerLink="/usuario/planos-pet">Alterar plano</a>
+>>>>>>> main
             </div>
           </article>
 
@@ -160,7 +187,11 @@
                 <strong>Nenhum plano ativo</strong>
               </div>
 
+<<<<<<< HEAD
+              <a routerLink="/user/planos-pet">Contratar plano</a>
+=======
               <a routerLink="/usuario/planos-pet">Contratar plano</a>
+>>>>>>> main
             </div>
           </article>
 

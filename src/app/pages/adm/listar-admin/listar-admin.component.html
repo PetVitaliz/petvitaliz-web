@@ -1,94 +1,57 @@
 <section class="page-container">
 
   <div class="page-header">
-
     <div>
-
       <h1>Gestão de Administradores</h1>
-
       <p>
         Controle de acessos, permissões e gerenciamento de membros da equipe
         administrativa do centro clínico.
       </p>
-
     </div>
 
     <button class="btn-novo" type="button" (click)="novoAdministrador()">
-
       <i class="bi bi-plus-lg"></i>
       Novo Administrador
-
     </button>
-
   </div>
 
   <div class="card">
 
     <div class="filters-area">
-
       <div class="filter-group">
-
         <span>Filtrar por:</span>
-
         <button type="button" [class.active]="filtroStatus === 'Todos'" (click)="alterarFiltro('Todos')">
-
           Todos
-
         </button>
-
         <button type="button" [class.active]="filtroStatus === 'Ativo'" (click)="alterarFiltro('Ativo')">
-
           Ativos
-
         </button>
-
         <button type="button" [class.active]="filtroStatus === 'Inativo'" (click)="alterarFiltro('Inativo')">
-
           Inativos
-
         </button>
-
       </div>
 
       <div class="right-filter">
-
         <div class="search-box">
-
           <i class="bi bi-search"></i>
-
-          <input type="text" placeholder="Buscar administrador..." [(ngModel)]="termoBusca"
-            (ngModelChange)="paginaAtual = 1">
-
+          <input type="text" placeholder="Buscar administrador..." [(ngModel)]="termoBusca" (ngModelChange)="paginaAtual = 1">
         </div>
 
         <div class="total-card">
-
           <div class="total-info">
-
             <strong>{{ totalAtivos }}</strong>
-
             <span>Ativos</span>
-
           </div>
-
           <div class="total-icon">
-
             <i class="bi bi-people-fill"></i>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
 
     <div class="table-wrapper">
-
       <table>
-
         <thead>
-
           <tr>
             <th>Nome</th>
             <th>E-mail</th>
@@ -97,36 +60,25 @@
             <th>Status</th>
             <th>Ações</th>
           </tr>
-
         </thead>
 
         <tbody>
-
           <tr *ngFor="let admin of adminsPaginados">
-
             <td>
-
               <div class="admin-info">
-
                 <div class="avatar-admin">
-
-                  {{ admin.nome.split(' ')[0][0] }}{{ admin.nome.split(' ')[1]?.[0] || '' }}
-
-                  <span class="status-dot" [class.inativo]="admin.status === 'Inativo'">
+                  <img *ngIf="admin.foto_url" [src]="admin.foto_url" alt="Foto de {{ admin.nome }}" class="avatar-img">
+                  <span *ngIf="!admin.foto_url" class="avatar-text">
+                    {{ admin.nome.substring(0, 2).toUpperCase() }}
                   </span>
-
+                  <span class="status-dot" [class.inativo]="admin.status === 'Inativo'"></span>
                 </div>
 
                 <div class="admin-details">
-
                   <strong>{{ admin.nome }}</strong>
-
                   <span>ID: #{{ admin.id }}</span>
-
                 </div>
-
               </div>
-
             </td>
 
             <td class="email-column">
@@ -138,30 +90,20 @@
             </td>
 
             <td>
-
               <span class="badge-acesso" [class.total]="admin.acesso === 'TOTAL'"
                 [class.intermediario]="admin.acesso === 'INTERMEDIÁRIO'" [class.basico]="admin.acesso === 'BÁSICO'">
-
                 {{ admin.acesso }}
-
               </span>
-
             </td>
 
             <td>
-
               <span class="status" [class.inativo]="admin.status === 'Inativo'">
-
                 {{ admin.status }}
-
               </span>
-
             </td>
 
             <td>
-
               <div class="acoes">
-
                 <button type="button" class="btn-editar" title="Editar" (click)="editarAdmin(admin.id)">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 20H21"></path>
@@ -178,102 +120,87 @@
                     <path d="M14 11V17"></path>
                   </svg>
                 </button>
-
               </div>
-
             </td>
-
           </tr>
 
           <tr *ngIf="adminsPaginados.length === 0">
-
             <td colspan="6" class="empty-message">
-
               Nenhum administrador encontrado.
-
             </td>
-
           </tr>
-
         </tbody>
-
       </table>
-
     </div>
 
     <div class="footer-table">
-
       <span>
-        Mostrando {{ adminsFiltrados.length }}
-        de {{ administradores.length }} administradores
+        Mostrando {{ adminsFiltrados.length }} de {{ administradores.length }} administradores
       </span>
 
       <div class="pagination" *ngIf="totalPaginas > 1">
-
         <button type="button" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
-
           <i class="bi bi-chevron-left"></i>
-
         </button>
-
         <div class="page-number">
           {{ paginaAtual }}
         </div>
-
         <button type="button" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
-
           <i class="bi bi-chevron-right"></i>
-
         </button>
-
       </div>
-
     </div>
 
   </div>
 
   <div class="modal-overlay" *ngIf="adminEditando">
-
     <div class="modal-editar">
-
       <h2>{{ tituloModal }}</h2>
 
-      <label>Nome</label>
-      <input type="text" [(ngModel)]="adminEditando.nome">
+      <label class="modal-adm-photo-upload">
+        <input type="file" accept="image/*" (change)="carregarFoto($event)">
+        <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Preview da Foto">
+        <div *ngIf="!fotoPreview" class="adm-photo-placeholder">
+          <span>Adicionar Foto</span>
+        </div>
+        <strong>+</strong>
+      </label>
 
-      <label>E-mail</label>
-      <input type="email" [(ngModel)]="adminEditando.email">
+      <label>Nome do Administrador</label>
+      <input type="text" [(ngModel)]="adminEditando.nome" placeholder="Ex: marcos_lima" [disabled]="salvando">
 
-      <label>Cargo</label>
-      <input type="text" [(ngModel)]="adminEditando.cargo">
+      <label>E-mail Corporativo</label>
+      <input type="email" [(ngModel)]="adminEditando.email" placeholder="Ex: marcos@petvitaliz.com" [disabled]="salvando">
+
+      <div *ngIf="isNovoAdmin" style="display: flex; flex-direction: column;">
+        <label>Senha de Acesso</label>
+        <input type="password" [(ngModel)]="adminEditando.senha" placeholder="Mínimo de 6 caracteres" [disabled]="salvando">
+      </div>
+
+      <label>Cargo administrativo</label>
+      <input type="text" [(ngModel)]="adminEditando.cargo" placeholder="Ex: TI / Gerência" [disabled]="salvando">
 
       <label>Nível de Acesso</label>
-      <select [(ngModel)]="adminEditando.acesso">
+      <select [(ngModel)]="adminEditando.acesso" [disabled]="salvando">
         <option value="TOTAL">TOTAL</option>
         <option value="INTERMEDIÁRIO">INTERMEDIÁRIO</option>
         <option value="BÁSICO">BÁSICO</option>
       </select>
 
       <label>Status</label>
-      <select [(ngModel)]="adminEditando.status">
+      <select [(ngModel)]="adminEditando.status" [disabled]="salvando">
         <option value="Ativo">Ativo</option>
         <option value="Inativo">Inativo</option>
       </select>
 
       <div class="modal-actions">
-
-        <button type="button" class="btn-cancelar" (click)="cancelarEdicao()">
+        <button type="button" class="btn-cancelar" (click)="cancelarEdicao()" [disabled]="salvando">
           Cancelar
         </button>
-
-        <button type="button" class="btn-salvar" (click)="salvarEdicao()">
-          Salvar
+        <button type="button" class="btn-salvar" (click)="salvarEdicao()" [disabled]="salvando">
+          {{ salvando ? 'Salvando...' : 'Salvar' }}
         </button>
-
       </div>
-
     </div>
-
   </div>
-
 </section>

@@ -188,7 +188,7 @@ export const routes: Routes = [
     canActivate: [authAdminGuard]
   },
   {
-    path: 'adm/listar-admin',
+    path: 'adm/listar/adm/cadastrar',
     component: ListarAdminComponent,
     canActivate: [authAdminGuard]
   },

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminsService } from '../../../core/services/admins.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-listar-admin',
@@ -10,7 +11,7 @@ import { AdminsService } from '../../../core/services/admins.service';
   templateUrl: './listar-admin.component.html',
   styleUrl: './listar-admin.component.css'
 })
-export class ListarAdminComponent {
+export class ListarAdminComponent implements OnInit {
   filtroStatus = 'Todos';
   termoBusca = '';
   paginaAtual = 1;
@@ -18,11 +19,43 @@ export class ListarAdminComponent {
 
   adminEditando: any = null;
   tituloModal = 'Editar Administrador';
+  isNovoAdmin = false;
 
   administradores: any[] = [];
+  carregando = false;
+  salvando = false;
 
-  constructor(private adminsService: AdminsService) {
-    this.administradores = this.adminsService.listarAdmins();
+  fotoPreview: string | ArrayBuffer | null = null;
+  fotoArquivo: File | null = null;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.carregarAdministradores();
+  }
+
+  carregarAdministradores(): void {
+    this.carregando = true;
+    this.http.get(`${environment.apiUrl}/adm/listar/adm`, { withCredentials: true }).subscribe({
+      next: (response: any) => {
+        if (response && response.ADMs) {
+          this.administradores = response.ADMs.map((adm: any) => ({
+            id: adm.ADM_ID,
+            nome: adm.ADM_NOME,
+            email: adm.ADM_EMAIL,
+            status: adm.ADM_ATIVO ? 'Ativo' : 'Inativo',
+            foto_url: adm.ADM_FOTO_URL,
+            acesso: 'TOTAL',
+            cargo: 'TI / Gerência'
+          }));
+        }
+        this.carregando = false;
+      },
+      error: (err) => {
+        console.error('Erro ao listar administradores:', err);
+        this.carregando = false;
+      }
+    });
   }
 
   get totalAtivos() {
@@ -31,17 +64,12 @@ export class ListarAdminComponent {
 
   get adminsFiltrados() {
     const termo = this.termoBusca.toLowerCase().trim();
-
     return this.administradores.filter(admin => {
-      const statusOk =
-        this.filtroStatus === 'Todos' || admin.status === this.filtroStatus;
-
+      const statusOk = this.filtroStatus === 'Todos' || admin.status === this.filtroStatus;
       const buscaOk =
         admin.nome.toLowerCase().includes(termo) ||
         admin.email.toLowerCase().includes(termo) ||
-        admin.cargo.toLowerCase().includes(termo) ||
-        admin.id.toLowerCase().includes(termo);
-
+        String(admin.id).includes(termo);
       return statusOk && buscaOk;
     });
   }
@@ -53,17 +81,7 @@ export class ListarAdminComponent {
   get adminsPaginados() {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
     const fim = inicio + this.itensPorPagina;
-
     return this.adminsFiltrados.slice(inicio, fim);
-  }
-
-  getIniciais(nome: string): string {
-    return nome
-      .split(' ')
-      .map(parte => parte.charAt(0))
-      .slice(0, 2)
-      .join('')
-      .toUpperCase();
   }
 
   alterarFiltro(status: string) {
@@ -71,79 +89,134 @@ export class ListarAdminComponent {
     this.paginaAtual = 1;
   }
 
+  carregarFoto(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const arquivo = input.files[0];
+    if (!arquivo.type.startsWith('image/')) {
+      alert('Selecione uma imagem válida.');
+      return;
+    }
+
+    this.fotoArquivo = arquivo;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fotoPreview = reader.result;
+    };
+    reader.readAsDataURL(arquivo);
+  }
+
   novoAdministrador() {
     this.tituloModal = 'Novo Administrador';
+    this.isNovoAdmin = true;
+    this.fotoPreview = null;
+    this.fotoArquivo = null;
 
     this.adminEditando = {
-      id: 'BPV-' + Math.floor(1000 + Math.random() * 9000),
       nome: '',
       email: '',
-      cargo: '',
-      acesso: 'TOTAL',
-      status: 'Ativo',
-      imagem: 'assets/img/admin.png'
+      senha: '',
+      status: 'Ativo'
     };
   }
 
-  editarAdmin(id: string) {
+  editarAdmin(id: number) {
     const adminEncontrado = this.administradores.find(admin => admin.id === id);
-
     if (adminEncontrado) {
       this.tituloModal = 'Editar Administrador';
-      this.adminEditando = { ...adminEncontrado };
+      this.isNovoAdmin = false;
+      this.fotoArquivo = null;
+      this.fotoPreview = adminEncontrado.foto_url;
+      this.adminEditando = { ...adminEncontrado, senha: '' };
     }
   }
 
   salvarEdicao() {
-    if (
-      !this.adminEditando.nome ||
-      !this.adminEditando.email ||
-      !this.adminEditando.cargo
-    ) {
-      alert('Preencha todos os campos.');
+    if (!this.adminEditando.nome || !this.adminEditando.email) {
+      alert('Preencha os campos obrigatórios (Nome e E-mail).');
       return;
     }
 
-    const index = this.administradores.findIndex(
-      admin => admin.id === this.adminEditando.id
-    );
-
-    if (index !== -1) {
-      this.administradores[index] = { ...this.adminEditando };
-    } else {
-      this.administradores.unshift({ ...this.adminEditando });
+    const emailFormatado = this.adminEditando.email.trim().toLowerCase();
+    if (!emailFormatado.endsWith('@petvitaliz.com')) {
+      alert('Apenas e-mails corporativos (@petvitaliz.com) podem ser cadastrados como Administrador.');
+      return;
     }
 
+    if (this.isNovoAdmin && (!this.adminEditando.senha || this.adminEditando.senha.length < 6)) {
+      alert('A senha é obrigatória e deve conter pelo menos 6 caracteres para novos cadastros.');
+      return;
+    }
+
+    this.salvando = true;
+
+    const formData = new FormData();
+    formData.append('username', this.adminEditando.nome.trim());
+    formData.append('email', emailFormatado);
+    formData.append('senha', this.adminEditando.senha || '');
+    formData.append('ativo', String(this.adminEditando.status === 'Ativo'));
+    
+    if (this.fotoArquivo) {
+      formData.append('image', this.fotoArquivo);
+    }
+
+    if (this.isNovoAdmin) {
+      this.http.post(`${environment.apiUrl}/adm/listar/adm/cadastrar`, formData, { withCredentials: true }).subscribe({
+        next: () => {
+          alert('Administrador cadastrado com sucesso');
+          this.finalizarSalvar();
+        },
+        error: (err) => {
+          this.salvando = false;
+          console.error(err);
+          alert(err.error || 'Erro ao cadastrar novo administrador.');
+        }
+      });
+    } else {
+      this.http.put(`${environment.apiUrl}/adm/listar/adm/editar/${this.adminEditando.id}`, formData, { withCredentials: true }).subscribe({
+        next: () => {
+          alert('Administrador atualizado com sucesso');
+          this.finalizarSalvar();
+        },
+        error: (err) => {
+          this.salvando = false;
+          console.error(err);
+          alert(err.error?.mensagem || 'Erro ao atualizar informações.');
+        }
+      });
+    }
+  }
+
+  private finalizarSalvar() {
     this.adminEditando = null;
-    this.paginaAtual = 1;
+    this.fotoArquivo = null;
+    this.fotoPreview = null;
+    this.salvando = false;
+    this.carregarAdministradores();
   }
 
   cancelarEdicao() {
     this.adminEditando = null;
+    this.fotoArquivo = null;
+    this.fotoPreview = null;
   }
 
-  excluirAdmin(id: string) {
-    const confirmar = confirm('Tem certeza que deseja excluir este administrador?');
-
-    if (confirmar) {
-      this.adminsService.excluirAdmin(id);
-      this.administradores = this.administradores.filter(admin => admin.id !== id);
-
-      if (this.paginaAtual > this.totalPaginas) {
-        this.paginaAtual = this.totalPaginas || 1;
-      }
+  excluirAdmin(id: number) {
+    if (confirm('Tem certeza que deseja remover este administrador do sistema?')) {
+      this.http.delete(`${environment.apiUrl}/adm/listar/adm/excluir/${id}`, { withCredentials: true }).subscribe({
+        next: () => {
+          alert('Administrador removido com sucesso.');
+          this.carregarAdministradores();
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Erro ao excluir o registro.');
+        }
+      });
     }
   }
 
-  paginaAnterior() {
-    if (this.paginaAtual > 1) {
-      this.paginaAtual--;
-    }
-  }
-
-  proximaPagina() {
-    if (this.paginaAtual < this.totalPaginas) {
-      this.paginaAtual++;
-    }
-  }
+  paginaAnterior() { if (this.paginaAtual > 1) this.paginaAtual--; }
+  proximaPagina() { if (this.paginaAtual < this.totalPaginas) this.paginaAtual++; }
 }

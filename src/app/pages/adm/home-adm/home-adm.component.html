@@ -11,10 +11,16 @@
 
       <main class="main">
 
+<<<<<<< HEAD
+        <div *ngIf="carregandoPlanos" class="loading-texto">Buscando planos ativos no servidor...</div>
+=======
         <section class="planos">
 
           <div class="plano-card" *ngFor="let plano of planos">
+>>>>>>> main
 
+        <section class="planos" *ngIf="!carregandoPlanos">
+          <div class="plano-card" *ngFor="let plano of planos" [class.recomendado]="plano.destaque">
             <div class="plano-topo">
               <span>{{ plano.tipo }}</span>
               <small *ngIf="plano.destaque">RECOMENDADO</small>
@@ -37,17 +43,17 @@
             <button type="button" [routerLink]="plano.rota">
               Editar
             </button>
-
           </div>
-
         </section>
 
         <section class="conteudo-baixo">
 
           <div class="gestao">
-
             <div class="secao-header">
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
               <div class="titulo-com-icone">
                 <div class="icone-card azul">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -57,29 +63,55 @@
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                   </svg>
                 </div>
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
                 <div>
                   <h3>Gestão de Administradores</h3>
                   <p>Controle de acesso e privilégios do sistema</p>
                 </div>
               </div>
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
               <button type="button" (click)="abrirListarAdmin()">
                 + Novo Administrador
               </button>
-
             </div>
 
-            <div class="tabela">
+            <div *ngIf="carregandoAdms" class="loading-texto" style="margin-top: 20px;">Sincronizando ADMs...</div>
 
+            <div class="tabela" *ngIf="!carregandoAdms">
               <div class="linha cabecalho">
                 <span>Usuário</span>
+<<<<<<< HEAD
+                <span>Ativo</span>
+=======
                 <span>Cargo</span>
+>>>>>>> main
                 <span>Último Acesso</span>
                 <span>Ações</span>
               </div>
 
               <div class="linha" *ngFor="let adm of administradores">
+<<<<<<< HEAD
+                <div class="usuario">
+  <div class="avatar">
+    <img *ngIf="adm.foto" [src]="adm.foto" [alt]="adm.nome" class="avatar-img" />
+    <span *ngIf="!adm.foto">{{ adm.inicial }}</span>
+  </div>
+  
+  <div>
+    <strong>{{ adm.nome }}</strong>
+    <small>{{ adm.email }}</small>
+  </div>
+</div>
+                <span class="cargo">{{ adm.ativo }}</span>
+                <span class="ultimo">{{ adm.ultimo }}</span>
+                <button type="button" class="editar" (click)="abrirListarAdmin()">✎</button>
+=======
 
                 <div class="usuario">
                   <div class="avatar">{{ adm.inicial }}</div>
@@ -98,11 +130,19 @@
                   ✎
                 </button>
 
+>>>>>>> main
               </div>
-
             </div>
 
             <button type="button" class="botao-link" (click)="abrirListarAdmin()">
+<<<<<<< HEAD
+              Ver todos os administradores <span>›</span>
+            </button>
+          </div>
+
+          <div class="agenda clicavel-card" routerLink="/adm/consultas">
+            <div class="agenda-header">
+=======
               Ver todos os administradores
               <span>›</span>
             </button>
@@ -113,6 +153,7 @@
 
             <div class="agenda-header">
 
+>>>>>>> main
               <div class="titulo-com-icone">
                 <div class="icone-card azul">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -122,20 +163,30 @@
                     <line x1="3" y1="10" x2="21" y2="10"></line>
                   </svg>
                 </div>
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
                 <div>
                   <h3>Agenda de Consultas</h3>
                   <p>Consultas agendadas para hoje</p>
                 </div>
               </div>
+<<<<<<< HEAD
+              <span>24 MAIO</span>
+=======
 
               <span>24 MAIO</span>
 
+>>>>>>> main
             </div>
 
             <div class="consulta azul">
               <span>09:00 - 10:00</span>
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
               <div>
                 <strong>Thor (Golden Retriever)</strong>
                 <p>Consulta de Rotina - Dr. Pedro</p>
@@ -144,6 +195,11 @@
 
             <div class="consulta laranja">
               <span>10:30 - 11:30</span>
+<<<<<<< HEAD
+              <div>
+                <strong>Luna (Persa)</strong>
+                <p>Vacinação - Dra. Carla</p>
+=======
 
               <div>
                 <strong>Luna (Persa)</strong>
@@ -200,15 +256,78 @@
                   • {{ item.status }}
                 </small>
 
+>>>>>>> main
               </div>
-
             </div>
 
+<<<<<<< HEAD
+            <button type="button" class="botao-link">
+              Ver agenda completa <span>›</span>
+            </button>
+          </div>
+
+          <div class="equipe-card clicavel-card" routerLink="/adm/equipe-funcionarios">
+            <div class="equipe-header">
+              <div class="titulo-com-icone">
+                <div class="icone-card verde">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3>Equipe e Funcionários</h3>
+                  <p>Resumo de contratados ativos</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="equipe-lista">
+              <div class="equipe-item">
+                <div class="equipe-icone">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="equipe-info">
+                  <strong>{{ funcionariosAtivosCount }}</strong>
+                  <span>Total de Funcionários</span>
+                </div>
+              </div>
+
+              <div class="equipe-item">
+                <div class="equipe-icone">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="equipe-info">
+                  <strong>{{ vetsAtivosCount }}</strong>
+                  <span>Médicos Veterinários</span>
+                </div>
+                <small>• Ativos</small>
+              </div>
+
+              <div class="equipe-item">
+                <div class="equipe-icone">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="equipe-info">
+                  <strong>{{ apoioAtivosCount }}</strong>
+                  <span>Equipe de Apoio</span>
+                </div>
+                <small>• Ativos</small>
+              </div>
+            </div>
+
+            <button type="button" class="botao-equipe">
+              Gerenciar Equipe <span>›</span>
+            </button>
+=======
             <button type="button" class="botao-equipe">
               Gerenciar Equipe
               <span>›</span>
             </button>
 
+>>>>>>> main
           </div>
 
         </section>
@@ -218,6 +337,18 @@
       <aside class="sidebar">
 
         <div class="resumo clicavel" routerLink="/adm/equipe-funcionarios">
+<<<<<<< HEAD
+          <small>RESUMO ATIVO TOTAL</small>
+          <h2>{{ totalEquipeAtiva }}</h2>
+          <span>↗ Total Ativos Online</span>
+        </div>
+
+        <div class="side-card clicavel-card">
+          <h4>Segurança do Sistema</h4>
+          <div class="info-box">
+            <small>ÚLTIMO LOGIN</small>
+            <strong>Hoje, 14:32</strong>
+=======
           <small>RESUMO ATIVO</small>
           <h2>24</h2>
           <span>↗ Total Ativos</span>
@@ -230,20 +361,35 @@
           <div class="info-box">
             <small>ÚLTIMO LOGIN</small>
             <strong>Hoje, 09:42</strong>
+>>>>>>> main
           </div>
-
           <div class="info-box">
             <small>NOVAS SOLICITAÇÕES</small>
             <strong>03 pendentes</strong>
           </div>
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
           <button type="button" (click)="abrirModalLogs($event)">
             Ver Logs Completos
           </button>
-
         </div>
 
         <div class="side-dark clicavel-card" routerLink="/adm/equipe-funcionarios">
+<<<<<<< HEAD
+          <h4>Estrutura de RH</h4>
+          <p>Funcionários Cadastrados <span>{{ funcionariosAtivosCount }} ativos</span></p>
+          <div class="barra"><div></div></div>
+        </div>
+
+        <div class="side-dark clicavel-card" routerLink="/adm/financeiro">
+          <h4>Performance Mensal</h4>
+          <p>Metas de Vendas <span>82%</span></p>
+          <div class="barra"><div></div></div>
+          <p>Capacidade Clínica <span>65%</span></p>
+          <div class="barra menor"><div></div></div>
+=======
 
           <h4>Estrutura de RH</h4>
 
@@ -280,6 +426,7 @@
             <div></div>
           </div>
 
+>>>>>>> main
         </div>
 
       </aside>
@@ -287,6 +434,11 @@
     </div>
 
     <section class="banner banner-click" routerLink="/adm/equipe-funcionarios">
+<<<<<<< HEAD
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <h2>Equipe Integrada</h2>
+=======
 
       <div class="banner-overlay"></div>
 
@@ -294,25 +446,39 @@
 
         <h2>Equipe Integrada</h2>
 
+>>>>>>> main
         <p>
           Mantenha os dados da sua equipe atualizados para garantir a melhor
           experiência para os tutores e seus pets. Gerencie permissões,
           escalas e colaboradores em uma interface unificada.
         </p>
+<<<<<<< HEAD
+        <button type="button" class="banner-btn" (click)="$event.stopPropagation()">
+          Gerenciar Equipe
+        </button>
+=======
 
         <button type="button" class="banner-btn" (click)="$event.stopPropagation()">
           Gerenciar Equipe
         </button>
 
+>>>>>>> main
       </div>
-
     </section>
 
   </div>
-
 </div>
 
 <div class="modal-logs-fundo" *ngIf="modalLogsAberto" (click)="fecharModalLogs()">
+<<<<<<< HEAD
+  <div class="modal-logs-card" (click)="$event.stopPropagation()">
+    <button type="button" class="fechar-logs" (click)="fecharModalLogs()">×</button>
+    <h2>Logs do Sistema</h2>
+    <p class="logs-subtitle">Acompanhe os últimos acessos e ações realizadas por administradores e funcionários.</p>
+    <div class="logs-lista">
+      <div class="log-item" *ngFor="let log of logs">
+        <div class="log-icon">{{ log.tipo === 'Administrador' ? 'AD' : 'FN' }}</div>
+=======
 
   <div class="modal-logs-card" (click)="$event.stopPropagation()">
 
@@ -334,18 +500,20 @@
           {{ log.tipo === 'Administrador' ? 'AD' : 'FN' }}
         </div>
 
+>>>>>>> main
         <div>
           <strong>{{ log.nome }}</strong>
           <span>{{ log.tipo }}</span>
           <p>{{ log.acao }}</p>
         </div>
+<<<<<<< HEAD
+        <small>{{ log.horario }}</small>
+=======
 
         <small>{{ log.horario }}</small>
 
+>>>>>>> main
       </div>
-
     </div>
-
   </div>
-
 </div>
