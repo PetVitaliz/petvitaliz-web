@@ -24,12 +24,6 @@ export class HomeAdmComponent implements OnInit {
   carregandoPlanos = true;
   carregandoAdms = true;
 
-  equipeResumo = [
-    { titulo: 'Total de Funcionários', valor: '6', detalhe: '', status: '' },
-    { titulo: 'Veterinários', valor: '2', detalhe: '', status: 'Ativos' },
-    { titulo: 'Equipe de Apoio', valor: '3', detalhe: '', status: 'Ativos' }
-  ];
-
   logs = [
     { tipo: 'Administrador', nome: 'Ana Souza', acao: 'Acessou o painel administrativo', horario: 'Hoje, 09:42' },
     { tipo: 'Administrador', nome: 'Marcos Lima', acao: 'Atualizou permissões de acesso', horario: 'Hoje, 08:55' },
