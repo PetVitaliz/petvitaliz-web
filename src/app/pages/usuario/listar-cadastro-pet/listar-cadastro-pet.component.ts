@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 
 @Component({
   selector: 'app-listar-cadastro-pet',
@@ -146,31 +146,25 @@ export class ListarCadastroPetComponent implements OnInit {
     if (!this.especie) return this.exibirErro('Selecione a espécie do pet.');
     if (this.especie === 'Outro' && !this.outraEspecie.trim()) return this.exibirErro('Informe qual é a espécie.');
     if (!this.sexo) return this.exibirErro('Selecione o sexo do pet.');
-    if (!this.idade) return this.exibirErro('Informe a data de nascimento do pet.');
+    if (!this.idade) return this.exibirErro('Informe a idade do pet.');
     if (this.peso === null || Number(this.peso) <= 0) return this.exibirErro('Peso é obrigatório e deve ser maior que zero.');
+
+    const numeroIdade = parseInt(this.idade.replace(/\D/g, ''), 10);
+    if (isNaN(numeroIdade)) return this.exibirErro('A idade deve conter um número válido.');
 
     this.salvando = true;
 
-    const dataNascimentoCalculada = this.idade; 
-
-    const anoNascimento = parseInt(dataNascimentoCalculada.split('-')[0], 10);
     const anoAtual = new Date().getFullYear();
-    const idadeNumerica = (anoAtual - anoNascimento) >= 0 ? (anoAtual - anoNascimento) : 0;
-
-    const sexoLower = this.sexo.toLowerCase().trim();
-    let sexoFormatado = 'M';
-    if (sexoLower === 'fêmea' || sexoLower === 'feminino' || sexoLower === 'f') {
-      sexoFormatado = 'F';
-    }
+    const dataNascimentoCalculada = `${anoAtual - numeroIdade}-01-01`;
 
     const formData = new FormData();
     formData.append('nome', this.nomePet.trim());
     formData.append('especie', this.especie === 'Outro' ? 'outro' : this.especie.toLowerCase());
     formData.append('outra_especie', this.especie === 'Outro' ? this.outraEspecie.trim() : '');
-    formData.append('sexo', sexoFormatado);
+    formData.append('sexo', this.sexo === 'Macho' ? 'M' : 'F');
+    formData.append('idade', numeroIdade.toString());
+    formData.append('peso', this.peso.toString());
     formData.append('data_nascimento', dataNascimentoCalculada);
-    formData.append('idade', idadeNumerica.toString());
-    formData.append('peso', String(this.peso));
 
     if (this.fotoArquivo) {
       formData.append('image', this.fotoArquivo);
@@ -185,7 +179,7 @@ export class ListarCadastroPetComponent implements OnInit {
           this.buscarPetsDoBanco();
         },
         error: (err) => {
-          console.error('Erro detalhado:', err);
+          console.error(err);
           this.exibirErro(err.error || err.error?.mensagem || 'Erro ao cadastrar o pet.');
           this.salvando = false;
         }
