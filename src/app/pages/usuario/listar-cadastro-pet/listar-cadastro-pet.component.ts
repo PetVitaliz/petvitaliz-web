@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-listar-cadastro-pet',
@@ -39,10 +39,8 @@ export class ListarCadastroPetComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || 'null');
-    
+    this.carregarDadosLocais();
     this.buscarPetsDoBanco();
-    this.buscarPlanoAtivoReal();
   }
 
   carregarDadosLocais(): void {
@@ -67,13 +65,13 @@ export class ListarCadastroPetComponent implements OnInit {
   buscarPlanoAtivoReal(): void {
     this.http.get(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
       next: (response: any) => {
-        if (response && response.tem_plano && response.include) {
+        if (response && response.tem_plano) {
           const partesNome = response.include.nome.split(' | ');
           
           this.planoContratado = {
             nome: partesNome[0],
             preco: `R$ ${response.include.preco}`,
-            descricao: response.include.descricao || ''
+            descricao: response.include.descricao
           };
         } else {
           this.planoContratado = null;
