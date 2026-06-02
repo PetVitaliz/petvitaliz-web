@@ -1,8 +1,8 @@
 .pets-page {
   min-height: calc(100vh - 84px);
   background:
-    radial-gradient(circle at top left, rgba(93, 110, 211, 0.12), transparent 34%),
-    linear-gradient(180deg, #f7f8fc 0%, #eef2f8 100%);
+    radial-gradient(circle at top left, rgba(93, 110, 211, 0.10), transparent 34%),
+    linear-gradient(180deg, #f8f9fd 0%, #eef2f8 100%);
   padding: 34px 44px;
   font-family: 'Inter', sans-serif;
   color: #0a2a66;
@@ -27,7 +27,7 @@
 .page-header p {
   margin: 0;
   font-size: 15px;
-  color: #5d6370;
+  color: #64748b;
 }
 
 .btn-novo {
@@ -40,8 +40,8 @@
   font-size: 12px;
   font-weight: 850;
   cursor: pointer;
-  transition: 0.25s ease;
-  box-shadow: 0 12px 26px rgba(93, 110, 211, 0.22);
+  transition: 0.22s ease;
+  box-shadow: 0 12px 24px rgba(93, 110, 211, 0.22);
 }
 
 .btn-novo:hover,
@@ -53,21 +53,23 @@
 
 .filters-area {
   display: grid;
-  grid-template-columns: 1fr 1fr 260px;
+  grid-template-columns: 1fr 1fr 220px;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .filter-group,
 .view-box {
+  min-height: 56px;
   background: #ffffff;
-  border: 1px solid #edf0f7;
+  border: 1px solid #e7ebf5;
   border-radius: 18px;
-  padding: 12px 14px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 10px 24px rgba(31, 59, 130, 0.06);
+  box-shadow: 0 8px 22px rgba(31, 59, 130, 0.05);
+  box-sizing: border-box;
 }
 
 .filter-group span,
@@ -84,11 +86,11 @@
   background: #f4f6ff;
   color: #0a2a66;
   padding: 8px 14px;
-  border-radius: 11px;
+  border-radius: 999px;
   font-size: 11px;
   font-weight: 850;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: 0.22s ease;
 }
 
 .filter-group button.active,
@@ -100,7 +102,7 @@
 .view-box {
   justify-content: space-between;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: 0.22s ease;
 }
 
 .view-box:hover {
@@ -111,7 +113,7 @@
 .view-box div {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   text-align: left;
 }
 
@@ -142,16 +144,16 @@
 .pet-card {
   background: #ffffff;
   border: 1px solid #e7ebf5;
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 16px;
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
-  transition: 0.25s ease;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.045);
+  transition: 0.22s ease;
 }
 
 .pet-card:hover {
   transform: translateY(-3px);
-  border-color: #5D6ED3;
-  box-shadow: 0 16px 34px rgba(93, 110, 211, 0.12);
+  border-color: #cbd5ff;
+  box-shadow: 0 16px 34px rgba(31, 59, 130, 0.09);
 }
 
 .pet-card-header {
@@ -163,16 +165,19 @@
 .pet-avatar {
   width: 58px;
   height: 58px;
-  border-radius: 18px;
-  background: #eef2ff;
-  border: 2px solid #dce3ff;
-  color: #5D6ED3;
-  font-size: 27px;
+  min-width: 58px;
+  min-height: 58px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, #5D6ED3 0%, #4557E8 100%);
+  border: none;
+  color: #ffffff;
+  font-size: 22px;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 10px 22px rgba(69, 87, 232, 0.20);
 }
 
 .pet-main-info {
@@ -192,13 +197,13 @@
   font-size: 19px;
   font-weight: 900;
   color: #0a2a66;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .pet-status {
   background: #dcfce7;
   color: #166534;
-  padding: 6px 10px;
+  padding: 5px 9px;
   border-radius: 999px;
   font-size: 9px;
   font-weight: 900;
@@ -212,7 +217,7 @@
 }
 
 .pet-meta {
-  margin-top: 5px;
+  margin-top: 6px;
   display: flex;
   justify-content: space-between;
   gap: 10px;
@@ -220,12 +225,12 @@
 
 .pet-meta span {
   font-size: 12px;
-  color: #5f6470;
+  color: #64748b;
 }
 
 .pet-meta strong {
   font-size: 12px;
-  color: #3b4252;
+  color: #1c2b4a;
   white-space: nowrap;
 }
 
@@ -275,7 +280,7 @@
 
 .card-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr 0.9fr 40px;
+  grid-template-columns: 1fr 1fr 0.9fr 38px;
   gap: 8px;
   margin-top: 12px;
 }
@@ -291,6 +296,7 @@
   font-weight: 900;
   cursor: pointer;
   transition: 0.2s ease;
+  font-family: 'Inter', sans-serif;
 }
 
 .btn-prontuario,
@@ -302,13 +308,13 @@
 .btn-agendar {
   background: #5D6ED3;
   color: #ffffff;
-  box-shadow: 0 8px 18px rgba(93, 110, 211, 0.2);
+  box-shadow: 0 8px 18px rgba(93, 110, 211, 0.18);
 }
 
 .btn-excluir {
   background: #fff1f1;
   color: #dc2626;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .btn-prontuario:hover,
@@ -330,7 +336,7 @@
   padding: 28px;
   border-radius: 22px;
   text-align: center;
-  color: #5f6470;
+  color: #64748b;
   border: 1px solid #edf0f7;
 }
 
@@ -347,7 +353,7 @@
 .bottom-area > span {
   font-size: 13px;
   font-weight: 700;
-  color: #5f6470;
+  color: #64748b;
 }
 
 .pagination {
@@ -358,10 +364,9 @@
 .pagination button {
   min-width: 34px;
   height: 34px;
-  border: none;
+  border: 1px solid #edf0f7;
   border-radius: 10px;
   background: #ffffff;
-  border: 1px solid #edf0f7;
   color: #0a2a66;
   font-size: 12px;
   font-weight: 850;
@@ -412,7 +417,7 @@
   font-size: 24px;
   color: #0a2a66;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: 0.22s ease;
 }
 
 .btn-fechar:hover {
@@ -448,7 +453,7 @@
   font-size: 14px;
   font-family: 'Inter', sans-serif;
   box-sizing: border-box;
-  transition: 0.25s ease;
+  transition: 0.22s ease;
   background: #ffffff;
 }
 
@@ -474,16 +479,19 @@
 .modal-pet-avatar {
   width: 70px;
   height: 70px;
+  min-width: 70px;
+  min-height: 70px;
   border-radius: 20px;
-  background: #eef2ff;
-  border: 2px solid #d8deee;
-  color: #5D6ED3;
+  background: linear-gradient(135deg, #5D6ED3 0%, #4557E8 100%);
+  border: none;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 900;
   flex-shrink: 0;
+  box-shadow: 0 12px 28px rgba(69, 87, 232, 0.24);
 }
 
 .modal-pet-header h3 {
@@ -494,7 +502,7 @@
 
 .modal-pet-header p {
   margin: 5px 0 0;
-  color: #5f6470;
+  color: #64748b;
 }
 
 .prontuario-box {
@@ -532,7 +540,7 @@
   font-size: 14px;
   font-weight: 850;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: 0.22s ease;
 }
 
 .btn-cancelar {
@@ -543,6 +551,10 @@
 .btn-salvar {
   background: #5D6ED3;
   color: #ffffff;
+}
+
+.btn-cancelar:hover {
+  background: #d4d7dd;
 }
 
 @media (max-width: 1200px) {

@@ -18,7 +18,6 @@ import { EmergenciaComponent } from './pages/publico/emergencia/emergencia.compo
 
 // USUÁRIO
 import { AgendamentoComponent } from './pages/usuario/agendamento/agendamento.component';
-import { CadastroPetComponent } from './pages/usuario/cadastro-pet/cadastro-pet.component';
 import { ListarCadastroPetComponent } from './pages/usuario/listar-cadastro-pet/listar-cadastro-pet.component';
 import { PlanosPetComponent } from './pages/usuario/planos-pet/planos-pet.component';
 import { PagamentoPlanoComponent } from './pages/usuario/pagamento-plano/pagamento-plano.component';
@@ -87,11 +86,6 @@ export const routes: Routes = [
 {
   path: 'user/contato',
   component: ContatoUsuarioComponent,
-  canActivate: [authUsuarioGuard]
-},
-{
-  path: 'user/listar/pet/cadastar',
-  component: CadastroPetComponent,
   canActivate: [authUsuarioGuard]
 },
 {

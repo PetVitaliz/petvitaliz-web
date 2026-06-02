@@ -82,6 +82,19 @@
           <strong>Nenhum plano</strong>
           <small>Contrate para proteger seu pet</small>
         </div>
+<<<<<<< HEAD
+=======
+
+        <div class="pet-selector" *ngIf="pets.length > 1">
+          <small>MEUS PETS</small>
+
+          <select [(ngModel)]="petSelecionado">
+            <option *ngFor="let p of pets" [ngValue]="p">
+              {{ p.nome }}
+            </option>
+          </select>
+        </div>
+>>>>>>> main
       </aside>
 
       <section class="profile-content">
@@ -150,7 +163,11 @@
                 <strong>{{ planoContratado.preco }} /mês</strong>
               </div>
 
+<<<<<<< HEAD
               <a routerLink="/user/planos-pet">Alterar plano</a>
+=======
+              <a routerLink="/usuario/planos-pet">Alterar plano</a>
+>>>>>>> main
             </div>
           </article>
 
@@ -170,7 +187,11 @@
                 <strong>Nenhum plano ativo</strong>
               </div>
 
+<<<<<<< HEAD
               <a routerLink="/user/planos-pet">Contratar plano</a>
+=======
+              <a routerLink="/usuario/planos-pet">Contratar plano</a>
+>>>>>>> main
             </div>
           </article>
 

@@ -225,6 +225,16 @@ export class EquipeFuncionariosComponent implements OnInit {
     this.carregarFuncionarios();
   }
 
+  modalRHAberto = false;
+
+  falarComRH(): void {
+    this.modalRHAberto = true;
+  }
+
+  fecharModalRH(): void {
+    this.modalRHAberto = false;
+  }
+
   excluirFuncionario(funcionario: Funcionario): void {
     if (confirm(`Tem certeza que deseja remover ${funcionario.nome} do sistema?`)) {
       this.http.delete(`${environment.apiUrl}/adm/listar/funcionario/excluir/${funcionario.id}`, { withCredentials: true }).subscribe({
