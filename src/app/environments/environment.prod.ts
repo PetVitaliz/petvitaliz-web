@@ -1,4 +1,4 @@
 export const environment = {
-    production: true,
-    apiUrl: 'https://petvitaliz-service.onrender.com'
+    production: false,
+    apiUrl: 'http://localhost:3000'
   };
