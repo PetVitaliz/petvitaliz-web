@@ -139,52 +139,53 @@ export class ListarCadastroPetComponent implements OnInit {
   }
 
   confirmarCadastro(): void {
-    this.erro = '';
-    this.sucesso = '';
+  this.erro = '';
+  this.sucesso = '';
 
-    if (!this.nomePet.trim()) return this.exibirErro('Informe o nome do pet.');
-    if (!this.especie) return this.exibirErro('Selecione a espécie do pet.');
-    if (this.especie === 'Outro' && !this.outraEspecie.trim()) return this.exibirErro('Informe qual é a espécie.');
-    if (!this.sexo) return this.exibirErro('Selecione o sexo do pet.');
-    if (!this.idade) return this.exibirErro('Informe a idade do pet.');
-    if (this.peso === null || Number(this.peso) <= 0) return this.exibirErro('Peso é obrigatório e deve ser maior que zero.');
+  if (!this.nomePet.trim()) return this.exibirErro('Informe o nome do pet.');
+  if (!this.especie) return this.exibirErro('Selecione a espécie do pet.');
+  if (this.especie === 'Outro' && !this.outraEspecie.trim()) return this.exibirErro('Informe qual é a espécie.');
+  if (!this.sexo) return this.exibirErro('Selecione o sexo do pet.');
+  if (!this.idade) return this.exibirErro('Informe a idade do pet.');
+  if (this.peso === null || Number(this.peso) <= 0) return this.exibirErro('Peso é obrigatório e deve ser maior que zero.');
 
-    const numeroIdade = parseInt(this.idade.replace(/\D/g, ''), 10);
-    if (isNaN(numeroIdade)) return this.exibirErro('A idade deve conter um número válido.');
+  const numeroIdade = parseInt(this.idade.replace(/\D/g, ''), 10);
+  if (isNaN(numeroIdade)) return this.exibirErro('A idade deve conter um número válido.');
 
-    this.salvando = true;
+  this.salvando = true;
 
-    const anoAtual = new Date().getFullYear();
-    const dataNascimentoCalculada = `${anoAtual - numeroIdade}-01-01`;
+  const anoAtual = new Date().getFullYear();
+  const dataNascimentoCalculada = String(anoAtual - numeroIdade) + '-01-01';
 
-    const formData = new FormData();
-    formData.append('nome', this.nomePet.trim());
-    formData.append('especie', this.especie === 'Outro' ? 'outro' : this.especie.toLowerCase());
-    formData.append('outra_especie', this.especie === 'Outro' ? this.outraEspecie.trim() : '');
-    formData.append('sexo', this.sexo === 'Macho' ? 'M' : 'F');
-    formData.append('idade', numeroIdade.toString());
-    formData.append('peso', this.peso.toString());
-    formData.append('data_nascimento', dataNascimentoCalculada);
+  const formData = new FormData();
+  formData.append('nome', this.nomePet.trim());
+  formData.append('especie', this.especie === 'Outro' ? 'outro' : this.especie.toLowerCase());
+  formData.append('outra_especie', this.especie === 'Outro' ? this.outraEspecie.trim() : '');
+  formData.append('sexo', this.sexo === 'Macho' ? 'M' : 'F');
+  formData.append('idade', numeroIdade.toString());
+  formData.append('peso', this.peso.toString());
+  
+  formData.append('data_nascimento', String(dataNascimentoCalculada).trim());
 
-    if (this.fotoArquivo) {
-      formData.append('image', this.fotoArquivo);
-    }
-
-    this.http.post(`${environment.apiUrl}/user/listar/pet/cadastar`, formData, { withCredentials: true })
-      .subscribe({
-        next: () => {
-          this.sucesso = 'Pet cadastrado com sucesso!';
-          this.modalCadastroAberto = false;
-          this.limparFormularioCadastro();
-          this.buscarPetsDoBanco();
-        },
-        error: (err) => {
-          console.error(err);
-          this.exibirErro(err.error || err.error?.mensagem || 'Erro ao cadastrar o pet.');
-          this.salvando = false;
-        }
-      });
+  if (this.fotoArquivo) {
+    formData.append('image', this.fotoArquivo);
   }
+
+  this.http.post(`${environment.apiUrl}/user/listar/pet/cadastar`, formData, { withCredentials: true })
+    .subscribe({
+      next: () => {
+        this.sucesso = 'Pet cadastrado com sucesso!';
+        this.modalCadastroAberto = false;
+        this.limparFormularioCadastro();
+        this.buscarPetsDoBanco();
+      },
+      error: (err) => {
+        console.error(err);
+        this.exibirErro(err.error || err.error?.mensagem || 'Erro ao cadastrar o pet.');
+        this.salvando = false;
+      }
+    });
+}
 
   editarPet(): void {
     if (!this.petSelecionado) return;
