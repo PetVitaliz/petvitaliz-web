@@ -1,0 +1,200 @@
+<section class="page-container">
+
+  <div class="hero">
+    <div>
+      <span>AGENDAMENTO</span>
+      <h1>Agende um horário para seu Pet</h1>
+      <p>Cuidados profissionais e carinhosos que o seu pet merece.</p>
+    </div>
+  </div>
+
+  <div class="stepper-card">
+
+    <div class="stepper-top">
+
+      <div class="step" [class.active]="etapaAtual >= 1">
+        <div class="circle">1</div>
+        <span>Selecionar Pet</span>
+      </div>
+
+      <div class="step" [class.active]="etapaAtual >= 2">
+        <div class="circle">2</div>
+        <span>Escolher Serviço</span>
+      </div>
+
+      <div class="step" [class.active]="etapaAtual >= 3">
+        <div class="circle">3</div>
+        <span>Data e Horário</span>
+      </div>
+
+      <div class="step" [class.active]="etapaAtual >= 4">
+        <div class="circle">4</div>
+        <span>Confirmação</span>
+      </div>
+
+    </div>
+
+    <div class="content-box">
+
+      <div class="alert-error" *ngIf="mensagemErro">
+        {{ mensagemErro }}
+      </div>
+
+      <div class="alert-success" *ngIf="mensagemSucesso">
+        {{ mensagemSucesso }}
+      </div>
+
+      <div *ngIf="etapaAtual === 1">
+
+        <div class="section-title">
+          <h2>Para qual pet é o atendimento?</h2>
+          <p>Selecione um de seus pets cadastrados.</p>
+        </div>
+
+        <div class="pets-grid">
+
+          <div
+            class="pet-card"
+            *ngFor="let pet of pets"
+            [class.selected]="petSelecionado === pet.nome"
+            (click)="selecionarPet(pet.nome)"
+          >
+            <div class="check">✓</div>
+
+            <img [src]="pet.foto" [alt]="pet.nome">
+
+            <h3>{{ pet.nome }}</h3>
+            <small>{{ pet.tipo }} • {{ pet.idade }}</small>
+          </div>
+
+          <button
+            type="button"
+            class="pet-card add-card"
+            (click)="irParaCadastroPet()"
+          >
+            <div class="plus">+</div>
+            <h3>Novo Pet</h3>
+            <small>Cadastrar Pet</small>
+          </button>
+
+        </div>
+
+      </div>
+
+      <div *ngIf="etapaAtual === 2">
+
+        <div class="section-title">
+          <h2>Escolha o serviço</h2>
+          <p>Selecione o tipo de atendimento desejado.</p>
+        </div>
+
+        <div class="services-grid">
+
+          <button
+            type="button"
+            *ngFor="let servico of servicos"
+            [class.active]="servicoSelecionado === servico"
+            (click)="selecionarServico(servico)"
+          >
+            {{ servico }}
+          </button>
+
+        </div>
+
+      </div>
+
+      <div *ngIf="etapaAtual === 3">
+
+        <div class="section-title">
+          <h2>Escolha a data e horário</h2>
+          <p>Horários disponíveis para atendimento.</p>
+        </div>
+
+        <input
+          type="date"
+          name="dataSelecionada"
+          [(ngModel)]="dataSelecionada"
+          [min]="obterDataMinima()"
+          (change)="aoAlterarData()"
+        >
+
+        <div class="horarios-grid">
+
+          <button
+            type="button"
+            *ngFor="let horario of horarios"
+            [class.active]="horarioSelecionado === horario"
+            [disabled]="horarioIndisponivel(horario)"
+            (click)="selecionarHorario(horario)"
+          >
+            {{ horario }}
+          </button>
+
+        </div>
+
+      </div>
+
+      <div *ngIf="etapaAtual === 4">
+
+        <div class="confirmacao">
+
+          <div class="success-icon">✓</div>
+
+          <h2>Agendamento confirmado!</h2>
+          <p>Seu horário foi reservado com sucesso.</p>
+
+          <div class="summary">
+
+            <div>
+              <span>Pet</span>
+              <strong>{{ petSelecionado }}</strong>
+            </div>
+
+            <div>
+              <span>Serviço</span>
+              <strong>{{ servicoSelecionado }}</strong>
+            </div>
+
+            <div>
+              <span>Data</span>
+              <strong>{{ dataSelecionada }}</strong>
+            </div>
+
+            <div>
+              <span>Horário</span>
+              <strong>{{ horarioSelecionado }}</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="bottom-actions" *ngIf="etapaAtual < 4">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          *ngIf="etapaAtual > 1"
+          (click)="voltar()"
+        >
+          Voltar
+        </button>
+
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="!podeContinuar()"
+          (click)="continuar()"
+        >
+          Continuar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

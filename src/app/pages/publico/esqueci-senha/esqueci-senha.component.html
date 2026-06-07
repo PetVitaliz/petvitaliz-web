@@ -1,0 +1,91 @@
+<section class="esqueci-page">
+
+  <div class="esqueci-card">
+
+    <h2>
+      Esqueceu sua senha?
+    </h2>
+
+    <p class="subtitle">
+      Insira seu e-mail cadastrado e enviaremos as instruções para criar uma nova senha.
+    </p>
+
+    <form (ngSubmit)="enviarLink()">
+
+      <div class="form-group">
+
+        <label for="email">
+          E-mail
+        </label>
+
+        <div class="input-box">
+
+          <span class="material-icons input-icon">
+            mail
+          </span>
+
+          <input type="email" id="email" name="email" placeholder="Coloque seu e-mail" [(ngModel)]="email">
+
+        </div>
+
+      </div>
+
+      <p class="erro" *ngIf="erro">
+
+        {{ erro }}
+
+      </p>
+
+      <p class="sucesso" *ngIf="sucesso">
+
+        {{ sucesso }}
+
+      </p>
+
+      <button type="submit" class="btn-submit">
+
+        Enviar link
+        <span>→</span>
+
+      </button>
+
+    </form>
+
+    <a routerLink="/login" class="back-login">
+
+      <span class="material-icons">
+        arrow_back
+      </span>
+
+      Voltar para o login
+
+    </a>
+
+    <div class="security-box">
+
+      <div class="security-icon">
+
+        <span class="material-icons">
+          verified_user
+        </span>
+
+      </div>
+
+      <div class="security-content">
+
+        <strong>
+          AMBIENTE SEGURO
+        </strong>
+
+        <p>
+          Utilizamos protocolos avançados de segurança para proteger suas informações
+          e garantir uma experiência confiável dentro da plataforma PetVitaliz.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

@@ -1,0 +1,541 @@
+:host {
+  display: block;
+  background: #ffffff;
+}
+
+.adocao-page {
+  width: 100%;
+  background: #ffffff;
+}
+
+.adocao-hero {
+  width: 100%;
+  min-height: calc(100vh - 90px);
+  padding: 50px 7%;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+
+  overflow: hidden;
+}
+
+.adocao-content {
+  flex: 1;
+  max-width: 480px;
+  z-index: 2;
+}
+
+.adocao-content h1 {
+  margin: 0 0 18px;
+  font-size: clamp(42px, 4.6vw, 70px);
+  line-height: 1.08;
+  font-weight: 500;
+  color: #222222;
+  letter-spacing: -1px;
+}
+
+.adocao-content p {
+  margin: 0 0 22px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: #222222;
+}
+
+.adocao-button {
+  min-width: 155px;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: #283593;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.3s ease;
+}
+
+.adocao-button:hover {
+  background: #1d2870;
+  transform: translateY(-2px);
+}
+
+.adocao-image-area {
+  flex: 1.5;
+  min-height: 560px;
+  position: relative;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.adocao-pets {
+  width: min(850px, 100%);
+  max-height: 520px;
+  object-fit: contain;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.adocao-paw {
+  position: absolute;
+  width: 210px;
+  top: 40px;
+  right: 6%;
+  z-index: 1;
+  object-fit: contain;
+}
+
+.adocao-pets[src=""],
+.adocao-paw[src=""] {
+  visibility: hidden;
+}
+
+@media (max-width: 1000px) {
+  .adocao-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 50px 5%;
+  }
+
+  .adocao-content {
+    max-width: 100%;
+  }
+
+  .adocao-image-area {
+    width: 100%;
+    min-height: 420px;
+  }
+
+  .adocao-paw {
+    width: 160px;
+    right: 10%;
+  }
+}
+
+@media (max-width: 600px) {
+  .adocao-hero {
+    padding: 40px 20px;
+  }
+
+  .adocao-content h1 {
+    font-size: 42px;
+  }
+
+  .adocao-content h1 br,
+  .adocao-content p br {
+    display: none;
+  }
+
+  .adocao-button {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .adocao-image-area {
+    min-height: 300px;
+  }
+
+  .adocao-paw {
+    display: none;
+  }
+}
+
+/* SEGUNDA PARTE */
+.adocao-profile-section {
+  width: 100%;
+  min-height: 760px;
+  background: #d7d7d7;
+  padding: 70px 7%;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adocao-profile-card {
+  width: 100%;
+  max-width: 940px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 24px;
+}
+
+.adocao-profile-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.adocao-main-image-box {
+  position: relative;
+  height: 460px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e5e5e5;
+}
+
+.adocao-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* se ainda não colocou imagem */
+.adocao-main-image[src=""],
+.adocao-thumbs img[src=""],
+.adocao-image-note img[src=""] {
+  background: #e5e5e5;
+}
+
+.adocao-image-note {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 18px;
+
+  min-height: 78px;
+  padding: 8px;
+  box-sizing: border-box;
+
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adocao-image-note img {
+  width: 68px;
+  height: 68px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.adocao-image-note p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
+  color: #222222;
+}
+
+.adocao-thumbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.adocao-thumbs img {
+  width: 100%;
+  height: 150px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: #e5e5e5;
+  display: block;
+}
+
+.adocao-profile-info {
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.adocao-profile-arrows {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 44px;
+}
+
+.adocao-profile-arrows button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #222222;
+  background: #ffffff;
+  color: #222222;
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.adocao-profile-arrows button:hover {
+  background: #283593;
+  border-color: #283593;
+  color: #ffffff;
+}
+
+.adocao-profile-info h2 {
+  margin: 0 0 20px;
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.1;
+  color: #222222;
+  font-weight: 600;
+}
+
+.adocao-profile-description {
+  margin: 0 0 18px;
+  max-width: 390px;
+  font-size: 22px;
+  line-height: 1.25;
+  color: #222222;
+}
+
+.adocao-profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adocao-profile-tags span {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid #8b95ef;
+  color: #5c6be8;
+  font-size: 13px;
+}
+
+.adocao-profile-buttons {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.adocao-profile-buttons a {
+  min-width: 160px;
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid #283593;
+  background: #ffffff;
+  color: #222222;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.3s ease;
+}
+
+.adocao-profile-buttons a:hover {
+  background: #283593;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .adocao-profile-card {
+    grid-template-columns: 1fr;
+  }
+
+  .adocao-profile-info {
+    padding: 10px 0 0;
+  }
+
+  .adocao-profile-arrows {
+    margin-bottom: 24px;
+  }
+
+  .adocao-profile-description {
+    max-width: 100%;
+  }
+
+  .adocao-profile-buttons {
+    margin-top: 35px;
+  }
+}
+
+@media (max-width: 600px) {
+  .adocao-profile-section {
+    padding: 50px 20px;
+  }
+
+  .adocao-main-image-box {
+    height: 360px;
+  }
+
+  .adocao-image-note {
+    position: static;
+    margin-top: -90px;
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  .adocao-thumbs {
+    gap: 10px;
+  }
+
+  .adocao-thumbs img {
+    height: 100px;
+  }
+
+  .adocao-profile-description {
+    font-size: 18px;
+  }
+
+  .adocao-profile-buttons a {
+    width: 100%;
+  }
+}
+
+/* ÚLTIMA PARTE - PASSOS DA ADOÇÃO */
+.adocao-steps-section {
+  position: relative;
+  width: 100%;
+  min-height: 820px;
+  background: #ffffff;
+  padding: 70px 7% 90px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.adocao-steps-section h2 {
+  margin: 0 0 42px;
+  text-align: center;
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.15;
+  font-weight: 500;
+  color: #222222;
+}
+
+.adocao-steps-paw {
+  position: absolute;
+  width: 190px;
+  top: 80px;
+  right: 15%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.adocao-steps-paw[src=""] {
+  visibility: hidden;
+}
+
+.adocao-steps-grid {
+  position: relative;
+  z-index: 2;
+  max-width: 940px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.adocao-step-card {
+  position: relative;
+  height: 240px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e5e5e5;
+}
+
+.adocao-step-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #e5e5e5;
+}
+
+.adocao-step-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+
+  min-width: 56px;
+  height: 26px;
+  padding: 0 10px;
+
+  border-radius: 999px;
+  background: #283593;
+  color: #ffffff;
+
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adocao-step-title {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+
+  max-width: calc(100% - 16px);
+  padding: 8px 12px;
+
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+
+  font-size: 14px;
+  color: #111111;
+  line-height: 1.2;
+}
+
+.adocao-step-image[src=""] {
+  background: #e5e5e5;
+}
+
+.adocao-steps-wave {
+  position: absolute;
+  left: 11%;
+  bottom: 65px;
+
+  width: 190px;
+  object-fit: contain;
+}
+
+@media (max-width: 1000px) {
+  .adocao-steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .adocao-steps-paw {
+    right: 5%;
+  }
+}
+
+@media (max-width: 600px) {
+  .adocao-steps-section {
+    padding: 55px 20px 80px;
+  }
+
+  .adocao-steps-section h2 br {
+    display: none;
+  }
+
+  .adocao-steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .adocao-step-card {
+    height: 260px;
+  }
+
+  .adocao-steps-paw,
+  .adocao-steps-wave {
+    display: none;
+  }
+}

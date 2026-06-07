@@ -1,0 +1,160 @@
+<main class="contato-page">
+  <section class="contato-section">
+    <div class="contato-title">
+      <h1>Fale Conosco</h1>
+      <p>Estamos aqui para garantir a vitalidade do seu pet.</p>
+    </div>
+
+    <div class="contato-content">
+      <div class="contato-info">
+
+        <div class="contato-info-card">
+          <div class="contato-icon-box">
+            <img [src]="iconAtendimento" alt="Ícone atendimento" />
+          </div>
+
+          <h2>Atendimento</h2>
+
+          <p>E-mail de Suporte:</p>
+
+          <a href="mailto:contato@petvitaliz.com.br">
+            contato&#64;petvitaliz.com.br
+          </a>
+        </div>
+
+        <div class="contato-info-card">
+          <div class="contato-icon-box">
+            <img [src]="iconTelefone" alt="Ícone telefone" />
+          </div>
+
+          <h2>Telefone</h2>
+
+          <p>Segunda a Sexta, 8h às 20h:</p>
+
+          <a href="tel:+551140028922">
+            +55 (11) 4002-8922
+          </a>
+        </div>
+
+        <div class="contato-info-card">
+          <div class="contato-icon-box">
+            <img [src]="iconLocalizacao" alt="Ícone localização" />
+          </div>
+
+          <h2>Unidade Central</h2>
+
+          <p>Av. Paulista, 1000 - Bela Vista</p>
+
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=Av.+Paulista,+1000,+Bela+Vista,+São+Paulo"
+            target="_blank"
+          >
+            São Paulo - SP
+          </a>
+        </div>
+
+      </div>
+
+      <form class="contato-form" (ngSubmit)="enviarMensagem()">
+        <div class="contato-form-row">
+          <div class="contato-field">
+            <label for="nome">Nome Completo</label>
+            <input
+              id="nome"
+              type="text"
+              name="nome"
+              [(ngModel)]="contato.nome"
+              placeholder="Como devemos te chamar?"
+              required
+            />
+          </div>
+
+          <div class="contato-field">
+            <label for="email">E-mail</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              [(ngModel)]="contato.email"
+              placeholder="seu@email.com"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="contato-field">
+          <label for="assunto">Assunto</label>
+          <select
+            id="assunto"
+            name="assunto"
+            [(ngModel)]="contato.assunto"
+          >
+            <option>Agendamento de Consulta</option>
+            <option>Dúvidas sobre Serviços</option>
+            <option>Emergência</option>
+            <option>Planos e Valores</option>
+          </select>
+        </div>
+
+        <div class="contato-field">
+          <label for="mensagem">Mensagem</label>
+          <textarea
+            id="mensagem"
+            name="mensagem"
+            [(ngModel)]="contato.mensagem"
+            placeholder="Conte-nos como podemos ajudar você e seu pet..."
+            required
+          ></textarea>
+        </div>
+
+        <button type="submit" class="contato-button">
+          ▷ Enviar Mensagem
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="contato-location-section">
+
+  <div
+    class="contato-location-left"
+    [style.background-image]="'url(' + imgContatoFundo + ')'"
+  >
+
+    <div class="contato-location-overlay">
+      <h2>Fundada em 2025</h2>
+
+      <p>
+        Compromisso com a inovação e o bem-estar animal desde o primeiro dia.
+      </p>
+    </div>
+
+  </div>
+
+  <a
+    class="contato-location-right"
+    [href]="linkGoogleMaps"
+    target="_blank"
+    [style.background-image]="'url(' + imgMapaFundo + ')'"
+  >
+
+    <div class="contato-map-overlay">
+
+      <div class="contato-map-icon"></div>
+
+      <h2>Visite Nossa Unidade</h2>
+
+      <p>
+        Ambiente seguro, higienizado e pronto para receber seu melhor amigo.
+      </p>
+
+      <span>
+        Ver no Google Maps ↗
+      </span>
+
+    </div>
+
+  </a>
+
+</section>
+</main>

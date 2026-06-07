@@ -1,0 +1,380 @@
+:host {
+  display: block;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.header {
+  width: 100%;
+  height: 82px;
+  padding: 0 45px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  background: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  border-bottom: 1px solid #edf0f7;
+  box-sizing: border-box;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.logo img {
+  height: 46px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 38px;
+}
+
+.nav a,
+.perfil-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  color: #111111;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  transition: 0.25s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.nav a:hover,
+.perfil-link:hover {
+  color: #5D6ED3;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.menu-mobile {
+  display: none;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 14px;
+  background: #f4f6ff;
+  color: #5D6ED3;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.menu-mobile:hover {
+  background: #5D6ED3;
+  color: #ffffff;
+}
+
+.perfil-wrapper,
+.avatar-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.perfil-card {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 210px;
+  background: #ffffff;
+  border: 1px solid #edf0f7;
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 1000;
+}
+
+.perfil-card a {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.22s ease;
+  box-sizing: border-box;
+}
+
+.perfil-card a:hover {
+  background: #f4f6ff;
+  color: #5D6ED3;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #f4f6ff;
+  color: #5D6ED3;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.avatar:hover {
+  background: #ebefff;
+}
+
+.avatar-card {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 130px;
+  background: #ffffff;
+  border: 1px solid #edf0f7;
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.avatar-card button {
+  width: 100%;
+  padding: 12px 13px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  color: #111111;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.avatar-card button:hover {
+  background: #f4f6ff;
+  color: #5D6ED3;
+}
+
+@media (max-width: 1200px) {
+  .header {
+    padding: 0 30px;
+  }
+
+  .nav {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .header {
+    height: 80px;
+    padding: 0 18px;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+  }
+
+  .logo img {
+    height: 42px;
+  }
+
+  .menu-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav {
+    display: none;
+    position: absolute;
+    top: 80px;
+    left: 14px;
+    right: 14px;
+    width: auto;
+    background: #ffffff;
+    border: 1px solid #edf0f7;
+    border-radius: 20px;
+    padding: 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+  }
+
+  .nav.open {
+    display: flex;
+  }
+
+  .nav a,
+  .perfil-link {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+
+  .nav a:hover,
+  .perfil-link:hover {
+    background: #f4f6ff;
+    color: #5D6ED3;
+  }
+
+  .perfil-wrapper {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .perfil-card {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: none;
+    background: #f8f9fc;
+  }
+}
+
+@media (max-width: 520px) {
+  .header {
+    padding: 0 14px;
+  }
+
+  .logo img {
+    height: 38px;
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+  }
+
+  .menu-mobile {
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 380px) {
+  .logo img {
+    height: 34px;
+  }
+
+  .header {
+    padding: 0 10px;
+    gap: 6px;
+  }
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-card {
+  position: absolute;
+  top: 55px;
+  right: 0; 
+  background-color: #ffffff;
+  width: 210px;
+  border-radius: 12px;
+  padding: 12px 0;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid #eef0f5;
+  z-index: 1000;
+}
+
+.dropdown-header {
+  padding: 4px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #666666;
+}
+
+.dropdown-divider {
+  border: 0;
+  height: 1px;
+  background: #eaeaea;
+  margin: 8px 0;
+}
+
+
+.avatar-card a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #333333;
+  font-size: 15px;
+  font-weight: 500;
+  transition: 0.2s ease;
+  text-align: left;
+}
+
+.avatar-card a:hover {
+  background-color: #f4f6ff;
+  color: #4F7BF1;
+}
+
+.btn-dropdown-logout {
+  width: 100%;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  color: #dc3545;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-dropdown-logout:hover {
+  background-color: #fff5f5;
+}
+
+
+.dropdown-icon {
+  font-size: 20px;
+  color: #757575;
+  transition: 0.2s ease;
+}
+
+.avatar-card a:hover .dropdown-icon {
+  color: #4F7BF1;
+}
+
+.dropdown-icon.text-danger {
+  color: #dc3545;
+}

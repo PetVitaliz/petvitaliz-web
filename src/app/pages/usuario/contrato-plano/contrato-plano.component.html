@@ -1,0 +1,55 @@
+<section class="contrato-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <h1>Contrato do Plano</h1>
+      <p>Leia atentamente os termos antes de finalizar a contratação.</p>
+    </div>
+
+    <div class="contrato-card" *ngIf="plano">
+      <div class="plano-info">
+        <span>PLANO CONTRATADO</span>
+        <h2>{{ plano.nome }}</h2>
+        <strong>R$ {{ plano.preco }}<small>/mês</small></strong>
+      </div>
+
+      <div class="contrato-texto">
+        <h3>Termos de contratação</h3>
+        <p>
+          O plano PetVitaliz garante acesso aos serviços inclusos
+          conforme disponibilidade da rede credenciada.
+        </p>
+        <p>
+          O tutor se responsabiliza pelas informações cadastradas
+          do pet e concorda com o compartilhamento seguro dos dados
+          necessários para atendimento veterinário.
+        </p>
+        <p>
+          O pagamento será renovado mensalmente até solicitação
+          de cancelamento pelo titular da conta.
+        </p>
+        <p>
+          Benefícios premium podem variar conforme disponibilidade
+          da região e do plano contratado.
+        </p>
+      </div>
+
+      <div class="feedback-msg erro" *ngIf="erroContrato" style="margin: 15px 0; padding: 12px; background: #fff1f2; color: #e11d48; border-radius: 12px; font-size: 13px; font-weight: 600;">
+        ⚠️ {{ erroContrato }}
+      </div>
+
+      <label class="checkbox" style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+        <input type="checkbox" [(ngModel)]="aceitou" [disabled]="processandoContratacao">
+        <span>Li e aceito os termos do contrato.</span>
+      </label>
+
+      <button
+        type="button"
+        (click)="aceitarContrato()"
+        [disabled]="processandoContratacao"
+        [style.opacity]="processandoContratacao ? '0.6' : '1'"
+      >
+        {{ processandoContratacao ? 'Processando Assinatura...' : 'Finalizar contratação →' }}
+      </button>
+    </div>
+  </div>
+</section>

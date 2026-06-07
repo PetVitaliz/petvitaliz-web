@@ -1,0 +1,146 @@
+<section class="planos-page">
+
+  <div class="page-inner">
+
+    <div class="page-header">
+      <h1>Escolha seu plano Pet</h1>
+      <p>
+        Inscreva hoje mesmo o seu pet para que ele receba cuidados personalizados.
+      </p>
+    </div>
+
+    <div *ngIf="carregandoPlanos" style="text-align: center; font-weight: bold; color: #1f3b82; padding: 40px; width: 100%;">
+      Buscando planos de saúde ativos na PetVitaliz...
+    </div>
+
+    <div class="planos-grid" *ngIf="!carregandoPlanos">
+
+      <article
+        class="plano-card"
+        *ngFor="let plano of planos"
+        [class.plano-featured]="plano.recomendado"
+      >
+
+        <div class="plano-top">
+          <span>{{ plano.tag }}</span>
+          <small *ngIf="plano.recomendado">RECOMENDADO</small>
+        </div>
+
+        <h2>{{ plano.nome }}</h2>
+
+        <div class="price">
+          {{ plano.preco }}
+          <span>/mês</span>
+        </div>
+
+        <ul>
+          <li *ngFor="let beneficio of plano.beneficios">
+            {{ beneficio }}
+          </li>
+        </ul>
+
+        <button
+          type="button"
+          (click)="abrirDetalhes(plano)"
+        >
+          Inscreva-se agora
+        </button>
+
+      </article>
+
+      <div *ngIf="planos.length === 0" style="grid-column: 1 / -1; text-align: center; color: #6b7280; padding: 30px;">
+        Nenhum plano disponível para contratação no momento.
+      </div>
+
+    </div>
+
+    <section class="info-section">
+
+      <div class="pet-image">
+        <img
+          src="assets/img/plano-pet.jpg"
+          alt="Pet feliz"
+          onError="this.src='assets/img/cachorro-feliz.png'"
+        >
+      </div>
+
+      <div class="editorial">
+        <span>POR QUE A PETVITALIZ?</span>
+        <h2>
+          Curadoria Especializada para a Saúde do seu Melhor Amigo
+        </h2>
+
+        <p>
+          Não somos apenas um plano de saúde convencional.
+          Somos o suporte contínuo para o bem-estar do seu pet.
+          Combinamos autoridade e estrutura clínica avançada com um atendimento profundamente pessoal.
+        </p>
+
+        <div class="mini-cards">
+          <div>
+            <strong>Certificado</strong>
+            <small>Rede credenciada premium</small>
+          </div>
+
+          <div>
+            <strong>Sempre Online</strong>
+            <small>Chat veterinário 24/7</small>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div
+    class="modal-overlay"
+    *ngIf="planoSelecionado"
+    (click)="fecharDetalhes()"
+  >
+
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+      <button
+        class="modal-close"
+        type="button"
+        (click)="fecharDetalhes()"
+      >
+        ×
+      </button>
+
+      <span class="modal-tag">
+        {{ planoSelecionado.tag }}
+      </span>
+
+      <h2>{{ planoSelecionado.nome }}</h2>
+
+      <p class="modal-description">
+        {{ planoSelecionado.descricao }}
+      </p>
+
+      <div class="modal-price">
+        {{ planoSelecionado.preco }}
+        <span>/mês</span>
+      </div>
+
+      <div class="modal-benefits">
+        <div *ngFor="let detalhe of planoSelecionado.detalhes">
+          <span>✓</span>
+          <p>{{ detalhe }}</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="modal-action"
+        (click)="concluirPlano()"
+      >
+        Prosseguir para o Contrato →
+      </button>
+
+    </div>
+
+  </div>
+
+</section>

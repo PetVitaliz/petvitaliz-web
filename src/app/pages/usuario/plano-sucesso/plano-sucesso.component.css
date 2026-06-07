@@ -1,0 +1,267 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+.success-page {
+  min-height: 100vh;
+  background: #f4f5f7;
+  padding: 58px 38px 80px;
+}
+
+.page-header {
+  max-width: 1100px;
+  margin: 0 auto 28px;
+}
+
+.page-header h1 {
+  margin: 0 0 6px;
+  color: #082c75;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.success-card {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 34px;
+  padding: 42px;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.07);
+  text-align: center;
+}
+
+.success-icon {
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4055c8, #5d6ed3);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.success-card h2 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 40px;
+  font-weight: 900;
+}
+
+.success-description {
+  max-width: 620px;
+  margin: 0 auto 34px;
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.plan-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.plan-info {
+  background: #fafbff;
+  border-radius: 24px;
+  padding: 28px;
+  text-align: left;
+  border: 1px solid #edf0f8;
+}
+
+.plan-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.plan-top h3 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.plan-top small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.plan-top strong {
+  color: #4055c8;
+  font-size: 34px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.plan-top span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.benefits div {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid #edf0f8;
+}
+
+.tutor-card {
+  background: linear-gradient(135deg, #4055c8, #5d6ed3);
+  border-radius: 24px;
+  padding: 28px;
+  text-align: left;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tutor-card span {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-bottom: 16px;
+}
+
+.tutor-card strong {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.tutor-card small {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.tutor-card button {
+  margin-top: 22px;
+  height: 44px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.consultation-box {
+  background: #fafbff;
+  border-radius: 22px;
+  padding: 24px;
+  border: 1px solid #edf0f8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.consultation-box strong {
+  display: block;
+  color: #111827;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.consultation-box p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.consultation-box button {
+  min-width: 170px;
+  height: 48px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #4055c8, #5d6ed3);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.profile-btn {
+  width: 320px;
+  max-width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #4055c8, #5d6ed3);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  margin-bottom: 16px;
+  box-shadow: 0 14px 28px rgba(64, 85, 200, 0.24);
+}
+
+.change-btn {
+  display: block;
+  margin: 0 auto;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .plan-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .consultation-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .consultation-box button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 650px) {
+  .success-page {
+    padding: 32px 18px 50px;
+  }
+
+  .success-card {
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .success-card h2 {
+    font-size: 32px;
+  }
+
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-top {
+    flex-direction: column;
+  }
+}

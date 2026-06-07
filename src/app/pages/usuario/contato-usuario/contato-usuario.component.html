@@ -1,0 +1,90 @@
+<main class="contato-page">
+  <section class="contato-hero">
+    <span>SUPORTE PETVITALIZ</span>
+    <h1>Como podemos ajudar você?</h1>
+    <p>
+      Entre em contato com nossa equipe para tirar dúvidas sobre consultas,
+      planos, pets cadastrados ou atendimentos.
+    </p>
+  </section>
+
+  <section class="contato-content">
+    <div class="info-card">
+      <h2>Atendimento ao usuário</h2>
+
+      <div class="info-item">
+        <strong>E-mail</strong>
+        <p>suporte&#64;petvitaliz.com</p>
+      </div>
+
+      <div class="info-item">
+        <strong>Telefone</strong>
+        <p>(11) 4002-8922</p>
+      </div>
+
+      <div class="info-item">
+        <strong>Horário</strong>
+        <p>Segunda a sexta, das 08h às 18h</p>
+      </div>
+
+      <div class="emergency-box">
+        <strong>Emergência?</strong>
+        <p>Para casos urgentes, acesse a área de emergência.</p>
+        <a routerLink="/emergencia">Ver emergência</a>
+      </div>
+    </div>
+
+    <form class="form-card" (ngSubmit)="enviarMensagem()">
+      <h2>Envie uma mensagem</h2>
+
+      <label>
+        Nome
+        <input
+          type="text"
+          name="nome"
+          [(ngModel)]="contato.nome"
+          placeholder="Digite seu nome"
+          required
+        />
+      </label>
+
+      <label>
+        E-mail
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="contato.email"
+          placeholder="Digite seu e-mail"
+          required
+        />
+      </label>
+
+      <label>
+        Assunto
+        <input
+          type="text"
+          name="assunto"
+          [(ngModel)]="contato.assunto"
+          placeholder="Sobre o que você precisa falar?"
+          required
+        />
+      </label>
+
+      <label>
+        Mensagem
+        <textarea
+          name="mensagem"
+          [(ngModel)]="contato.mensagem"
+          placeholder="Escreva sua mensagem"
+          required
+        ></textarea>
+      </label>
+
+      <button type="submit">Enviar mensagem</button>
+
+      <p class="success" *ngIf="mensagemEnviada">
+        Mensagem enviada com sucesso!
+      </p>
+    </form>
+  </section>
+</main>

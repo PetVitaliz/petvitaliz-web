@@ -1,0 +1,81 @@
+<section class="success-page">
+
+  <div class="page-header">
+    <h1>Plano Contratado</h1>
+    <p>Parabéns, seu Pet agora está protegido!</p>
+  </div>
+
+  <main class="success-card" *ngIf="plano">
+
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <h2>Assinatura Ativada com Sucesso!</h2>
+
+    <p class="success-description">
+      O plano de saúde foi integrado à sua conta PetVitaliz. 
+      Aproveite todos os benefícios médicos e exames disponíveis a partir de hoje.
+    </p>
+
+    <div class="plan-wrapper">
+
+      <div class="plan-info">
+        <div class="plan-top">
+          <div>
+            <h3>{{ plano.nome }}</h3>
+            <small>Início imediato • {{ dataInicio }}</small>
+          </div>
+          <strong>
+            R$ {{ plano.preco }}
+            <span>POR MÊS</span>
+          </strong>
+        </div>
+
+        <div class="benefits">
+          <div class="benefit-item" *ngFor="let item of plano.beneficiosArray">
+            <span class="check-box-icon">✓</span> {{ item }}
+          </div>
+        </div>
+      </div>
+
+      <aside class="tutor-card">
+        <span class="tutor-tag">Titular da Conta</span>
+        <strong class="tutor-nome">{{ nomeTutor }}</strong>
+        
+        <div class="tutor-meta">
+          <small class="meta-label">Documento de Identificação</small>
+          <small class="meta-value">***.***.***-**</small>
+        </div>
+
+        <button type="button" routerLink="/user/contato">
+          Suporte ao Cliente
+        </button>
+      </aside>
+
+    </div>
+
+    <div class="consultation-box">
+      <div class="box-text">
+        <strong>Agendar uma Consulta Veterinária?</strong>
+        <p>Sua primeira consulta de rotina para avaliação com este plano é totalmente gratuita.</p>
+      </div>
+      <button type="button" routerLink="/user/agendamento">
+        Agendar Agora
+      </button>
+    </div>
+
+    <div class="success-actions">
+      <button class="profile-btn" routerLink="/user/listar/pet">
+        Ver perfil dos meus pets
+      </button>
+      
+      <button class="change-btn" routerLink="/user/planos-pet">
+        Voltar para Planos
+      </button>
+    </div>
+
+  </main>
+</section>
