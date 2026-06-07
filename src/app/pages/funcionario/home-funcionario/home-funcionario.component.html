@@ -1,54 +1,13 @@
 <div class="page">
 
   <section class="hero-area">
-
-    <div class="hero-card">
-      <div>
-        <h1>Bom dia, Dr. Rodrigo!</h1>
-        <p>
-          Você possui <strong>{{ totalHoje }} atendimentos</strong>
-          agendados para hoje, <strong>{{ dataAtual }}.</strong>
-        </p>
-      </div>
+    <div class="hero-text">
+      <h1>Bom dia, Dr. Rodrigo!</h1>
+      <p>
+        Você possui <strong>{{ totalHoje }} atendimentos</strong>
+        agendados para hoje, <strong>{{ dataAtual }}.</strong>
+      </p>
     </div>
-
-    <aside class="next-card" *ngIf="consultasFiltradas.length > 0">
-      <div class="next-title">
-        <span class="clock-icon">
-          <i class="fa-regular fa-clock"></i>
-        </span>
-        <h3>Próxima Consulta</h3>
-      </div>
-
-      <div class="next-time">
-        {{ consultasFiltradas[0].horario || consultasFiltradas[0].hora }}
-        <small>{{ consultasFiltradas[0].periodo }}</small>
-      </div>
-
-      <div class="next-pet">
-        <div class="pet-avatar small">
-          {{ inicialPet(consultasFiltradas[0]) }}
-        </div>
-
-        <div>
-          <strong>{{ consultasFiltradas[0].pet }}</strong>
-          <span>Tutor: {{ $any(consultasFiltradas[0]).tutor || 'Não informado' }}</span>
-        </div>
-      </div>
-
-      <span class="next-reason">
-        {{ consultasFiltradas[0].motivo }}
-      </span>
-
-      <button
-        type="button"
-        class="btn-main full"
-        (click)="selecionarConsulta(consultasFiltradas[0]); iniciarConsulta()">
-        <i class="fa-solid fa-play"></i>
-        Iniciar Atendimento
-      </button>
-    </aside>
-
   </section>
 
   <section class="stats">
@@ -128,12 +87,8 @@
         </div>
       </div>
 
-      <div
-        class="row"
-        *ngFor="let consulta of consultasFiltradas"
-        [class.alert]="consulta.status === 'URGENTE'"
-        [class.selecionada]="consultaSelecionada === consulta"
-        (click)="selecionarConsulta(consulta)">
+      <div class="row" *ngFor="let consulta of consultasFiltradas" [class.alert]="consulta.status === 'URGENTE'"
+        [class.selecionada]="consultaSelecionada === consulta" (click)="selecionarConsulta(consulta)">
 
         <div class="time">
           <strong>{{ consulta.horario || consulta.hora }}</strong>
@@ -158,17 +113,13 @@
         </div>
 
         <div class="row-actions">
-          <button
-            type="button"
-            class="mini-btn"
+          <button type="button" class="mini-btn"
             (click)="selecionarConsulta(consulta); abrirProntuario(); $event.stopPropagation()">
             <i class="fa-regular fa-file-lines"></i>
             Prontuário
           </button>
 
-          <button
-            type="button"
-            class="mini-btn primary"
+          <button type="button" class="mini-btn primary"
             (click)="selecionarConsulta(consulta); iniciarConsulta(); $event.stopPropagation()">
             <i class="fa-solid fa-play"></i>
             Iniciar
