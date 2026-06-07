@@ -1,0 +1,189 @@
+<section class="emergencia-hero">
+
+  <img
+    class="emergencia-pata"
+    [src]="imgPataEmergencia"
+    alt="Pata decorativa"
+  />
+
+  <div class="emergencia-container">
+
+    <div class="emergencia-content">
+
+      <h1>
+        Sempre pronto,<br>
+        ajuda de<br>
+        emergência a<br>
+        qualquer hora
+      </h1>
+
+      <p>
+        Serviços de emergência confiáveis 24/7 garantindo
+        cuidados imediatos, atenção especializada e apoio
+        compassivo para seus amados pets em momentos
+        críticos
+      </p>
+
+      <div class="emergencia-buttons">
+
+        <button
+          class="btn-emergencia"
+          routerLink="/contato"
+        >
+          Marcar consulta
+        </button>
+
+        <button
+          class="btn-emergencia"
+          routerLink="/cadastro"
+        >
+          Começar
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="emergencia-image-area">
+
+      <img
+        class="emergencia-image"
+        [src]="imgVeterinaria"
+        alt="Veterinária"
+      />
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="emergencia-cuidados">
+
+  <div class="emergencia-cuidados-container">
+
+    <div class="emergencia-cuidados-image">
+
+      <img
+        [src]="imgEmergenciaInfo"
+        alt="Emergência veterinária"
+      />
+
+    </div>
+
+    <div class="emergencia-cuidados-content">
+
+      <h2>
+        Não se preocupe mais se o seu
+        pet precisar de ajuda urgente.
+      </h2>
+
+      <div class="emergencia-cuidados-grid">
+
+        @for (card of cardsEmergencia; track card.titulo) {
+
+          <div class="emergencia-card">
+
+            <img
+              class="emergencia-card-number"
+              [src]="card.numero"
+              alt="Número do passo"
+            />
+
+            <h3>
+              {{ card.titulo }}
+            </h3>
+
+            <p>
+              {{ card.descricao }}
+            </p>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="emergencia-final-section">
+  <h2>
+    Cuidados rápidos, confiáveis e compassivos quando seu<br />
+    animal de estimação mais precisa
+  </h2>
+
+  <div class="emergencia-final-grid">
+    <img class="emergencia-final-img" [src]="imgLinha24h" alt="Linha de emergência 24h" />
+
+    <div class="emergencia-final-text">
+      <h3>Linha de emergência 24/7</h3>
+
+      <p>
+        Fornecendo cuidados de emergência rápidos, confiáveis e compassivos
+        para seus amados animais de estimação em momentos críticos
+      </p>
+
+      <span>◎ 60 min/sessão</span>
+
+      <h4>O que você vai ganhar?</h4>
+
+      <ul>
+        <li>Suporte 24 horas</li>
+        <li>Equipe veterinária especializada</li>
+        <li>Serviços sob demanda</li>
+      </ul>
+
+      <a routerLink="/contato">Agendar uma visita</a>
+    </div>
+
+    <div class="emergencia-final-text">
+      <h3>Como funciona</h3>
+
+      <p>
+        Nosso serviço de emergência 24/7 é simples, ágil e eficiente.
+        Veja como você pode obter ajuda imediata para o seu pet:
+      </p>
+
+      <span>◎ 60 min/sessão</span>
+
+      <h4>O que esperar do atendimento?</h4>
+
+      <ul>
+        <li>Agende ou ligue diretamente</li>
+        <li>Conecte-se com um especialista</li>
+        <li>Receba orientação ou encaminhamento</li>
+      </ul>
+
+      <a routerLink="/contato">Agendar uma visita</a>
+    </div>
+
+    <img class="emergencia-final-img" [src]="imgComoFunciona" alt="Atendimento online" />
+
+    <img class="emergencia-final-img" [src]="imgSinaisEmergencia" alt="Sinais de emergência" />
+
+    <div class="emergencia-final-text">
+      <h3>Quando acionar a linha de emergência?</h3>
+
+      <p>
+        Nem sempre é fácil saber quando seu pet precisa de atendimento imediato.
+        Aqui estão alguns sinais de alerta que indicam uma emergência:
+      </p>
+
+      <span>◎ 60 min/sessão</span>
+
+      <h4>Quais os sinais?</h4>
+
+      <ul>
+        <li>Sangramento excessivo</li>
+        <li>Dificuldade para respirar</li>
+        <li>Letargia extrema</li>
+      </ul>
+
+      <a routerLink="/contato">Agendar uma visita</a>
+    </div>
+  </div>
+</section>
