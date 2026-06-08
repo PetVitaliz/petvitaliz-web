@@ -1,12 +1,16 @@
 <div class="page">
 
   <section class="hero-area">
-    <div class="hero-text">
-      <h1>Bom dia, Dr. Rodrigo!</h1>
-      <p>
-        Você possui <strong>{{ totalHoje }} atendimentos</strong>
-        agendados para hoje, <strong>{{ dataAtual }}.</strong>
-      </p>
+    <div class="hero-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div>
+        <h1>Olá, {{ saudacaoNome }}!</h1>
+        <p>
+          Você possui <strong>{{ totalHoje }} atendimentos</strong> agendados para hoje, <strong>{{ dataAtual }}.</strong>
+        </p>
+      </div>
+      <button class="btn-outline" type="button" (click)="baterPonto()" style="border-color: #2563eb; color: #2563eb;">
+        ⏱ Bater Ponto
+      </button>
     </div>
   </section>
 
@@ -16,11 +20,10 @@
       <div class="box-icon blue">
         <i class="fa-regular fa-calendar-days"></i>
       </div>
-
       <div>
         <span>ATENDIMENTOS HOJE</span>
         <h2>{{ totalHoje }}</h2>
-        <p>consultas agendadas</p>
+        <p>consultas na agenda</p>
       </div>
     </div>
 
@@ -28,35 +31,34 @@
       <div class="box-icon purple">
         <i class="fa-regular fa-file-lines"></i>
       </div>
-
       <div>
-        <span>LAUDOS PENDENTES</span>
+        <span>EM ESPERA</span>
         <h2>{{ laudosPendentes }}</h2>
-        <p>aguardando laudo</p>
+        <p>aguardando triagem</p>
       </div>
     </div>
 
-    <div class="box green-line">
+   <div class="box green-line">
       <div class="box-icon green">
         <i class="fa-solid fa-stethoscope"></i>
       </div>
-
       <div>
-        <span>CIRURGIAS AGENDADAS</span>
-        <h2>{{ cirurgiasHoje }}</h2>
-        <p>procedimentos hoje</p>
+        <span>SUA FUNÇÃO</span>
+        <h2 style="font-size: 18px; margin-top: 14px; font-weight: 800; color: #08245f; text-transform: uppercase;">
+          {{ especialidade }}
+        </h2>
+        <p>Especialidade cadastrada</p>
       </div>
     </div>
 
     <div class="box red-line danger-box">
       <div class="box-icon red">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+        <i class="fa-solid fa-clock"></i>
       </div>
-
       <div>
-        <span>URGÊNCIAS</span>
-        <h2>{{ urgenciasHoje }}</h2>
-        <p>atendimentos urgentes</p>
+        <span>CARGA DISPONÍVEL</span>
+        <h2>{{ cargaDisponivel }}</h2>
+        <p>atendimentos restantes</p>
       </div>
     </div>
 
@@ -65,7 +67,6 @@
   <section class="main-grid">
 
     <div class="card">
-
       <div class="card-header">
         <div>
           <h2>Agenda do Dia</h2>
@@ -79,7 +80,6 @@
             <i class="fa-solid fa-filter"></i>
             Filtros
           </button>
-
           <button class="btn-main" type="button" routerLink="/funcionario/consultas">
             <i class="fa-regular fa-calendar"></i>
             Ver Agenda Completa
@@ -87,11 +87,11 @@
         </div>
       </div>
 
-      <div class="row" *ngFor="let consulta of consultasFiltradas" [class.alert]="consulta.status === 'URGENTE'"
+      <div class="row" *ngFor="let consulta of consultasHomePaginadas"
         [class.selecionada]="consultaSelecionada === consulta" (click)="selecionarConsulta(consulta)">
 
         <div class="time">
-          <strong>{{ consulta.horario || consulta.hora }}</strong>
+          <strong>{{ consulta.horario }}</strong>
           <span>{{ consulta.periodo }}</span>
         </div>
 
@@ -101,7 +101,7 @@
 
         <div class="content">
           <h3>{{ consulta.pet }}</h3>
-          <p>Tutor: {{ $any(consulta).tutor || 'Não informado' }}</p>
+          <p>Tutor: {{ consulta.tutor }}</p>
         </div>
 
         <span class="reason-pill">
@@ -119,84 +119,53 @@
             Prontuário
           </button>
 
-          <button type="button" class="mini-btn primary"
+          <button type="button" class="mini-btn primary" *ngIf="consulta.status !== 'FINALIZADO'"
             (click)="selecionarConsulta(consulta); iniciarConsulta(); $event.stopPropagation()">
             <i class="fa-solid fa-play"></i>
             Iniciar
           </button>
         </div>
-
       </div>
 
       <div class="empty-state" *ngIf="consultasFiltradas.length === 0">
         <div class="empty-icon">
           <i class="fa-solid fa-check"></i>
         </div>
-
         <h3>Nenhuma consulta para este filtro</h3>
         <p>Você pode limpar os filtros ou acessar a agenda completa.</p>
-
         <button class="btn-main" type="button" (click)="aplicarFiltro('Todos')">
           Ver todas
         </button>
       </div>
-
     </div>
 
     <aside class="side">
-
       <div class="side-card">
         <h3>Acesso rápido</h3>
-
         <button type="button" routerLink="/funcionario/consultas">
-          <span class="quick-icon blue">
-            <i class="fa-regular fa-calendar-plus"></i>
-          </span>
-
+          <span class="quick-icon blue"><i class="fa-regular fa-calendar-plus"></i></span>
           <div>
-            <strong>Novo Agendamento</strong>
-            <small>Agendar nova consulta</small>
+            <strong>Minha Agenda</strong>
+            <small>Gerenciar escala</small>
           </div>
-
           <b>›</b>
         </button>
 
         <button type="button" routerLink="/funcionario/clientes">
-          <span class="quick-icon purple">
-            <i class="fa-solid fa-users"></i>
-          </span>
-
+          <span class="quick-icon purple"><i class="fa-solid fa-users"></i></span>
           <div>
             <strong>Clientes</strong>
-            <small>Ver todos os clientes</small>
+            <small>Ver todos os tutores</small>
           </div>
-
           <b>›</b>
         </button>
 
         <button type="button" routerLink="/funcionario/pets">
-          <span class="quick-icon green">
-            <i class="fa-solid fa-paw"></i>
-          </span>
-
+          <span class="quick-icon green"><i class="fa-solid fa-paw"></i></span>
           <div>
             <strong>Pets</strong>
-            <small>Ver todos os pets</small>
+            <small>Ver todos os pacientes</small>
           </div>
-
-          <b>›</b>
-        </button>
-
-        <button type="button" (click)="abrirProntuario()">
-          <span class="quick-icon orange">
-            <i class="fa-regular fa-file-lines"></i>
-          </span>
-
-          <div>
-            <strong>Laudos</strong>
-            <small>Ver laudos pendentes</small>
-          </div>
-
           <b>›</b>
         </button>
       </div>
@@ -204,104 +173,70 @@
       <div class="tip-card">
         <div>
           <strong>Dica do dia</strong>
-          <p>
-            Mantenha os dados do paciente sempre atualizados para um atendimento mais eficiente.
-          </p>
+          <p>Mantenha os dados do paciente sempre atualizados para um atendimento mais eficiente.</p>
         </div>
-
-        <button type="button">×</button>
       </div>
-
     </aside>
 
   </section>
 
   <div class="modal-fundo" *ngIf="filtroAberto">
     <div class="modal-card pequeno">
-      <button class="fechar-modal" type="button" (click)="fecharFiltros()">
-        ×
-      </button>
-
+      <button class="fechar-modal" type="button" (click)="fecharFiltros()">×</button>
       <h2>Filtros</h2>
       <p>Escolha quais consultas deseja visualizar.</p>
-
       <div class="opcoes-filtro">
-        <button type="button" (click)="aplicarFiltro('Todos')">Todos</button>
-        <button type="button" (click)="aplicarFiltro('EM ESPERA')">Em espera</button>
-        <button type="button" (click)="aplicarFiltro('CONFIRMADO')">Confirmados</button>
+        <button type="button" (click)="aplicarFiltro('Todos')">Todos os registros</button>
+        <button type="button" (click)="aplicarFiltro('EM ESPERA')">Em espera / Triagem</button>
         <button type="button" (click)="aplicarFiltro('EM ATENDIMENTO')">Em atendimento</button>
-        <button type="button" (click)="aplicarFiltro('URGENTE')">Urgentes</button>
-        <button type="button" (click)="aplicarFiltro('AGENDADO')">Agendados</button>
+        <button type="button" (click)="aplicarFiltro('FINALIZADO')">Finalizados</button>
       </div>
     </div>
   </div>
 
   <div class="modal-fundo" *ngIf="prontuarioAberto">
     <div class="modal-card prontuario-modal">
-      <button class="fechar-modal" type="button" (click)="fecharProntuario()">
-        ×
-      </button>
-
+      <button class="fechar-modal" type="button" (click)="fecharProntuario()">×</button>
       <div class="prontuario-topo" *ngIf="consultaSelecionada">
-        <div class="prontuario-avatar">
-          {{ inicialPet(consultaSelecionada) }}
-        </div>
-
+        <div class="prontuario-avatar">{{ inicialPet(consultaSelecionada) }}</div>
         <div>
-          <h2>Prontuário</h2>
-          <p>Informações do atendimento selecionado.</p>
+          <h2>Ficha de Atendimento</h2>
+          <p>Acompanhamento médico do paciente.</p>
         </div>
       </div>
 
       <div class="prontuario-card" *ngIf="consultaSelecionada">
         <div class="prontuario-nome">
           <h3>{{ consultaSelecionada.pet }}</h3>
-
-          <span class="tag" [ngClass]="consultaSelecionada.tipo">
-            {{ consultaSelecionada.status }}
-          </span>
+          <span class="tag" [ngClass]="consultaSelecionada.tipo">{{ consultaSelecionada.status }}</span>
         </div>
-
         <div class="prontuario-info">
           <div>
-            <small>Motivo da consulta</small>
+            <small>Responsável / Tutor</small>
+            <strong>{{ consultaSelecionada.tutor }}</strong>
+          </div>
+          <div>
+            <small>Horário de Entrada</small>
+            <strong>{{ consultaSelecionada.horario }} {{ consultaSelecionada.periodo }}</strong>
+          </div>
+          <div>
+            <small>Procedimento</small>
             <strong>{{ consultaSelecionada.motivo }}</strong>
           </div>
-
           <div>
-            <small>Horário</small>
-            <strong>
-              {{ consultaSelecionada.horario || consultaSelecionada.hora }}
-              {{ consultaSelecionada.periodo }}
-            </strong>
-          </div>
-
-          <div>
-            <small>Veterinário</small>
-            <strong>Dr. Rodrigo</strong>
-          </div>
-
-          <div>
-            <small>Data</small>
+            <small>Data Atual</small>
             <strong>{{ dataAtual }}</strong>
           </div>
         </div>
-
         <div class="prontuario-observacao">
-          <small>Observações</small>
-          <p>
-            Paciente selecionado para acompanhamento clínico.
-            Verifique histórico, sintomas e conduta médica antes de iniciar o atendimento.
-          </p>
+          <small>Queixa Principal / Sintomas relatados pelo tutor</small>
+          <p>{{ consultaSelecionada.observacoes }}</p>
         </div>
       </div>
 
       <div class="modal-botoes">
-        <button class="btn-cancelar" type="button" (click)="fecharProntuario()">
-          Cancelar
-        </button>
-
-        <button class="btn-salvar" type="button" (click)="iniciarConsulta()">
+        <button class="btn-cancelar" type="button" (click)="fecharProntuario()">Voltar</button>
+        <button class="btn-salvar" type="button" *ngIf="consultaSelecionada?.status !== 'FINALIZADO'" (click)="iniciarConsulta()">
           Iniciar Consulta
         </button>
       </div>
@@ -310,16 +245,10 @@
 
   <div class="modal-fundo" *ngIf="dialogoAberto">
     <div class="dialogo-card">
-      <div class="dialogo-icone">
-        <i class="fa-solid fa-check"></i>
-      </div>
-
+      <div class="dialogo-icone"><i class="fa-solid fa-check"></i></div>
       <h2>{{ dialogoTitulo }}</h2>
       <p>{{ dialogoMensagem }}</p>
-
-      <button class="btn-dialogo" type="button" (click)="fecharDialogo()">
-        OK
-      </button>
+      <button class="btn-dialogo" type="button" (click)="fecharDialogo()">OK</button>
     </div>
   </div>
 

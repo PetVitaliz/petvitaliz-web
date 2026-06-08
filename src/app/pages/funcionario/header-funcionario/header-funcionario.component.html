@@ -1,5 +1,4 @@
 <header class="header-funcionario">
-
   <div class="header-container">
 
     <div
@@ -11,7 +10,6 @@
     </div>
 
     <nav class="navbar" [class.open]="isMobileMenuOpen">
-
       <a
         routerLink="/funcionario/home"
         routerLinkActive="ativo"
@@ -44,11 +42,9 @@
       >
         Pets
       </a>
-
     </nav>
 
     <div class="user-area">
-
       <button
         class="menu-mobile"
         type="button"
@@ -58,20 +54,18 @@
       </button>
 
       <div class="perfil-dropdown">
-
         <button
           type="button"
           class="perfil-btn"
           (click)="toggleMenu($event)"
         >
-
           <img
             [src]="fotoPerfil"
             alt="Funcionário"
           >
 
           <span class="perfil-nome">
-            Dr. Rogério Souza
+            {{ nomeFuncionario }}
           </span>
 
           <svg
@@ -81,7 +75,6 @@
           >
             <path d="M6 9l6 6 6-6" />
           </svg>
-
         </button>
 
         <div
@@ -89,7 +82,6 @@
           *ngIf="isMenuOpen"
           (click)="$event.stopPropagation()"
         >
-
           <a
             routerLink="/funcionario/perfil"
             (click)="closeAllMenus()"
@@ -103,13 +95,9 @@
           >
             Sair
           </button>
-
         </div>
-
       </div>
-
     </div>
 
   </div>
-
 </header>

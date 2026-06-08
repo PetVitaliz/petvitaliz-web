@@ -41,10 +41,10 @@ export class ListarCadastroPetComponent implements OnInit {
   ngOnInit(): void {
     this.carregarDadosLocais();
     this.buscarPetsDoBanco();
+    this.buscarPlanoAtivoReal();
   }
 
   carregarDadosLocais(): void {
-    this.planoContratado = JSON.parse(localStorage.getItem('planoSelecionado') || 'null');
     this.usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || 'null');
   }
 
@@ -65,21 +65,25 @@ export class ListarCadastroPetComponent implements OnInit {
   buscarPlanoAtivoReal(): void {
     this.http.get(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
       next: (response: any) => {
-        if (response && response.tem_plano) {
-          const partesNome = response.include.nome.split(' | ');
+        if (response && response.tem_plano && response.include) {
+          const partesNome = response.include.nome ? response.include.nome.split(' | ') : ['Plano'];
           
           this.planoContratado = {
             nome: partesNome[0],
             preco: `R$ ${response.include.preco}`,
             descricao: response.include.descricao
           };
+          
+          localStorage.setItem('planoSelecionado', JSON.stringify(this.planoContratado));
         } else {
           this.planoContratado = null;
+          localStorage.removeItem('planoSelecionado');
         }
       },
       error: (err) => {
         console.error('Erro ao buscar plano ativo do pet:', err);
         this.planoContratado = null;
+        localStorage.removeItem('planoSelecionado');
       }
     });
   }
@@ -219,7 +223,7 @@ export class ListarCadastroPetComponent implements OnInit {
     this.http.put(`${environment.apiUrl}/user/listar/pet/editar/${this.petForm.id_pet}`, dadosAtualizados, { withCredentials: true })
       .subscribe({
         next: () => {
-          this.sucesso = 'Informações atualizadas com sucesso.';
+          this.sucesso = 'Informações updated com sucesso.';
           this.editando = false;
           this.buscarPetsDoBanco();
         },

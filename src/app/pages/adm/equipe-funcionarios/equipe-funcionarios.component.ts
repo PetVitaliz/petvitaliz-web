@@ -150,7 +150,18 @@ export class EquipeFuncionariosComponent implements OnInit {
     this.mensagemErro = '';
     this.mensagemSucesso = '';
     this.fotoPreview = funcionario.avatar;
-    this.funcionarioForm = { ...funcionario, senha: '' };
+    
+    this.funcionarioForm = {
+      id: funcionario.id,
+      nome: funcionario.nome,
+      sobrenome: funcionario.sobrenome ? funcionario.sobrenome.trim() : '',
+      cargo: funcionario.cargo,
+      email: funcionario.email,
+      status: funcionario.status,
+      avatar: funcionario.avatar,
+      senha: ''
+    };
+    
     this.modalAberto = true;
   }
 

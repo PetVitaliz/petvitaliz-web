@@ -99,7 +99,6 @@
           <article class="section-card">
             <div class="section-title">
               <span>01</span>
-
               <div>
                 <h3>Dados do Tutor</h3>
                 <p>Informações principais do responsável.</p>
@@ -132,7 +131,6 @@
           <article class="section-card plan-section" *ngIf="planoContratado">
             <div class="section-title">
               <span>02</span>
-
               <div>
                 <h3>Plano Contratado</h3>
                 <p>{{ planoContratado.descricao }}</p>
@@ -157,7 +155,6 @@
           <article class="section-card plan-section empty-plan" *ngIf="!planoContratado">
             <div class="section-title">
               <span>02</span>
-
               <div>
                 <h3>Plano Contratado</h3>
                 <p>Você ainda não possui um plano ativo.</p>
@@ -169,15 +166,14 @@
                 <small>PLANO</small>
                 <strong>Nenhum plano ativo</strong>
               </div>
-
-              <a routerLink="/usuario/planos-pet">Contratar plano</a>
+              
+              <a routerLink="/user/planos-pet">Contratar plano</a>
             </div>
           </article>
 
           <article class="section-card">
             <div class="section-title">
               <span>03</span>
-
               <div>
                 <h3>Dados do Pet</h3>
                 <p>Informações cadastradas pelo tutor.</p>
@@ -202,7 +198,7 @@
 
               <div>
                 <small>PESO ATUAL</small>
-                <strong>{{ petSelecionado.peso || petSelecionado.Peso || '0' }} kg</strong>
+                <strong>{{ petSelecionado.peso }} kg</strong>
               </div>
 
               <div>
@@ -235,23 +231,16 @@
 
         <div class="pet-modal-header">
           <h2>Cadastrar Pet</h2>
-
-          <button type="button" class="btn-close-modal" (click)="fecharCadastroPet()">
-            ×
-          </button>
+          <button type="button" class="btn-close-modal" (click)="fecharCadastroPet()">×</button>
         </div>
 
         <div class="pet-modal-body">
-
           <label class="modal-photo-upload">
             <input type="file" accept="image/*" (change)="carregarFoto($event)">
-
             <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto do pet">
-
             <div *ngIf="!fotoPreview" class="modal-photo-placeholder">
               <span>Adicionar foto</span>
             </div>
-
             <strong>+</strong>
           </label>
 
@@ -263,7 +252,6 @@
 
             <div class="modal-field">
               <label>Espécie</label>
-
               <select [(ngModel)]="especie">
                 <option value="">Selecione</option>
                 <option value="Cachorro">Cachorro</option>
@@ -276,7 +264,6 @@
 
             <div class="modal-field">
               <label>Sexo</label>
-
               <select [(ngModel)]="sexo">
                 <option value="">Selecione</option>
                 <option value="Macho">Macho</option>
@@ -291,12 +278,11 @@
 
             <div class="modal-field">
               <label>Idade</label>
-              <input type="text" placeholder="Ex: 3 anos" [(ngModel)]="idade">
+              <input type="text" placeholder="Ex: 3" [(ngModel)]="idade">
             </div>
 
             <div class="modal-field">
               <label>Peso (kg)</label>
-
               <div class="modal-weight-field">
                 <input type="number" min="0.1" max="100" step="0.1" placeholder="Ex: 12.5" [(ngModel)]="peso">
                 <span>KG</span>
@@ -306,10 +292,7 @@
         </div>
 
         <div class="pet-modal-actions">
-          <button type="button" class="btn-modal-cancel" (click)="fecharCadastroPet()">
-            Cancelar
-          </button>
-
+          <button type="button" class="btn-modal-cancel" (click)="fecharCadastroPet()">Cancelar</button>
           <button type="button" class="btn-modal-save" [disabled]="salvando" (click)="confirmarCadastro()">
             {{ salvando ? 'Salvando...' : 'Salvar' }}
           </button>
@@ -322,10 +305,7 @@
       <div class="modal-card">
         <div class="modal-header">
           <h2>Editar Dados de {{ petForm.nome }}</h2>
-
-          <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">
-            ×
-          </button>
+          <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">×</button>
         </div>
 
         <div class="modal-body">
