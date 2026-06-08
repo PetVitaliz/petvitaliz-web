@@ -35,7 +35,7 @@
         <div class="beneficios">
           <h4>Benefícios inclusos</h4>
           <p class="descricao-plano" *ngIf="plano.descricao">{{ plano.descricao }}</p>
-
+          
           <ul *ngIf="plano.listaBeneficios && plano.listaBeneficios.length > 0">
             <li *ngFor="let beneficio of plano.listaBeneficios">
               ✓ {{ beneficio }}
@@ -57,9 +57,7 @@
 
     <ng-template #semPlano>
       <div class="sem-plano">
-        <div class="icone">
-          <i class="bi bi-shield-check"></i>
-        </div>
+        <div class="icone">🐾</div>
         <h2>Nenhum plano contratado</h2>
         <p>
           Seu pet ainda não possui um plano ativo no momento.
