@@ -24,11 +24,9 @@
       </div>
 
       <div class="dados-principais">
-
         <span>Clinical Guardian</span>
-
-        <h2>{{ funcionario.nome }}</h2>
-
+        <h2>{{ funcionario.nome }} {{ funcionario.sobrenome }}</h2>
+        
         <div class="info-linha">
 
           <p>
@@ -70,29 +68,30 @@
 
         </div>
 
-        <div class="form-grid">
+       <div class="form-grid">
 
           <div>
-            <label>Nome completo</label>
-
+            <label>Nome</label>
             <input type="text" [(ngModel)]="dadosTemp.nome" [disabled]="!editando">
           </div>
 
           <div>
-            <label>E-mail profissional</label>
+            <label>Sobrenome</label>
+            <input type="text" [(ngModel)]="dadosTemp.sobrenome" [disabled]="!editando">
+          </div>
 
+          <div>
+            <label>E-mail profissional</label>
             <input type="email" [(ngModel)]="dadosTemp.email" [disabled]="!editando">
           </div>
 
           <div>
             <label>Telefone de contato</label>
-
             <input type="text" [(ngModel)]="dadosTemp.telefone" [disabled]="!editando">
           </div>
 
           <div>
             <label>Data de nascimento</label>
-
             <input type="text" [(ngModel)]="dadosTemp.nascimento" [disabled]="!editando">
           </div>
 

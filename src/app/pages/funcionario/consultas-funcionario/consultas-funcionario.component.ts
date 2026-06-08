@@ -1,7 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ConsultasService, ConsultaFuncionario } from '../../../core/services/consultas.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+
+export interface ConsultaFuncionario {
+  id: number;
+  hora: string;
+  horario: string;
+  periodo: string;
+  pet: string;
+  idade: string;
+  tutor: string;
+  motivo: string;
+  status: string;
+  data: string;
+  imagem: string;
+  tipo: string;
+}
 
 @Component({
   selector: 'app-consultas-funcionario',
@@ -10,7 +26,7 @@ import { ConsultasService, ConsultaFuncionario } from '../../../core/services/co
   templateUrl: './consultas-funcionario.component.html',
   styleUrl: './consultas-funcionario.component.css'
 })
-export class ConsultasFuncionarioComponent {
+export class ConsultasFuncionarioComponent implements OnInit {
 
   filtros = {
     pet: '',
@@ -28,22 +44,16 @@ export class ConsultasFuncionarioComponent {
   itensPorPagina = 5;
 
   consultas: ConsultaFuncionario[] = [];
-
   consultaSelecionada: ConsultaFuncionario | null = null;
+  
   modalDetalhesAberto = false;
   modalEdicaoAberto = false;
   modalNovaConsultaAberto = false;
 
   consultaEditando: ConsultaFuncionario = this.criarConsultaVazia();
-
   dataMinima = this.pegarDataHoje();
 
-  horariosDisponiveis = [
-    '08:00',
-    '09:00',
-    '10:00',
-    '11:00'
-  ];
+  horariosDisponiveis = ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
   novaConsulta = {
     hora: '',
@@ -55,27 +65,54 @@ export class ConsultasFuncionarioComponent {
     data: ''
   };
 
-  constructor(private consultasService: ConsultasService) {
-    this.consultas = this.consultasService.listarConsultas();
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.carregarConsultasDoBanco();
+  }
+
+  carregarConsultasDoBanco(): void {
+    this.http.get<any>(`${environment.apiUrl}/funcionario/consultas`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        if (res && res.consultas) {
+          this.consultas = res.consultas.map((c: any) => {
+            const [horaNum] = c.hora_inicio.split(':').map(Number);
+            const statusMapeado = this.normalizarStatus(c.status);
+
+            return {
+              id: c.id_consulta,
+              hora: c.hora_inicio,
+              horario: c.hora_inicio,
+              periodo: horaNum >= 12 ? 'PM' : 'AM',
+              pet: c.pet?.nome || 'Paciente',
+              idade: c.pet?.idade ? `${c.pet.idade} ano(s)` : 'Não informada',
+              tutor: c.pet?.usuario ? `${c.pet.usuario.nome} ${c.pet.usuario.sobrenome || ''}`.trim() : 'Não informado',
+              motivo: 'Atendimento Clínico',
+              status: statusMapeado,
+              data: c.data_consulta ? c.data_consulta.split('T')[0] : '',
+              imagem: '',
+              tipo: this.definirTipoStatus(statusMapeado)
+            };
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao buscar consultas do funcionário:', err);
+        this.consultas = [];
+      }
+    });
   }
 
   get consultasFiltradas(): ConsultaFuncionario[] {
     return this.consultas.filter(consulta => {
       const pet = this.filtrosAplicados.pet.trim().toLowerCase();
 
-      const matchPet =
-        !pet ||
-        consulta.pet.toLowerCase().includes(pet);
-
-      const matchData =
-        !this.filtrosAplicados.data ||
-        consulta.data === this.filtrosAplicados.data;
+      const matchPet = !pet || consulta.pet.toLowerCase().includes(pet);
+      const matchData = !this.filtrosAplicados.data || consulta.data === this.filtrosAplicados.data;
 
       const statusFiltro = this.normalizarStatus(this.filtrosAplicados.status);
-
-      const matchStatus =
-        this.filtrosAplicados.status === 'Todos os Status' ||
-        this.normalizarStatus(consulta.status) === statusFiltro;
+      const matchStatus = this.filtrosAplicados.status === 'Todos os Status' || 
+                          this.normalizarStatus(consulta.status) === statusFiltro;
 
       return matchPet && matchData && matchStatus;
     });
@@ -110,12 +147,7 @@ export class ConsultasFuncionarioComponent {
   }
 
   limparFiltros(): void {
-    this.filtros = {
-      pet: '',
-      data: '',
-      status: 'Todos os Status'
-    };
-
+    this.filtros = { pet: '', data: '', status: 'Todos os Status' };
     this.filtrosAplicados = { ...this.filtros };
     this.paginaAtual = 1;
   }
@@ -127,84 +159,18 @@ export class ConsultasFuncionarioComponent {
 
   abrirNovaConsulta(): void {
     this.dataMinima = this.pegarDataHoje();
-
     this.novaConsulta = {
-      hora: '',
-      periodo: 'AM',
-      pet: '',
-      idade: '',
-      tutor: '',
-      tipoAtendimento: 'Consulta de rotina',
-      data: this.pegarDataHoje()
+      hora: '', periodo: 'AM', pet: '', idade: '', tutor: '',
+      tipoAtendimento: 'Consulta de rotina', data: this.pegarDataHoje()
     };
-
     this.modalNovaConsultaAberto = true;
   }
 
-  fecharNovaConsulta(): void {
-    this.modalNovaConsultaAberto = false;
-  }
-
-  validarIdade(): void {
-    this.novaConsulta.idade = this.novaConsulta.idade
-      .replace(/\D/g, '')
-      .slice(0, 2);
-  }
+  fecharNovaConsulta(): void { this.modalNovaConsultaAberto = false; }
+  validarIdade(): void { this.novaConsulta.idade = this.novaConsulta.idade.replace(/\D/g, '').slice(0, 2); }
 
   salvarNovaConsulta(): void {
-    this.validarIdade();
-
-    if (
-      !this.novaConsulta.hora ||
-      !this.novaConsulta.pet ||
-      !this.novaConsulta.idade ||
-      !this.novaConsulta.tutor ||
-      !this.novaConsulta.tipoAtendimento ||
-      !this.novaConsulta.data
-    ) {
-      alert('Preencha todos os campos antes de salvar a consulta.');
-      return;
-    }
-
-    if (this.dataJaPassou(this.novaConsulta.data)) {
-      alert('Não é possível marcar consulta em uma data que já passou.');
-      return;
-    }
-
-    if (!this.horariosDisponiveis.includes(this.novaConsulta.hora)) {
-      alert('Selecione um horário válido disponível na agenda.');
-      return;
-    }
-
-    const horarioOcupado = this.consultas.some(consulta =>
-      consulta.data === this.novaConsulta.data &&
-      consulta.hora === this.novaConsulta.hora &&
-      this.normalizarStatus(consulta.status) !== 'CANCELADO'
-    );
-
-    if (horarioOcupado) {
-      alert('Esse horário já está ocupado. Escolha outro horário disponível.');
-      return;
-    }
-
-    const consulta: ConsultaFuncionario = {
-      id: 0,
-      hora: this.novaConsulta.hora,
-      horario: this.novaConsulta.hora,
-      periodo: 'AM',
-      pet: this.novaConsulta.pet,
-      idade: `${this.novaConsulta.idade} anos`,
-      tutor: this.novaConsulta.tutor,
-      motivo: this.novaConsulta.tipoAtendimento,
-      status: 'PENDENTE',
-      data: this.novaConsulta.data,
-      imagem: '',
-      tipo: 'gray'
-    };
-
-    this.consultasService.adicionarConsulta(consulta);
-    this.consultas = this.consultasService.listarConsultas();
-    this.paginaAtual = 1;
+    alert('Para agendar novas consultas de tutores, utilize o fluxo de agendamento principal do cliente.');
     this.fecharNovaConsulta();
   }
 
@@ -213,9 +179,7 @@ export class ConsultasFuncionarioComponent {
     this.modalDetalhesAberto = true;
   }
 
-  fecharDetalhes(): void {
-    this.modalDetalhesAberto = false;
-  }
+  fecharDetalhes(): void { this.modalDetalhesAberto = false; }
 
   abrirEdicao(consulta: ConsultaFuncionario): void {
     this.consultaSelecionada = consulta;
@@ -223,35 +187,29 @@ export class ConsultasFuncionarioComponent {
     this.modalEdicaoAberto = true;
   }
 
-  fecharEdicao(): void {
-    this.modalEdicaoAberto = false;
-  }
+  fecharEdicao(): void { this.modalEdicaoAberto = false; }
 
   salvarEdicao(): void {
     if (!this.consultaSelecionada) return;
-
-    const status = this.normalizarStatus(this.consultaEditando.status);
-
-    Object.assign(this.consultaSelecionada, {
-      ...this.consultaEditando,
-      status,
-      tipo: this.definirTipoStatus(status)
-    });
-
-    this.consultasService.salvarAlteracoes();
-    this.consultas = this.consultasService.listarConsultas();
+    this.alterarStatus(this.consultaSelecionada, this.consultaEditando.status);
     this.fecharEdicao();
   }
 
   alterarStatus(consulta: ConsultaFuncionario, status: string): void {
     if (!status) return;
-
     const statusNormalizado = this.normalizarStatus(status);
 
-    this.consultasService.atualizarStatus(consulta, statusNormalizado);
+    let statusBanco = 'em_espera';
+    if (statusNormalizado === 'EM ATENDIMENTO') statusBanco = 'em_endamento';
+    else if (statusNormalizado === 'FINALIZADO') statusBanco = 'finalizado';
 
-    consulta.status = statusNormalizado;
-    consulta.tipo = this.definirTipoStatus(statusNormalizado);
+    this.http.put(`${environment.apiUrl}/funcionario/consultas/atualizar/${consulta.id}`, {}, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          this.carregarConsultasDoBanco();
+        },
+        error: (err) => console.error('Erro ao atualizar status da consulta:', err)
+      });
   }
 
   iniciarConsulta(consulta: ConsultaFuncionario): void {
@@ -259,17 +217,7 @@ export class ConsultasFuncionarioComponent {
   }
 
   excluirConsulta(consulta: ConsultaFuncionario): void {
-    const confirmar = confirm(`Deseja excluir a consulta de ${consulta.pet}?`);
-
-    if (!confirmar) return;
-
-    this.consultasService.removerConsulta(consulta);
-    this.consultas = this.consultasService.listarConsultas();
-    this.consultaSelecionada = null;
-
-    if (this.paginaAtual > this.totalPaginas) {
-      this.paginaAtual = this.totalPaginas;
-    }
+    alert('A exclusão de registros históricos deve ser realizada através do painel de administração.');
   }
 
   inicialPet(consulta: ConsultaFuncionario | null): string {
@@ -278,75 +226,38 @@ export class ConsultasFuncionarioComponent {
   }
 
   statusClasse(status: string): string {
-    return this.normalizarStatus(status)
-      .toLowerCase()
-      .replace(/\s+/g, '-');
+    return this.normalizarStatus(status).toLowerCase().replace(/\s+/g, '-');
   }
 
   private definirTipoStatus(status: string): string {
-    const statusNormalizado = this.normalizarStatus(status);
-
-    if (statusNormalizado === 'CONFIRMADO' || statusNormalizado === 'CONFIRMADA') return 'green';
-    if (statusNormalizado === 'URGENTE' || statusNormalizado === 'CANCELADO' || statusNormalizado === 'CANCELADA') return 'red';
-    if (statusNormalizado === 'EM ATENDIMENTO') return 'blue';
-    if (statusNormalizado === 'FINALIZADO' || statusNormalizado === 'FINALIZADA') return 'blue';
-    if (statusNormalizado === 'PENDENTE') return 'gray';
-
+    const st = this.normalizarStatus(status);
+    if (st === 'CONFIRMADO' || st === 'CONFIRMADA') return 'green';
+    if (st === 'URGENTE' || st === 'CANCELADO' || st === 'CANCELADA') return 'red';
+    if (st === 'EM ATENDIMENTO' || st === 'EM_ENDAMENTO') return 'blue';
+    if (st === 'FINALIZADO' || st === 'FINALIZADA') return 'green';
     return 'gray';
   }
 
-  private normalizarStatus(status: string): string {
-    return status
-      .trim()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toUpperCase();
+  public normalizarStatus(status: string): string {
+    if (!status) return 'PENDENTE';
+    const st = status.trim().toUpperCase();
+    if (st === 'EM_ESPERA') return 'EM ESPERA';
+    if (st === 'EM_ENDAMENTO') return 'EM ATENDIMENTO';
+    return st;
   }
 
   private pegarDataHoje(): string {
     const hoje = new Date();
-    const ano = hoje.getFullYear();
-    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-    const dia = String(hoje.getDate()).padStart(2, '0');
-
-    return `${ano}-${mes}-${dia}`;
-  }
-
-  private dataJaPassou(data: string): boolean {
-    const hoje = new Date(this.pegarDataHoje() + 'T00:00:00');
-    const selecionada = new Date(data + 'T00:00:00');
-
-    return selecionada < hoje;
+    return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
   }
 
   formatarData(data: string): string {
-    if (!data) {
-      return 'Data não informada';
-    }
-
-    const [ano, mes, dia] = data.split('-');
-
-    if (!ano || !mes || !dia) {
-      return data;
-    }
-
-    return `${dia}/${mes}/${ano}`;
+    if (!data) return 'Data não informada';
+    const partes = data.split('-');
+    return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : data;
   }
 
   private criarConsultaVazia(): ConsultaFuncionario {
-    return {
-      id: 0,
-      hora: '',
-      horario: '',
-      periodo: '',
-      pet: '',
-      idade: '',
-      tutor: '',
-      motivo: '',
-      status: '',
-      data: '',
-      imagem: '',
-      tipo: ''
-    };
+    return { id: 0, hora: '', horario: '', periodo: '', pet: '', idade: '', tutor: '', motivo: '', status: '', data: '', imagem: '', tipo: '' };
   }
 }

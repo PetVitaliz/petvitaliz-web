@@ -43,14 +43,14 @@
       <div class="input-group">
         <label>Status</label>
         <select [(ngModel)]="filtros.status">
-          <option>Todos os Status</option>
-          <option>Confirmado</option>
-          <option>Agendado</option>
-          <option>Em espera</option>
-          <option>Em atendimento</option>
-          <option>Urgente</option>
-          <option>Finalizado</option>
-          <option>Cancelado</option>
+          <option value="Todos os Status">Todos os Status</option>
+          <option value="CONFIRMADO">Confirmado</option>
+          <option value="AGENDADO">Agendado</option>
+          <option value="EM ESPERA">Em espera / Triagem</option>
+          <option value="EM ATENDIMENTO">Em atendimento</option>
+          <option value="URGENTE">Urgente</option>
+          <option value="FINALIZADO">Finalizado</option>
+          <option value="CANCELADO">Cancelado</option>
         </select>
       </div>
 

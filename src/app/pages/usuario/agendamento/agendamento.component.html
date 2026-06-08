@@ -9,55 +9,45 @@
   </div>
 
   <div class="stepper-card">
-
     <div class="stepper-top">
-
       <div class="step" [class.active]="etapaAtual >= 1">
         <div class="circle">1</div>
         <span>Selecionar Pet</span>
       </div>
-
       <div class="step" [class.active]="etapaAtual >= 2">
         <div class="circle">2</div>
         <span>Escolher Serviço</span>
       </div>
-
       <div class="step" [class.active]="etapaAtual >= 3">
         <div class="circle">3</div>
         <span>Data e Horário</span>
       </div>
-
       <div class="step" [class.active]="etapaAtual >= 4">
         <div class="circle">4</div>
         <span>Confirmação</span>
       </div>
-
     </div>
 
     <div class="content-box">
-
       <div class="alert-error" *ngIf="mensagemErro">
         {{ mensagemErro }}
       </div>
-
       <div class="alert-success" *ngIf="mensagemSucesso">
         {{ mensagemSucesso }}
       </div>
 
       <div *ngIf="etapaAtual === 1">
-
         <div class="section-title">
           <h2>Para qual pet é o atendimento?</h2>
-          <p>Selecione um de seus pets cadastrados.</p>
+          <p>Selecione um de seus pets cadastrados na sua conta.</p>
         </div>
 
         <div class="pets-grid">
-
           <div
             class="pet-card"
             *ngFor="let pet of pets"
-            [class.selected]="petSelecionado === pet.nome"
-            (click)="selecionarPet(pet.nome)"
+            [class.selected]="petSelecionadoId === pet.id_pet"
+            (click)="selecionarPet(pet)"
           >
             <button
               type="button"
@@ -69,54 +59,41 @@
             </button>
 
             <div class="check">✓</div>
-
-            <img [src]="pet.foto" [alt]="pet.nome">
-
+            <img [src]="pet.foto_url || 'assets/img/banner.png'" [alt]="pet.nome">
             <h3>{{ pet.nome }}</h3>
-            <small>{{ pet.tipo }} • {{ pet.idade }}</small>
+            <small>ESPÉCIE: {{ pet.especie }}</small>
           </div>
 
-          <button
-            type="button"
-            class="pet-card add-card"
-            (click)="irParaCadastroPet()"
-          >
+          <button type="button" class="pet-card add-card" (click)="irParaCadastroPet()">
             <div class="plus">+</div>
             <h3>Novo Pet</h3>
             <small>Cadastrar Pet</small>
           </button>
-
         </div>
-
       </div>
 
       <div *ngIf="etapaAtual === 2">
-
         <div class="section-title">
           <h2>Escolha o serviço</h2>
-          <p>Selecione o tipo de atendimento desejado.</p>
+          <p>Selecione o tipo de atendimento clínico ou estético desejado.</p>
         </div>
 
         <div class="services-grid">
-
           <button
             type="button"
-            *ngFor="let servico of servicos"
-            [class.active]="servicoSelecionado === servico"
-            (click)="selecionarServico(servico)"
+            *ngFor="let s of servicosCard"
+            [class.active]="servicoSelecionadoValor === s.valor"
+            (click)="selecionarServico(s.valor)"
           >
-            {{ servico }}
+            {{ s.label }}
           </button>
-
         </div>
-
       </div>
 
       <div *ngIf="etapaAtual === 3">
-
         <div class="section-title">
-          <h2>Escolha a data e horário</h2>
-          <p>Horários disponíveis para atendimento.</p>
+          <h2>Escolha a data, horário e detalhes</h2>
+          <p>Selecione o dia e digite observações clínicas importantes.</p>
         </div>
 
         <input
@@ -125,78 +102,74 @@
           [(ngModel)]="dataSelecionada"
           [min]="obterDataMinima()"
           (change)="aoAlterarData()"
+          [disabled]="carregando"
         >
 
-        <div class="horarios-grid">
+        <div style="margin-bottom: 24px;">
+          <label style="color: #082c75; font-weight: 800; font-size: 14px; display: block; margin-bottom: 8px;">
+            Observações ou Sintomas (Opcional):
+          </label>
+          <textarea 
+            [(ngModel)]="observacoes" 
+            placeholder="Ex: Pet está tossindo ou precisa de cuidado especial com a pele no banho..." 
+            style="width: 100%; min-height: 80px; border-radius: 16px; border: 1px solid #dbe1ee; padding: 12px; outline: none; font-size: 14px;"
+            [disabled]="carregando">
+          </textarea>
+        </div>
 
+        <div class="horarios-grid">
           <button
             type="button"
             *ngFor="let horario of horarios"
             [class.active]="horarioSelecionado === horario"
-            [disabled]="horarioIndisponivel(horario)"
+            [disabled]="horarioIndisponivel(horario) || horarioJaOcupado(horario) || carregando"
             (click)="selecionarHorario(horario)"
           >
             {{ horario }}
           </button>
-
         </div>
-
       </div>
 
       <div *ngIf="etapaAtual === 4">
-
         <div class="confirmacao">
-
           <div class="success-icon">✓</div>
-
           <h2>Agendamento confirmado!</h2>
-          <p>Seu horário foi reservado com sucesso.</p>
+          <p>Seu horário foi transmitido aos profissionais da clínica.</p>
 
           <div class="summary">
-
             <div>
               <span>Pet</span>
-              <strong>{{ petSelecionado }}</strong>
+              <strong>{{ petSelecionadoNome }}</strong>
             </div>
-
             <div>
               <span>Serviço</span>
-              <strong>{{ servicoSelecionado }}</strong>
+              <strong>{{ servicoSelecionadoValor === 'veterinario' ? 'Veterinário' : 'Tosador' }}</strong>
             </div>
-
             <div>
               <span>Data</span>
               <strong>{{ formatarData(dataSelecionada) }}</strong>
             </div>
-
             <div>
               <span>Horário</span>
               <strong>{{ horarioSelecionado }}</strong>
             </div>
-
           </div>
 
           <div class="confirm-actions">
-            <button type="button" class="btn-secondary" (click)="voltarParaInicio()">
-              Voltar
-            </button>
-
             <button type="button" class="btn-primary" (click)="limparFormulario()">
               Novo agendamento
             </button>
           </div>
-
         </div>
-
       </div>
 
       <div class="bottom-actions" *ngIf="etapaAtual < 4">
-
         <button
           type="button"
           class="btn-secondary"
           *ngIf="etapaAtual > 1"
           (click)="voltar()"
+          [disabled]="carregando"
         >
           Voltar
         </button>
@@ -204,60 +177,42 @@
         <button
           type="button"
           class="btn-primary"
-          [disabled]="!podeContinuar()"
+          [disabled]="!podeContinuar() || carregando"
           (click)="continuar()"
         >
-          Continuar
+          {{ carregando ? 'Processando...' : 'Continuar' }}
         </button>
-
       </div>
-
     </div>
-
   </div>
 
   <div class="management-grid">
-
     <div class="management-card">
       <div class="management-header">
         <div>
           <span>ATIVOS</span>
-          <h2>Agendamentos marcados</h2>
+          <h2>Consultas Marcadas</h2>
         </div>
       </div>
 
       <div class="empty-state" *ngIf="agendamentosAtivos.length === 0">
-        Nenhum agendamento ativo encontrado.
+        Nenhuma consulta ativa agendada no momento.
       </div>
 
       <div class="appointment-list" *ngIf="agendamentosAtivos.length > 0">
-
-        <div class="appointment-card" *ngFor="let agendamento of agendamentosAtivos">
-
+        <div class="appointment-card" *ngFor="let a of agendamentosAtivos">
           <div>
-            <h3>{{ agendamento.pet }}</h3>
-            <p>{{ agendamento.servico }}</p>
+            <h3>{{ a.nome_pet }}</h3>
+            <p>{{ a.servico }} <span *ngIf="a.nome_funcionario">({{ a.nome_funcionario }})</span></p>
           </div>
-
           <div class="appointment-info">
-            <span>{{ formatarData(agendamento.data) }}</span>
-            <strong>{{ agendamento.horario }}</strong>
+            <span>{{ formatarData(a.data_consulta) }}</span>
+            <strong>{{ a.hora_inicio }}</strong>
           </div>
-
           <div class="status active-status">
-            {{ agendamento.status }}
+            {{ a.status.toUpperCase() }}
           </div>
-
-          <button
-            type="button"
-            class="cancel-button"
-            (click)="cancelarAgendamento(agendamento.id)"
-          >
-            Cancelar
-          </button>
-
         </div>
-
       </div>
     </div>
 
@@ -265,37 +220,29 @@
       <div class="management-header">
         <div>
           <span>HISTÓRICO</span>
-          <h2>Agendamentos cancelados</h2>
+          <h2>Histórico Clínico</h2>
         </div>
       </div>
 
       <div class="empty-state" *ngIf="historicoAgendamentos.length === 0">
-        Nenhum histórico encontrado.
+        Nenhum histórico de atendimento encerrado.
       </div>
 
       <div class="appointment-list" *ngIf="historicoAgendamentos.length > 0">
-
-        <div class="appointment-card history" *ngFor="let agendamento of historicoAgendamentos">
-
+        <div class="appointment-card history" *ngFor="let a of historicoAgendamentos">
           <div>
-            <h3>{{ agendamento.pet }}</h3>
-            <p>{{ agendamento.servico }}</p>
+            <h3>{{ a.nome_pet }}</h3>
+            <p>{{ a.servico }}</p>
           </div>
-
           <div class="appointment-info">
-            <span>{{ formatarData(agendamento.data) }}</span>
-            <strong>{{ agendamento.horario }}</strong>
+            <span>{{ formatarData(a.data_consulta) }}</span>
+            <strong>{{ a.hora_inicio }}</strong>
           </div>
-
-          <div class="status canceled-status">
-            {{ agendamento.status }}
+          <div class="status" [class.canceled-status]="a.status === 'Cancelado'">
+            {{ a.status.toUpperCase() }}
           </div>
-
         </div>
-
       </div>
     </div>
-
   </div>
-
 </section>
