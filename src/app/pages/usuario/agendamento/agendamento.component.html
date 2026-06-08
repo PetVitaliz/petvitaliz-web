@@ -59,6 +59,15 @@
             [class.selected]="petSelecionado === pet.nome"
             (click)="selecionarPet(pet.nome)"
           >
+            <button
+              type="button"
+              class="delete-pet"
+              title="Excluir pet"
+              (click)="excluirPet(pet.nome); $event.stopPropagation()"
+            >
+              ×
+            </button>
+
             <div class="check">✓</div>
 
             <img [src]="pet.foto" [alt]="pet.nome">
@@ -157,7 +166,7 @@
 
             <div>
               <span>Data</span>
-              <strong>{{ dataSelecionada }}</strong>
+              <strong>{{ formatarData(dataSelecionada) }}</strong>
             </div>
 
             <div>
@@ -165,6 +174,16 @@
               <strong>{{ horarioSelecionado }}</strong>
             </div>
 
+          </div>
+
+          <div class="confirm-actions">
+            <button type="button" class="btn-secondary" (click)="voltarParaInicio()">
+              Voltar
+            </button>
+
+            <button type="button" class="btn-primary" (click)="limparFormulario()">
+              Novo agendamento
+            </button>
           </div>
 
         </div>
@@ -193,6 +212,88 @@
 
       </div>
 
+    </div>
+
+  </div>
+
+  <div class="management-grid">
+
+    <div class="management-card">
+      <div class="management-header">
+        <div>
+          <span>ATIVOS</span>
+          <h2>Agendamentos marcados</h2>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="agendamentosAtivos.length === 0">
+        Nenhum agendamento ativo encontrado.
+      </div>
+
+      <div class="appointment-list" *ngIf="agendamentosAtivos.length > 0">
+
+        <div class="appointment-card" *ngFor="let agendamento of agendamentosAtivos">
+
+          <div>
+            <h3>{{ agendamento.pet }}</h3>
+            <p>{{ agendamento.servico }}</p>
+          </div>
+
+          <div class="appointment-info">
+            <span>{{ formatarData(agendamento.data) }}</span>
+            <strong>{{ agendamento.horario }}</strong>
+          </div>
+
+          <div class="status active-status">
+            {{ agendamento.status }}
+          </div>
+
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarAgendamento(agendamento.id)"
+          >
+            Cancelar
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="management-card">
+      <div class="management-header">
+        <div>
+          <span>HISTÓRICO</span>
+          <h2>Agendamentos cancelados</h2>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="historicoAgendamentos.length === 0">
+        Nenhum histórico encontrado.
+      </div>
+
+      <div class="appointment-list" *ngIf="historicoAgendamentos.length > 0">
+
+        <div class="appointment-card history" *ngFor="let agendamento of historicoAgendamentos">
+
+          <div>
+            <h3>{{ agendamento.pet }}</h3>
+            <p>{{ agendamento.servico }}</p>
+          </div>
+
+          <div class="appointment-info">
+            <span>{{ formatarData(agendamento.data) }}</span>
+            <strong>{{ agendamento.horario }}</strong>
+          </div>
+
+          <div class="status canceled-status">
+            {{ agendamento.status }}
+          </div>
+
+        </div>
+
+      </div>
     </div>
 
   </div>

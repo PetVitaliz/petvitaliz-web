@@ -28,7 +28,7 @@
 
 .hero h1 {
   margin: 0 0 12px;
-  color: #082c75;
+  color: #000000;
   font-size: 52px;
   line-height: 1;
   font-weight: 900;
@@ -512,5 +512,215 @@ input[type="date"]:focus {
     align-items: flex-start;
     flex-direction: column;
     gap: 6px;
+  }
+}
+
+.delete-pet {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #fff1f2;
+  color: #b42318;
+  font-size: 19px;
+  font-weight: 900;
+  cursor: pointer;
+  z-index: 4;
+  transition: 0.25s ease;
+}
+
+.delete-pet:hover {
+  background: #b42318;
+  color: #ffffff;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.management-grid {
+  max-width: 1180px;
+  margin: 34px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+}
+
+.management-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  padding: 28px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
+}
+
+.management-header {
+  margin-bottom: 22px;
+}
+
+.management-header span {
+  display: inline-flex;
+  margin-bottom: 8px;
+  color: #4055c8;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.management-header h2 {
+  margin: 0;
+  color: #082c75;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.empty-state {
+  width: 100%;
+  min-height: 92px;
+  border-radius: 20px;
+  background: #f7f9ff;
+  border: 1px dashed #cfd6e6;
+  color: #7d8597;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.appointment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.appointment-card {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr auto auto;
+  gap: 14px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #edf0f5;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.appointment-card.history {
+  grid-template-columns: 1.2fr 0.8fr auto;
+  opacity: 0.8;
+}
+
+.appointment-card h3 {
+  margin: 0 0 6px;
+  color: #082c75;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.appointment-card p {
+  margin: 0;
+  color: #7d8597;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.appointment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.appointment-info span {
+  color: #7d8597;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.appointment-info strong {
+  color: #082c75;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.status {
+  min-width: 92px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.active-status {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.canceled-status {
+  background: #fff1f2;
+  color: #b42318;
+}
+
+.cancel-button {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  background: #fff1f2;
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.cancel-button:hover {
+  background: #b42318;
+  color: #ffffff;
+}
+
+@media (max-width: 1000px) {
+  .management-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .appointment-card,
+  .appointment-card.history {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+
+  .status,
+  .cancel-button {
+    width: fit-content;
+  }
+}
+
+@media (max-width: 768px) {
+  .confirm-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .confirm-actions button {
+    width: 100%;
+  }
+
+  .management-card {
+    padding: 22px;
+    border-radius: 24px;
   }
 }

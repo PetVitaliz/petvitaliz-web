@@ -1,7 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+
+type StatusAgendamento = 'Confirmado' | 'Cancelado';
+
+interface Pet {
+  nome: string;
+  tipo: string;
+  idade: string;
+  foto: string;
+}
+
+interface Agendamento {
+  id: number;
+  pet: string;
+  servico: string;
+  data: string;
+  horario: string;
+  status: StatusAgendamento;
+  criadoEm: string;
+}
 
 @Component({
   selector: 'app-agendamento',
@@ -10,25 +29,12 @@ import { Router } from '@angular/router';
   templateUrl: './agendamento.component.html',
   styleUrl: './agendamento.component.css'
 })
-export class AgendamentoComponent {
-  constructor(private router: Router) {}
+export class AgendamentoComponent implements OnInit {
+  constructor(private router: Router) { }
 
   etapaAtual = 1;
 
-  pets = [
-    {
-      nome: 'Max',
-      tipo: 'Beagle',
-      idade: '3 anos',
-      foto: 'assets/img/pet-dog.jpg'
-    },
-    {
-      nome: 'Luna',
-      tipo: 'Siamês',
-      idade: '1 ano',
-      foto: 'assets/img/pet-cat.jpg'
-    }
-  ];
+  pets: Pet[] = [];
 
   servicos = [
     'Consulta Geral',
@@ -45,6 +51,8 @@ export class AgendamentoComponent {
     '16:00'
   ];
 
+  agendamentos: Agendamento[] = [];
+
   petSelecionado = '';
   servicoSelecionado = '';
   dataSelecionada = '';
@@ -53,8 +61,59 @@ export class AgendamentoComponent {
   mensagemErro = '';
   mensagemSucesso = '';
 
+  ngOnInit(): void {
+    this.carregarPets();
+    this.carregarAgendamentos();
+  }
+
+  get agendamentosAtivos(): Agendamento[] {
+    return this.agendamentos.filter(agendamento => agendamento.status === 'Confirmado');
+  }
+
+  get historicoAgendamentos(): Agendamento[] {
+    return this.agendamentos.filter(agendamento => agendamento.status === 'Cancelado');
+  }
+
+  carregarPets(): void {
+    const petsSalvos = JSON.parse(localStorage.getItem('petsUsuario') || '[]');
+
+    if (petsSalvos.length > 0) {
+      this.pets = petsSalvos;
+      return;
+    }
+
+    this.pets = [
+      {
+        nome: 'Max',
+        tipo: 'Beagle',
+        idade: '3 anos',
+        foto: 'assets/img/pet-dog.jpg'
+      },
+      {
+        nome: 'Luna',
+        tipo: 'Siamês',
+        idade: '1 ano',
+        foto: 'assets/img/pet-cat.jpg'
+      }
+    ];
+
+    localStorage.setItem('petsUsuario', JSON.stringify(this.pets));
+  }
+
+  salvarPets(): void {
+    localStorage.setItem('petsUsuario', JSON.stringify(this.pets));
+  }
+
+  carregarAgendamentos(): void {
+    this.agendamentos = JSON.parse(localStorage.getItem('agendamentosUsuario') || '[]');
+  }
+
+  salvarAgendamentos(): void {
+    localStorage.setItem('agendamentosUsuario', JSON.stringify(this.agendamentos));
+  }
+
   irParaCadastroPet(): void {
-    this.router.navigate(['/user/listar/pet/cadastar']);
+    this.router.navigate(['/user/listar/pet']);
   }
 
   selecionarPet(nome: string): void {
@@ -120,6 +179,10 @@ export class AgendamentoComponent {
     }
   }
 
+  voltarParaInicio(): void {
+    this.limparFormulario();
+  }
+
   podeContinuar(): boolean {
     if (this.etapaAtual === 1) {
       return !!this.petSelecionado;
@@ -165,27 +228,86 @@ export class AgendamentoComponent {
       return;
     }
 
-    const novoAgendamento = {
+    if (this.agendamentoJaExiste()) {
+      this.mensagemErro = 'Já existe um agendamento ativo para esse pet nesse dia e horário.';
+      return;
+    }
+
+    const novoAgendamento: Agendamento = {
+      id: Date.now(),
       pet: this.petSelecionado,
       servico: this.servicoSelecionado,
       data: this.dataSelecionada,
       horario: this.horarioSelecionado,
-      status: 'Pendente'
+      status: 'Confirmado',
+      criadoEm: new Date().toISOString()
     };
 
-    const agendamentosSalvos = JSON.parse(
-      localStorage.getItem('agendamentosUsuario') || '[]'
-    );
-
-    agendamentosSalvos.push(novoAgendamento);
-
-    localStorage.setItem(
-      'agendamentosUsuario',
-      JSON.stringify(agendamentosSalvos)
-    );
+    this.agendamentos.push(novoAgendamento);
+    this.salvarAgendamentos();
 
     this.mensagemSucesso = 'Consulta agendada com sucesso!';
     this.etapaAtual = 4;
+  }
+
+  agendamentoJaExiste(): boolean {
+    return this.agendamentos.some(agendamento =>
+      agendamento.status === 'Confirmado' &&
+      agendamento.pet === this.petSelecionado &&
+      agendamento.data === this.dataSelecionada &&
+      agendamento.horario === this.horarioSelecionado
+    );
+  }
+
+  cancelarAgendamento(id: number): void {
+    const confirmar = confirm('Tem certeza que deseja cancelar este agendamento?');
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.agendamentos = this.agendamentos.map(agendamento => {
+      if (agendamento.id === id) {
+        return {
+          ...agendamento,
+          status: 'Cancelado'
+        };
+      }
+
+      return agendamento;
+    });
+
+    this.salvarAgendamentos();
+    this.mensagemSucesso = 'Agendamento cancelado com sucesso.';
+    this.mensagemErro = '';
+  }
+
+  excluirPet(nome: string): void {
+    const temAgendamentoAtivo = this.agendamentosAtivos.some(
+      agendamento => agendamento.pet === nome
+    );
+
+    if (temAgendamentoAtivo) {
+      this.mensagemErro = 'Não é possível excluir um pet com agendamento ativo.';
+      this.mensagemSucesso = '';
+      return;
+    }
+
+    const confirmar = confirm(`Tem certeza que deseja excluir ${nome}?`);
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.pets = this.pets.filter(pet => pet.nome !== nome);
+    this.salvarPets();
+
+    if (this.petSelecionado === nome) {
+      this.petSelecionado = '';
+    }
+
+    this.mensagemSucesso = 'Pet excluído com sucesso.';
+    this.mensagemErro = '';
   }
 
   dataPassada(): boolean {
@@ -238,6 +360,15 @@ export class AgendamentoComponent {
     const dia = String(hoje.getDate()).padStart(2, '0');
 
     return `${ano}-${mes}-${dia}`;
+  }
+
+  formatarData(data: string): string {
+    if (!data) {
+      return '';
+    }
+
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
   }
 
   obterMensagemErro(): string {
