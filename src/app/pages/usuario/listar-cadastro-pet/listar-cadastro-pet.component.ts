@@ -179,6 +179,12 @@ export class ListarCadastroPetComponent implements OnInit {
       return this.exibirErro('A idade deve conter um número válido.');
     }
 
+    const pesoConvertido = this.converterPorteParaPeso(this.porte);
+
+    if (pesoConvertido <= 0) {
+      return this.exibirErro('Selecione um porte válido.');
+    }
+
     this.salvando = true;
 
     const anoAtual = new Date().getFullYear();
@@ -192,6 +198,7 @@ export class ListarCadastroPetComponent implements OnInit {
     formData.append('sexo', this.sexo === 'Macho' ? 'M' : 'F');
     formData.append('idade', numeroIdade.toString());
     formData.append('porte', this.porte);
+    formData.append('peso', pesoConvertido.toString());
     formData.append('data_nascimento', dataNascimentoCalculada);
 
     if (this.fotoArquivo) {
@@ -248,6 +255,12 @@ export class ListarCadastroPetComponent implements OnInit {
       return this.exibirErro('Idade inválida.');
     }
 
+    const pesoConvertido = this.converterPorteParaPeso(this.petForm.porte);
+
+    if (pesoConvertido <= 0) {
+      return this.exibirErro('Selecione um porte válido.');
+    }
+
     const anoAtual = new Date().getFullYear();
     const dataNascimentoCalculada = `${anoAtual - numeroIdade}-01-01`;
 
@@ -258,6 +271,7 @@ export class ListarCadastroPetComponent implements OnInit {
       sexo: this.petForm.sexo,
       idade: numeroIdade,
       porte: this.petForm.porte,
+      peso: pesoConvertido,
       data_nascimento: dataNascimentoCalculada,
       observacoes: this.petForm.observacoes || ''
     };
@@ -302,6 +316,22 @@ export class ListarCadastroPetComponent implements OnInit {
           this.exibirErro(err.error?.mensagem || 'Não foi possível excluir o registro.');
         }
       });
+  }
+
+  converterPorteParaPeso(porte: string): number {
+    if (porte === 'Pequeno') {
+      return 8;
+    }
+
+    if (porte === 'Médio') {
+      return 15;
+    }
+
+    if (porte === 'Grande') {
+      return 25;
+    }
+
+    return 0;
   }
 
   converterPesoParaPorte(peso: number): string {
