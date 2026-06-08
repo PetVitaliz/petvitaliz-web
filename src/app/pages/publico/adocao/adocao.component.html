@@ -1,119 +1,82 @@
 <main class="adocao-page">
   <section class="adocao-hero">
     <div class="adocao-content">
+      <span class="adocao-badge">Seu amigo espera por você</span>
+
       <h1>
-        Guiando você<br />
-        para a jornada<br />
-        perfeita de<br />
-        adoção de Pet
+        Encontre seu<br />
+        novo melhor amigo aqui<br />
+        na Petvitaliz
       </h1>
 
       <p>
-        Precisa de ajuda? Nossa equipe está aqui para apoiá-lo<br />
-        em todas as etapas da adoção e dos cuidados com seu<br />
-        novo Pet.
+        Adotar é um ato de amor que transforma vidas. Na PetVitaliz,
+        conectamos animais resgatados a lares cheios de carinho e
+        responsabilidade.
       </p>
 
       <a routerLink="/usuario/login" class="adocao-button">
-        Agendar consulta
+        Venha nos visitar
       </a>
     </div>
 
     <div class="adocao-image-area">
-      <img class="adocao-paw" [src]="imgPataAdocao" alt="Pata decorativa" />
-
       <img class="adocao-pets" [src]="imgPetsAdocao" alt="Cachorro e gato" />
     </div>
   </section>
 
   <section class="adocao-profile-section">
-  <div class="adocao-profile-card">
-    <div class="adocao-profile-gallery">
-      <div class="adocao-main-image-box">
-        <img
-          class="adocao-main-image"
-          [src]="petsAdocao[petSelecionado].imagemPrincipal"
-          [alt]="petsAdocao[petSelecionado].nome"
-        />
+    <div class="adocao-profile-card">
+      <div class="adocao-profile-gallery">
+        <div class="adocao-main-image-box">
+          <img class="adocao-main-image" [src]="petsAdocao[petSelecionado].imagemPrincipal"
+            [alt]="petsAdocao[petSelecionado].nome" />
 
-        <div class="adocao-image-note">
-          <img
-            [src]="petsAdocao[petSelecionado].imagemMini1"
-            [alt]="petsAdocao[petSelecionado].nome"
-          />
+          <div class="adocao-image-note">
+            <img [src]="petsAdocao[petSelecionado].imagemMini1" [alt]="petsAdocao[petSelecionado].nome" />
 
-          <p>
-            {{ petsAdocao[petSelecionado].destaque }}
-          </p>
+            <p>
+              {{ petsAdocao[petSelecionado].destaque }}
+            </p>
+          </div>
+        </div>
+
+        <div class="adocao-thumbs">
+          <img [src]="petsAdocao[petSelecionado].imagemMini1" alt="Foto pet 1" />
+          <img [src]="petsAdocao[petSelecionado].imagemMini2" alt="Foto pet 2" />
+          <img [src]="petsAdocao[petSelecionado].imagemMini3" alt="Foto pet 3" />
         </div>
       </div>
 
-      <div class="adocao-thumbs">
-        <img [src]="petsAdocao[petSelecionado].imagemMini1" alt="Foto pet 1" />
-        <img [src]="petsAdocao[petSelecionado].imagemMini2" alt="Foto pet 2" />
-        <img [src]="petsAdocao[petSelecionado].imagemMini3" alt="Foto pet 3" />
-      </div>
-    </div>
+      <div class="adocao-profile-info">
+        <div class="adocao-profile-arrows">
+          <button type="button" (click)="petAnterior()">←</button>
+          <button type="button" (click)="proximoPet()">→</button>
+        </div>
 
-    <div class="adocao-profile-info">
-      <div class="adocao-profile-arrows">
-        <button type="button" (click)="petAnterior()">←</button>
-        <button type="button" (click)="proximoPet()">→</button>
-      </div>
+        <h2>{{ petsAdocao[petSelecionado].titulo }}</h2>
 
-      <h2>{{ petsAdocao[petSelecionado].titulo }}</h2>
+        <p class="adocao-profile-description">
+          {{ petsAdocao[petSelecionado].descricao }}
+        </p>
 
-      <p class="adocao-profile-description">
-        {{ petsAdocao[petSelecionado].descricao }}
-      </p>
-
-      <div class="adocao-profile-tags">
-        @for (tag of petsAdocao[petSelecionado].tags; track tag) {
+        <div class="adocao-profile-tags">
+          @for (tag of petsAdocao[petSelecionado].tags; track tag) {
           <span>{{ tag }}</span>
-        }
-      </div>
+          }
+        </div>
 
-      <div class="adocao-profile-buttons">
-        <a routerLink="/contato">
-          Adote {{ petsAdocao[petSelecionado].nome }} Hoje
-        </a>
+        <div class="adocao-profile-buttons">
+          <a routerLink="/contato">
+            Adote {{ petsAdocao[petSelecionado].nome }} Hoje
+          </a>
 
-        <a routerLink="/contato">
-          Processo de Adoção
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="adocao-steps-section">
-  <img class="adocao-steps-paw" [src]="imgPataPassos" alt="Pata decorativa" />
-
-  <h2>
-    Guia passo a passo para adoção de<br />
-    Pets
-  </h2>
-
-  <div class="adocao-steps-grid">
-    @for (item of passosAdocao; track item.passo) {
-      <div class="adocao-step-card">
-        <img class="adocao-step-image" [src]="item.imagem" [alt]="item.titulo" />
-
-        <span class="adocao-step-badge">
-          {{ item.passo }}
-        </span>
-
-        <div class="adocao-step-title">
-          {{ item.titulo }}
+          <a routerLink="/contato">
+            Processo de Adoção
+          </a>
         </div>
       </div>
-    }
-  </div>
+    </div>
+  </section>
 
-  <img
-  class="adocao-steps-wave"
-  src=""
-  alt="Linha decorativa"
-/>
-</section>
 </main>

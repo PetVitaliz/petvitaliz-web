@@ -11,21 +11,38 @@
 .adocao-hero {
   width: 100%;
   min-height: calc(100vh - 90px);
-  padding: 50px 7%;
+  padding: 70px 9% 80px;
   box-sizing: border-box;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 50px;
+  gap: 70px;
 
+  background: #ffffff;
   overflow: hidden;
 }
 
 .adocao-content {
   flex: 1;
-  max-width: 480px;
+  max-width: 650px;
   z-index: 2;
+}
+
+.adocao-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+  padding: 7px 14px;
+
+  border-radius: 999px;
+  background: #f3f3f3;
+   color: #222222;
+
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .adocao-content h1 {
@@ -38,48 +55,52 @@
 }
 
 .adocao-content p {
-  margin: 0 0 22px;
+  margin: 0 0 26px;
+  max-width: 430px;
+
   font-size: 16px;
-  line-height: 1.45;
+  line-height: 1.6;
   color: #222222;
 }
 
 .adocao-button {
-  min-width: 155px;
-  height: 44px;
-  padding: 0 22px;
+  min-width: 165px;
+  height: 48px;
+  padding: 0 24px;
   border-radius: 999px;
-  background: #283593;
+
+  background: #02006b;
   color: #ffffff;
   text-decoration: none;
+
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 800;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  transition: 0.3s ease;
+  transition: 0.25s ease;
 }
 
 .adocao-button:hover {
-  background: #1d2870;
+  background: #11109a;
   transform: translateY(-2px);
 }
 
 .adocao-image-area {
-  flex: 1.5;
-  min-height: 560px;
+  flex: 2;
+  min-height: 650px;
   position: relative;
 
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
 }
 
 .adocao-pets {
-  width: min(850px, 100%);
-  max-height: 520px;
+  width: min(820px, 100%);
+  max-height: 720px;
   object-fit: contain;
   display: block;
   position: relative;
@@ -87,12 +108,7 @@
 }
 
 .adocao-paw {
-  position: absolute;
-  width: 210px;
-  top: 40px;
-  right: 6%;
-  z-index: 1;
-  object-fit: contain;
+  display: none;
 }
 
 .adocao-pets[src=""],
@@ -104,31 +120,36 @@
   .adocao-hero {
     flex-direction: column;
     text-align: center;
-    padding: 50px 5%;
+    padding: 55px 24px 70px;
+    gap: 40px;
   }
 
   .adocao-content {
     max-width: 100%;
   }
 
-  .adocao-image-area {
-    width: 100%;
-    min-height: 420px;
+  .adocao-content p {
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .adocao-paw {
-    width: 160px;
-    right: 10%;
+  .adocao-image-area {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .adocao-pets {
+    width: min(430px, 100%);
   }
 }
 
 @media (max-width: 600px) {
   .adocao-hero {
-    padding: 40px 20px;
+    padding: 45px 20px 60px;
   }
 
   .adocao-content h1 {
-    font-size: 42px;
+    font-size: 40px;
   }
 
   .adocao-content h1 br,
@@ -139,14 +160,6 @@
   .adocao-button {
     width: 100%;
     max-width: 260px;
-  }
-
-  .adocao-image-area {
-    min-height: 300px;
-  }
-
-  .adocao-paw {
-    display: none;
   }
 }
 
@@ -197,7 +210,6 @@
   display: block;
 }
 
-/* se ainda não colocou imagem */
 .adocao-main-image[src=""],
 .adocao-thumbs img[src=""],
 .adocao-image-note img[src=""] {
