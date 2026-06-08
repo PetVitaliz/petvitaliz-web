@@ -41,32 +41,32 @@ export class ServicosComponent {
   servicoCarrosselSelecionado = 0;
 
   servicosCarrossel: ServicoCarrossel[] = [
-    {
-      titulo: 'Suprimento de Pet',
-      imagem: '',
-      tags: ['Brinquedos', 'Acessórios']
-    },
-    {
-      titulo: 'Serviços de Higiene',
-      imagem: '',
-      tags: ['Corte de Unhas', 'Limpeza de Ouvido']
-    },
-    {
-      titulo: 'Suporte Veterinario',
-      imagem: '',
-      tags: ['Check-Ups', 'Vacinação']
-    },
-    {
-      titulo: 'Assistencia com Adoção',
-      imagem: '',
-      tags: ['Abrigos locais', 'Pet Perfeito']
-    },
-    {
-      titulo: 'Hospedagem & Creche Para Pets',
-      imagem: '',
-      tags: ['Hora de Brincar', 'Alimentação']
-    }
-  ];
+  {
+    titulo: 'Consulta Veterinária Completa',
+    imagem: '',
+    tags: ['Avaliação', 'Bem-estar']
+  },
+  {
+    titulo: 'Programa de Imunização',
+    imagem: '',
+    tags: ['Vacinação', 'Proteção']
+  },
+  {
+    titulo: 'Diagnóstico Clínico',
+    imagem: '',
+    tags: ['Exames', 'Monitoramento']
+  },
+  {
+    titulo: 'Cuidados de Higiene e Estética',
+    imagem: '',
+    tags: ['Banho', 'Tosa']
+  },
+  {
+    titulo: 'Atendimento Emergencial',
+    imagem: '',
+    tags: ['Urgência', '24h']
+  }
+];
 
   selecionarServicoCarrossel(index: number): void {
     this.servicoCarrosselSelecionado = index;
