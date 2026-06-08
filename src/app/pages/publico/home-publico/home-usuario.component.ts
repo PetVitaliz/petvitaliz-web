@@ -38,33 +38,13 @@ export class HomeUsuarioComponent implements OnInit {
     { nome: 'Dra. Ana', imagem: 'assets/img/doctor4.png', experiencia: '6+ Anos de Experiência' }
   ];
 
-servicosHome: ServicoHome[] = [
-  {
-    titulo: 'Consulta Veterinária',
-    imagem: 'assets/img/consulta-veterinaria.jpg',
-    tags: ['Avaliação Clínica', 'Prevenção']
-  },
-  {
-    titulo: 'Programa de Imunização',
-    imagem: 'assets/img/imunizacao.jpg',
-    tags: ['Vacinação', 'Proteção']
-  },
-  {
-    titulo: 'Diagnóstico Clínico',
-    imagem: 'assets/img/diagnostico-clinico.jpg',
-    tags: ['Exames', 'Monitoramento']
-  },
-  {
-    titulo: 'Cuidados de Higiene e Estética',
-    imagem: 'assets/img/higiene-estetica.jpeg',
-    tags: ['Banho', 'Tosa']
-  },
-  {
-    titulo: 'Atendimento Emergencial',
-    imagem: 'assets/img/atendimento-emergencial.jpg',
-    tags: ['Urgência', '24h']
-  }
-];
+  servicosHome: ServicoHome[] = [
+    { titulo: 'Suprimento de Pet', imagem: '', tags: ['Brinquedos', 'Acessórios'] },
+    { titulo: 'Serviços de Higiene', imagem: '', tags: ['Corte de Unhas', 'Limpeza de Ouvido'] },
+    { titulo: 'Suporte Veterinario', imagem: '', tags: ['Check-Ups', 'Vacinação'] },
+    { titulo: 'Assistencia com Adoção', imagem: '', tags: ['Abrigos locais', 'Pet Perfeito'] },
+    { titulo: 'Hospedagem & Creche Para Pets', imagem: '', tags: ['Hora de Brincar', 'Alimentação'] }
+  ];
 
   avaliacoes = [
     { nome: 'Mariana Silva', texto: 'O Plano Abrangente salvou as vacinas do meu Golden! Atendimento maravilhoso.' },

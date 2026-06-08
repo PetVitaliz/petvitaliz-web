@@ -26,25 +26,6 @@ interface Agendamento {
   observacoes?: string;
 }
 
-type StatusAgendamento = 'Confirmado' | 'Cancelado';
-
-interface Pet {
-  nome: string;
-  tipo: string;
-  idade: string;
-  foto: string;
-}
-
-interface Agendamento {
-  id: number;
-  pet: string;
-  servico: string;
-  data: string;
-  horario: string;
-  status: StatusAgendamento;
-  criadoEm: string;
-}
-
 @Component({
   selector: 'app-agendamento',
   standalone: true,
@@ -199,10 +180,6 @@ export class AgendamentoComponent implements OnInit {
     }
   }
 
-  voltarParaInicio(): void {
-    this.limparFormulario();
-  }
-
   podeContinuar(): boolean {
     if (this.etapaAtual === 1) return !!this.petSelecionadoId;
     if (this.etapaAtual === 2) return !!this.servicoSelecionadoValor;
@@ -300,15 +277,6 @@ export class AgendamentoComponent implements OnInit {
     if (!data) return '';
     const partes = data.split('-');
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
-  }
-
-  formatarData(data: string): string {
-    if (!data) {
-      return '';
-    }
-
-    const [ano, mes, dia] = data.split('-');
-    return `${dia}/${mes}/${ano}`;
   }
 
   obterMensagemErro(): string {

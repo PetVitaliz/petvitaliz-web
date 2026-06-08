@@ -49,15 +49,6 @@
             [class.selected]="petSelecionadoId === pet.id_pet"
             (click)="selecionarPet(pet)"
           >
-            <button
-              type="button"
-              class="delete-pet"
-              title="Excluir pet"
-              (click)="excluirPet(pet.nome); $event.stopPropagation()"
-            >
-              ×
-            </button>
-
             <div class="check">✓</div>
             <img [src]="pet.foto_url || 'assets/img/banner.png'" [alt]="pet.nome">
             <h3>{{ pet.nome }}</h3>
