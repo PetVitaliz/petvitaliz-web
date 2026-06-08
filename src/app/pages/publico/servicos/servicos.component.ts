@@ -40,30 +40,30 @@ export class ServicosComponent {
 
   servicoCarrosselSelecionado = 0;
 
-  servicosCarrossel: ServicoCarrossel[] = [
+servicosCarrossel: ServicoCarrossel[] = [
   {
-    titulo: 'Consulta Veterinária Completa',
-    imagem: '',
-    tags: ['Avaliação', 'Bem-estar']
+    titulo: 'Consulta Veterinária',
+    imagem: 'assets/img/consulta-veterinaria.jpg',
+    tags: ['Avaliação Clínica', 'Prevenção']
   },
   {
     titulo: 'Programa de Imunização',
-    imagem: '',
+    imagem: 'assets/img/imunizacao.jpg',
     tags: ['Vacinação', 'Proteção']
   },
   {
     titulo: 'Diagnóstico Clínico',
-    imagem: '',
+    imagem: 'assets/img/diagnostico-clinico.jpg',
     tags: ['Exames', 'Monitoramento']
   },
   {
     titulo: 'Cuidados de Higiene e Estética',
-    imagem: '',
+    imagem: 'assets/img/higiene-estetica.jpeg',
     tags: ['Banho', 'Tosa']
   },
   {
     titulo: 'Atendimento Emergencial',
-    imagem: '',
+    imagem: 'assets/img/atendimento-emergencial.jpg',
     tags: ['Urgência', '24h']
   }
 ];
