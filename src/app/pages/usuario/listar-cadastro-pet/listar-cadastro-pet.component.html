@@ -6,10 +6,6 @@
         <h1>Meus Pets</h1>
         <p>Gerencie os pets cadastrados, planos e informações do tutor.</p>
       </div>
-
-      <button type="button" class="btn-add-pet" (click)="abrirCadastroPet()">
-        + Adicionar pet
-      </button>
     </div>
 
     <p class="erro" *ngIf="erro">{{ erro }}</p>
@@ -20,7 +16,7 @@
       <p>Cadastre um pet para visualizar as informações aqui.</p>
 
       <button type="button" (click)="abrirCadastroPet()">
-        Cadastrar pet
+        Cadastrar Pet
       </button>
     </div>
 
@@ -53,15 +49,11 @@
 
         <div class="pet-selector" *ngIf="pets.length > 1">
           <small>MEUS PETS</small>
-          
+
           <div class="pet-avatars-grid">
-            <button 
-              type="button" 
-              class="pet-avatar-card" 
-              *ngFor="let p of pets"
+            <button type="button" class="pet-avatar-card" *ngFor="let p of pets"
               [class.selecionado]="p.id_pet === petSelecionado?.id_pet"
-              (click)="petSelecionado = p; erro = ''; sucesso = ''"
-            >
+              (click)="petSelecionado = p; erro = ''; sucesso = ''">
               <div class="avatar-img-wrapper">
                 <img *ngIf="p.foto_url" [src]="p.foto_url" alt="Foto de {{ p.nome }}">
                 <div *ngIf="!p.foto_url" class="avatar-empty-placeholder"></div>
@@ -207,7 +199,8 @@
 
               <div>
                 <small>SEXO</small>
-                <strong>{{ petSelecionado.sexo === 'M' || petSelecionado.sexo === 'Macho' ? 'Macho' : 'Fêmea' }}</strong>
+                <strong>{{ petSelecionado.sexo === 'M' || petSelecionado.sexo === 'Macho' ? 'Macho' : 'Fêmea'
+                  }}</strong>
               </div>
 
               <div *ngIf="petSelecionado.especie === 'outro'">
@@ -295,93 +288,94 @@
             </div>
 
             <div class="modal-field">
-              <label>Peso (kg)</label>
+              <label>Porte</label>
 
-              <div class="modal-weight-field">
-                <input type="number" min="0.1" max="100" step="0.1" placeholder="Ex: 12.5" [(ngModel)]="peso">
-                <span>KG</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="pet-modal-actions">
-          <button type="button" class="btn-modal-cancel" (click)="fecharCadastroPet()">
-            Cancelar
-          </button>
-
-          <button type="button" class="btn-modal-save" [disabled]="salvando" (click)="confirmarCadastro()">
-            {{ salvando ? 'Salvando...' : 'Salvar' }}
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="modal-overlay" *ngIf="editando">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2>Editar Dados de {{ petForm.nome }}</h2>
-
-          <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">
-            ×
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <div class="modal-grid">
-            <div class="modal-field">
-              <small>NOME DO PET</small>
-              <input type="text" [(ngModel)]="petForm.nome" class="edit-input">
-            </div>
-
-            <div class="modal-field">
-              <small>ESPÉCIE</small>
-              <select [(ngModel)]="petForm.especie" class="edit-input">
-                <option value="cachorro">Cachorro</option>
-                <option value="gato">Gato</option>
-                <option value="ave">Ave</option>
-                <option value="coelho">Coelho</option>
-                <option value="outro">Outro</option>
+              <select [(ngModel)]="porte">
+                <option value="">Selecione</option>
+                <option value="Pequeno">Pequeno</option>
+                <option value="Médio">Médio</option>
+                <option value="Grande">Grande</option>
               </select>
-            </div>
-
-            <div class="modal-field" *ngIf="petForm.especie === 'outro'">
-              <small>QUAL ESPÉCIE?</small>
-              <input type="text" [(ngModel)]="petForm.outra_especie" class="edit-input">
-            </div>
-
-            <div class="modal-field">
-              <small>IDADE</small>
-              <input type="text" [(ngModel)]="petForm.idade" class="edit-input">
-            </div>
-
-            <div class="modal-field">
-              <small>PESO (KG)</small>
-              <input type="number" min="0.1" max="100" step="0.1" [(ngModel)]="petForm.peso" class="edit-input">
-            </div>
-
-            <div class="modal-field">
-              <small>SEXO</small>
-              <select [(ngModel)]="petForm.sexo" class="edit-input">
-                <option value="M">Macho</option>
-                <option value="F">Fêmea</option>
-              </select>
-            </div>
           </div>
-
-          <div class="modal-field full-width">
-            <small>OBSERVAÇÕES</small>
-            <textarea [(ngModel)]="petForm.observacoes" class="edit-textarea"></textarea>
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
-          <button type="button" class="btn-save" (click)="salvarEdicao()">Salvar alterações</button>
         </div>
       </div>
+
+      <div class="pet-modal-actions">
+        <button type="button" class="btn-modal-cancel" (click)="fecharCadastroPet()">
+          Cancelar
+        </button>
+
+        <button type="button" class="btn-modal-save" [disabled]="salvando" (click)="confirmarCadastro()">
+          {{ salvando ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+
     </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="editando">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Editar Dados de {{ petForm.nome }}</h2>
+
+        <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">
+          ×
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="modal-field">
+            <small>NOME DO PET</small>
+            <input type="text" [(ngModel)]="petForm.nome" class="edit-input">
+          </div>
+
+          <div class="modal-field">
+            <small>ESPÉCIE</small>
+            <select [(ngModel)]="petForm.especie" class="edit-input">
+              <option value="cachorro">Cachorro</option>
+              <option value="gato">Gato</option>
+              <option value="ave">Ave</option>
+              <option value="coelho">Coelho</option>
+            </select>
+          </div>
+
+          <div class="modal-field" *ngIf="petForm.especie === 'outro'">
+            <small>QUAL ESPÉCIE?</small>
+            <input type="text" [(ngModel)]="petForm.outra_especie" class="edit-input">
+          </div>
+
+          <div class="modal-field">
+            <small>IDADE</small>
+            <input type="text" [(ngModel)]="petForm.idade" class="edit-input">
+          </div>
+
+          <div class="modal-field">
+            <small>PESO (KG)</small>
+            <input type="number" min="0.1" max="100" step="0.1" [(ngModel)]="petForm.peso" class="edit-input">
+          </div>
+
+          <div class="modal-field">
+            <small>SEXO</small>
+            <select [(ngModel)]="petForm.sexo" class="edit-input">
+              <option value="M">Macho</option>
+              <option value="F">Fêmea</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-field full-width">
+          <small>OBSERVAÇÕES</small>
+          <textarea [(ngModel)]="petForm.observacoes" class="edit-textarea"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
+        <button type="button" class="btn-save" (click)="salvarEdicao()">Salvar alterações</button>
+      </div>
+    </div>
+  </div>
 
   </div>
 </section>
