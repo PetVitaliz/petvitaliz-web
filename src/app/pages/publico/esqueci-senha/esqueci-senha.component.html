@@ -1,91 +1,65 @@
 <section class="esqueci-page">
-
   <div class="esqueci-card">
+    <h2>Esqueceu sua senha?</h2>
 
-    <h2>
-      Esqueceu sua senha?
-    </h2>
-
-    <p class="subtitle">
-      Insira seu e-mail cadastrado e enviaremos as instruções para criar uma nova senha.
+    <p class="subtitle" *ngIf="!enviouCodigo">
+      Insira seu e-mail cadastrado e enviaremos o código de verificação para redefinir sua senha.
+    </p>
+    <p class="subtitle" *ngIf="enviouCodigo">
+      Insira o código de 6 dígitos enviado para o e-mail: <strong>{{ email }}</strong>
     </p>
 
-    <form (ngSubmit)="enviarLink()">
-
+    <form (ngSubmit)="enviarLink()" *ngIf="!enviouCodigo">
       <div class="form-group">
-
-        <label for="email">
-          E-mail
-        </label>
-
+        <label for="email">E-mail</label>
         <div class="input-box">
-
-          <span class="material-icons input-icon">
-            mail
-          </span>
-
+          <span class="material-icons input-icon">mail</span>
           <input type="email" id="email" name="email" placeholder="Coloque seu e-mail" [(ngModel)]="email">
-
         </div>
-
       </div>
 
-      <p class="erro" *ngIf="erro">
+      <p class="erro" *ngIf="erro">{{ erro }}</p>
+      <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
 
-        {{ erro }}
-
-      </p>
-
-      <p class="sucesso" *ngIf="sucesso">
-
-        {{ sucesso }}
-
-      </p>
-
-      <button type="submit" class="btn-submit">
-
-        Enviar link
+      <button type="submit" class="btn-submit" [disabled]="carregando">
+        {{ carregando ? 'Enviando...' : 'Enviar código' }}
         <span>→</span>
-
       </button>
+    </form>
 
+    <form (ngSubmit)="verificarCodigo()" *ngIf="enviouCodigo">
+      <div class="form-group">
+        <label for="codigoOtp">Código de Verificação</label>
+        <div class="input-box">
+          <span class="material-icons input-icon">lock_open</span>
+          <input type="text" id="codigoOtp" name="codigoOtp" placeholder="Digite o código de 6 dígitos" [(ngModel)]="codigoOtp" maxlength="6">
+        </div>
+      </div>
+
+      <p class="erro" *ngIf="erro">{{ erro }}</p>
+      <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+
+      <button type="submit" class="btn-submit" [disabled]="carregando">
+        {{ carregando ? 'Validando...' : 'Confirmar Código' }}
+        <span>→</span>
+      </button>
     </form>
 
     <a routerLink="/login" class="back-login">
-
-      <span class="material-icons">
-        arrow_back
-      </span>
-
+      <span class="material-icons">arrow_back</span>
       Voltar para o login
-
     </a>
 
     <div class="security-box">
-
       <div class="security-icon">
-
-        <span class="material-icons">
-          verified_user
-        </span>
-
+        <span class="material-icons">verified_user</span>
       </div>
-
       <div class="security-content">
-
-        <strong>
-          AMBIENTE SEGURO
-        </strong>
-
+        <strong>AMBIENTE SEGURO</strong>
         <p>
-          Utilizamos protocolos avançados de segurança para proteger suas informações
-          e garantir uma experiência confiável dentro da plataforma PetVitaliz.
+          Utilizamos protocolos avançados de segurança para proteger suas informações e garantir uma experiência confiável dentro da plataforma PetVitaliz.
         </p>
-
       </div>
-
     </div>
-
   </div>
-
 </section>
