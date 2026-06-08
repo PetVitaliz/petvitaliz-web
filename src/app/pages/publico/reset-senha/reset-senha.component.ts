@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-reset-senha',
@@ -19,8 +21,9 @@ export class ResetSenhaComponent {
 
   erro = '';
   sucesso = '';
+  carregando = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   redefinirSenha() {
     this.erro = '';
@@ -41,19 +44,39 @@ export class ResetSenhaComponent {
       return;
     }
 
-    const usuarioSalvo = localStorage.getItem('usuarioCadastro');
+    this.carregando = true;
 
-    if (usuarioSalvo) {
-      const usuario = JSON.parse(usuarioSalvo);
-      usuario.senha = this.senha;
+    const tokenReset = localStorage.getItem('tokenResetJWT');
+    
+    const httpOptions = {
+      withCredentials: true,
+      headers: new HttpHeaders({
+        'Authorization': tokenReset ? `Bearer ${tokenReset}` : ''
+      })
+    };
 
-      localStorage.setItem('usuarioCadastro', JSON.stringify(usuario));
-    }
+    const dadosPayload = {
+      senha1: this.senha.trim(),
+      senha2: this.confirmarSenha.trim()
+    };
 
-    this.sucesso = 'Senha redefinida com sucesso!';
+    this.http.put(`${environment.apiUrl}/user/login/alterar-senha`, dadosPayload, httpOptions)
+      .subscribe({
+        next: () => {
+          this.carregando = false;
+          this.sucesso = 'Senha redefinida com sucesso!';
+          
+          localStorage.removeItem('tokenResetJWT');
 
-    setTimeout(() => {
-      this.router.navigate(['/usuario/login']);
-    }, 1200);
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 1500);
+        },
+        error: (err) => {
+          this.carregando = false;
+          console.error(err);
+          this.erro = err.error || err.error?.mensagem || 'Não foi possível redefinir sua senha. Tente novamente.';
+        }
+      });
   }
 }
