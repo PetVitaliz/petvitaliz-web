@@ -15,45 +15,36 @@
 
           <div class="campo busca">
             <label>Paciente ou tutor</label>
-
-            <input type="text" placeholder="Nome do pet ou tutor..." [(ngModel)]="termoBusca"
-              (input)="aplicarFiltros()">
+            <input type="text" placeholder="Nome do pet ou tutor..." [(ngModel)]="termoBusca" (input)="aplicarFiltros()">
           </div>
 
           <div class="campo">
             <label>Status</label>
-
             <select [(ngModel)]="statusSelecionado" (change)="aplicarFiltros()">
-              <option>Todos</option>
-              <option>Confirmada</option>
-              <option>Em andamento</option>
-              <option>Pendente</option>
-              <option>Cancelada</option>
-              <option>Finalizada</option>
-              <option>Urgente</option>
+              <option value="Todos">Todos</option>
+              <option value="Pendente">Pendente / Triagem</option>
+              <option value="Em andamento">Em andamento</option>
+              <option value="Finalizada">Finalizada</option>
+              <option value="Cancelada">Cancelada</option>
             </select>
           </div>
 
           <div class="campo">
             <label>Veterinário</label>
-
             <select [(ngModel)]="vetSelecionado" (change)="aplicarFiltros()">
-              <option>Todos</option>
-              <option>Dr. Rogério Souza</option>
-              <option>Dra. Carla Mendes</option>
-              <option>Plantão</option>
+              <option value="Todos">Todos</option>
+              <option *ngFor="let vet of listaVeterinarios" [value]="vet">{{ vet }}</option>
             </select>
           </div>
 
           <div class="campo">
             <label>Período</label>
-
             <select [(ngModel)]="periodoSelecionado" (change)="aplicarFiltros()">
-              <option>Todos</option>
-              <option>Hoje</option>
-              <option>Semana</option>
-              <option>Mês</option>
-              <option>Dia selecionado</option>
+              <option value="Todos">Todos</option>
+              <option value="Hoje">Hoje</option>
+              <option value="Semana">Semana</option>
+              <option value="Mês">Mês</option>
+              <option value="Dia selecionado">Dia selecionado</option>
             </select>
           </div>
 
@@ -78,16 +69,13 @@
             </div>
 
             <div class="paciente">
-
               <div class="avatar-pet">
                 {{ c.pet.charAt(0) }}
               </div>
-
               <div>
                 <strong>{{ c.pet }}</strong>
                 <small>Tutor: {{ c.tutor }}</small>
               </div>
-
             </div>
 
             <div class="vet">
@@ -98,36 +86,33 @@
               <span class="procedimento">
                 {{ c.motivo }}
               </span>
+              <div *ngIf="c.passouDoTempo" style="color: #dc2626; font-size: 9px; font-weight: 800; margin-top: 4px; display: flex; align-items: center; gap: 3px; text-transform: uppercase; letter-spacing: 0.3px;">
+                ⚠️ Tempo Excedido
+              </div>
             </div>
 
             <div>
               <span class="status" [ngClass]="c.tipo">
-                {{ normalizarStatus(c.status) }}
+                {{ c.passouDoTempo ? 'Atrasada' : normalizarStatus(c.status) }}
               </span>
             </div>
 
             <div class="acoes">
-
               <button type="button" class="menu-btn" (click)="abrirMenu(i)">
                 ⋮
               </button>
 
               <div class="menu" *ngIf="menuAberto === i">
-
                 <button type="button" (click)="confirmar(c)">
                   Confirmar
                 </button>
-
                 <button type="button" (click)="finalizar(c)">
                   Finalizar
                 </button>
-
                 <button type="button" (click)="cancelar(c)">
                   Cancelar
                 </button>
-
               </div>
-
             </div>
 
           </div>

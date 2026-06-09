@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { DataMaskDirective } from './data-mask.directive';
 
 @Component({
   selector: 'app-listar-cadastro-pet',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, DataMaskDirective],
   templateUrl: './listar-cadastro-pet.component.html',
   styleUrl: './listar-cadastro-pet.component.css'
 })
@@ -27,7 +28,7 @@ export class ListarCadastroPetComponent implements OnInit {
   nomePet = '';
   especie = '';
   outraEspecie = '';
-  idade = '';
+  dataNascimentoInput = '';
   sexo = '';
   peso: number | null = null;
   fotoPreview: string | ArrayBuffer | null = null;
@@ -49,7 +50,7 @@ export class ListarCadastroPetComponent implements OnInit {
   }
 
   buscarPetsDoBanco(): void {
-    this.http.get(`${environment.apiUrl}/user/listar/pet`, { withCredentials: true })
+    this.http.get<any>(`${environment.apiUrl}/user/listar/pet`, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.pets = response.Pets || response.pets || [];
@@ -63,37 +64,82 @@ export class ListarCadastroPetComponent implements OnInit {
   }
 
   buscarPlanoAtivoReal(): void {
-    this.http.get(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
       next: (response: any) => {
         if (response && response.tem_plano && response.include) {
           const partesNome = response.include.nome ? response.include.nome.split(' | ') : ['Plano'];
-          
           this.planoContratado = {
             nome: partesNome[0],
             preco: `R$ ${response.include.preco}`,
             descricao: response.include.descricao
           };
-          
-          localStorage.setItem('planoSelecionado', JSON.stringify(this.planoContratado));
         } else {
           this.planoContratado = null;
-          localStorage.removeItem('planoSelecionado');
         }
       },
-      error: (err) => {
-        console.error('Erro ao buscar plano ativo do pet:', err);
-        this.planoContratado = null;
-        localStorage.removeItem('planoSelecionado');
-      }
+      error: (err) => console.error(err)
     });
   }
 
-  get nomeTutor(): string {
-    return this.usuarioLogado?.nome || 'Responsável';
+  get nomeTutor(): string { return this.usuarioLogado?.nome || 'Responsável'; }
+  get emailTutor(): string { return this.usuarioLogado?.email || 'E-mail não informado'; }
+
+  calcularPorteCachorro(pesoAtual: any): string {
+    const p = Number(pesoAtual);
+    if (!p || isNaN(p) || p <= 0) return 'Indefinido';
+    
+    if (p <= 5) return 'Pequeno (Mini)';
+    if (p <= 10) return 'Pequeno';
+    if (p >= 11 && p <= 25) return 'Médio';
+    if (p >= 26 && p <= 45) return 'Grande';
+    return 'Gigante';
   }
 
-  get emailTutor(): string {
-    return this.usuarioLogado?.email || 'E-mail não informado';
+  obterIdadeExtenso(dataNasc: string): string {
+    if (!dataNasc) return 'Idade desconhecida';
+    
+    const hoje = new Date();
+    const nascimento = new Date(dataNasc);
+    
+    let anos = hoje.getFullYear() - nascimento.getFullYear();
+    let meses = hoje.getMonth() - nascimento.getMonth();
+    
+    if (meses < 0 || (meses === 0 && hoje.getDate() < nascimento.getDate())) {
+      anos--;
+      meses += 12;
+    }
+    if (hoje.getDate() < nascimento.getDate() && meses > 0) {
+      meses--;
+    }
+
+    if (anos === 0 && meses === 0) return 'Recém-nascido';
+    
+    const textoAnos = anos > 0 ? `${anos} ${anos === 1 ? 'ano' : 'anos'}` : '';
+    const textoMeses = meses > 0 ? `${meses} ${meses === 1 ? 'mês' : 'meses'}` : '';
+    
+    if (textoAnos && textoMeses) return `${textoAnos} e ${textoMeses}`;
+    return textoAnos || textoMeses;
+  }
+
+  formatarParaDataBR(dataISO: string): string {
+    if (!dataISO) return '';
+    const partes = dataISO.split('T')[0].split('-');
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  }
+
+  converterParaISO(dataBR: string): string | null {
+    const partes = dataBR.split('/');
+    if (partes.length !== 3) return null;
+    
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10);
+    const ano = parseInt(partes[2], 10);
+    
+    const dataObj = new Date(ano, mes - 1, dia);
+    if (dataObj.getFullYear() !== ano || dataObj.getMonth() !== mes - 1 || dataObj.getDate() !== dia) {
+      return null;
+    }
+    return `${ano}-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}T00:00:00.000Z`;
   }
 
   abrirCadastroPet(): void {
@@ -110,7 +156,7 @@ export class ListarCadastroPetComponent implements OnInit {
     this.nomePet = '';
     this.especie = '';
     this.outraEspecie = '';
-    this.idade = '';
+    this.dataNascimentoInput = '';
     this.sexo = '';
     this.peso = null;
     this.fotoPreview = null;
@@ -121,22 +167,10 @@ export class ListarCadastroPetComponent implements OnInit {
   carregarFoto(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
-
     const arquivo = input.files[0];
-    if (!arquivo.type.startsWith('image/')) {
-      this.exibirErro('Selecione uma imagem válida.');
-      return;
-    }
-    if (arquivo.size > 5 * 1024 * 1024) {
-      this.exibirErro('A imagem deve ter no máximo 5MB.');
-      return;
-    }
-
     this.fotoArquivo = arquivo;
     const reader = new FileReader();
-    reader.onload = () => {
-      this.fotoPreview = reader.result;
-    };
+    reader.onload = () => this.fotoPreview = reader.result;
     reader.readAsDataURL(arquivo);
   }
 
@@ -145,32 +179,27 @@ export class ListarCadastroPetComponent implements OnInit {
     this.sucesso = '';
 
     if (!this.nomePet.trim()) return this.exibirErro('Informe o nome do pet.');
-    if (!this.especie) return this.exibirErro('Selecione a espécie do pet.');
-    if (this.especie === 'Outro' && !this.outraEspecie.trim()) return this.exibirErro('Informe qual é a espécie.');
-    if (!this.sexo) return this.exibirErro('Selecione o sexo do pet.');
-    if (!this.idade) return this.exibirErro('Informe a idade do pet.');
-    if (this.peso === null || Number(this.peso) <= 0) return this.exibirErro('Peso é obrigatório e deve ser maior que zero.');
+    if (!this.especie) return this.exibirErro('Selecione a espécie.');
+    if (!this.sexo) return this.exibirErro('Selecione o sexo.');
+    if (this.peso === null || Number(this.peso) <= 0) return this.exibirErro('Peso inválido.');
 
-    const numeroIdade = parseInt(this.idade.replace(/\D/g, ''), 10);
-    if (isNaN(numeroIdade)) return this.exibirErro('A idade deve conter um número válido.');
+    const dataISO = this.converterParaISO(this.dataNascimentoInput);
+    if (!dataISO) return this.exibirErro('Insira uma data de nascimento válida (DD/MM/AAAA).');
 
     this.salvando = true;
 
-    const anoAtual = new Date().getFullYear();
-    const dataNascimentoCalculada = `${anoAtual - numeroIdade}-01-01`;
+    const anosIdade = new Date().getFullYear() - new Date(dataISO).getFullYear();
 
     const formData = new FormData();
     formData.append('nome', this.nomePet.trim());
     formData.append('especie', this.especie === 'Outro' ? 'outro' : this.especie.toLowerCase());
     formData.append('outra_especie', this.especie === 'Outro' ? this.outraEspecie.trim() : '');
     formData.append('sexo', this.sexo === 'Macho' ? 'M' : 'F');
-    formData.append('idade', numeroIdade.toString());
+    formData.append('idade', Math.max(0, anosIdade).toString());
     formData.append('peso', this.peso.toString());
-    formData.append('data_nascimento', dataNascimentoCalculada);
+    formData.append('data_nascimento', dataISO.split('T')[0]);
 
-    if (this.fotoArquivo) {
-      formData.append('image', this.fotoArquivo);
-    }
+    if (this.fotoArquivo) formData.append('image', this.fotoArquivo);
 
     this.http.post(`${environment.apiUrl}/user/listar/pet/cadastar`, formData, { withCredentials: true })
       .subscribe({
@@ -181,8 +210,7 @@ export class ListarCadastroPetComponent implements OnInit {
           this.buscarPetsDoBanco();
         },
         error: (err) => {
-          console.error(err);
-          this.exibirErro(err.error || err.error?.mensagem || 'Erro ao cadastrar o pet.');
+          this.exibirErro(err.error || 'Erro ao cadastrar pet.');
           this.salvando = false;
         }
       });
@@ -191,6 +219,7 @@ export class ListarCadastroPetComponent implements OnInit {
   editarPet(): void {
     if (!this.petSelecionado) return;
     this.petForm = { ...this.petSelecionado };
+    this.petForm.dataNascimentoInput = this.formatarParaDataBR(this.petForm.data_nascimento);
     this.editando = true;
     this.erro = '';
   }
@@ -198,62 +227,42 @@ export class ListarCadastroPetComponent implements OnInit {
   salvarEdicao(): void {
     this.erro = '';
     if (!this.petForm.nome?.trim()) return this.exibirErro('Informe o nome do pet.');
-    if (this.petForm.peso !== null && Number(this.petForm.peso) <= 0) return this.exibirErro('O peso deve ser maior que zero.');
+    
+    const dataISO = this.converterParaISO(this.petForm.dataNascimentoInput);
+    if (!dataISO) return this.exibirErro('Data de nascimento inválida.');
 
-    const numeroIdade = typeof this.petForm.idade === 'string' 
-      ? parseInt(this.petForm.idade.replace(/\D/g, ''), 10) 
-      : this.petForm.idade;
-
-    if (isNaN(numeroIdade)) return this.exibirErro('Idade inválida.');
-
-    const anoAtual = new Date().getFullYear();
-    const dataNascimentoCalculada = `${anoAtual - numeroIdade}-01-01`;
+    const anosIdade = new Date().getFullYear() - new Date(dataISO).getFullYear();
 
     const dadosAtualizados = {
       nome: this.petForm.nome.trim(),
       especie: this.petForm.especie.toLowerCase(),
       outra_especie: this.petForm.especie === 'outro' ? this.petForm.outra_especie : null,
       sexo: this.petForm.sexo,
-      idade: numeroIdade,
+      idade: Math.max(0, anosIdade),
       peso: Number(this.petForm.peso),
-      data_nascimento: dataNascimentoCalculada,
+      data_nascimento: dataISO.split('T')[0],
       observacoes: this.petForm.observacoes || ''
     };
 
     this.http.put(`${environment.apiUrl}/user/listar/pet/editar/${this.petForm.id_pet}`, dadosAtualizados, { withCredentials: true })
       .subscribe({
         next: () => {
-          this.sucesso = 'Informações updated com sucesso.';
+          this.sucesso = 'Informações atualizadas com sucesso.';
           this.editando = false;
           this.buscarPetsDoBanco();
         },
-        error: (err) => {
-          console.error(err);
-          this.exibirErro(err.error?.mensagem || 'Erro ao atualizar os dados do pet.');
-        }
+        error: (err) => this.exibirErro(err.error?.mensagem || 'Erro ao atualizar dados.')
       });
   }
 
-  cancelarEdicao(): void {
-    this.editando = false;
-    this.petForm = {};
-    this.erro = '';
-  }
+  cancelarEdicao() { this.editando = false; this.petForm = {}; }
 
   excluirPet(): void {
-    if (!this.petSelecionado) return;
-    if (!confirm(`Deseja realmente excluir o histórico de ${this.petSelecionado.nome}?`)) return;
-
+    if (!this.petSelecionado || !confirm(`Excluir o histórico de ${this.petSelecionado.nome}?`)) return;
     this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${this.petSelecionado.id_pet}`, { withCredentials: true })
       .subscribe({
-        next: () => {
-          this.sucesso = 'Pet removido com sucesso.';
-          this.buscarPetsDoBanco();
-        },
-        error: (err) => {
-          console.error(err);
-          this.exibirErro(err.error?.mensagem || 'Não foi possível excluir o registro.');
-        }
+        next: () => { this.sucesso = 'Pet removido.'; this.buscarPetsDoBanco(); },
+        error: (err) => this.exibirErro('Não foi possível excluir o registro.')
       });
   }
 

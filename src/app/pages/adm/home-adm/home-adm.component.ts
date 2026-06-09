@@ -15,6 +15,7 @@ export class HomeAdmComponent implements OnInit {
   modalLogsAberto = false;
   planos: any[] = [];
   administradores: any[] = [];
+  consultas: any[] = [];
   
   admsAtivosCount = 0;
   funcionariosAtivosCount = 0;
@@ -23,6 +24,9 @@ export class HomeAdmComponent implements OnInit {
 
   carregandoPlanos = true;
   carregandoAdms = true;
+  carregandoConsultas = true;
+
+  dataLabel = '';
 
   logs = [
     { tipo: 'Administrador', nome: 'Ana Souza', acao: 'Acessou o painel administrativo', horario: 'Hoje, 09:42' },
@@ -34,9 +38,16 @@ export class HomeAdmComponent implements OnInit {
   constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.definirDataLabel();
     this.buscarPlanosReal();
     this.buscarAdministradoresReal();
     this.buscarMetricasFuncionariosReal();
+    this.buscarConsultasDoDiaReal();
+  }
+
+  definirDataLabel(): void {
+    const hoje = new Date();
+    this.dataLabel = hoje.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).toUpperCase();
   }
 
   buscarPlanosReal(): void {
@@ -103,11 +114,8 @@ export class HomeAdmComponent implements OnInit {
       next: (response: any) => {
         if (response && response.funcionarios) {
           const lista = response.funcionarios;
-          
           this.funcionariosAtivosCount = lista.filter((f: any) => f.ativo === true || f.ativo === 'true').length;
-          
-          this.vetsAtivosCount = lista.filter((f: any) => (f.ativo === true || f.ativo === 'true') && f.especialidade === 'veterinario').length;
-          
+          this.vetsAtivosCount = lista.filter((f: any) => (f.ativo === true || f.ativo === 'true') && f.especie === 'veterinario').length;
           this.apoioAtivosCount = lista.filter((f: any) => 
             (f.ativo === true || f.ativo === 'true') && ['tosador', 'recepcionista', 'financeiro'].includes(f.especialidade)
           ).length;
@@ -115,6 +123,41 @@ export class HomeAdmComponent implements OnInit {
       },
       error: (err) => console.error('Erro ao computar métricas de funcionários na Home:', err)
     });
+  }
+
+  buscarConsultasDoDiaReal(): void {
+    this.carregandoConsultas = true;
+    this.http.get<any>(`${environment.apiUrl}/adm/consultas`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        if (res && res.consultas) {
+          this.consultas = res.consultas.map((c: any) => {
+            const [h, m] = c.hora_inicio.split(':').map(Number);
+            const horaFimFormatada = `${String(h + 1).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            
+            let statusCor = 'azul';
+            if (c.status === 'em_espera') statusCor = 'laranja';
+            if (c.status === 'finalizado') statusCor = 'verde';
+
+            return {
+              horario: `${c.hora_inicio} - ${horaFimFormatada}`,
+              pet: c.pet?.nome || 'Paciente',
+              raca: c.pet?.especie ? c.pet.especie.toUpperCase() : 'Pet',
+              detalhe: `${c.observacoes || 'Consulta geral'} - Prof. ${c.funcionario?.nome || 'Clínica'}`,
+              cor: statusCor
+            };
+          });
+        }
+        this.carregandoConsultas = false;
+      },
+      error: (err) => {
+        console.error('Erro ao buscar consultas na Home ADM:', err);
+        this.carregandoConsultas = false;
+      }
+    });
+  }
+
+  get consultasHomePaginadas(): any[] {
+    return this.consultas.slice(0, 2);
   }
 
   get totalEquipeAtiva(): number {

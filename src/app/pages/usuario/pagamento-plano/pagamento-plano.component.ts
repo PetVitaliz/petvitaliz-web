@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { DataMaskDirective } from './data-mask.directive';
 
 @Component({
   selector: 'app-pagamento-plano',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DataMaskDirective],
   templateUrl: './pagamento-plano.component.html',
   styleUrl: './pagamento-plano.component.css'
 })
@@ -21,7 +24,10 @@ export class PagamentoPlanoComponent implements OnInit {
   cvv = '';
   nomeCartao = '';
 
-  constructor(private router: Router) {}
+  erroMensagem = '';
+  carregando = false;
+
+  constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.plano = JSON.parse(localStorage.getItem('planoSelecionado') || 'null');
@@ -31,9 +37,41 @@ export class PagamentoPlanoComponent implements OnInit {
     }
   }
 
-  confirmarPagamento(): void {
-    localStorage.setItem('pagamentoPlanoConfirmado', 'true');
+  private obterErroCpf(cpf: string): string | null {
+    const numeros = cpf.replace(/\D/g, '').trim();
+    if (numeros.length !== 11) return 'CPF incompleto.';
+    if (/^(\d)\1{10}$/.test(numeros)) return 'Este CPF é inválido.';
+    
+    let soma = 0; let resto;
+    for (let i = 1; i <= 9; i++) soma += parseInt(numeros.substring(i - 1, i), 10) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(numeros.substring(9, 10), 10)) return 'Este CPF é inválido.';
 
-    this.router.navigate(['/usuario/plano-sucesso']);
+    soma = 0;
+    for (let i = 1; i <= 10; i++) soma += parseInt(numeros.substring(i - 1, i), 10) * (12 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(numeros.substring(10, 11), 10)) return 'Este CPF é inválido.';
+
+    return null;
+  }
+
+  confirmarPagamento(): void {
+    this.erroMensagem = '';
+
+    if (!this.nomeCompleto || !this.cpf || !this.email || !this.numeroCartao || !this.validade || !this.cvv || !this.nomeCartao) {
+      this.erroMensagem = 'Por favor, preencha todas as informações de dados pessoais e pagamento.';
+      return;
+    }
+
+    const erroCpfEncontrado = this.obterErroCpf(this.cpf);
+    if (erroCpfEncontrado) {
+      this.erroMensagem = erroCpfEncontrado;
+      return;
+    }
+
+    localStorage.setItem('pagamentoPlanoConfirmado', 'true');
+    this.router.navigate(['/user/contrato-plano']);
   }
 }

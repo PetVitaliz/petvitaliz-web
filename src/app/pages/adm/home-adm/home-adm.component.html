@@ -112,24 +112,26 @@
                   <p>Consultas agendadas para hoje</p>
                 </div>
               </div>
-              <span>24 MAIO</span>
+              <span>{{ dataLabel }}</span>
             </div>
 
-            <div class="consulta azul">
-              <span>09:00 - 10:00</span>
-              <div>
-                <strong>Thor (Golden Retriever)</strong>
-                <p>Consulta de Rotina - Dr. Pedro</p>
-              </div>
+            <div *ngIf="carregandoConsultas" class="loading-texto" style="padding: 20px 0;">
+              Sincronizando agendamentos...
             </div>
 
-            <div class="consulta laranja">
-              <span>10:30 - 11:30</span>
-              <div>
-                <strong>Luna (Persa)</strong>
-                <p>Vacinação - Dra. Carla</p>
+            <ng-container *ngIf="!carregandoConsultas">
+              <div class="consulta" *ngFor="let c of consultasHomePaginadas" [ngClass]="c.cor">
+                <span>{{ c.horario }}</span>
+                <div>
+                  <strong>{{ c.pet }} ({{ c.raca }})</strong>
+                  <p>{{ c.detalhe }}</p>
+                </div>
               </div>
-            </div>
+
+              <div *ngIf="consultas.length === 0" class="loading-texto" style="padding: 20px 0; color: #6b7280;">
+                Nenhuma consulta agendada para hoje.
+              </div>
+            </ng-container>
 
             <button type="button" class="botao-link">
               Ver agenda completa <span>›</span>

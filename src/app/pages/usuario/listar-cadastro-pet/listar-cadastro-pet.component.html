@@ -18,10 +18,7 @@
     <div class="empty-state" *ngIf="pets.length === 0">
       <h2>Nenhum pet cadastrado</h2>
       <p>Cadastre um pet para visualizar as informações aqui.</p>
-
-      <button type="button" (click)="abrirCadastroPet()">
-        Cadastrar pet
-      </button>
+      <button type="button" (click)="abrirCadastroPet()">Cadastrar pet</button>
     </div>
 
     <main class="profile-dashboard" *ngIf="pets.length > 0 && petSelecionado">
@@ -36,7 +33,7 @@
 
         <p>
           {{ petSelecionado.especie === 'outro' ? petSelecionado.outra_especie : petSelecionado.especie }}
-          • {{ petSelecionado.idade }} anos
+          • {{ obterIdadeExtenso(petSelecionado.data_nascimento) }}
         </p>
 
         <div class="sidebar-badges">
@@ -51,9 +48,14 @@
           </div>
         </div>
 
+        <div class="plan-mini" style="margin-bottom: 12px; background: #f3f6ff; border: 1px solid #dbe3f0;" *ngIf="petSelecionado.especie?.toLowerCase() === 'cachorro'">
+          <span>Classificação de Tamanho</span>
+          <strong style="color: #5D6ED3;">Porte {{ calcularPorteCachorro(petSelecionado.peso) }}</strong>
+          <small>Baseado no peso atual</small>
+        </div>
+
         <div class="pet-selector" *ngIf="pets.length > 1">
           <small>MEUS PETS</small>
-          
           <div class="pet-avatars-grid">
             <button 
               type="button" 
@@ -90,12 +92,10 @@
             <span>ÁREA DO USUÁRIO</span>
             <h2>Resumo do perfil</h2>
           </div>
-
           <strong>Perfil verificado</strong>
         </div>
 
         <div class="profile-sections">
-
           <article class="section-card">
             <div class="section-title">
               <span>01</span>
@@ -110,17 +110,14 @@
                 <small>NOME</small>
                 <strong>{{ nomeTutor }}</strong>
               </div>
-
               <div>
                 <small>E-MAIL</small>
                 <strong>{{ emailTutor }}</strong>
               </div>
-
               <div>
                 <small>STATUS</small>
                 <strong>Perfil ativo</strong>
               </div>
-
               <div>
                 <small>CONTA</small>
                 <strong>Usuário PetVitaliz</strong>
@@ -128,52 +125,9 @@
             </div>
           </article>
 
-          <article class="section-card plan-section" *ngIf="planoContratado">
-            <div class="section-title">
-              <span>02</span>
-              <div>
-                <h3>Plano Contratado</h3>
-                <p>{{ planoContratado.descricao }}</p>
-              </div>
-            </div>
-
-            <div class="plan-row">
-              <div>
-                <small>PLANO</small>
-                <strong>{{ planoContratado.nome }}</strong>
-              </div>
-
-              <div>
-                <small>VALOR</small>
-                <strong>{{ planoContratado.preco }} /mês</strong>
-              </div>
-
-              <a routerLink="/user/planos-pet">Alterar plano</a>
-            </div>
-          </article>
-
-          <article class="section-card plan-section empty-plan" *ngIf="!planoContratado">
-            <div class="section-title">
-              <span>02</span>
-              <div>
-                <h3>Plano Contratado</h3>
-                <p>Você ainda não possui um plano ativo.</p>
-              </div>
-            </div>
-
-            <div class="plan-row">
-              <div>
-                <small>PLANO</small>
-                <strong>Nenhum plano ativo</strong>
-              </div>
-              
-              <a routerLink="/user/planos-pet">Contratar plano</a>
-            </div>
-          </article>
-
           <article class="section-card">
             <div class="section-title">
-              <span>03</span>
+              <span>02</span>
               <div>
                 <h3>Dados do Pet</h3>
                 <p>Informações cadastradas pelo tutor.</p>
@@ -185,25 +139,26 @@
                 <small>NOME DO PET</small>
                 <strong>{{ petSelecionado.nome }}</strong>
               </div>
-
               <div>
                 <small>ESPÉCIE</small>
-                <strong>{{ petSelecionado.especie }}</strong>
+                <strong style="text-transform: capitalize;">{{ petSelecionado.especie }}</strong>
               </div>
-
               <div>
-                <small>IDADE</small>
-                <strong>{{ petSelecionado.idade }} anos</strong>
+                <small>IDADE DETALHADA</small>
+                <strong>{{ obterIdadeExtenso(petSelecionado.data_nascimento) }}</strong>
               </div>
-
               <div>
                 <small>PESO ATUAL</small>
                 <strong>{{ petSelecionado.peso }} kg</strong>
               </div>
-
               <div>
                 <small>SEXO</small>
                 <strong>{{ petSelecionado.sexo === 'M' || petSelecionado.sexo === 'Macho' ? 'Macho' : 'Fêmea' }}</strong>
+              </div>
+              
+              <div *ngIf="petSelecionado.especie?.toLowerCase() === 'cachorro'">
+                <small>PORTE DO CÃO</small>
+                <strong>{{ calcularPorteCachorro(petSelecionado.peso) }}</strong>
               </div>
 
               <div *ngIf="petSelecionado.especie === 'outro'">
@@ -228,7 +183,6 @@
 
     <div class="modal-overlay" *ngIf="modalCadastroAberto">
       <div class="pet-modal-card">
-
         <div class="pet-modal-header">
           <h2>Cadastrar Pet</h2>
           <button type="button" class="btn-close-modal" (click)="fecharCadastroPet()">×</button>
@@ -277,8 +231,8 @@
             </div>
 
             <div class="modal-field">
-              <label>Idade</label>
-              <input type="text" placeholder="Ex: 3" [(ngModel)]="idade">
+              <label>Data de Nascimento</label>
+              <input type="text" appDataMask="date" placeholder="DD/MM/AAAA" [(ngModel)]="dataNascimentoInput">
             </div>
 
             <div class="modal-field">
@@ -288,6 +242,12 @@
                 <span>KG</span>
               </div>
             </div>
+
+            <div class="modal-field full" *ngIf="especie === 'Cachorro' && peso && peso > 0" style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 5px;">
+              <span style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">PORTE ESTIMADO</span>
+              <strong style="color: #1e3a8a; font-size: 14px;">Porte {{ calcularPorteCachorro(peso) }}</strong>
+            </div>
+
           </div>
         </div>
 
@@ -297,7 +257,6 @@
             {{ salvando ? 'Salvando...' : 'Salvar' }}
           </button>
         </div>
-
       </div>
     </div>
 
@@ -332,8 +291,8 @@
             </div>
 
             <div class="modal-field">
-              <small>IDADE</small>
-              <input type="text" [(ngModel)]="petForm.idade" class="edit-input">
+              <small>DATA DE NASCIMENTO</small>
+              <input type="text" appDataMask="date" [(ngModel)]="petForm.dataNascimentoInput" class="edit-input" placeholder="DD/MM/AAAA">
             </div>
 
             <div class="modal-field">
@@ -348,6 +307,12 @@
                 <option value="F">Fêmea</option>
               </select>
             </div>
+
+            <div class="modal-field" *ngIf="petForm.especie === 'cachorro' && petForm.peso && petForm.peso > 0" style="grid-column: span 2; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 4px;">
+              <small style="color: #64748b; font-weight: bold; display: block; margin-bottom: 2px;">RECALCULANDO PORTE</small>
+              <strong style="color: #1e3a8a;">Porte {{ calcularPorteCachorro(petForm.peso) }}</strong>
+            </div>
+
           </div>
 
           <div class="modal-field full-width">

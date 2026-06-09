@@ -16,11 +16,27 @@ export class PlanosPetComponent implements OnInit {
   planoSelecionado: any = null;
   planos: any[] = [];
   carregandoPlanos = true;
+  
+  usuarioJaPossuiPlano = false;
+  mensagemAvisoPlano = '';
 
   constructor(private router: Router, private http: HttpClient) { }
 
   ngOnInit(): void {
+    this.verificarPlanoAtivoDoUsuario();
     this.buscarPlanosDoBanco();
+  }
+
+  verificarPlanoAtivoDoUsuario(): void {
+    this.http.get<any>(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        if (res && res.tem_plano) {
+          this.usuarioJaPossuiPlano = true;
+          this.mensagemAvisoPlano = `Você já possui o plano "${res.include?.nome?.split(' | ')[0]}" ativo. Cancele-o na sua Área de Planos antes de assinar uma nova opção.`;
+        }
+      },
+      error: (err) => console.error('Erro ao checar plano ativo:', err)
+    });
   }
 
   buscarPlanosDoBanco(): void {
@@ -59,6 +75,10 @@ export class PlanosPetComponent implements OnInit {
   }
 
   abrirDetalhes(plano: any): void {
+    if (this.usuarioJaPossuiPlano) {
+      alert(this.mensagemAvisoPlano);
+      return;
+    }
     this.planoSelecionado = plano;
   }
 
@@ -67,13 +87,13 @@ export class PlanosPetComponent implements OnInit {
   }
 
   concluirPlano(): void {
-    if (!this.planoSelecionado) return;
+    if (!this.planoSelecionado || this.usuarioJaPossuiPlano) return;
 
     localStorage.setItem(
       'planoSelecionado',
       JSON.stringify(this.planoSelecionado)
     );
 
-    this.router.navigate(['/user/contrato-plano']);
+    this.router.navigate(['/user/pagamento-plano']);
   }
 }

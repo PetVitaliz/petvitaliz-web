@@ -7,16 +7,18 @@ import { environment } from '../../../environments/environment';
 export interface ConsultaFuncionario {
   id: number;
   hora: string;
-  horario: string;
-  periodo: string;
+  hora_fim: string;
   pet: string;
+  especie: string;
   idade: string;
   tutor: string;
   motivo: string;
   status: string;
   data: string;
-  imagem: string;
   tipo: string;
+  podeIniciar: boolean;
+  podeFinalizar: boolean;
+  expirado: boolean
 }
 
 @Component({
@@ -28,17 +30,8 @@ export interface ConsultaFuncionario {
 })
 export class ConsultasFuncionarioComponent implements OnInit {
 
-  filtros = {
-    pet: '',
-    data: '',
-    status: 'Todos os Status'
-  };
-
-  filtrosAplicados = {
-    pet: '',
-    data: '',
-    status: 'Todos os Status'
-  };
+  filtros = { pet: '', data: '', status: 'Todos os Status' };
+  filtrosAplicados = { pet: '', data: '', status: 'Todos os Status' };
 
   paginaAtual = 1;
   itensPorPagina = 5;
@@ -47,23 +40,8 @@ export class ConsultasFuncionarioComponent implements OnInit {
   consultaSelecionada: ConsultaFuncionario | null = null;
   
   modalDetalhesAberto = false;
-  modalEdicaoAberto = false;
-  modalNovaConsultaAberto = false;
+  erroMensagem = '';
 
-  consultaEditando: ConsultaFuncionario = this.criarConsultaVazia();
-  dataMinima = this.pegarDataHoje();
-
-  horariosDisponiveis = ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-
-  novaConsulta = {
-    hora: '',
-    periodo: 'AM',
-    pet: '',
-    idade: '',
-    tutor: '',
-    tipoAtendimento: 'Consulta de rotina',
-    data: ''
-  };
 
   constructor(private http: HttpClient) {}
 
@@ -72,169 +50,115 @@ export class ConsultasFuncionarioComponent implements OnInit {
   }
 
   carregarConsultasDoBanco(): void {
+    this.erroMensagem = '';
     this.http.get<any>(`${environment.apiUrl}/funcionario/consultas`, { withCredentials: true }).subscribe({
       next: (res) => {
         if (res && res.consultas) {
           this.consultas = res.consultas.map((c: any) => {
-            const [horaNum] = c.hora_inicio.split(':').map(Number);
             const statusMapeado = this.normalizarStatus(c.status);
+            const expirado = this.verificarSeExpirou(c.data_consulta, c.hora_fim);
+            
+            let statusFinal = statusMapeado;
+            if (statusMapeado === 'EM ATENDIMENTO' && expirado) {
+              statusFinal = 'ATRASADO';
+            }
 
             return {
               id: c.id_consulta,
               hora: c.hora_inicio,
-              horario: c.hora_inicio,
-              periodo: horaNum >= 12 ? 'PM' : 'AM',
+              hora_fim: c.hora_fim,
               pet: c.pet?.nome || 'Paciente',
+              especie: c.pet?.especie || 'Pet',
               idade: c.pet?.idade ? `${c.pet.idade} ano(s)` : 'Não informada',
               tutor: c.pet?.usuario ? `${c.pet.usuario.nome} ${c.pet.usuario.sobrenome || ''}`.trim() : 'Não informado',
               motivo: 'Atendimento Clínico',
-              status: statusMapeado,
+              status: statusFinal,
               data: c.data_consulta ? c.data_consulta.split('T')[0] : '',
-              imagem: '',
-              tipo: this.definirTipoStatus(statusMapeado)
+              tipo: this.definirTipoStatus(statusMapeado),
+              podeIniciar: this.verificarJanelaInicio(c.data_consulta, c.hora_inicio),
+              podeFinalizar: this.verificarJanelaTempo(c.data_consulta, c.hora_fim),
+              expirado: this.verificarSeExpirou(c.data_consulta, c.hora_fim)
             };
           });
         }
       },
-      error: (err) => {
-        console.error('Erro ao buscar consultas do funcionário:', err);
-        this.consultas = [];
-      }
+      error: (err) => console.error('Erro ao buscar consultas:', err)
     });
+  }
+
+  verificarSeExpirou(dataConsulta: string, horaFim: string): boolean {
+    const agora = new Date();
+    const dataStr = dataConsulta.split('T')[0];
+    const [h, m] = horaFim.split(':').map(Number);
+    const dataFimReal = new Date(`${dataStr}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
+
+    return agora > dataFimReal && agora.toDateString() === dataFimReal.toDateString();
+  }
+
+  verificarJanelaInicio(dataConsulta: string, horaInicio: string): boolean {
+    if (!dataConsulta || !horaInicio) return false;
+    const agora = new Date();
+    const dataStr = dataConsulta.split('T')[0];
+    const [h, m] = horaInicio.split(':').map(Number);
+    const dataInicioReal = new Date(`${dataStr}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
+    
+    return agora >= dataInicioReal;
+  }
+
+  verificarJanelaTempo(dataConsulta: string, horaFim: string): boolean {
+    if (!dataConsulta || !horaFim) return false;
+    const agora = new Date();
+    const dataStr = dataConsulta.split('T')[0];
+    const [h, m] = horaFim.split(':').map(Number);
+    const dataFimReal = new Date(`${dataStr}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
+    const limiteFim = new Date(dataFimReal.getTime() + 10 * 60 * 1000);
+
+    return agora >= dataFimReal && agora <= limiteFim;
   }
 
   get consultasFiltradas(): ConsultaFuncionario[] {
     return this.consultas.filter(consulta => {
       const pet = this.filtrosAplicados.pet.trim().toLowerCase();
-
       const matchPet = !pet || consulta.pet.toLowerCase().includes(pet);
       const matchData = !this.filtrosAplicados.data || consulta.data === this.filtrosAplicados.data;
-
-      const statusFiltro = this.normalizarStatus(this.filtrosAplicados.status);
-      const matchStatus = this.filtrosAplicados.status === 'Todos os Status' || 
-                          this.normalizarStatus(consulta.status) === statusFiltro;
-
+      const matchStatus = this.filtrosAplicados.status === 'Todos os Status' || consulta.status === this.filtrosAplicados.status;
       return matchPet && matchData && matchStatus;
     });
   }
 
-  get totalPaginas(): number {
-    return Math.max(Math.ceil(this.consultasFiltradas.length / this.itensPorPagina), 1);
-  }
-
-  get paginas(): number[] {
-    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
-  }
-
+  get totalPaginas(): number { return Math.max(Math.ceil(this.consultasFiltradas.length / this.itensPorPagina), 1); }
+  get paginas(): number[] { return Array.from({ length: this.totalPaginas }, (_, i) => i + 1); }
   get consultasPaginadas(): ConsultaFuncionario[] {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
     return this.consultasFiltradas.slice(inicio, inicio + this.itensPorPagina);
   }
 
-  get horariosLivres(): string[] {
-    return this.horariosDisponiveis.filter(horario => {
-      return !this.consultas.some(consulta =>
-        consulta.data === this.novaConsulta.data &&
-        consulta.hora === horario &&
-        this.normalizarStatus(consulta.status) !== 'CANCELADO'
-      );
-    });
-  }
+  aplicarFiltros(): void { this.filtrosAplicados = { ...this.filtros }; this.paginaAtual = 1; }
+  limparFiltros(): void { this.filtros = { pet: '', data: '', status: 'Todos os Status' }; this.aplicarFiltros(); }
+  mudarPagina(p: number): void { this.paginaAtual = p; }
 
-  aplicarFiltros(): void {
-    this.filtrosAplicados = { ...this.filtros };
-    this.paginaAtual = 1;
-  }
-
-  limparFiltros(): void {
-    this.filtros = { pet: '', data: '', status: 'Todos os Status' };
-    this.filtrosAplicados = { ...this.filtros };
-    this.paginaAtual = 1;
-  }
-
-  mudarPagina(pagina: number): void {
-    if (pagina < 1 || pagina > this.totalPaginas) return;
-    this.paginaAtual = pagina;
-  }
-
-  abrirNovaConsulta(): void {
-    this.dataMinima = this.pegarDataHoje();
-    this.novaConsulta = {
-      hora: '', periodo: 'AM', pet: '', idade: '', tutor: '',
-      tipoAtendimento: 'Consulta de rotina', data: this.pegarDataHoje()
-    };
-    this.modalNovaConsultaAberto = true;
-  }
-
-  fecharNovaConsulta(): void { this.modalNovaConsultaAberto = false; }
-  validarIdade(): void { this.novaConsulta.idade = this.novaConsulta.idade.replace(/\D/g, '').slice(0, 2); }
-
-  salvarNovaConsulta(): void {
-    alert('Para agendar novas consultas de tutores, utilize o fluxo de agendamento principal do cliente.');
-    this.fecharNovaConsulta();
-  }
-
-  abrirDetalhes(consulta: ConsultaFuncionario): void {
-    this.consultaSelecionada = consulta;
-    this.modalDetalhesAberto = true;
-  }
-
-  fecharDetalhes(): void { this.modalDetalhesAberto = false; }
-
-  abrirEdicao(consulta: ConsultaFuncionario): void {
-    this.consultaSelecionada = consulta;
-    this.consultaEditando = { ...consulta };
-    this.modalEdicaoAberto = true;
-  }
-
-  fecharEdicao(): void { this.modalEdicaoAberto = false; }
-
-  salvarEdicao(): void {
-    if (!this.consultaSelecionada) return;
-    this.alterarStatus(this.consultaSelecionada, this.consultaEditando.status);
-    this.fecharEdicao();
-  }
-
-  alterarStatus(consulta: ConsultaFuncionario, status: string): void {
-    if (!status) return;
-    const statusNormalizado = this.normalizarStatus(status);
-
+  alterarStatus(consulta: ConsultaFuncionario, statusDestino: string): void {
+    this.erroMensagem = '';
     let statusBanco = 'em_espera';
-    if (statusNormalizado === 'EM ATENDIMENTO') statusBanco = 'em_endamento';
-    else if (statusNormalizado === 'FINALIZADO') statusBanco = 'finalizado';
+    if (statusDestino === 'EM ATENDIMENTO') statusBanco = 'em_endamento';
+    if (statusDestino === 'FINALIZADO') statusBanco = 'finalizado';
 
-    this.http.put(`${environment.apiUrl}/funcionario/consultas/atualizar/${consulta.id}`, {}, { withCredentials: true })
+    this.http.put(`${environment.apiUrl}/funcionario/consultas/atualizar/${consulta.id}`, { novoStatus: statusBanco }, { withCredentials: true })
       .subscribe({
-        next: () => {
-          this.carregarConsultasDoBanco();
-        },
-        error: (err) => console.error('Erro ao atualizar status da consulta:', err)
+        next: () => this.carregarConsultasDoBanco(),
+        error: (err) => {
+          this.erroMensagem = err.error?.mensagem || 'Fora da janela de alteração permitida.';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       });
   }
 
-  iniciarConsulta(consulta: ConsultaFuncionario): void {
-    this.alterarStatus(consulta, 'EM ATENDIMENTO');
-  }
-
-  excluirConsulta(consulta: ConsultaFuncionario): void {
-    alert('A exclusão de registros históricos deve ser realizada através do painel de administração.');
-  }
-
-  inicialPet(consulta: ConsultaFuncionario | null): string {
-    if (!consulta || !consulta.pet) return 'P';
-    return consulta.pet.charAt(0).toUpperCase();
-  }
-
-  statusClasse(status: string): string {
-    return this.normalizarStatus(status).toLowerCase().replace(/\s+/g, '-');
-  }
+  inicialPet(consulta: ConsultaFuncionario): string { return consulta.pet ? consulta.pet.charAt(0).toUpperCase() : 'P'; }
+  statusClasse(status: string): string { return status.toLowerCase().replace(/\s+/g, '-'); }
 
   private definirTipoStatus(status: string): string {
-    const st = this.normalizarStatus(status);
-    if (st === 'CONFIRMADO' || st === 'CONFIRMADA') return 'green';
-    if (st === 'URGENTE' || st === 'CANCELADO' || st === 'CANCELADA') return 'red';
-    if (st === 'EM ATENDIMENTO' || st === 'EM_ENDAMENTO') return 'blue';
-    if (st === 'FINALIZADO' || st === 'FINALIZADA') return 'green';
+    if (status === 'FINALIZADO') return 'green';
+    if (status === 'EM ATENDIMENTO') return 'blue';
     return 'gray';
   }
 
@@ -246,18 +170,12 @@ export class ConsultasFuncionarioComponent implements OnInit {
     return st;
   }
 
-  private pegarDataHoje(): string {
-    const hoje = new Date();
-    return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
-  }
-
   formatarData(data: string): string {
-    if (!data) return 'Data não informada';
-    const partes = data.split('-');
-    return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : data;
+    if (!data) return '';
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
   }
 
-  private criarConsultaVazia(): ConsultaFuncionario {
-    return { id: 0, hora: '', horario: '', periodo: '', pet: '', idade: '', tutor: '', motivo: '', status: '', data: '', imagem: '', tipo: '' };
-  }
+  abrirDetalhes(consulta: ConsultaFuncionario): void { this.consultaSelecionada = consulta; this.modalDetalhesAberto = true; }
+  fecharDetalhes(): void { this.modalDetalhesAberto = false; }
 }

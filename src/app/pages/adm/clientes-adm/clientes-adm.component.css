@@ -1,10 +1,8 @@
 .clientes-page {
   min-height: calc(100vh - 84px);
-
   background:
     radial-gradient(circle at top left, rgba(93, 110, 211, 0.12), transparent 34%),
     linear-gradient(180deg, #f7f8fc 0%, #eef2f8 100%);
-
   padding: 34px 44px;
   font-family: 'Inter', sans-serif;
   box-sizing: border-box;
@@ -12,9 +10,8 @@
 
 .page-header {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 24px;
 }
 
@@ -26,14 +23,9 @@
 }
 
 .page-header p {
-  margin: 8px 0 0;
+  margin: 0;
   color: #6b7280;
   font-size: 15px;
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
 }
 
 button {
@@ -135,24 +127,19 @@ button {
   align-items: stretch;
 }
 
-.client-card,
-.add-card {
+.client-card {
   background: #fcfdff;
   border: 1px solid #e8edf8;
   border-radius: 26px;
   padding: 18px;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.045);
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-
-.client-card {
   min-height: 305px;
   display: flex;
   flex-direction: column;
 }
 
-.client-card:hover,
-.add-card:hover {
+.client-card:hover {
   transform: translateY(-3px);
   border-color: #5D6ED3;
   box-shadow: 0 18px 38px rgba(93, 110, 211, 0.12);
@@ -168,21 +155,15 @@ button {
   width: 48px;
   height: 48px;
   min-width: 48px;
-
   border-radius: 14px;
-
   background: linear-gradient(135deg, #4055c8, #1d3ed8);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #ffffff;
-
   font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
-
   box-shadow: 0 10px 22px rgba(64, 85, 200, 0.22);
 }
 
@@ -301,46 +282,6 @@ button {
 
 .card-actions button:hover {
   transform: translateY(-2px);
-}
-
-.add-card {
-  border: 2px dashed #c6cedd;
-  min-height: 305px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-}
-
-.add-card .icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #eef2ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #5D6ED3;
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 18px;
-}
-
-.add-card h3 {
-  margin: 0 0 10px;
-  color: #1f3b82;
-  font-size: 23px;
-  font-weight: 800;
-}
-
-.add-card p {
-  max-width: 250px;
-  margin: 0;
-  color: #6b7280;
-  font-size: 14px;
-  line-height: 1.6;
 }
 
 .sem-resultados {
@@ -677,7 +618,6 @@ button {
 }
 
 @media (max-width: 700px) {
-
   .form-grid,
   .prontuario-grid {
     grid-template-columns: 1fr;
