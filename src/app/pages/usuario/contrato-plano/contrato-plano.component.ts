@@ -55,10 +55,7 @@ export class ContratoPlanoComponent implements OnInit {
         error: (err) => {
           this.processandoContratacao = false;
           console.error('Erro retornado pelo backend:', err);
-          
           this.erroContrato = err.error?.mensagem || 'Falha ao processar assinatura.';
-          
-          this.buscarPlanoOriginalDoBancoESalvar();
         }
       });
   }

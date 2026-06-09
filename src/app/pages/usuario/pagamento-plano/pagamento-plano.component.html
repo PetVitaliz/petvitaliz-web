@@ -5,6 +5,10 @@
     <p>Preencha as informações para continuar.</p>
   </div>
 
+  <p class="erro-banner" *ngIf="erroMensagem" style="background: #fef2f2; color: #dc2626; padding: 12px; margin: 15px auto; max-width: 800px; border-radius: 6px; font-weight: 500; text-align: center;">
+    ⚠️ {{ erroMensagem }}
+  </p>
+
   <main class="payment-card" *ngIf="plano">
 
     <section class="form-section">
@@ -16,17 +20,17 @@
       <div class="form-box">
         <div class="field">
           <label>Nome Completo</label>
-          <input type="text" placeholder="Ex: Jadi Silva" [(ngModel)]="nomeCompleto">
+          <input type="text" placeholder="Nome Completo" [(ngModel)]="nomeCompleto">
         </div>
 
         <div class="field">
           <label>CPF</label>
-          <input type="text" placeholder="000.000.000-00" [(ngModel)]="cpf">
+          <input type="text" placeholder="000.000.000-00" [(ngModel)]="cpf" appDataMask="cpf">
         </div>
 
         <div class="field full">
           <label>E-mail para confirmação</label>
-          <input type="email" placeholder="joao@email.com" [(ngModel)]="email">
+          <input type="email" placeholder="a@email.com" [(ngModel)]="email">
         </div>
       </div>
     </section>
@@ -40,17 +44,17 @@
       <div class="form-box">
         <div class="field full">
           <label>Número do Cartão</label>
-          <input type="text" placeholder="0000 0000 0000 0000" [(ngModel)]="numeroCartao">
+          <input type="text" placeholder="0000 0000 0000 0000" [(ngModel)]="numeroCartao" appDataMask="card">
         </div>
 
         <div class="field">
           <label>Validade</label>
-          <input type="text" placeholder="MM/AA" [(ngModel)]="validade">
+          <input type="text" placeholder="MM/AA" [(ngModel)]="validade" appDataMask="expiry">
         </div>
 
         <div class="field">
           <label>CVV</label>
-          <input type="text" placeholder="123" [(ngModel)]="cvv">
+          <input type="text" placeholder="123" [(ngModel)]="cvv" maxlength="3" oninput="this.value = this.value.replace(/\D/g, '')">
         </div>
 
         <div class="field full">
@@ -84,8 +88,8 @@
       Ao clicar em “Confirmar pagamento”, você concorda com nossos termos e será redirecionado para o contrato.
     </div>
 
-    <button type="button" class="confirm-btn" (click)="confirmarPagamento()">
-      Confirmar
+    <button type="button" class="confirm-btn" [disabled]="carregando" (click)="confirmarPagamento()">
+      {{ carregando ? 'Processando assinatura...' : 'Confirmar' }}
     </button>
 
   </main>

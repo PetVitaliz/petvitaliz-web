@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { ConsultasService, ConsultaFuncionario } from '../../../core/services/consultas.service';
 
 @Component({
@@ -13,18 +15,14 @@ import { ConsultasService, ConsultaFuncionario } from '../../../core/services/co
 export class PetsFuncionarioComponent implements OnInit {
 
   filtroEspecie = 'Todos';
-  filtroStatus = 'Ativo';
-
+  filtroStatus = 'Todos';
   visualizacao: 'grid' | 'lista' = 'grid';
 
   modalTipo = '';
   petSelecionado: any = null;
-  petEditandoOriginal: any = null;
 
   paginaAtual = 1;
   itensPorPagina = 8;
-
-  novoPet: any = this.criarPetVazio();
 
   agendamento = {
     data: '',
@@ -34,101 +32,22 @@ export class PetsFuncionarioComponent implements OnInit {
 
   pets: any[] = [];
 
-  petsPadrao = [
-    {
-      nome: 'Bento',
-      especie: 'Cão',
-      raca: 'Golden Retriever',
-      idade: '2 anos',
-      status: 'Ativo',
-      tutor: 'Helena Silva',
-      prontuario: 'Vacinas em dia. Última consulta sem alterações.'
-    },
-    {
-      nome: 'Misty',
-      especie: 'Gato',
-      raca: 'Siamês',
-      idade: '4 anos',
-      status: 'Ativo',
-      tutor: 'Ricardo Souza',
-      prontuario: 'Histórico de alergia leve.'
-    },
-    {
-      nome: 'Thor',
-      especie: 'Cão',
-      raca: 'Bulldog Inglês',
-      idade: '6 anos',
-      status: 'Ativo',
-      tutor: 'Ana Beatriz',
-      prontuario: 'Acompanhamento respiratório.'
-    },
-    {
-      nome: 'Luna',
-      especie: 'Gato',
-      raca: 'Maine Coon',
-      idade: '1 ano',
-      status: 'Ativo',
-      tutor: 'Marcos Oliveira',
-      prontuario: 'Primeira consulta realizada.'
-    },
-    {
-      nome: 'Pipoca',
-      especie: 'Cão',
-      raca: 'Beagle',
-      idade: '3 anos',
-      status: 'Ativo',
-      tutor: 'Julia Mendes',
-      prontuario: 'Controle de peso recomendado.'
-    },
-    {
-      nome: 'Cookie',
-      especie: 'Cão',
-      raca: 'Poodle Toy',
-      idade: '5 anos',
-      status: 'Ativo',
-      tutor: 'Fabio Costa',
-      prontuario: 'Vacinação anual pendente.'
-    },
-    {
-      nome: 'Max',
-      especie: 'Cão',
-      raca: 'Pastor Alemão',
-      idade: '7 anos',
-      status: 'Ativo',
-      tutor: 'Camila Ferrag',
-      prontuario: 'Exames recentes normais.'
-    },
-    {
-      nome: 'Amora',
-      especie: 'Cão',
-      raca: 'Dachshund',
-      idade: '9 meses',
-      status: 'Em Tratamento',
-      tutor: 'Gabriel Lima',
-      prontuario: 'Tratamento dermatológico em andamento.'
-    }
-  ];
-
-  constructor(private consultasService: ConsultasService) {}
+  constructor(private http: HttpClient, private consultasService: ConsultasService) {}
 
   ngOnInit(): void {
-    this.carregarPets();
+    this.carregarPetsDaAPI();
   }
 
-  carregarPets(): void {
-    const petsSalvos = localStorage.getItem('pets');
-
-    if (petsSalvos) {
-      this.pets = JSON.parse(petsSalvos);
-      return;
-    }
-
-    this.pets = [...this.petsPadrao];
-    this.salvarPets();
-  }
-
-  salvarPets(): void {
-    localStorage.setItem('pets', JSON.stringify(this.pets));
+  carregarPetsDaAPI(): void {
+    this.http.get<any>(`${environment.apiUrl}/funcionario/pets`, { withCredentials: true })
+      .subscribe({
+        next: (res) => {
+          this.pets = res.pets || res || [];
+        },
+        error: (err) => {
+          console.error('Erro ao buscar o diretório global de pacientes:', err);
+        }
+      });
   }
 
   get petsFiltrados(): any[] {
@@ -146,10 +65,7 @@ export class PetsFuncionarioComponent implements OnInit {
   }
 
   get totalPaginas(): number {
-    return Math.max(
-      Math.ceil(this.petsFiltrados.length / this.itensPorPagina),
-      1
-    );
+    return Math.max(Math.ceil(this.petsFiltrados.length / this.itensPorPagina), 1);
   }
 
   get paginas(): number[] {
@@ -181,53 +97,7 @@ export class PetsFuncionarioComponent implements OnInit {
   }
 
   abrirNovoPaciente(): void {
-    this.modalTipo = 'novo';
-    this.petSelecionado = null;
-    this.petEditandoOriginal = null;
-    this.novoPet = this.criarPetVazio();
-  }
-
-  abrirEdicao(pet: any): void {
-    this.modalTipo = 'editar';
-    this.petSelecionado = pet;
-    this.petEditandoOriginal = pet;
-    this.novoPet = { ...pet };
-  }
-
-  salvarPet(): void {
-    if (
-      !this.novoPet.nome ||
-      !this.novoPet.especie ||
-      !this.novoPet.raca ||
-      !this.novoPet.idade ||
-      !this.novoPet.tutor
-    ) {
-      alert('Preencha todos os campos obrigatórios.');
-      return;
-    }
-
-    if (this.modalTipo === 'editar' && this.petEditandoOriginal) {
-      Object.assign(this.petEditandoOriginal, this.novoPet);
-    } else {
-      this.pets.unshift({ ...this.novoPet });
-    }
-
-    this.salvarPets();
-    this.paginaAtual = 1;
-    this.fecharModal();
-  }
-
-  excluirPet(pet: any): void {
-    const confirmar = confirm(`Deseja excluir o paciente ${pet.nome}?`);
-
-    if (!confirmar) return;
-
-    this.pets = this.pets.filter(item => item !== pet);
-    this.salvarPets();
-
-    if (this.paginaAtual > this.totalPaginas) {
-      this.paginaAtual = this.totalPaginas;
-    }
+    alert('O cadastro de novos pacientes é feito pelos tutores em suas respectivas contas para garantir o vínculo correto.');
   }
 
   abrirProntuario(pet: any): void {
@@ -262,7 +132,7 @@ export class PetsFuncionarioComponent implements OnInit {
       horario: this.agendamento.horario,
       periodo: this.definirPeriodo(this.agendamento.horario),
       pet: this.petSelecionado.nome,
-      idade: this.petSelecionado.idade,
+      idade: this.petSelecionado.idadeTexto,
       tutor: this.petSelecionado.tutor,
       motivo: this.agendamento.motivo,
       status: 'AGENDADO',
@@ -272,8 +142,7 @@ export class PetsFuncionarioComponent implements OnInit {
     };
 
     this.consultasService.adicionarConsulta(consulta);
-
-    alert(`Consulta agendada para ${this.petSelecionado.nome}.`);
+    alert(`Consulta agendada para o paciente ${this.petSelecionado.nome} com sucesso!`);
     this.fecharModal();
   }
 
@@ -285,19 +154,6 @@ export class PetsFuncionarioComponent implements OnInit {
   fecharModal(): void {
     this.modalTipo = '';
     this.petSelecionado = null;
-    this.petEditandoOriginal = null;
-  }
-
-  private criarPetVazio(): any {
-    return {
-      nome: '',
-      especie: 'Cão',
-      raca: '',
-      idade: '',
-      status: 'Ativo',
-      tutor: '',
-      prontuario: 'Novo paciente cadastrado.'
-    };
   }
 
   private definirPeriodo(horario: string): string {
@@ -310,7 +166,6 @@ export class PetsFuncionarioComponent implements OnInit {
     const ano = hoje.getFullYear();
     const mes = String(hoje.getMonth() + 1).padStart(2, '0');
     const dia = String(hoje.getDate()).padStart(2, '0');
-
     return `${ano}-${mes}-${dia}`;
   }
 }

@@ -1,25 +1,12 @@
 <section class="clientes-page">
 
   <div class="page-header">
-
     <div>
       <h1>Diretório de Clientes</h1>
-
       <p>
-        Gerencie o cadastro de tutores e seus pets em um único lugar.
+        Gerencie a visualização de tutores e seus pets em um único lugar.
       </p>
     </div>
-
-    <div class="actions">
-      <button
-        class="btn-primary"
-        type="button"
-        (click)="abrirNovoCliente()"
-      >
-        Novo Cliente
-      </button>
-    </div>
-
   </div>
 
   <div class="panel">
@@ -27,46 +14,33 @@
     <div class="filters">
 
       <div class="search">
-
         <span class="search-icon">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"></path>
           </svg>
         </span>
-
         <input
           type="text"
           placeholder="Buscar por tutor, pet ou telefone..."
           [(ngModel)]="busca"
           (input)="aplicarFiltros()"
         >
-
       </div>
 
-      <select
-        [(ngModel)]="especie"
-        (change)="aplicarFiltros()"
-      >
+      <select [(ngModel)]="especie" (change)="aplicarFiltros()">
         <option>Todas</option>
         <option>Cão</option>
         <option>Gato</option>
       </select>
 
-      <select
-        [(ngModel)]="status"
-        (change)="aplicarFiltros()"
-      >
+      <select [(ngModel)]="status" (change)="aplicarFiltros()">
         <option>Todos</option>
         <option>Ativo</option>
         <option>Em tratamento</option>
         <option>Inativo</option>
       </select>
 
-      <button
-        class="btn-limpar"
-        type="button"
-        (click)="limparFiltros()"
-      >
+      <button class="btn-limpar" type="button" (click)="limparFiltros()">
         Limpar
       </button>
 
@@ -74,27 +48,16 @@
 
     <div class="cards">
 
-      <article
-        class="client-card"
-        *ngFor="let cliente of clientesPaginados"
-      >
+      <article class="client-card" *ngFor="let cliente of clientesPaginados">
 
         <div class="card-top">
-
           <div class="avatar-cliente">
             {{ obterInicial(cliente.nome) }}
           </div>
 
           <div class="cliente-info">
-
-            <h3>
-              {{ cliente.nome }}
-            </h3>
-
-            <p>
-              {{ cliente.pet }} • {{ cliente.idade }}
-            </p>
-
+            <h3>{{ cliente.nome }}</h3>
+            <p>{{ cliente.pet }} • {{ cliente.idade }}</p>
           </div>
 
           <span
@@ -104,44 +67,31 @@
           >
             {{ cliente.status }}
           </span>
-
         </div>
 
         <div class="info">
-
           <p>
             <span class="info-icon">
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M20 21a8 8 0 0 0-16 0"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </span>
-
             <span>{{ cliente.tutor }}</span>
           </p>
 
           <p>
             <span class="info-icon">
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6.12-6.12A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12.9.36 1.76.72 2.54a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.54-1.18a2 2 0 0 1 2.11-.45c.78.36 1.64.6 2.54.72A2 2 0 0 1 22 16.92z"></path>
               </svg>
             </span>
-
             <span>{{ cliente.telefone }}</span>
           </p>
 
           <p>
             <span class="info-icon">
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5.5 12.5C4.4 12.5 3.5 11.5 3.5 10.2C3.5 8.9 4.4 7.9 5.5 7.9C6.6 7.9 7.5 8.9 7.5 10.2C7.5 11.5 6.6 12.5 5.5 12.5Z"></path>
                 <path d="M9.3 8.1C8.2 8.1 7.4 7.1 7.4 5.8C7.4 4.5 8.2 3.5 9.3 3.5C10.4 3.5 11.2 4.5 11.2 5.8C11.2 7.1 10.4 8.1 9.3 8.1Z"></path>
                 <path d="M14.7 8.1C13.6 8.1 12.8 7.1 12.8 5.8C12.8 4.5 13.6 3.5 14.7 3.5C15.8 3.5 16.6 4.5 16.6 5.8C16.6 7.1 15.8 8.1 14.7 8.1Z"></path>
@@ -149,107 +99,45 @@
                 <path d="M8.2 16.2C8.2 13.9 9.9 12.2 12 12.2C14.1 12.2 15.8 13.9 15.8 16.2C15.8 18.1 14.3 19.5 12.4 19.5H11.6C9.7 19.5 8.2 18.1 8.2 16.2Z"></path>
               </svg>
             </span>
-
             <span>{{ cliente.especie }}</span>
           </p>
-
         </div>
 
         <div class="card-actions">
-
-          <button
-            class="btn-prontuario"
-            type="button"
-            (click)="abrirProntuario(cliente)"
-          >
+          <button class="btn-prontuario" type="button" (click)="abrirProntuario(cliente)">
             Prontuário
           </button>
 
-          <button
-            class="btn-agendar"
-            type="button"
-            (click)="abrirAgendamento(cliente)"
-          >
+          <button class="btn-agendar" type="button" (click)="abrirAgendamento(cliente)">
             Agendar
           </button>
 
-          <button
-            class="btn-icon"
-            type="button"
-            (click)="editarCliente(cliente)"
-          >
+          <button class="btn-icon" type="button" (click)="editarCliente(cliente)">
             Editar
           </button>
 
-          <button
-            class="btn-icon btn-status"
-            type="button"
-            (click)="alternarStatus(cliente)"
-          >
+          <button class="btn-icon btn-status" type="button" (click)="alternarStatus(cliente)">
             {{ cliente.status === 'Inativo' ? 'Ativar' : 'Inativar' }}
           </button>
 
-          <button
-            class="btn-icon btn-danger"
-            type="button"
-            (click)="excluirCliente(cliente)"
-          >
+          <button class="btn-icon btn-danger" type="button" (click)="excluirCliente(cliente)">
             Excluir
           </button>
-
         </div>
-
-      </article>
-
-      <article
-        class="add-card"
-        (click)="abrirNovoCliente()"
-      >
-
-        <div class="icon">
-          +
-        </div>
-
-        <h3>
-          Cadastrar Novo Tutor
-        </h3>
-
-        <p>
-          Adicione novos clientes e pets à sua base
-        </p>
 
       </article>
 
     </div>
 
-    <div
-      class="sem-resultados"
-      *ngIf="clientesFiltrados.length === 0"
-    >
+    <div class="sem-resultados" *ngIf="clientesFiltrados.length === 0">
       Nenhum cliente encontrado.
     </div>
 
-    <div
-      class="footer-list"
-      *ngIf="clientesFiltrados.length > 0"
-    >
+    <div class="footer-list" *ngIf="clientesFiltrados.length > 0">
+      <p>Mostrando {{ clientesPaginados.length }} de {{ clientesFiltrados.length }} clientes</p>
 
-      <p>
-        Mostrando {{ clientesPaginados.length }} de {{ clientesFiltrados.length }} clientes
-      </p>
-
-      <div
-        class="pagination"
-        *ngIf="totalPaginas > 1"
-      >
-
-        <button
-          type="button"
-          (click)="mudarPagina(paginaAtual - 1)"
-        >
-          ‹
-        </button>
-
+      <div class="pagination" *ngIf="totalPaginas > 1">
+        <button type="button" (click)="mudarPagina(paginaAtual - 1)">‹</button>
         <button
           type="button"
           *ngFor="let p of paginas"
@@ -258,82 +146,43 @@
         >
           {{ p }}
         </button>
-
-        <button
-          type="button"
-          (click)="mudarPagina(paginaAtual + 1)"
-        >
-          ›
-        </button>
-
+        <button type="button" (click)="mudarPagina(paginaAtual + 1)">›</button>
       </div>
-
     </div>
 
   </div>
 
-  <div
-    class="modal-fundo"
-    *ngIf="modalClienteAberto"
-  >
-
+  <div class="modal-fundo" *ngIf="modalClienteAberto">
     <div class="modal">
-
       <div class="modal-header">
-
-        <h2>
-          {{ modoEdicao ? 'Editar Cliente' : 'Novo Cliente' }}
-        </h2>
-
-        <button
-          type="button"
-          (click)="fecharModais()"
-        >
-          ×
-        </button>
-
+        <h2>Editar Informações Auxiliares</h2>
+        <button type="button" (click)="fecharModais()">×</button>
       </div>
 
       <div class="form-grid">
-
         <label>
           Nome do pet
-          <input
-            type="text"
-            [(ngModel)]="novoCliente.nome"
-          >
+          <input type="text" [(ngModel)]="novoCliente.nome">
         </label>
 
         <label>
           Raça
-          <input
-            type="text"
-            [(ngModel)]="novoCliente.pet"
-          >
+          <input type="text" [(ngModel)]="novoCliente.pet">
         </label>
 
         <label>
           Idade
-          <input
-            type="text"
-            [(ngModel)]="novoCliente.idade"
-          >
+          <input type="text" [(ngModel)]="novoCliente.idade">
         </label>
 
         <label>
           Tutor
-          <input
-            type="text"
-            [(ngModel)]="novoCliente.tutor"
-          >
+          <input type="text" [(ngModel)]="novoCliente.tutor" disabled style="background: #f1f5f9; cursor: not-allowed;">
         </label>
 
         <label>
           Telefone
-          <input
-            type="text"
-            [(ngModel)]="novoCliente.telefone"
-          >
+          <input type="text" [(ngModel)]="novoCliente.telefone" disabled style="background: #f1f5f9; cursor: not-allowed;">
         </label>
 
         <label>
@@ -352,71 +201,29 @@
             <option>Inativo</option>
           </select>
         </label>
-
       </div>
 
       <div class="modal-actions">
-
-        <button
-          class="btn-light"
-          type="button"
-          (click)="fecharModais()"
-        >
-          Cancelar
-        </button>
-
-        <button
-          class="btn-primary"
-          type="button"
-          (click)="salvarCliente()"
-        >
-          Salvar
-        </button>
-
+        <button class="btn-light" type="button" (click)="fecharModais()">Cancelar</button>
+        <button class="btn-primary" type="button" (click)="salvarCliente()">Salvar</button>
       </div>
-
     </div>
-
   </div>
 
-  <div
-    class="modal-fundo"
-    *ngIf="modalProntuarioAberto && clienteSelecionado"
-  >
-
+  <div class="modal-fundo" *ngIf="modalProntuarioAberto && clienteSelecionado">
     <div class="modal prontuario-card">
-
       <div class="modal-header">
-
-        <h2>
-          Prontuário do Pet
-        </h2>
-
-        <button
-          type="button"
-          (click)="fecharModais()"
-        >
-          ×
-        </button>
-
+        <h2>Prontuário do Pet</h2>
+        <button type="button" (click)="fecharModais()">×</button>
       </div>
 
       <div class="prontuario-topo">
-
         <div class="avatar-cliente avatar-grande">
           {{ obterInicial(clienteSelecionado.nome) }}
         </div>
-
         <div>
-
-          <h3>
-            {{ clienteSelecionado.nome }}
-          </h3>
-
-          <p>
-            {{ clienteSelecionado.pet }} • {{ clienteSelecionado.idade }}
-          </p>
-
+          <h3>{{ clienteSelecionado.nome }}</h3>
+          <p>{{ clienteSelecionado.pet }} • {{ clienteSelecionado.idade }}</p>
           <span
             class="badge"
             [class.tratamento]="clienteSelecionado.status === 'Em tratamento'"
@@ -424,133 +231,73 @@
           >
             {{ clienteSelecionado.status }}
           </span>
-
         </div>
-
       </div>
 
       <div class="prontuario-grid">
-
         <div>
           <small>Tutor</small>
           <strong>{{ clienteSelecionado.tutor }}</strong>
         </div>
-
         <div>
           <small>Telefone</small>
           <strong>{{ clienteSelecionado.telefone }}</strong>
         </div>
-
         <div>
           <small>Espécie</small>
           <strong>{{ clienteSelecionado.especie }}</strong>
         </div>
-
         <div>
           <small>Última consulta</small>
-          <strong>14/10/2026</strong>
+          <strong>Instante Atual</strong>
         </div>
-
       </div>
 
       <div class="historico">
-
-        <h4>
-          Histórico clínico
-        </h4>
-
-        <p>
-          Vacinas em dia. Última avaliação sem alterações graves.
+        <h4>Histórico Clínico e Sintomas</h4>
+        <p style="background: #f8fafc; padding: 12px; border-radius: 8px; font-style: italic; color: #475569;">
+          " {{ clienteSelecionado.observacoes }} "
         </p>
-
-        <p>
-          Observação administrativa: manter cadastro do tutor atualizado.
+        <p style="font-size: 11px; color: #94a3b8; margin-top: 10px;">
+          * Observação administrativa: manter cadastro do tutor atualizado e conferir status vacinal na triagem.
         </p>
-
       </div>
 
       <div class="modal-actions">
-
-        <button
-          class="btn-light"
-          type="button"
-          (click)="fecharModais()"
-        >
-          Fechar
-        </button>
-
-        <button
-          class="btn-primary"
-          type="button"
-          (click)="abrirAgendamento(clienteSelecionado)"
-        >
+        <button class="btn-light" type="button" (click)="fecharModais()">Fechar</button>
+        <button class="btn-primary" type="button" (click)="abrirAgendamento(clienteSelecionado)">
           Agendar Consulta
         </button>
-
       </div>
-
     </div>
-
   </div>
 
-  <div
-    class="modal-fundo"
-    *ngIf="modalAgendarAberto && clienteSelecionado"
-  >
-
+  <div class="modal-fundo" *ngIf="modalAgendarAberto && clienteSelecionado">
     <div class="modal agendar-card">
-
       <div class="modal-header">
-
-        <h2>
-          Agendar Consulta
-        </h2>
-
-        <button
-          type="button"
-          (click)="fecharModais()"
-        >
-          ×
-        </button>
-
+        <h2>Agendar Consulta</h2>
+        <button type="button" (click)="fecharModais()">×</button>
       </div>
 
       <div class="agendar-resumo">
-
         <div class="avatar-cliente avatar-grande">
           {{ obterInicial(clienteSelecionado.nome) }}
         </div>
-
         <div>
-
-          <strong>
-            {{ clienteSelecionado.nome }}
-          </strong>
-
-          <span>
-            Tutor: {{ clienteSelecionado.tutor }}
-          </span>
-
+          <strong>{{ clienteSelecionado.nome }}</strong>
+          <span>Tutor: {{ clienteSelecionado.tutor }}</span>
         </div>
-
       </div>
 
       <div class="form-grid">
-
         <label>
           Data
-          <input
-            type="date"
-            [(ngModel)]="novaConsulta.data"
-          >
+          <input type="date" [(ngModel)]="novaConsulta.data">
         </label>
 
         <label>
           Horário
-          <input
-            type="time"
-            [(ngModel)]="novaConsulta.horario"
-          >
+          <input type="time" [(ngModel)]="novaConsulta.horario">
         </label>
 
         <label>
@@ -575,36 +322,17 @@
 
         <label class="campo-full">
           Observação
-          <textarea
-            [(ngModel)]="novaConsulta.observacao"
-            placeholder="Informe detalhes importantes..."
-          ></textarea>
+          <textarea [(ngModel)]="novaConsulta.observacao" placeholder="Informe detalhes importantes..."></textarea>
         </label>
-
       </div>
 
       <div class="modal-actions">
-
-        <button
-          class="btn-light"
-          type="button"
-          (click)="fecharModais()"
-        >
-          Cancelar
-        </button>
-
-        <button
-          class="btn-primary"
-          type="button"
-          (click)="salvarAgendamento()"
-        >
+        <button class="btn-light" type="button" (click)="fecharModais()">Cancelar</button>
+        <button class="btn-primary" type="button" (click)="salvarAgendamento()">
           Confirmar Agendamento
         </button>
-
       </div>
-
     </div>
-
   </div>
 
 </section>

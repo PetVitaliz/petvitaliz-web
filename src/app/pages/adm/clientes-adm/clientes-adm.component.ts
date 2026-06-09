@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 interface ClienteAdm {
+  id_pet?: number;
   nome: string;
   pet: string;
   idade: string;
@@ -10,6 +13,7 @@ interface ClienteAdm {
   telefone: string;
   status: 'Ativo' | 'Em tratamento' | 'Inativo';
   especie: 'Cão' | 'Gato';
+  observacoes?: string;
 }
 
 interface ConsultaAdm {
@@ -27,7 +31,7 @@ interface ConsultaAdm {
   templateUrl: './clientes-adm.component.html',
   styleUrl: './clientes-adm.component.css'
 })
-export class ClientesAdmComponent {
+export class ClientesAdmComponent implements OnInit {
 
   busca = '';
   especie = 'Todas';
@@ -44,56 +48,32 @@ export class ClientesAdmComponent {
   clienteSelecionado: ClienteAdm | null = null;
 
   novoCliente: ClienteAdm = this.criarClienteVazio();
-
   novaConsulta: ConsultaAdm = this.criarConsultaVazia();
 
-  clientes: ClienteAdm[] = [
-    {
-      nome: 'Bento',
-      pet: 'Beagle',
-      idade: '2 anos',
-      tutor: 'Ricardo Oliveira',
-      telefone: '(11) 98871-8855',
-      status: 'Ativo',
-      especie: 'Cão'
-    },
-    {
-      nome: 'Thor',
-      pet: 'Golden',
-      idade: '3 anos',
-      tutor: 'André Santos',
-      telefone: '(11) 91221-3334',
-      status: 'Ativo',
-      especie: 'Cão'
-    },
-    {
-      nome: 'Mel',
-      pet: 'SRD',
-      idade: '5 anos',
-      tutor: 'Mariane Costa',
-      telefone: '(11) 98453-2281',
-      status: 'Em tratamento',
-      especie: 'Cão'
-    },
-    {
-      nome: 'Luna',
-      pet: 'Maine Coon',
-      idade: '1 ano',
-      tutor: 'Beatriz Lima',
-      telefone: '(11) 97786-5544',
-      status: 'Ativo',
-      especie: 'Gato'
-    },
-    {
-      nome: 'Cookie',
-      pet: 'Bulldog',
-      idade: '4 anos',
-      tutor: 'Gustavo Meireles',
-      telefone: '(11) 93252-1100',
-      status: 'Ativo',
-      especie: 'Cão'
-    }
-  ];
+  clientes: ClienteAdm[] = [];
+  carregando = false;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.carregarClientesDoBanco();
+  }
+
+  carregarClientesDoBanco(): void {
+    this.carregando = true;
+    this.http.get<any>(`${environment.apiUrl}/adm/listar/clientes`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        if (res && res.clientes) {
+          this.clientes = res.clientes;
+        }
+        this.carregando = false;
+      },
+      error: (err) => {
+        console.error('Erro ao buscar diretório de clientes:', err);
+        this.carregando = false;
+      }
+    });
+  }
 
   criarClienteVazio(): ClienteAdm {
     return {
@@ -118,15 +98,13 @@ export class ClientesAdmComponent {
   }
 
   obterInicial(nome: string): string {
-    if (!nome || !nome.trim()) {
-      return '?';
-    }
-
+    if (!nome || !nome.trim()) return '?';
     return nome.trim().charAt(0).toUpperCase();
   }
 
   get clientesFiltrados(): ClienteAdm[] {
     return this.clientes.filter(cliente => {
+      const termo = this.busca.trim().toLowerCase();
       const texto = `
         ${cliente.nome}
         ${cliente.pet}
@@ -134,7 +112,7 @@ export class ClientesAdmComponent {
         ${cliente.telefone}
       `.toLowerCase();
 
-      const passaBusca = texto.includes(this.busca.trim().toLowerCase());
+      const passaBusca = texto.includes(termo);
       const passaEspecie = this.especie === 'Todas' || cliente.especie === this.especie;
       const passaStatus = this.status === 'Todos' || cliente.status === this.status;
 
@@ -143,23 +121,16 @@ export class ClientesAdmComponent {
   }
 
   get totalPaginas(): number {
-    return Math.ceil(this.clientesFiltrados.length / this.itensPorPagina);
+    return Math.max(Math.ceil(this.clientesFiltrados.length / this.itensPorPagina), 1);
   }
 
   get paginas(): number[] {
-    return Array.from(
-      { length: this.totalPaginas },
-      (_, i) => i + 1
-    );
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
   }
 
   get clientesPaginados(): ClienteAdm[] {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
-
-    return this.clientesFiltrados.slice(
-      inicio,
-      inicio + this.itensPorPagina
-    );
+    return this.clientesFiltrados.slice(inicio, inicio + this.itensPorPagina);
   }
 
   aplicarFiltros(): void {
@@ -179,13 +150,6 @@ export class ClientesAdmComponent {
     }
   }
 
-  abrirNovoCliente(): void {
-    this.modoEdicao = false;
-    this.clienteSelecionado = null;
-    this.novoCliente = this.criarClienteVazio();
-    this.modalClienteAberto = true;
-  }
-
   editarCliente(cliente: ClienteAdm): void {
     this.modoEdicao = true;
     this.clienteSelecionado = cliente;
@@ -194,21 +158,13 @@ export class ClientesAdmComponent {
   }
 
   salvarCliente(): void {
-    if (
-      !this.novoCliente.nome.trim() ||
-      !this.novoCliente.pet.trim() ||
-      !this.novoCliente.idade.trim() ||
-      !this.novoCliente.tutor.trim() ||
-      !this.novoCliente.telefone.trim()
-    ) {
-      alert('Preencha todos os campos obrigatórios.');
+    if (!this.novoCliente.nome.trim() || !this.novoCliente.pet.trim()) {
+      alert('Preencha os campos obrigatórios identificadores do Pet.');
       return;
     }
 
     if (this.modoEdicao && this.clienteSelecionado) {
       Object.assign(this.clienteSelecionado, this.novoCliente);
-    } else {
-      this.clientes.unshift({ ...this.novoCliente });
     }
 
     this.fecharModais();
@@ -232,13 +188,23 @@ export class ClientesAdmComponent {
       return;
     }
 
-    if (!this.clienteSelecionado) {
-      alert('Nenhum cliente selecionado.');
-      return;
-    }
+    const payload = {
+      servico: this.novaConsulta.procedimento.toLowerCase().includes('tosa') ? 'tosador' : 'veterinario',
+      id_pet: this.clienteSelecionado?.id_pet,
+      data_consulta: this.novaConsulta.data,
+      hora_inicio: this.novaConsulta.horario,
+      observacoes: this.novaConsulta.observacao
+    };
 
-    alert(`Consulta agendada para ${this.clienteSelecionado.nome}.`);
-    this.fecharModais();
+    this.http.post(`${environment.apiUrl}/agendamento`, payload, { withCredentials: true }).subscribe({
+      next: () => {
+        alert(`Consulta para ${this.clienteSelecionado?.nome} agendada com sucesso via painel do Administrador!`);
+        this.fecharModais();
+      },
+      error: (err) => {
+        alert(err.error?.mensagem || 'Erro ao processar agendamento.');
+      }
+    });
   }
 
   alternarStatus(cliente: ClienteAdm): void {
@@ -246,34 +212,19 @@ export class ClientesAdmComponent {
   }
 
   excluirCliente(cliente: ClienteAdm): void {
-    const confirmar = confirm(`Deseja excluir ${cliente.nome}?`);
+    if (!confirm(`Deseja remover ${cliente.nome} do diretório clínico?`)) return;
 
-    if (confirmar) {
+    if (cliente.id_pet) {
+      this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${cliente.id_pet}`, { withCredentials: true }).subscribe({
+        next: () => {
+          this.carregarClientesDoBanco();
+          this.paginaAtual = 1;
+        },
+        error: (err) => console.error('Erro ao excluir pet:', err)
+      });
+    } else {
       this.clientes = this.clientes.filter(c => c !== cliente);
-      this.paginaAtual = 1;
     }
-  }
-
-  exportarLista(): void {
-    const cabecalho = 'Pet;Raça;Idade;Tutor;Telefone;Status;Espécie\n';
-
-    const conteudo = this.clientesFiltrados
-      .map(cliente => {
-        return `${cliente.nome};${cliente.pet};${cliente.idade};${cliente.tutor};${cliente.telefone};${cliente.status};${cliente.especie}`;
-      })
-      .join('\n');
-
-    const arquivo = new Blob(
-      [cabecalho + conteudo],
-      { type: 'text/csv;charset=utf-8;' }
-    );
-
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(arquivo);
-    link.download = 'clientes-petvitaliz.csv';
-    link.click();
-
-    URL.revokeObjectURL(link.href);
   }
 
   fecharModais(): void {

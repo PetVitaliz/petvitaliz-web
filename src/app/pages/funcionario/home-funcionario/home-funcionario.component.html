@@ -4,6 +4,7 @@
     <div class="hero-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       <div>
         <h1>Olá, {{ saudacaoNome }}!</h1>
+        <br>
         <p>
           Você possui <strong>{{ totalHoje }} atendimentos</strong> agendados para hoje, <strong>{{ dataAtual }}.</strong>
         </p>
@@ -92,7 +93,6 @@
 
         <div class="time">
           <strong>{{ consulta.horario }}</strong>
-          <span>{{ consulta.periodo }}</span>
         </div>
 
         <div class="pet-avatar">
@@ -119,7 +119,7 @@
             Prontuário
           </button>
 
-          <button type="button" class="mini-btn primary" *ngIf="consulta.status !== 'FINALIZADO'"
+          <button type="button" class="mini-btn primary" *ngIf="consulta.status === 'EM ESPERA'"
             (click)="selecionarConsulta(consulta); iniciarConsulta(); $event.stopPropagation()">
             <i class="fa-solid fa-play"></i>
             Iniciar
@@ -217,7 +217,7 @@
           </div>
           <div>
             <small>Horário de Entrada</small>
-            <strong>{{ consultaSelecionada.horario }} {{ consultaSelecionada.periodo }}</strong>
+            <strong>{{ consultaSelecionada.horario }}</strong>
           </div>
           <div>
             <small>Procedimento</small>
@@ -244,11 +244,23 @@
   </div>
 
   <div class="modal-fundo" *ngIf="dialogoAberto">
-    <div class="dialogo-card">
-      <div class="dialogo-icone"><i class="fa-solid fa-check"></i></div>
+    <div class="dialogo-card" [ngClass]="{'erro-card': dialogoTipo === 'atencao' || dialogoTipo === 'erro'}">
+      <div class="dialogo-icone" *ngIf="dialogoTipo === 'sucesso'">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      
+      <div class="dialogo-icone erro" *ngIf="dialogoTipo === 'atencao' || dialogoTipo === 'erro'" style="background-color: #fef2f2; color: #dc2626;">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+
       <h2>{{ dialogoTitulo }}</h2>
       <p>{{ dialogoMensagem }}</p>
-      <button class="btn-dialogo" type="button" (click)="fecharDialogo()">OK</button>
+
+      <button class="btn-dialogo" type="button" 
+              [style.background-color]="dialogoTipo === 'sucesso' ? '#2563eb' : '#dc2626'" 
+              (click)="fecharDialogo()">
+        OK
+      </button>
     </div>
   </div>
 

@@ -144,6 +144,28 @@
   z-index: 1000;
 }
 
+.perfil-menu button.btn-dropdown-logout {
+  width: 100%;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  color: #dc3545;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.perfil-menu button.btn-dropdown-logout:hover {
+  background: #fff5f5;
+  color: #c82333;
+}
+
 .perfil-menu a,
 .perfil-menu button {
   width: 100%;

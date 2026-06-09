@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-contato',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './contato.component.html',
   styleUrl: './contato.component.css'
 })
@@ -20,29 +21,14 @@ export class ContatoComponent {
     mensagem: ''
   };
 
+  erro = '';
+
   enviarMensagem(): void {
-    if (
-      !this.contato.nome.trim() ||
-      !this.contato.email.trim() ||
-      !this.contato.assunto.trim() ||
-      !this.contato.mensagem.trim()
-    ) {
-      alert('Preencha todos os campos antes de enviar.');
-      return;
-    }
-
-    alert('Mensagem enviada com sucesso!');
-
-    this.contato = {
-      nome: '',
-      email: '',
-      assunto: 'Agendamento de Consulta',
-      mensagem: ''
-    };
+    this.erro = 'Faça login para utilizar esse recurso.';
   }
 
-  imgContatoFundo = '';
-imgMapaFundo = '';
+  imgContatoFundo = 'assets/img/clinica-fachada.jpg';
+  imgMapaFundo = 'assets/img/mapa-fundo.jpg';
 
-linkGoogleMaps = 'https://maps.google.com';
+  linkGoogleMaps = 'https://maps.google.com';
 }

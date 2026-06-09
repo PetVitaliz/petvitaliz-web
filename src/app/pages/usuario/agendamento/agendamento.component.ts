@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
-type StatusAgendamento = 'em espera' | 'em andamento' | 'finalizado' | 'Cancelado';
+type StatusAgendamento = 'em espera' | 'em andamento' | 'finalizado' | 'cancelado';
 
 interface Pet {
   id_pet: number;
@@ -68,7 +68,7 @@ export class AgendamentoComponent implements OnInit {
   private gerarGradeHorarios(): void {
     const lista = [];
     let atual = 8 * 60;
-    const fim = 18 * 60;
+    const fim = 20 * 60;
     while (atual <= fim) {
       const h = Math.floor(atual / 60);
       const m = atual % 60;
@@ -81,12 +81,9 @@ export class AgendamentoComponent implements OnInit {
   buscarPetsDoUsuario(): void {
     this.http.get<any>(`${environment.apiUrl}/user/listar/pet`, { withCredentials: true }).subscribe({
       next: (response) => {
-        console.log('Resposta de pets no agendamento:', response);
         this.pets = response.pets || response.Pets || [];
       },
-      error: (err) => {
-        console.error('Erro ao buscar pets do tutor no agendamento:', err);
-      }
+      error: (err) => console.error('Erro ao buscar pets:', err)
     });
   }
 
@@ -99,7 +96,6 @@ export class AgendamentoComponent implements OnInit {
             nome_pet: c.pet?.nome || 'Seu Pet',
             servico: c.funcionario?.especialidade === 'veterinario' ? 'Veterinário' : 'Tosador',
             data_consulta: c.data_consulta ? c.data_consulta.split('T')[0] : '',
-            hora_inicio: c.hora_inicio,
             status: c.status,
             nome_funcionario: c.funcionario?.nome,
             observacoes: c.observacoes
@@ -107,9 +103,7 @@ export class AgendamentoComponent implements OnInit {
         }
       },
       error: (err) => {
-        if (err.status !== 404) {
-          console.error('Erro ao buscar lista de consultas:', err);
-        }
+        if (err.status !== 404) console.error('Erro ao buscar consultas:', err);
         this.agendamentos = [];
       }
     });
@@ -140,6 +134,7 @@ export class AgendamentoComponent implements OnInit {
   selecionarServico(valor: string): void {
     this.servicoSelecionadoValor = valor;
     this.mensagemErro = '';
+    this.horarioSelecionado = '';
   }
 
   selecionarHorario(horario: string): void {
@@ -213,7 +208,7 @@ export class AgendamentoComponent implements OnInit {
       error: (err) => {
         this.carregando = false;
         console.error(err);
-        this.mensagemErro = err.error?.mensagem || err.error || 'Erro ao efuar o agendamento no servidor.';
+        this.mensagemErro = err.error?.mensagem || 'Erro ao efetuar o agendamento no servidor.';
       }
     });
   }
@@ -221,14 +216,14 @@ export class AgendamentoComponent implements OnInit {
   cancelarAgendamento(id: number): void {
     if (!confirm('Tem certeza que deseja cancelar essa consulta?')) return;
 
-    this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${id}`).subscribe({
+    this.http.delete(`${environment.apiUrl}/user/agendamento/cancelar/${id}`, { withCredentials: true }).subscribe({
       next: () => {
-        this.mensagemSucesso = 'Agendamento removido.';
+        this.mensagemSucesso = 'Agendamento cancelado com sucesso.';
         this.buscarAgendamentosDoUsuario();
       },
       error: (err) => {
         console.error(err);
-        this.mensagemErro = 'Não foi possível cancelar o agendamento.';
+        this.mensagemErro = err.error?.mensagem || 'Não foi possível cancelar o agendamento.';
       }
     });
   }
@@ -258,13 +253,19 @@ export class AgendamentoComponent implements OnInit {
   }
 
   horarioJaOcupado(horario: string): boolean {
-    if (!this.dataSelecionada) return false;
+    if (!this.dataSelecionada || !this.servicoSelecionadoValor) return false;
 
     return this.agendamentos.some(a => {
       const statusBaixo = a.status ? a.status.toLowerCase().trim() : '';
       const estaAtivo = statusBaixo === 'em espera' || statusBaixo === 'em_espera' || statusBaixo === 'em andamento' || statusBaixo === 'em_andamento';
       
-      return estaAtivo && a.data_consulta === this.dataSelecionada && a.hora_inicio === horario;
+      const servicoConsulta = a.servico.toLowerCase().includes('vet') ? 'veterinario' : 'tosador';
+      const mesmoServico = servicoConsulta === this.servicoSelecionadoValor.toLowerCase();
+
+      return estaAtivo && 
+             a.data_consulta === this.dataSelecionada && 
+             a.hora_inicio === horario && 
+             mesmoServico;
     });
   }
 

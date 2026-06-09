@@ -1,122 +1,78 @@
 <div class="clientes-page">
 
   <div class="page-header">
-
     <div>
       <span class="eyebrow">CRM VETERINÁRIO</span>
-
       <h1>Gestão de Clientes</h1>
-
-      <p>
-        Visualize tutores, pets, consultas e histórico clínico.
-      </p>
+      <p>Visualize tutores, pets cadastrados e o histórico clínico da clínica.</p>
     </div>
-
-    <button
-      class="btn-novo"
-      type="button"
-      (click)="novoCliente()">
-
-      Novo Cliente
-
-    </button>
-
   </div>
 
   <div class="stats-grid">
-
     <div class="stat-card">
       <span>CLIENTES</span>
       <strong>{{ clientes.length }}</strong>
-      <small>Total cadastrado</small>
+      <small>Tutores na base</small>
     </div>
 
     <div class="stat-card">
       <span>ATIVOS</span>
       <strong>{{ totalAtivos }}</strong>
-      <small>Em acompanhamento</small>
+      <small>Contas ativas</small>
     </div>
 
     <div class="stat-card">
       <span>PETS</span>
       <strong>{{ totalPets }}</strong>
-      <small>Vinculados</small>
+      <small>Animais vinculados</small>
     </div>
 
     <div class="stat-card danger">
       <span>INATIVOS</span>
       <strong>{{ totalInativos }}</strong>
-      <small>Sem acompanhamento</small>
+      <small>Contas suspensas</small>
     </div>
-
   </div>
 
   <div class="main-card">
-
     <div class="toolbar">
-
       <div class="search-area">
         <span class="search-icon">⌕</span>
-
-        <input
-          type="text"
-          placeholder="Buscar cliente..."
-          [(ngModel)]="searchTerm">
+        <input type="text" placeholder="Buscar por nome, CPF ou e-mail..." [(ngModel)]="searchTerm">
       </div>
 
-      <select
-        class="status-filter"
-        [(ngModel)]="statusFiltro">
-
+      <select class="status-filter" [(ngModel)]="statusFiltro">
         <option value="Todos">Todos os status</option>
         <option value="ATIVO">Ativos</option>
         <option value="INATIVO">Inativos</option>
-
       </select>
-
     </div>
 
     <div class="clientes-grid">
-
-      <div
-        class="cliente-card"
+      <div 
+        class="cliente-card" 
         *ngFor="let cliente of clientesFiltrados"
-        [class.inativo-card]="cliente.status === 'INATIVO'">
-
+        [class.inativo-card]="cliente.status === 'INATIVO'"
+      >
         <div class="card-top">
-
           <div class="cliente-identidade">
-
             <div class="cliente-avatar">
               {{ inicialCliente(cliente) }}
             </div>
 
             <div class="cliente-info">
-
               <div class="cliente-nome-status">
-
                 <h3>{{ cliente.nome }}</h3>
-
-                <span
-                  class="status"
-                  [class.inativo]="cliente.status === 'INATIVO'">
-
+                <span class="status" [class.inativo]="cliente.status === 'INATIVO'">
                   {{ cliente.status }}
-
                 </span>
-
               </div>
-
               <p>{{ cliente.email }}</p>
-
             </div>
-
           </div>
-
         </div>
 
         <div class="cliente-dados">
-
           <div class="dado-item">
             <span>CPF</span>
             <strong>{{ cliente.cpf }}</strong>
@@ -134,247 +90,151 @@
 
           <div class="dado-item">
             <span>Última visita</span>
-            <strong>{{ cliente.ultimaVisita }}</strong>
+            <strong style="color: #4055c8; cursor: pointer; text-decoration: underline;" (click)="abrirDetalhes(cliente)">
+              {{ cliente.ultimaVisita }}
+            </strong>
           </div>
-
         </div>
 
         <div class="card-actions">
-
-          <button
-            type="button"
-            class="btn-action primary"
-            (click)="abrirDetalhes(cliente)">
-
-            Ver detalhes
-
+          <button type="button" class="btn-action primary" (click)="verPets(cliente)">
+            Ver Pets
           </button>
 
-          <button
-            type="button"
-            class="btn-action"
-            (click)="verPets(cliente)">
-
-            Pets
-
+          <button type="button" class="btn-action" (click)="agendarConsulta(cliente)">
+            Agendar Consulta
           </button>
-
-          <button
-            type="button"
-            class="btn-action"
-            (click)="agendarConsulta(cliente)">
-
-            Agendar
-
-          </button>
-
-          <button
-            type="button"
-            class="btn-editar"
-            (click)="editar(cliente)">
-
-            Editar
-
-          </button>
-
         </div>
-
       </div>
-
     </div>
 
-    <div
-      class="empty"
-      *ngIf="clientesFiltrados.length === 0">
-
-      <h3>Nenhum cliente encontrado</h3>
-
-      <p>
-        Tente pesquisar por outro nome, CPF ou telefone.
-      </p>
-
+    <div class="empty" *ngIf="clientesFiltrados.length === 0">
+      <h3>Nenhum tutor encontrado</h3>
+      <p>Tente pesquisar por outro termo ou mude o filtro.</p>
     </div>
-
   </div>
-
 </div>
 
-<div
-  class="modal-fundo"
-  *ngIf="modalDetalhesAberto && clienteSelecionado">
-
+<div class="modal-fundo" *ngIf="modalDetalhesAberto && clienteSelecionado">
   <div class="modal detalhes-modal">
-
-    <button
-      class="fechar-modal"
-      type="button"
-      (click)="fecharDetalhes()">
-
-      ×
-
-    </button>
+    <button class="fechar-modal" type="button" (click)="fecharDetalhes()">×</button>
 
     <div class="detalhes-topo">
-
       <div class="cliente-avatar grande">
         {{ inicialCliente(clienteSelecionado) }}
       </div>
-
       <div>
-
-        <span class="eyebrow">DETALHES DO CLIENTE</span>
-
+        <span class="eyebrow">HISTÓRICO CLÍNICO DO TUTOR</span>
         <h2>{{ clienteSelecionado.nome }}</h2>
-
         <p>{{ clienteSelecionado.email }}</p>
-
       </div>
-
     </div>
 
     <div class="detalhes-grid">
-
       <div>
         <span>CPF</span>
         <strong>{{ clienteSelecionado.cpf }}</strong>
       </div>
-
       <div>
-        <span>Telefone</span>
+        <span>TELEFONE</span>
         <strong>{{ clienteSelecionado.telefone }}</strong>
       </div>
-
       <div>
-        <span>Pets</span>
+        <span>QUANTIDADE DE PETS</span>
         <strong>{{ clienteSelecionado.pets }}</strong>
       </div>
-
       <div>
-        <span>Status</span>
+        <span>STATUS DA CONTA</span>
         <strong>{{ clienteSelecionado.status }}</strong>
       </div>
+    </div>
 
-      <div class="full">
-        <span>Última visita</span>
-        <strong>{{ clienteSelecionado.ultimaVisita }}</strong>
+    <div class="historico-clinico-section" style="margin-top: 24px;">
+      <h3 style="color: #082b57; font-size: 16px; margin-bottom: 12px; font-weight: 700; border-bottom: 2px solid #edf0f7; padding-bottom: 6px;">
+        Linha do Tempo de Atendimentos
+      </h3>
+      
+      <div class="historico-lista" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 6px;">
+        <div 
+          *ngFor="let consulta of historicoConsultas" 
+          style="background: #f8fafc; border-left: 4px solid #5D6ED3; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13px;"
+        >
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <strong style="color: #1e293b;">Pet: {{ consulta.pet?.nome || consulta.pet }}</strong>
+            <span style="color: #64748b; font-size: 11px;">{{ formatarDataParaExibicao(consulta.data_consulta) }} às {{ consulta.hora_inicio || consulta.hora }}</span>
+          </div>
+          <p style="margin: 0; color: #475569;"><strong>Motivo / Observação:</strong> {{ consulta.observacoes || consulta.motivo || 'Consulta de rotina' }}</p>
+          <p style="margin: 3px 0 0; color: #64748b; font-size: 12px;"><strong>Status:</strong> {{ consulta.status }}</p>
+        </div>
+
+        <div class="empty-state-mini" *ngIf="historicoConsultas.length === 0" style="color: #64748b; font-style: italic; font-size: 13px; text-align: center; padding: 15px;">
+          Nenhum registro médico ou consulta encontrada para este tutor.
+        </div>
       </div>
-
     </div>
 
-    <div class="modal-botoes">
-
-      <button
-        class="btn-cancelar"
-        type="button"
-        (click)="fecharDetalhes()">
-
-        Fechar
-
+    <div class="modal-botoes" style="margin-top: 24px;">
+      <button class="btn-cancelar" type="button" (click)="fecharDetalhes()" style="width: 100%;">
+        Fechar Prontuário
       </button>
-
-      <button
-        class="btn-salvar"
-        type="button"
-        (click)="editar(clienteSelecionado); fecharDetalhes()">
-
-        Editar cliente
-
-      </button>
-
     </div>
-
   </div>
-
 </div>
 
 <div class="modal-fundo" *ngIf="modalPetsAberto && clienteSelecionado">
-
   <div class="modal detalhes-modal">
-
-    <button
-      class="fechar-modal"
-      type="button"
-      (click)="fecharPets()">
-
-      ×
-
-    </button>
+    <button class="fechar-modal" type="button" (click)="fecharPets()">×</button>
 
     <div class="modal-header">
-
-      <h2>Pets de {{ clienteSelecionado.nome }}</h2>
-
-      <p>Pets vinculados a este tutor.</p>
-
+      <h2>Animais de {{ clienteSelecionado.nome }}</h2>
+      <p>Lista detalhada de pets vinculados a este responsável.</p>
     </div>
 
-    <div class="pets-grid">
-
-      <div
-        class="pet-mini-card"
-        *ngFor="let pet of clienteSelecionado.petsLista">
-
-        <span>Pet cadastrado</span>
-        <strong>{{ pet }}</strong>
-
+    <div class="pets-grid" style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px; max-height: 280px; overflow-y: auto; padding-right: 4px;">
+      <div 
+        class="pet-mini-card" 
+        *ngFor="let pet of clienteSelecionado.petsDetalhesLista"
+        style="border: 1px solid #dfe5f1; border-radius: 12px; padding: 14px; background: #ffffff; display: flex; flex-direction: column; gap: 4px;"
+      >
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; margin-bottom: 4px;">
+          <strong style="color: #082b57; font-size: 16px;">🐾 {{ pet.nome || pet }}</strong>
+          <span style="background: #e0e7ff; color: #4338ca; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; text-transform: uppercase;">
+            {{ pet.especie || 'Não informada' }}
+          </span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; font-size: 13px; color: #475569; gap: 6px;" *ngIf="pet.nome">
+          <div><span>Gênero:</span> <strong style="color: #1e293b;">{{ pet.sexo === 'M' ? 'Macho' : 'Fêmea' }}</strong></div>
+          <div><span>Peso:</span> <strong style="color: #1e293b;">{{ pet.peso ? pet.peso + ' kg' : 'Não informado' }}</strong></div>
+          <div style="grid-column: span 2;">
+            <span>Nascimento:</span> <strong style="color: #1e293b;">{{ formatarDataParaExibicao(pet.data_nascimento) }}</strong>
+          </div>
+        </div>
       </div>
-
     </div>
 
-    <div
-      class="empty"
-      *ngIf="!clienteSelecionado.petsLista || clienteSelecionado.petsLista.length === 0">
-
-      <h3>Nenhum pet vinculado</h3>
-
-      <p>
-        Cadastre pets para este tutor na página de Pets.
-      </p>
-
+    <div class="empty" *ngIf="!clienteSelecionado.petsDetalhesLista || clienteSelecionado.petsDetalhesLista.length === 0">
+      <h3>Nenhum pet cadastrado</h3>
+      <p>Este tutor ainda não possui nenhum animal vinculado ao perfil.</p>
     </div>
 
-    <div class="modal-botoes">
-
-      <button
-        class="btn-cancelar"
-        type="button"
-        (click)="fecharPets()">
-
-        Fechar
-
+    <div class="modal-botoes" style="margin-top: 20px;">
+      <button class="btn-cancelar" type="button" (click)="fecharPets()" style="width: 100%;">
+        Fechar Lista
       </button>
-
     </div>
-
   </div>
-
 </div>
 
 <div class="modal-fundo" *ngIf="modalAgendarAberto && clienteSelecionado">
-
   <div class="modal detalhes-modal">
-
-    <button
-      class="fechar-modal"
-      type="button"
-      (click)="fecharAgendar()">
-
-      ×
-
-    </button>
+    <button class="fechar-modal" type="button" (click)="fecharAgendar()">×</button>
 
     <div class="modal-header">
-
       <h2>Agendar Consulta</h2>
-
-      <p>
-        Agendamento para {{ clienteSelecionado.nome }}.
-      </p>
-
+      <p>Criar novo agendamento de atendimento para {{ clienteSelecionado.nome }}.</p>
     </div>
 
     <div class="form-grid">
-
       <div class="campo">
         <label>Horário</label>
         <input type="time" [(ngModel)]="novaConsulta.horario">
@@ -386,170 +246,31 @@
       </div>
 
       <div class="campo campo-full">
-        <label>Nome do pet</label>
-        <input type="text" [(ngModel)]="novaConsulta.pet">
-      </div>
-
-      <div class="campo">
-        <label>Idade</label>
-        <input type="text" [(ngModel)]="novaConsulta.idade">
+        <label>Selecione o Pet do Tutor</label>
+        <select [(ngModel)]="novaConsulta.pet">
+          <option value="">Selecione um animal</option>
+          <option *ngFor="let p of clienteSelecionado.petsDetalhesLista" [value]="p.nome">
+            {{ p.nome }} {{ p.especie ? '(' + p.especie + ')' : '' }}
+          </option>
+        </select>
       </div>
 
       <div class="campo campo-full">
-        <label>Motivo</label>
-
+        <label>Motivo do Procedimento / Observações</label>
         <select [(ngModel)]="novaConsulta.motivo">
-          <option>Consulta de rotina</option>
-          <option>Retorno</option>
-          <option>Vacinação</option>
-          <option>Cirurgia</option>
-          <option>Urgência</option>
-          <option>Exame</option>
+          <option value="Consulta de rotina">Consulta de rotina</option>
+          <option value="Retorno">Retorno</option>
+          <option value="Vacinação">Vacinação</option>
+          <option value="Cirurgia">Cirurgia</option>
+          <option value="Urgência">Urgência</option>
+          <option value="Exame">Exame</option>
         </select>
-
       </div>
-
     </div>
 
     <div class="modal-botoes">
-
-      <button
-        class="btn-cancelar"
-        type="button"
-        (click)="fecharAgendar()">
-
-        Cancelar
-
-      </button>
-
-      <button
-        class="btn-salvar"
-        type="button"
-        (click)="salvarAgendamento()">
-
-        Salvar agendamento
-
-      </button>
-
+      <button class="btn-cancelar" type="button" (click)="fecharAgendar()">Cancelar</button>
+      <button class="btn-salvar" type="button" (click)="salvarAgendamento()">Salvar agendamento</button>
     </div>
-
   </div>
-
-</div>
-
-<div class="modal-fundo" *ngIf="clienteEditando">
-
-  <div class="modal">
-
-    <button
-      class="fechar-modal"
-      type="button"
-      (click)="cancelar()">
-
-      ×
-
-    </button>
-
-    <div class="modal-header">
-
-      <h2>
-        {{ modoNovo ? 'Novo Cliente' : 'Editar Cliente' }}
-      </h2>
-
-      <p>
-        Preencha os dados do tutor com atenção.
-      </p>
-
-    </div>
-
-    <div class="form-grid">
-
-      <div class="campo campo-full">
-        <label>Nome</label>
-
-        <input
-          type="text"
-          [(ngModel)]="clienteEditando.nome">
-      </div>
-
-      <div class="campo">
-        <label>CPF</label>
-
-        <input
-          type="text"
-          [(ngModel)]="clienteEditando.cpf"
-          (input)="formatarCPF()">
-      </div>
-
-      <div class="campo">
-        <label>Telefone</label>
-
-        <input
-          type="text"
-          [(ngModel)]="clienteEditando.telefone"
-          (input)="formatarTelefone()">
-      </div>
-
-      <div class="campo campo-full">
-        <label>Email</label>
-
-        <input
-          type="email"
-          [(ngModel)]="clienteEditando.email">
-      </div>
-
-      <div class="campo">
-        <label>Quantidade de pets</label>
-
-        <input
-          type="number"
-          [(ngModel)]="clienteEditando.pets">
-      </div>
-
-      <div class="campo">
-        <label>Última visita</label>
-
-        <input
-          type="date"
-          [(ngModel)]="clienteEditando.ultimaVisitaData">
-      </div>
-
-      <div class="campo campo-full">
-        <label>Status</label>
-
-        <select [(ngModel)]="clienteEditando.status">
-
-          <option value="ATIVO">ATIVO</option>
-          <option value="INATIVO">INATIVO</option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-    <div class="modal-botoes">
-
-      <button
-        class="btn-cancelar"
-        type="button"
-        (click)="cancelar()">
-
-        Cancelar
-
-      </button>
-
-      <button
-        class="btn-salvar"
-        type="button"
-        (click)="salvar()">
-
-        Salvar
-
-      </button>
-
-    </div>
-
-  </div>
-
 </div>

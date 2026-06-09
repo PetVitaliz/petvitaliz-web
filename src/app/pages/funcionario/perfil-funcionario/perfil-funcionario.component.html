@@ -81,18 +81,18 @@
           </div>
 
           <div>
-            <label>E-mail profissional</label>
-            <input type="email" [(ngModel)]="dadosTemp.email" [disabled]="!editando">
+            <label>E-mail</label>
+            <input type="email" [(ngModel)]="dadosTemp.email" [disabled]="true" style="background-color: #f3f4f6; cursor: not-allowed; color: #9d9d9d;">
           </div>
 
           <div>
             <label>Telefone de contato</label>
-            <input type="text" [(ngModel)]="dadosTemp.telefone" [disabled]="!editando">
+            <input type="text" [(ngModel)]="dadosTemp.telefone" [disabled]="!editando" appDataMask="phone" placeholder="(00) 00000-0000">
           </div>
 
           <div>
             <label>Data de nascimento</label>
-            <input type="text" [(ngModel)]="dadosTemp.nascimento" [disabled]="!editando">
+            <input type="text" [(ngModel)]="dadosTemp.nascimento" [disabled]="!editando" appDataMask="date" placeholder="DD/MM/AAAA">
           </div>
 
         </div>

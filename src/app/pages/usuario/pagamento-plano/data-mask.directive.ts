@@ -6,7 +6,7 @@ import { NgControl } from '@angular/forms';
   standalone: true
 })
 export class DataMaskDirective {
-  @Input('appDataMask') maskType: 'date' | 'cpf' | 'phone' | '' = 'date';
+  @Input('appDataMask') maskType: 'date' | 'cpf' | 'phone' | 'card' | 'expiry' | '' = 'date';
 
   constructor(private el: ElementRef, private ngControl: NgControl) {}
 
@@ -23,6 +23,10 @@ export class DataMaskDirective {
       v = this.aplicarMarcaraCpf(v);
     } else if (this.maskType === 'phone') {
       v = this.aplicarMascaraTelefone(v);
+    } else if (this.maskType === 'card') {
+      v = this.aplicarMascaraCartao(v);
+    } else if (this.maskType === 'expiry') {
+      v = this.aplicarMascaraValidade(v);
     } else {
       v = this.aplicarMascaraData(v);
     }
@@ -55,5 +59,16 @@ export class DataMaskDirective {
     if (v.length <= 6) return v.replace(/(\d{2})(\d{1,4})/, '($1) $2');
     if (v.length <= 10) return v.replace(/(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
     return v.replace(/(\d{2})(\d{5})(\d{1,4})/, '($1) $2-$3');
+  }
+
+  private aplicarMascaraCartao(v: string): string {
+    if (v.length > 16) v = v.slice(0, 16);
+    return v.replace(/(\d{4})(?=\d)/g, '$1 ');
+  }
+
+  private aplicarMascaraValidade(v: string): string {
+    if (v.length > 4) v = v.slice(0, 4);
+    if (v.length >= 2) return v.substring(0, 2) + '/' + v.substring(2);
+    return v;
   }
 }

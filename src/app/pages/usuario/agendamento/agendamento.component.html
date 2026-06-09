@@ -219,21 +219,26 @@
         Nenhum histórico de atendimento encerrado.
       </div>
 
-      <div class="appointment-list" *ngIf="historicoAgendamentos.length > 0">
-        <div class="appointment-card history" *ngFor="let a of historicoAgendamentos">
+      <div class="appointment-list" *ngIf="agendamentosAtivos.length > 0">
+        <div class="appointment-card" *ngFor="let a of agendamentosAtivos" style="display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h3>{{ a.nome_pet }}</h3>
-            <p>{{ a.servico }}</p>
+            <p>{{ a.servico }} <span *ngIf="a.nome_funcionario">({{ a.nome_funcionario }})</span></p>
           </div>
           <div class="appointment-info">
             <span>{{ formatarData(a.data_consulta) }}</span>
             <strong>{{ a.hora_inicio }}</strong>
           </div>
-          <div class="status" [class.canceled-status]="a.status === 'Cancelado'">
-            {{ a.status.toUpperCase() }}
+          <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+            <div class="status active-status">
+              {{ a.status.toUpperCase() }}
+            </div>
+            <button type="button" (click)="cancelarAgendamento(a.id_consulta)" style="background: transparent; color: #dc2626; border: none; font-size: 11px; font-weight: bold; cursor: pointer; text-decoration: underline; padding: 0;">
+              Cancelar
+            </button>
           </div>
         </div>
       </div>
-    </div>
   </div>
+</div>
 </section>

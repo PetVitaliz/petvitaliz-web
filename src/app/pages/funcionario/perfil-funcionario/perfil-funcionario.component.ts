@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { DataMaskDirective } from './data-mask.directive';
 
 @Component({
   selector: 'app-perfil-funcionario',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DataMaskDirective],
   templateUrl: './perfil-funcionario.component.html',
   styleUrl: './perfil-funcionario.component.css'
 })
@@ -32,7 +33,7 @@ export class PerfilFuncionarioComponent implements OnInit {
     crmv: 'Não informado',
     email: '',
     telefone: '',
-    nascimento: 'Não cadastrada'
+    nascimento: '00/00/0000'
   };
 
   dadosTemp = { ...this.funcionario };
@@ -53,7 +54,7 @@ export class PerfilFuncionarioComponent implements OnInit {
           crmv: dados.crmv || 'Inscrição ativa', 
           email: dados.email,
           telefone: dados.telefone || '',
-          nascimento: dados.data_nascimento ? dados.data_nascimento.split('T')[0] : 'Não informada'
+          nascimento: localStorage.getItem('nascimento_fun') || '00/00/0000'
         };
 
         if (dados.foto_url) {
@@ -85,22 +86,31 @@ export class PerfilFuncionarioComponent implements OnInit {
   }
 
   salvarEdicao(): void {
+    if (!this.dadosTemp.nome) {
+      alert('O nome é obrigatório.');
+      return;
+    }
+
+    if (this.dadosTemp.nascimento) {
+      localStorage.setItem('nascimento_fun', this.dadosTemp.nascimento);
+    }
+
     const payload = {
-      nome: this.dadosTemp.nome,
-      sobrenome: this.dadosTemp.sobrenome,
-      email: this.dadosTemp.email,
-      telefone: this.dadosTemp.telefone
+      nome: this.dadosTemp.nome.trim(),
+      sobrenome: this.dadosTemp.sobrenome.trim(),
+      email: this.funcionario.email.trim(), 
+      telefone: this.dadosTemp.telefone ? this.dadosTemp.telefone.trim() : null
     };
 
     this.http.put<any>(`${environment.apiUrl}/funcionario/perfil-dados/atualizar`, payload, { withCredentials: true }).subscribe({
       next: (res) => {
-        alert(res.mensagem || 'Informações pessoais atualizadas!');
+        alert(res.mensagem || 'Perfil updated com sucesso!');
         this.buscarDadosPerfil();
         this.editando = false;
       },
       error: (err) => {
         console.error('Erro ao atualizar perfil no servidor:', err);
-        alert(err.error?.mensagem || 'Não foi possível salvar as alterações no banco.');
+        alert(err.error?.mensagem || 'Não foi possível salvar as alterações.');
       }
     });
   }
