@@ -15,7 +15,7 @@
         responsabilidade.
       </p>
 
-      <a routerLink="/usuario/login" class="adocao-button">
+      <a (click)="irParaHome()" class="adocao-button">
         Venha nos visitar
       </a>
     </div>
@@ -67,11 +67,11 @@
         </div>
 
         <div class="adocao-profile-buttons">
-          <a routerLink="/contato">
+          <a (click)="irParaContato()">
             Adote {{ petsAdocao[petSelecionado].nome }} Hoje
           </a>
 
-          <a routerLink="/contato">
+          <a (click)="irParaContato()">
             Processo de Adoção
           </a>
         </div>
