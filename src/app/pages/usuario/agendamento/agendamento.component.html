@@ -201,7 +201,7 @@
             <strong>{{ a.hora_inicio }}</strong>
           </div>
           <div class="status active-status">
-            {{ a.status.toUpperCase() }}
+            {{ formatarStatus(a.status) }}
           </div>
         </div>
       </div>
@@ -231,7 +231,7 @@
           </div>
           <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
             <div class="status active-status">
-              {{ a.status.toUpperCase() }}
+              {{ formatarStatus(a.status) }}
             </div>
             <button type="button" (click)="cancelarAgendamento(a.id_consulta)" style="background: transparent; color: #dc2626; border: none; font-size: 11px; font-weight: bold; cursor: pointer; text-decoration: underline; padding: 0;">
               Cancelar

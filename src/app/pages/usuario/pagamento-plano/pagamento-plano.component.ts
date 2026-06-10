@@ -31,10 +31,11 @@ export class PagamentoPlanoComponent implements OnInit {
 
   ngOnInit(): void {
     this.plano = JSON.parse(localStorage.getItem('planoSelecionado') || 'null');
-
     if (!this.plano) {
       this.router.navigate(['/usuario/planos-pet']);
+      return;
     }
+    this.carregarDadosUsuario();
   }
 
   private obterErroCpf(cpf: string): string | null {
@@ -73,5 +74,25 @@ export class PagamentoPlanoComponent implements OnInit {
 
     localStorage.setItem('pagamentoPlanoConfirmado', 'true');
     this.router.navigate(['/user/contrato-plano']);
+  }
+
+  carregarDadosUsuario(): void {
+    this.http.get<any>(`${environment.apiUrl}/user/buscar/perfil`, { withCredentials: true }).subscribe({
+      next: (user) => {
+        this.nomeCompleto = `${user.nome} ${user.sobrenome}`;
+        this.email = user.email;
+
+        if (user.CPF) {
+          let cpfLimpo = user.CPF.replace(/\D/g, '');
+          this.cpf = this.formatarCpf(cpfLimpo);
+        }
+      },
+      error: (err) => console.error('Erro ao carregar perfil', err)
+    });
+  }
+
+  private formatarCpf(v: string): string {
+    if (v.length !== 11) return v;
+    return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 }

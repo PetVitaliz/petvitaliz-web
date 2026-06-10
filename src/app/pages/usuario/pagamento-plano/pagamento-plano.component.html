@@ -20,12 +20,12 @@
       <div class="form-box">
         <div class="field">
           <label>Nome Completo</label>
-          <input type="text" placeholder="Nome Completo" [(ngModel)]="nomeCompleto">
+          <input type="text" [(ngModel)]="nomeCompleto" readonly>
         </div>
 
         <div class="field">
           <label>CPF</label>
-          <input type="text" placeholder="000.000.000-00" [(ngModel)]="cpf" appDataMask="cpf">
+          <input type="text" [(ngModel)]="cpf" appDataMask="cpf" readonly>
         </div>
 
         <div class="field full">

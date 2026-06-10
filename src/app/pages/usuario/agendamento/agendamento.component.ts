@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -56,7 +56,7 @@ export class AgendamentoComponent implements OnInit {
   mensagemSucesso = '';
   carregando = false;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {
     this.gerarGradeHorarios();
   }
 
@@ -100,6 +100,7 @@ export class AgendamentoComponent implements OnInit {
             nome_funcionario: c.funcionario?.nome,
             observacoes: c.observacoes
           }));
+          this.cdr.detectChanges();
         }
       },
       error: (err) => {
@@ -253,19 +254,27 @@ export class AgendamentoComponent implements OnInit {
   }
 
   horarioJaOcupado(horario: string): boolean {
-    if (!this.dataSelecionada || !this.servicoSelecionadoValor) return false;
+    if (!this.dataSelecionada || !this.petSelecionadoNome) {
+      return false;
+    }
 
     return this.agendamentos.some(a => {
-      const statusBaixo = a.status ? a.status.toLowerCase().trim() : '';
-      const estaAtivo = statusBaixo === 'em espera' || statusBaixo === 'em_espera' || statusBaixo === 'em andamento' || statusBaixo === 'em_andamento';
-      
-      const servicoConsulta = a.servico.toLowerCase().includes('vet') ? 'veterinario' : 'tosador';
-      const mesmoServico = servicoConsulta === this.servicoSelecionadoValor.toLowerCase();
+      const statusAPI = String(a.status || '').toLowerCase();
+      const ativo = statusAPI.includes('espera') || statusAPI.includes('andamento');
 
-      return estaAtivo && 
-             a.data_consulta === this.dataSelecionada && 
-             a.hora_inicio === horario && 
-             mesmoServico;
+      const dataAPI = String(a.data_consulta || '').trim();
+      const dataInput = String(this.dataSelecionada || '').trim();
+      const mesmaData = dataAPI === dataInput;
+
+      const horaAPI = String(a.hora_inicio || '').trim();
+      const horaInput = String(horario || '').trim();
+      const mesmoHorario = horaAPI === horaInput;
+
+      const petAPI = String(a.nome_pet || '').toLowerCase().trim();
+      const petInput = String(this.petSelecionadoNome || '').toLowerCase().trim();
+      const mesmoPet = petAPI === petInput;
+
+      return ativo && mesmaData && mesmoHorario && mesmoPet;
     });
   }
 
@@ -278,6 +287,12 @@ export class AgendamentoComponent implements OnInit {
     if (!data) return '';
     const partes = data.split('-');
     return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  }
+
+  formatarStatus(status: string): string {
+    if (!status) return '';
+    const formatado = status.replace('_', ' ');
+    return formatado.charAt(0).toUpperCase() + formatado.slice(1);
   }
 
   obterMensagemErro(): string {
