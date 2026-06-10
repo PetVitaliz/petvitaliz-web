@@ -84,15 +84,41 @@ export class ListarCadastroPetComponent implements OnInit {
   get nomeTutor(): string { return this.usuarioLogado?.nome || 'Responsável'; }
   get emailTutor(): string { return this.usuarioLogado?.email || 'E-mail não informado'; }
 
-  calcularPorteCachorro(pesoAtual: any): string {
-    const p = Number(pesoAtual);
+  calcularPortePet(especie: string, peso: any): string {
+    const p = Number(peso);
     if (!p || isNaN(p) || p <= 0) return 'Indefinido';
-    
-    if (p <= 5) return 'Pequeno (Mini)';
-    if (p <= 10) return 'Pequeno';
-    if (p >= 11 && p <= 25) return 'Médio';
-    if (p >= 26 && p <= 45) return 'Grande';
-    return 'Gigante';
+    const esp = especie.toLowerCase();
+
+    if (esp === 'cachorro') {
+      if (p <= 5) return 'Pequeno';
+      if (p <= 10) return 'Pequeno';
+      if (p <= 25) return 'Médio';
+      if (p <= 45) return 'Grande';
+      return 'Gigante';
+    }
+
+    if (esp === 'gato') {
+      if (p <= 3.5) return 'Pequeno';
+      if (p <= 5.5) return 'Médio';
+      if (p <= 8) return 'Grande';
+      return 'Gigante';
+    }
+
+    if (esp === 'coelho') {
+      if (p < 1.5) return 'Anão';
+      if (p <= 3) return 'Pequeno';
+      if (p <= 5) return 'Médio';
+      return 'Grande';
+    }
+
+    if (esp === 'ave') {
+      if (p <= 1) return 'Pequeno';
+      if (p <= 4) return 'Médio';
+      if (p <= 10) return 'Grande';
+      return 'Gigante';
+    }
+
+    return 'N/A';
   }
 
   obterIdadeExtenso(dataNasc: string): string {
@@ -143,6 +169,8 @@ export class ListarCadastroPetComponent implements OnInit {
   }
 
   abrirCadastroPet(): void {
+    this.erro = '';
+    this.sucesso = '';
     this.limparFormularioCadastro();
     this.modalCadastroAberto = true;
   }
