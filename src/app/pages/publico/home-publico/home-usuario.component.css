@@ -631,17 +631,23 @@
 
 .plan-card {
   position: relative;
-  min-height: 250px;
+  min-height: 290px;
   background: #ffffff;
   border: 1px solid #dddddd;
   border-radius: 18px;
   padding: 28px;
   box-sizing: border-box;
+
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
+  grid-template-columns: 330px 1fr;
+  gap: 35px;
+
   transition: 0.3s ease;
   cursor: pointer;
+}
+
+.plan-featured {
+  order: -1;
 }
 
 .plan-card:hover {
@@ -672,6 +678,11 @@
   padding: 10px 22px;
   border-radius: 8px 8px 0 0;
   font-size: 13px;
+  font-weight: 700;
+}
+
+.plan-left {
+  width: 330px;
 }
 
 .plan-name {
@@ -725,12 +736,20 @@
   margin: 0;
   padding: 0;
   list-style: none;
+
+  width: max-content;
+  justify-self: center;
+  align-self: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .plan-card li {
-  margin-bottom: 14px;
   font-size: 14px;
   color: #111111;
+  white-space: nowrap;
 }
 
 .plan-card li::before {
@@ -742,37 +761,6 @@
 .plan-card:hover li::before {
   color: #ffffff;
 }
-
-@media (max-width: 1100px) {
-  .plans-grid {
-    grid-template-columns: 1fr;
-    gap: 35px;
-  }
-
-  .plan-card {
-    max-width: 760px;
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 700px) {
-  .home-plans-section {
-    padding: 55px 20px;
-  }
-
-  .home-plans-section h2 {
-    margin-bottom: 45px;
-  }
-
-  .plan-card {
-    grid-template-columns: 1fr;
-  }
-
-  .plans-paw {
-    display: none;
-  }
-}
-
 /* QUINTA PARTE */
 .home-team-section {
   width: 100%;

@@ -15,9 +15,9 @@ type ServicoCarrossel = {
   styleUrl: './servicos.component.css'
 })
 export class ServicosComponent {
-  imgPetsServicos = '';
-  imgPataServicos = '';
-  imgServicosInfo = '';
+  imgPetsServicos = 'assets/img/servicos-principal.png';
+  imgPataServicos = 'assets/img/Group.png';
+  imgServicosInfo = 'assets/img/australian-cattle.png';
 
   servicosInfo = [
     {
@@ -43,27 +43,27 @@ export class ServicosComponent {
   servicosCarrossel: ServicoCarrossel[] = [
     {
       titulo: 'Suprimento de Pet',
-      imagem: '',
+      imagem: 'assets/img/carrosel1.png',
       tags: ['Brinquedos', 'Acessórios']
     },
     {
       titulo: 'Serviços de Higiene',
-      imagem: '',
+      imagem: 'assets/img/carrosel2.png',
       tags: ['Corte de Unhas', 'Limpeza de Ouvido']
     },
     {
       titulo: 'Suporte Veterinario',
-      imagem: '',
+      imagem: 'assets/img/carrosel3.png',
       tags: ['Check-Ups', 'Vacinação']
     },
     {
       titulo: 'Assistencia com Adoção',
-      imagem: '',
+      imagem: 'assets/img/carrosel4.png',
       tags: ['Abrigos locais', 'Pet Perfeito']
     },
     {
       titulo: 'Hospedagem & Creche Para Pets',
-      imagem: '',
+      imagem: 'assets/img/carrosel5.png',
       tags: ['Hora de Brincar', 'Alimentação']
     }
   ];
@@ -72,8 +72,8 @@ export class ServicosComponent {
     this.servicoCarrosselSelecionado = index;
   }
 
-  imgTosaPrincipal = '';
-  imgTosaMini1 = '';
-  imgTosaMini2 = '';
-  imgTosaMini3 = '';
+  imgTosaPrincipal = 'assets/img/animals-for.png';
+  imgTosaMini1 = 'assets/img/nail-clipping.png';
+  imgTosaMini2 = 'assets/img/young-mother.png';
+  imgTosaMini3 = 'assets/img/unrecognizable.png';
 }

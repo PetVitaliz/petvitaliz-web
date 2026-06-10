@@ -153,49 +153,48 @@
   </section>
 
   <section class="home-plans-section">
-    <img class="plans-paw plans-paw-left" [src]="imgPataPlanos" alt="Pata decorativa" />
-    <img class="plans-paw plans-paw-right" [src]="imgPataPlanos" alt="Pata decorativa" />
+  <img class="plans-paw plans-paw-left" [src]="imgPataPlanos" alt="Pata decorativa" />
+  <img class="plans-paw plans-paw-right" [src]="imgPataPlanos" alt="Pata decorativa" />
 
-    <h2>
-      Mantenha seus Pets felizes e saudáveis.<br />
-      Inscreva-se hoje mesmo para receber cuidados especializados.
-    </h2>
+  <h2>
+    Mantenha seus Pets felizes e saudáveis.<br />
+    Inscreva-se hoje mesmo para receber cuidados especializados.
+  </h2>
 
-    <div *ngIf="carregandoPlanos" style="text-align: center; color: #ffffff; font-weight: bold; padding: 40px;">
-      Carregando planos de saúde PetVitaliz...
-    </div>
+  <div *ngIf="carregandoPlanos" style="text-align: center; color: #ffffff; font-weight: bold; padding: 40px;">
+    Carregando planos de saúde PetVitaliz...
+  </div>
 
-    <div class="plans-grid" *ngIf="!carregandoPlanos">
-      <div class="plans-grid" *ngIf="!carregandoPlanos">
-      <div 
-        class="plan-card" 
-        *ngFor="let plano of planos" 
-        [class.plan-featured]="plano.tag === 'RECOMENDADO'"
-      >
-        <span class="popular-label" *ngIf="plano.tag === 'RECOMENDADO'">Mais Popular</span>
+  <div class="plans-grid" *ngIf="!carregandoPlanos">
+    <div
+      class="plan-card"
+      *ngFor="let plano of planos"
+      [class.plan-featured]="plano.tag === 'RECOMENDADO'"
+    >
+      <span class="popular-label" *ngIf="plano.tag === 'RECOMENDADO'">
+        Mais Popular
+      </span>
 
-        <div class="plan-left">
-          <span class="plan-name">{{ plano.nome }}</span>
-          <h3>R$ {{ plano.preco }} <small>/Mês</small></h3>
-          <p>{{ plano.descricao }}</p>
-          
-          <a (click)="inscreverNoPlano(plano)" style="cursor: pointer;">Inscreva-se agora</a>
-        </div>
+      <div class="plan-left">
+        <span class="plan-name">{{ plano.nome }}</span>
 
-        <ul>
-          <li *ngFor="let beneficio of plano.beneficiosArray">
-            {{ beneficio }}
-          </li>
-        </ul>
+        <h3>R$ {{ plano.preco }} <small>/Mês</small></h3>
+
+        <p>{{ plano.descricao }}</p>
+
+        <a (click)="inscreverNoPlano(plano)" style="cursor: pointer;">
+          Inscreva-se agora
+        </a>
       </div>
-    </div>
 
-      <div *ngIf="planos.length === 0" style="grid-column: 1 / -1; text-align: center; color: #ffffff; padding: 20px;">
-        Nenhum plano disponível no momento. Volte mais tarde!
-      </div>
+      <ul>
+        <li *ngFor="let beneficio of plano.beneficiosArray">
+          {{ beneficio }}
+        </li>
+      </ul>
     </div>
-  </section>
-
+  </div>
+</section>
   <section class="home-team-section">
     <h2>
       Conheça nossa equipe: Especialistas compassivos<br />

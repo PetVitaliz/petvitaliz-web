@@ -9,8 +9,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './sobre-nos.component.css'
 })
 export class SobreNosComponent {
-  imgPetsSobre = '';
-  imgPataSobre = '';
+  imgPetsSobre = 'assets/img/sobre-nos-principal.png';
+  imgPataSobre = 'assets/img/Group.png';
 
   imgIconPrecisao = '';
   imgIconBemEstar = '';
@@ -23,14 +23,14 @@ export class SobreNosComponent {
 ];
 
 equipeSobre = [
-  { nome: 'Dr. Jenny Wilson', imagem: '', experiencia: '20+ anos de experiência' },
-  { nome: 'Dr. Jane Cooper', imagem: '', experiencia: '20+ anos de experiência' },
-  { nome: 'Dr. Jacob Jones', imagem: '', experiencia: '20+ anos de experiência' },
-  { nome: 'Dr. Guy Hawkins', imagem: '', experiencia: '20+ anos de experiência' },
-  { nome: 'Dr. Kristin Watson', imagem: '', experiencia: '20+ anos de experiência' },
-  { nome: 'Dr. Theresa Webb', imagem: '', experiencia: '20+ anos de experiência' },
-  { nome: 'Dr. Selena Grey', imagem: '', experiencia: '20+ anos de experiência' },
-  { nome: 'Dr. Kathryn Murphy', imagem: '', experiencia: '20+ anos de experiência' }
+  { nome: 'Dr. Jenny Wilson', imagem: 'assets/img/successful-psychologist.png', experiencia: '20+ anos de experiência' },
+  { nome: 'Dr. Jane Cooper', imagem: 'assets/img/medico1.png', experiencia: '20+ anos de experiência' },
+  { nome: 'Dr. Jacob Jones', imagem: 'assets/img/smiling-african.png', experiencia: '20+ anos de experiência' },
+  { nome: 'Dr. Guy Hawkins', imagem: 'assets/img/medico2.png', experiencia: '20+ anos de experiência' },
+  { nome: 'Dr. Kristin Watson', imagem: 'assets/img/african-doctor2.png', experiencia: '20+ anos de experiência' },
+  { nome: 'Dr. Theresa Webb', imagem: 'assets/img/african-doctor.png', experiencia: '20+ anos de experiência' },
+  { nome: 'Dr. Selena Grey', imagem: 'assets/img/medico3.png', experiencia: '20+ anos de experiência' },
+  { nome: 'Dr. Kathryn Murphy', imagem: 'assets/img/medico4.png', experiencia: '20+ anos de experiência' }
 ];
 
 valoresSobre = [
