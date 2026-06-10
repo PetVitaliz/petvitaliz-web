@@ -16,6 +16,12 @@ type ServicoCarrossel = {
   styleUrl: './servicos.component.css'
 })
 export class ServicosComponent {
+  constructor(private authRedirect: AuthRedirectService) {}
+
+  irParaAgendamento(): void {
+    this.authRedirect.redirecionar('/user/agendamento');
+  }
+
   imgPetsServicos = 'assets/img/servicos-principal.png';
   imgPataServicos = 'assets/img/Group.png';
   imgServicosInfo = 'assets/img/australian-cattle.png';
@@ -23,19 +29,23 @@ export class ServicosComponent {
   servicosInfo = [
     {
       titulo: 'Serviços abrangentes',
-      descricao: 'Desde cuidados pessoais e treinamento até exames médicos e creches, oferecemos soluções completas para o bem-estar do seu animal de estimação.'
+      descricao:
+        'Desde cuidados pessoais e treinamento até exames médicos e creches, oferecemos soluções completas para o bem-estar do seu animal de estimação.'
     },
     {
       titulo: 'Especialistas Certificados',
-      descricao: 'Profissionais treinados e apaixonados por animais para oferecer o melhor atendimento possível.'
+      descricao:
+        'Profissionais treinados e apaixonados por animais para oferecer o melhor atendimento possível.'
     },
     {
       titulo: 'Instalações de última geração',
-      descricao: 'Espaços modernos e preparados para garantir conforto, segurança e bem-estar.'
+      descricao:
+        'Espaços modernos e preparados para garantir conforto, segurança e bem-estar.'
     },
     {
       titulo: 'Confiável por donos de pet',
-      descricao: 'Construímos confiança através de atendimento humanizado e resultados reais.'
+      descricao:
+        'Construímos confiança através de atendimento humanizado e resultados reais.'
     }
   ];
 
