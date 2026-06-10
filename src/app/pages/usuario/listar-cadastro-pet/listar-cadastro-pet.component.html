@@ -48,11 +48,11 @@
           </div>
         </div>
 
-        <div class="plan-mini" style="margin-bottom: 12px; background: #f3f6ff; border: 1px solid #dbe3f0;" *ngIf="petSelecionado.especie?.toLowerCase() === 'cachorro'">
-          <span>Classificação de Tamanho</span>
-          <strong style="color: #5D6ED3;">Porte {{ calcularPorteCachorro(petSelecionado.peso) }}</strong>
-          <small>Baseado no peso atual</small>
-        </div>
+       <div class="plan-mini" style="margin-bottom: 12px; background: #f3f6ff; border: 1px solid #dbe3f0;">
+        <span>Classificação de Tamanho</span>
+        <strong style="color: #5D6ED3;">Porte {{ calcularPortePet(petSelecionado.especie, petSelecionado.peso) }}</strong>
+        <small>Baseado no peso atual</small>
+      </div>
 
         <div class="pet-selector" *ngIf="pets.length > 1">
           <small>MEUS PETS</small>
@@ -156,9 +156,9 @@
                 <strong>{{ petSelecionado.sexo === 'M' || petSelecionado.sexo === 'Macho' ? 'Macho' : 'Fêmea' }}</strong>
               </div>
               
-              <div *ngIf="petSelecionado.especie?.toLowerCase() === 'cachorro'">
-                <small>PORTE DO CÃO</small>
-                <strong>{{ calcularPorteCachorro(petSelecionado.peso) }}</strong>
+              <div>
+                <small>PORTE</small>
+                <strong>{{ calcularPortePet(petSelecionado.especie, petSelecionado.peso) }}</strong>
               </div>
 
               <div *ngIf="petSelecionado.especie === 'outro'">
@@ -189,6 +189,9 @@
         </div>
 
         <div class="pet-modal-body">
+          <p class="erro" *ngIf="erro" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 15px; padding: 10px; background: #fee2e2; border-radius: 8px;">
+            ⚠️ {{ erro }}
+          </p>
           <label class="modal-photo-upload">
             <input type="file" accept="image/*" (change)="carregarFoto($event)">
             <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto do pet">
@@ -243,9 +246,9 @@
               </div>
             </div>
 
-            <div class="modal-field full" *ngIf="especie === 'Cachorro' && peso && peso > 0" style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 5px;">
+            <div class="modal-field full" *ngIf="peso && peso > 0" style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 5px;">
               <span style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">PORTE ESTIMADO</span>
-              <strong style="color: #1e3a8a; font-size: 14px;">Porte {{ calcularPorteCachorro(peso) }}</strong>
+              <strong style="color: #1e3a8a; font-size: 14px;">Porte {{ calcularPortePet(especie, peso) }}</strong>
             </div>
 
           </div>
@@ -308,9 +311,9 @@
               </select>
             </div>
 
-            <div class="modal-field" *ngIf="petForm.especie === 'cachorro' && petForm.peso && petForm.peso > 0" style="grid-column: span 2; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 4px;">
+            <div class="modal-field" *ngIf="petForm.peso && petForm.peso > 0" style="grid-column: span 2; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 4px;">
               <small style="color: #64748b; font-weight: bold; display: block; margin-bottom: 2px;">RECALCULANDO PORTE</small>
-              <strong style="color: #1e3a8a;">Porte {{ calcularPorteCachorro(petForm.peso) }}</strong>
+              <strong style="color: #1e3a8a;">Porte {{ calcularPortePet(petForm.especie, petForm.peso) }}</strong>
             </div>
 
           </div>
