@@ -8,7 +8,6 @@
   </section>
 
   <section class="contato-content">
-    
     <div class="info-card">
       <h2>Atendimento</h2>
 
@@ -25,11 +24,12 @@
       <div class="info-item">
         <strong>Horário de Funcionamento</strong>
         <p>Segunda a Sexta, das 8h às 20h</p>
+        <p>Sábado e Domingo, das 9h às 20h</p>
       </div>
 
       <div class="info-item">
         <strong>Unidade Central</strong>
-        <p>Av. Paulista, 1000 - Bela Vista<br>São Paulo - SP</p>
+        <p>Av. Paulista, 1000 - Bela Vista<br />São Paulo - SP</p>
       </div>
     </div>
 
@@ -62,11 +62,7 @@
 
       <label>
         Assunto
-        <select
-          name="assunto"
-          [(ngModel)]="contato.assunto"
-          required
-        >
+        <select name="assunto" [(ngModel)]="contato.assunto" required>
           <option value="Agendamento de Consulta">Agendamento de Consulta</option>
           <option value="Dúvidas sobre Serviços">Dúvidas sobre Serviços</option>
           <option value="Emergência">Emergência</option>
@@ -85,7 +81,8 @@
       </label>
 
       <button type="submit">
-        ▶ Enviar mensagem
+        <span class="material-icons">send</span>
+        Enviar mensagem
       </button>
 
       <p class="erro" *ngIf="erro">
@@ -114,11 +111,16 @@
       [style.background-image]="'url(' + imgMapaFundo + ')'"
     >
       <div class="contato-map-overlay">
-        <div class="contato-map-icon">📍</div>
+        <div class="contato-map-icon">
+          <span class="material-icons">location_on</span>
+        </div>
+
         <h2>Visite Nossa Unidade</h2>
+
         <p>
           Ambiente seguro, higienizado e pronto para receber seu melhor amigo.
         </p>
+
         <span>Ver no Google Maps ↗</span>
       </div>
     </a>
