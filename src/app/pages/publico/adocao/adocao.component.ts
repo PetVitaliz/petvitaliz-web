@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthRedirectService } from '../../../core/services/auth-redirect.service';
 
 @Component({
   selector: 'app-adocao',
@@ -9,7 +10,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './adocao.component.css'
 })
 export class AdocaoComponent {
-
+constructor(private authRedirect: AuthRedirectService) {}
   imgPetsAdocao = 'assets/img/adocao-pets.png';
   imgPataAdocao = '';
 
@@ -111,4 +112,12 @@ export class AdocaoComponent {
       imagem: ''
     }
   ];
+
+  irParaContato(): void {
+    this.authRedirect.redirecionar('/user/contato');
+  }
+
+  irParaHome(): void {
+    this.authRedirect.redirecionar('/user/home')
+  }
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthRedirectService } from '../../../core/services/auth-redirect.service';
 
 type ServicoCarrossel = {
   titulo: string;
@@ -15,6 +16,8 @@ type ServicoCarrossel = {
   styleUrl: './servicos.component.css'
 })
 export class ServicosComponent {
+  constructor(private authRedirect: AuthRedirectService) {}
+
   imgPetsServicos = '';
   imgPataServicos = '';
   imgServicosInfo = '';
@@ -76,4 +79,8 @@ export class ServicosComponent {
   imgTosaMini1 = '';
   imgTosaMini2 = '';
   imgTosaMini3 = '';
+
+  irParaAgendamento(): void {
+    this.authRedirect.redirecionar('/user/agendamento');
+  }
 }
