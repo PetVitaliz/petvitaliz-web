@@ -17,7 +17,8 @@
 }
 
 .footer-logo img {
-  width: 88px;
+  width: 110px;
+  height: auto;
   object-fit: contain;
 }
 
