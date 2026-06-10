@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthRedirectService } from '../../core/services/auth-redirect.service';
 
 @Component({
   selector: 'app-footer',
@@ -9,6 +10,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './footer.component.css'
 })
 export class FooterComponent {
+  constructor(private authRedirect: AuthRedirectService) {}
   logoFooter = '';
 
   pataGrandeFooter = '';
@@ -18,4 +20,20 @@ export class FooterComponent {
   iconBehance = '';
   iconDribbble = '';
   iconLinkedin = '';
+
+  irParaSobreNos(): void {
+    this.authRedirect.redirecionar('/user/sobre-nos');
+  }
+
+  irParaHome(): void {
+    this.authRedirect.redirecionar('/user/home');
+  }
+
+  irParaPlanoPet(): void {
+    this.authRedirect.redirecionar('/user/planos-pet');
+  }
+
+  irParaServicos(): void {
+    this.authRedirect.redirecionar('/user/servicos');
+  }
 }

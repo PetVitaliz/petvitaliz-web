@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthRedirectService } from '../../../core/services/auth-redirect.service';
 
 @Component({
   selector: 'app-sobre-nos',
@@ -58,4 +59,12 @@ valoresSobre = [
     icone: ''
   }
 ];
+
+  irParaAgendamento(): void {
+      this.authRedirect.redirecionar('/user/agendamento');
+    }
+
+  irParaPet(): void {
+    this.authRedirect.redirecionar('/user/listar/pet');
+  }
 }

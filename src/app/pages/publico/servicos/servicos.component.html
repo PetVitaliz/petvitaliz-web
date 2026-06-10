@@ -13,9 +13,9 @@
         curar e garantir a felicidade de seus amados pet
       </p>
 
-      <a routerLink="/usuario/login" class="servicos-hero-button">
+      <button type="button" class="servicos-hero-button" (click)="irParaAgendamento()">
         Agendar Consulta
-      </a>
+      </button>
     </div>
 
     <div class="servicos-hero-image-area">
@@ -134,7 +134,9 @@
     </p>
 
     <div class="servicos-tosa-actions">
-      <a routerLink="/usuario/login">Agendar consulta</a>
+      <button type="button" class="servicos-hero-button" (click)="irParaAgendamento()">
+        Agendar Consulta
+      </button>
 
       <select>
         <option>Porte Grande (18-36 kg): R$70</option>

@@ -3,34 +3,33 @@
     <span>SUPORTE PETVITALIZ</span>
     <h1>Como podemos ajudar você?</h1>
     <p>
-      Entre em contato com nossa equipe para tirar dúvidas sobre consultas,
-      planos, pets cadastrados ou atendimentos.
+      Estamos aqui para garantir a vitalidade do seu pet. Entre em contato com nossa equipe para tirar dúvidas sobre consultas, planos, pets cadastrados ou atendimentos.
     </p>
   </section>
 
   <section class="contato-content">
+    
     <div class="info-card">
-      <h2>Atendimento ao usuário</h2>
+      <h2>Atendimento</h2>
 
       <div class="info-item">
-        <strong>E-mail</strong>
-        <p>suporte&#64;petvitaliz.com</p>
+        <strong>E-mail de Suporte</strong>
+        <p class="link-direto">equipepetvitaliz&#64;gmail.com</p>
       </div>
 
       <div class="info-item">
         <strong>Telefone</strong>
-        <p>(11) 4002-8922</p>
+        <p class="link-direto">+55 (11) 4002-8922</p>
       </div>
 
       <div class="info-item">
-        <strong>Horário</strong>
-        <p>Segunda a sexta, das 08h às 18h</p>
+        <strong>Horário de Funcionamento</strong>
+        <p>Segunda a Sexta, das 8h às 20h</p>
       </div>
 
-      <div class="emergency-box">
-        <strong>Emergência?</strong>
-        <p>Para casos urgentes, acesse a área de emergência.</p>
-        <a routerLink="/emergencia">Ver emergência</a>
+      <div class="info-item">
+        <strong>Unidade Central</strong>
+        <p>Av. Paulista, 1000 - Bela Vista<br>São Paulo - SP</p>
       </div>
     </div>
 
@@ -38,12 +37,12 @@
       <h2>Envie uma mensagem</h2>
 
       <label>
-        Nome
+        Nome Completo
         <input
           type="text"
           name="nome"
           [(ngModel)]="contato.nome"
-          placeholder="Digite seu nome"
+          placeholder="Como devemos te chamar?"
           required
         />
       </label>
@@ -54,20 +53,23 @@
           type="email"
           name="email"
           [(ngModel)]="contato.email"
-          placeholder="Digite seu e-mail"
+          placeholder="seu@email.com"
           required
         />
       </label>
 
       <label>
         Assunto
-        <input
-          type="text"
+        <select
           name="assunto"
           [(ngModel)]="contato.assunto"
-          placeholder="Sobre o que você precisa falar?"
           required
-        />
+        >
+          <option value="Agendamento de Consulta">Agendamento de Consulta</option>
+          <option value="Dúvidas sobre Serviços">Dúvidas sobre Serviços</option>
+          <option value="Emergência">Emergência</option>
+          <option value="Planos e Valores">Planos e Valores</option>
+        </select>
       </label>
 
       <label>
@@ -75,16 +77,52 @@
         <textarea
           name="mensagem"
           [(ngModel)]="contato.mensagem"
-          placeholder="Escreva sua mensagem"
+          placeholder="Conte-nos como podemos ajudar você e seu pet..."
           required
         ></textarea>
       </label>
 
-      <button type="submit">Enviar mensagem</button>
+      <button type="submit" [disabled]="enviando">
+        {{ enviando ? 'Enviando...' : '▶ Enviar mensagem' }}
+      </button>
 
       <p class="success" *ngIf="mensagemEnviada">
         Mensagem enviada com sucesso!
       </p>
+
+      <p class="erro" *ngIf="erro">
+        {{ erro }}
+      </p>
     </form>
+  </section>
+
+  <section class="contato-location-section">
+    <div
+      class="contato-location-left"
+      [style.background-image]="'url(' + imgContatoFundo + ')'"
+    >
+      <div class="contato-location-overlay">
+        <h2>Fundada em 2025</h2>
+        <p>
+          Compromisso com a inovação e o bem-estar animal desde o primeiro dia.
+        </p>
+      </div>
+    </div>
+
+    <a
+      class="contato-location-right"
+      [href]="linkGoogleMaps"
+      target="_blank"
+      [style.background-image]="'url(' + imgMapaFundo + ')'"
+    >
+      <div class="contato-map-overlay">
+        <div class="contato-map-icon">📍</div>
+        <h2>Visite Nossa Unidade</h2>
+        <p>
+          Ambiente seguro, higienizado e pronto para receber seu melhor amigo.
+        </p>
+        <span>Ver no Google Maps ↗</span>
+      </div>
+    </a>
   </section>
 </main>

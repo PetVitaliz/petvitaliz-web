@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { HeaderUsuarioComponent } from '../../usuario/header-usuario/header-usuario.component';
+import { AuthRedirectService } from '../../../core/services/auth-redirect.service';
 
 type ServicoHome = {
   titulo: string;
@@ -66,7 +67,7 @@ export class HomeUsuarioComponent implements OnInit {
   }
 ];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private authRedirect: AuthRedirectService) {}
 
   ngOnInit(): void {
     this.buscarPlanosCadastrados();
@@ -150,7 +151,7 @@ export class HomeUsuarioComponent implements OnInit {
     localStorage.setItem('planoSelecionado', JSON.stringify(plano));
 
     if (this.router.url.includes('/user/home')) {
-      this.router.navigate(['/user/contrato-plano']);
+      this.router.navigate(['/user/planos-pet']);
     } else {
       this.router.navigate(['/login']);
     }
@@ -159,4 +160,13 @@ export class HomeUsuarioComponent implements OnInit {
   selecionarServico(index: number): void {
     this.servicoSelecionado = index;
   }
+
+  irParaAgendamento(): void {
+    this.authRedirect.redirecionar('/user/agendamento');
+  }
+
+  irParaPet(): void {
+    this.authRedirect.redirecionar('/user/listar/pet');
+  }
+
 }

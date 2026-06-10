@@ -35,8 +35,8 @@
         <h2>{{ petSelecionado.nome }}</h2>
 
         <p>
-          {{ petSelecionado.especie === 'outro' ? petSelecionado.outra_especie : petSelecionado.especie }}
-          • {{ petSelecionado.idade }} anos
+          <span style="text-transform: capitalize;">{{ petSelecionado.especie === 'outro' ? petSelecionado.outra_especie : petSelecionado.especie }}</span>
+          • {{ obterIdadeExtenso(petSelecionado.data_nascimento) }}
         </p>
 
         <div class="sidebar-badges">
@@ -49,6 +49,12 @@
             <small>SEXO</small>
             <strong>{{ petSelecionado.sexo === 'M' ? 'Macho' : 'Fêmea' }}</strong>
           </div>
+        </div>
+
+        <div class="plan-mini" style="margin-bottom: 12px; background: #f3f6ff; border: 1px solid #dbe3f0;">
+          <span>Classificação de Tamanho</span>
+          <strong style="color: #5D6ED3;">Porte {{ calcularPortePet(petSelecionado.especie, petSelecionado.peso) }}</strong>
+          <small>Baseado no peso atual</small>
         </div>
 
         <div class="pet-selector" *ngIf="pets.length > 1">
@@ -188,12 +194,12 @@
 
               <div>
                 <small>ESPÉCIE</small>
-                <strong>{{ petSelecionado.especie }}</strong>
+                <strong style="text-transform: capitalize;">{{ petSelecionado.especie }}</strong>
               </div>
 
               <div>
-                <small>IDADE</small>
-                <strong>{{ petSelecionado.idade }} anos</strong>
+                <small>IDADE DETALHADA</small>
+                <strong>{{ obterIdadeExtenso(petSelecionado.data_nascimento) }}</strong>
               </div>
 
               <div>
@@ -235,8 +241,12 @@
         </div>
 
         <div class="pet-modal-body">
+          <p class="erro" *ngIf="erro" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 15px; padding: 10px; background: #fee2e2; border-radius: 8px;">
+             {{ erro }}
+          </p>
+
           <label class="modal-photo-upload">
-            <input type="file" accept="image/*" (change)="carregarFoto($event)">
+            <input type="file" accept="image/*" (change)="carregarFoto($event)" #fileInput>
             <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto do pet">
             <div *ngIf="!fotoPreview" class="modal-photo-placeholder">
               <span>Adicionar foto</span>
@@ -254,11 +264,11 @@
               <label>Espécie</label>
               <select [(ngModel)]="especie">
                 <option value="">Selecione</option>
-                <option value="Cachorro">Cachorro</option>
-                <option value="Gato">Gato</option>
-                <option value="Ave">Ave</option>
-                <option value="Coelho">Coelho</option>
-                <option value="Outro">Outro</option>
+                <option value="cachorro">Cachorro</option>
+                <option value="gato">Gato</option>
+                <option value="ave">Ave</option>
+                <option value="coelho">Coelho</option>
+                <option value="outro">Outro</option>
               </select>
             </div>
 
@@ -271,14 +281,14 @@
               </select>
             </div>
 
-            <div class="modal-field full" *ngIf="especie === 'Outro'">
+            <div class="modal-field full" *ngIf="especie === 'outro'">
               <label>Qual a espécie?</label>
               <input type="text" placeholder="Ex: Porquinho-da-índia" [(ngModel)]="outraEspecie">
             </div>
 
             <div class="modal-field">
-              <label>Idade</label>
-              <input type="text" placeholder="Ex: 3" [(ngModel)]="idade">
+              <label>Data de Nascimento</label>
+              <input type="text" appDataMask="date" placeholder="DD/MM/AAAA" [(ngModel)]="dataNascimentoInput">
             </div>
 
             <div class="modal-field">
@@ -287,6 +297,11 @@
                 <input type="number" min="0.1" max="100" step="0.1" placeholder="Ex: 12.5" [(ngModel)]="peso">
                 <span>KG</span>
               </div>
+            </div>
+
+            <div class="modal-field full" *ngIf="peso && peso > 0" style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 5px;">
+              <span style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">PORTE ESTIMADO</span>
+              <strong style="color: #1e3a8a; font-size: 14px;">Porte {{ calcularPortePet(especie, peso) }}</strong>
             </div>
           </div>
         </div>
@@ -309,6 +324,19 @@
         </div>
 
         <div class="modal-body">
+          <p class="erro" *ngIf="erro" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 15px; padding: 10px; background: #fee2e2; border-radius: 8px;">
+             {{ erro }}
+          </p>
+
+          <label class="modal-photo-upload" style="margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; width: 120px;">
+            <input type="file" accept="image/*" (change)="carregarFotoEdicao($event)">
+            <img *ngIf="fotoPreviewEdicao" [src]="fotoPreviewEdicao" alt="Foto do pet editada">
+            <div *ngIf="!fotoPreviewEdicao" class="modal-photo-placeholder">
+              <span>Alterar foto</span>
+            </div>
+            <strong>+</strong>
+          </label>
+
           <div class="modal-grid">
             <div class="modal-field">
               <small>NOME DO PET</small>
@@ -332,8 +360,8 @@
             </div>
 
             <div class="modal-field">
-              <small>IDADE</small>
-              <input type="text" [(ngModel)]="petForm.idade" class="edit-input">
+              <small>DATA DE NASCIMENTO</small>
+              <input type="text" appDataMask="date" [(ngModel)]="petForm.dataNascimentoInput" class="edit-input" placeholder="DD/MM/AAAA">
             </div>
 
             <div class="modal-field">
@@ -348,9 +376,15 @@
                 <option value="F">Fêmea</option>
               </select>
             </div>
+            
+            <div class="modal-field" *ngIf="petForm.peso && petForm.peso > 0" style="grid-column: span 2; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 4px;">
+              <small style="color: #64748b; font-weight: bold; display: block; margin-bottom: 2px;">RECALCULANDO PORTE</small>
+              <strong style="color: #1e3a8a;">Porte {{ calcularPortePet(petForm.especie, petForm.peso) }}</strong>
+            </div>
+
           </div>
 
-          <div class="modal-field full-width">
+          <div class="modal-field full-width" style="margin-top: 15px;">
             <small>OBSERVAÇÕES</small>
             <textarea [(ngModel)]="petForm.observacoes" class="edit-textarea"></textarea>
           </div>
@@ -358,7 +392,9 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
-          <button type="button" class="btn-save" (click)="salvarEdicao()">Salvar alterações</button>
+          <button type="button" class="btn-save" [disabled]="salvando" (click)="salvarEdicao()">
+            {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
+          </button>
         </div>
       </div>
     </div>

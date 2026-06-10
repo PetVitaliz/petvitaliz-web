@@ -8,13 +8,13 @@
       </h1>
 
       <div class="hero-buttons">
-        <a routerLink="/login" class="btn-primary">
+        <button type="button" class="btn-primary" (click)="irParaAgendamento()">
           Agendar Consulta
-        </a>
+        </button>
 
-        <a routerLink="/login" class="btn-secondary">
+        <button type="button" class="btn-secondary" (click)="irParaPet()">
           Comece
-        </a>
+        </button>
       </div>
 
       <p>
@@ -256,7 +256,7 @@
         Tudo para a sua felicidade e a do seu pet.
       </p>
 
-      <a routerLink="/login" class="home-final-button">
+      <a (click)="irParaPet()" class="home-final-button" style="cursor: pointer;">
         Comece
       </a>
     </div>

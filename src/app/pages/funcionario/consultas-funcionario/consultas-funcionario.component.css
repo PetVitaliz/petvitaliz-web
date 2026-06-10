@@ -772,3 +772,9 @@
     width: 100%;
   }
 }
+
+.status.atrasado {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}

@@ -11,11 +11,11 @@ export interface ConsultaHome {
   pet: string;
   tutor: string;
   horario: string;
-  periodo: string;
   motivo: string;
   status: string;
   tipo: string;
   observacoes: string;
+  expirado: boolean
 }
 
 @Component({
@@ -26,7 +26,8 @@ export interface ConsultaHome {
   styleUrl: './home-funcionario.component.css'
 })
 export class HomeFuncionarioComponent implements OnInit {
-
+  
+  dialogoTipo: 'sucesso' | 'atencao' | 'erro' = 'sucesso';
   filtroAberto = false;
   prontuarioAberto = false;
   dialogoAberto = false;
@@ -72,21 +73,19 @@ export class HomeFuncionarioComponent implements OnInit {
         if (res.consultas) {
           this.consultas = res.consultas.map((c: any) => {
             const [hora] = c.hora_inicio.split(':').map(Number);
-            const periodoCalculado = hora >= 12 ? 'PM' : 'AM';
+            const expirado = this.verificarSeExpirou(c.data_consulta, c.hora_fim);
             
             const statusBanco = c.status ? c.status.trim().toLowerCase() : '';
             let statusPill = 'AGENDADO';
             let corTag = 'gray';
 
             if (statusBanco === 'em_espera' || statusBanco === 'em espera') { 
-              statusPill = 'EM ESPERA'; 
-              corTag = 'gray'; 
+              statusPill = 'EM ESPERA'; corTag = 'gray'; 
             } else if (statusBanco === 'em_endamento' || statusBanco === 'em andamento') { 
-              statusPill = 'EM ATENDIMENTO'; 
-              corTag = 'blue'; 
+              statusPill = expirado ? 'ATRASADO' : 'EM ATENDIMENTO';
+              corTag = expirado ? 'red' : 'blue'; 
             } else if (statusBanco === 'finalizado') { 
-              statusPill = 'FINALIZADO'; 
-              corTag = 'green'; 
+              statusPill = 'FINALIZADO'; corTag = 'green'; 
             }
 
             return {
@@ -95,7 +94,6 @@ export class HomeFuncionarioComponent implements OnInit {
               pet: c.pet?.nome || 'Paciente',
               tutor: c.pet?.usuario ? `${c.pet.usuario.nome} ${c.pet.usuario.sobrenome || ''}`.trim() : 'Não informado',
               horario: c.hora_inicio,
-              periodo: periodoCalculado,
               motivo: this.especialidade === 'Veterinário' ? 'Consulta Geral' : 'Estética / Banho',
               status: statusPill,
               tipo: corTag,
@@ -110,7 +108,7 @@ export class HomeFuncionarioComponent implements OnInit {
   }
 
   baterPonto(): void {
-    if (!confirm('Confirmar batida de ponto para restaurar sua carga horária?')) return;
+    if (!confirm('Bater ponto? (restaura carga)')) return;
 
     this.http.post<any>(`${environment.apiUrl}/funcionario/bater-ponto`, {}, { withCredentials: true }).subscribe({
       next: (res) => {
@@ -169,19 +167,28 @@ export class HomeFuncionarioComponent implements OnInit {
   iniciarConsulta(): void {
     if (!this.consultaSelecionada) return;
 
-    this.http.put(`${environment.apiUrl}/funcionario/consultas/atualizar/${this.consultaSelecionada.id_consulta}`, {}, { withCredentials: true }).subscribe({
-      next: () => {
+    const payload = { novoStatus: 'em_endamento' };
+
+    this.http.put(`${environment.apiUrl}/funcionario/consultas/atualizar/${this.consultaSelecionada.id_consulta}`, payload, { withCredentials: true }).subscribe({
+      next: (res: any) => {
         this.prontuarioAberto = false;
-        this.abrirDialogo('Atendimento Iniciado', `O prontuário de ${this.consultaSelecionada?.pet} está aberto.`);
+        this.abrirDialogo('Atendimento Iniciado', `O atendimento de ${this.consultaSelecionada?.pet} foi iniciado com sucesso!`, 'sucesso');
         this.carregarDadosHome();
       },
-      error: (err) => console.error('Erro ao iniciar atendimento:', err)
+      error: (err) => {
+        console.error('Erro ao iniciar atendimento:', err);
+        this.prontuarioAberto = false;
+        
+        const mensagemErro = err.error?.mensagem || 'Não foi possível iniciar o atendimento fora do horário agendado.';
+        this.abrirDialogo('Atenção', mensagemErro, 'atencao');
+      }
     });
   }
 
-  abrirDialogo(titulo: string, mensagem: string): void {
+  abrirDialogo(titulo: string, mensagem: string, tipo: 'sucesso' | 'atencao' | 'erro' = 'sucesso'): void {
     this.dialogoTitulo = titulo;
     this.dialogoMensagem = mensagem;
+    this.dialogoTipo = tipo;
     this.dialogoAberto = true;
   }
 
@@ -190,4 +197,15 @@ export class HomeFuncionarioComponent implements OnInit {
   inicialPet(consulta: ConsultaHome | null): string {
     return consulta && consulta.pet ? consulta.pet.charAt(0).toUpperCase() : 'P';
   }
+
+  verificarSeExpirou(data: string, horaFim: string): boolean {
+    if (!data || !horaFim) return false;
+    const agora = new Date();
+    const dataStr = data.split('T')[0];
+    const [h, m] = horaFim.split(':').map(Number);
+    const dataFimReal = new Date(`${dataStr}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
+
+    return agora > dataFimReal && agora.toDateString() === dataFimReal.toDateString();
+  }
+  
 }
