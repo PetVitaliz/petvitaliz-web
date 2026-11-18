@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { DataMaskDirective } from './data-mask.directive';
@@ -8,53 +9,61 @@ import { DataMaskDirective } from './data-mask.directive';
 @Component({
   selector: 'app-perfil-funcionario',
   standalone: true,
-  imports: [CommonModule, FormsModule, DataMaskDirective],
+  imports: [CommonModule, FormsModule, RouterLink, DataMaskDirective],
   templateUrl: './perfil-funcionario.component.html',
   styleUrl: './perfil-funcionario.component.css'
 })
 export class PerfilFuncionarioComponent implements OnInit {
 
-  fotoPerfil = 'assets/img/veterinario.png';
+  fotoPerfil = '';
 
+  carregando = true;
   editando = false;
-  modalSenhaAberto = false;
-  modal2FAAberto = false;
-  doisFatoresAtivo = false;
+  salvando = false;
 
-  senhaAtual = '';
-  novaSenha = '';
-  confirmarSenha = '';
-  codigo2FA = '';
+  erroMensagem = '';
+  toastMensagem = '';
+
+  especialidade = '';
 
   funcionario = {
-    nome: 'Carregando...',
+    nome: '',
     sobrenome: '',
     cargo: 'Funcionário',
-    crmv: 'Não informado',
+    crmv: '',
     email: '',
     telefone: '',
-    nascimento: '00/00/0000'
+    nascimento: ''
   };
 
   dadosTemp = { ...this.funcionario };
 
+  // Números reais, calculados a partir das consultas do funcionário
+  carregandoResumo = true;
+  resumo = { total: 0, hoje: 0, emEspera: 0, finalizadas: 0 };
+
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+    this.fotoPerfil = localStorage.getItem('fotoFuncionario') || '';
     this.buscarDadosPerfil();
+    this.carregarResumo();
   }
 
   buscarDadosPerfil(): void {
+    this.carregando = true;
     this.http.get<any>(`${environment.apiUrl}/funcionario/perfil-dados`, { withCredentials: true }).subscribe({
       next: (dados) => {
+        this.carregando = false;
+        this.especialidade = dados.especialidade || '';
         this.funcionario = {
-          nome: dados.nome,
+          nome: dados.nome || '',
           sobrenome: dados.sobrenome || '',
-          cargo: dados.especialidade === 'veterinario' ? 'Veterinário(a) Clínico' : 'Profissional de Estética',
-          crmv: dados.crmv || 'Inscrição ativa', 
-          email: dados.email,
+          cargo: dados.especialidade === 'veterinario' ? 'Veterinário(a)' : this.capitalizar(dados.especialidade || 'Funcionário'),
+          crmv: dados.crmv || '',
+          email: dados.email || '',
           telefone: dados.telefone || '',
-          nascimento: localStorage.getItem('nascimento_fun') || '00/00/0000'
+          nascimento: localStorage.getItem('nascimento_fun') || ''
         };
 
         if (dados.foto_url) {
@@ -63,91 +72,142 @@ export class PerfilFuncionarioComponent implements OnInit {
 
         this.dadosTemp = { ...this.funcionario };
       },
-      error: (err) => console.error('Erro ao carregar perfil do funcionário:', err)
+      error: (err) => {
+        this.carregando = false;
+        console.error('Erro ao carregar perfil do funcionário:', err);
+        this.erroMensagem = 'Não foi possível carregar seus dados.';
+      }
     });
+  }
+
+  carregarResumo(): void {
+    this.carregandoResumo = true;
+    this.http.get<any>(`${environment.apiUrl}/funcionario/consultas`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        this.carregandoResumo = false;
+        const consultas: any[] = Array.isArray(res?.consultas) ? res.consultas : [];
+        const hoje = this.hojeISO();
+        const status = (c: any) => String(c.status || '').trim().toLowerCase();
+
+        this.resumo = {
+          total: consultas.length,
+          hoje: consultas.filter(c => String(c.data_consulta || '').split('T')[0] === hoje).length,
+          emEspera: consultas.filter(c => status(c) === 'em_espera' || status(c) === 'em espera').length,
+          finalizadas: consultas.filter(c => status(c) === 'finalizado').length
+        };
+      },
+      error: (err) => {
+        this.carregandoResumo = false;
+        console.error('Erro ao carregar resumo de consultas:', err);
+      }
+    });
+  }
+
+  get nomeCompleto(): string {
+    return `${this.funcionario.nome} ${this.funcionario.sobrenome}`.trim() || 'Carregando...';
+  }
+
+  get iniciais(): string {
+    const n = this.funcionario.nome?.charAt(0) || 'F';
+    const s = this.funcionario.sobrenome?.charAt(0) || '';
+    return (n + s).toUpperCase();
+  }
+
+  get ehVeterinario(): boolean {
+    return this.especialidade === 'veterinario';
   }
 
   alterarFoto(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.fotoPerfil = reader.result as string;
-        localStorage.setItem('fotoFuncionario', this.fotoPerfil);
-        window.dispatchEvent(new Event('fotoFuncionarioAtualizada'));
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
+    const arquivo = input.files?.[0];
+    if (!arquivo) return;
 
-  habilitarEdicao(): void {
-    this.editando = true;
-    this.dadosTemp = { ...this.funcionario };
-  }
-
-  salvarEdicao(): void {
-    if (!this.dadosTemp.nome) {
-      alert('O nome é obrigatório.');
+    if (!arquivo.type.startsWith('image/')) {
+      this.erroMensagem = 'Escolha um arquivo de imagem (JPG, PNG ou WEBP).';
       return;
     }
 
-    if (this.dadosTemp.nascimento) {
-      localStorage.setItem('nascimento_fun', this.dadosTemp.nascimento);
+    if (arquivo.size > 2 * 1024 * 1024) {
+      this.erroMensagem = 'A imagem precisa ter no máximo 2 MB.';
+      return;
     }
 
-    const payload = {
-      nome: this.dadosTemp.nome.trim(),
-      sobrenome: this.dadosTemp.sobrenome.trim(),
-      email: this.funcionario.email.trim(), 
-      telefone: this.dadosTemp.telefone ? this.dadosTemp.telefone.trim() : null
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fotoPerfil = reader.result as string;
+      localStorage.setItem('fotoFuncionario', this.fotoPerfil);
+      window.dispatchEvent(new Event('fotoFuncionarioAtualizada'));
+      this.mostrarToast('Foto atualizada.');
     };
+    reader.readAsDataURL(arquivo);
+    input.value = '';
+  }
 
-    this.http.put<any>(`${environment.apiUrl}/funcionario/perfil-dados/atualizar`, payload, { withCredentials: true }).subscribe({
-      next: (res) => {
-        alert(res.mensagem || 'Perfil updated com sucesso!');
-        this.buscarDadosPerfil();
-        this.editando = false;
-      },
-      error: (err) => {
-        console.error('Erro ao atualizar perfil no servidor:', err);
-        alert(err.error?.mensagem || 'Não foi possível salvar as alterações.');
-      }
-    });
+  habilitarEdicao(): void {
+    this.erroMensagem = '';
+    this.editando = true;
+    this.dadosTemp = { ...this.funcionario };
   }
 
   cancelarEdicao(): void {
     this.dadosTemp = { ...this.funcionario };
     this.editando = false;
+    this.erroMensagem = '';
   }
 
-  abrirModalSenha(): void {
-    this.modalSenhaAberto = true;
-    this.senhaAtual = ''; this.novaSenha = ''; this.confirmarSenha = '';
-  }
-
-  fecharModalSenha(): void { this.modalSenhaAberto = false; }
-
-  salvarSenha(): void {
-    if (!this.senhaAtual || !this.novaSenha || !this.confirmarSenha) {
-      alert('Preencha todos os campos.'); return;
+  salvarEdicao(): void {
+    if (!this.dadosTemp.nome.trim()) {
+      this.erroMensagem = 'O nome é obrigatório.';
+      return;
     }
-    if (this.novaSenha !== this.confirmarSenha) {
-      alert('As senhas não coincidem.'); return;
+
+    if (this.dadosTemp.nascimento && !/^\d{2}\/\d{2}\/\d{4}$/.test(this.dadosTemp.nascimento)) {
+      this.erroMensagem = 'Informe a data de nascimento no formato DD/MM/AAAA.';
+      return;
     }
-    alert('Senha alterada com sucesso no sistema!');
-    this.fecharModalSenha();
+
+    // A data de nascimento ainda não existe na API: fica salva neste navegador
+    if (this.dadosTemp.nascimento) {
+      localStorage.setItem('nascimento_fun', this.dadosTemp.nascimento);
+    } else {
+      localStorage.removeItem('nascimento_fun');
+    }
+
+    const payload = {
+      nome: this.dadosTemp.nome.trim(),
+      sobrenome: this.dadosTemp.sobrenome.trim(),
+      email: this.funcionario.email.trim(),
+      telefone: this.dadosTemp.telefone ? this.dadosTemp.telefone.trim() : null
+    };
+
+    this.salvando = true;
+    this.erroMensagem = '';
+    this.http.put<any>(`${environment.apiUrl}/funcionario/perfil-dados/atualizar`, payload, { withCredentials: true }).subscribe({
+      next: (res) => {
+        this.salvando = false;
+        this.editando = false;
+        this.mostrarToast(res?.mensagem || 'Dados atualizados com sucesso.');
+        this.buscarDadosPerfil();
+      },
+      error: (err) => {
+        this.salvando = false;
+        console.error('Erro ao atualizar perfil no servidor:', err);
+        this.erroMensagem = err.error?.mensagem || 'Não foi possível salvar as alterações.';
+      }
+    });
   }
 
-  abrirModal2FA(): void { this.modal2FAAberto = true; this.codigo2FA = ''; }
-  fecharModal2FA(): void { this.modal2FAAberto = false; }
-
-  ativar2FA(): void {
-    if (this.codigo2FA.length < 6) { alert('O código precisa ter 6 dígitos.'); return; }
-    this.doisFatoresAtivo = true;
-    this.fecharModal2FA();
+  private mostrarToast(mensagem: string): void {
+    this.toastMensagem = mensagem;
+    setTimeout(() => (this.toastMensagem = ''), 3000);
   }
 
-  desativar2FA(): void { this.doisFatoresAtivo = false; }
-  suporteChat(): void { alert('Iniciando chat de suporte interno da clínica...'); }
-  centralAjuda(): void { alert('Redirecionando para a base de conhecimento PetVitaliz...'); }
+  private capitalizar(texto: string): string {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  private hojeISO(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
 }

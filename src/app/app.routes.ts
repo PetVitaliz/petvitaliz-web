@@ -29,8 +29,8 @@ import { MeuPlanoComponent } from './pages/usuario/meu-plano/meu-plano.component
 import { HomeFuncionarioComponent } from './pages/funcionario/home-funcionario/home-funcionario.component';
 import { ConsultasFuncionarioComponent } from './pages/funcionario/consultas-funcionario/consultas-funcionario.component';
 import { ClientesFuncionarioComponent } from './pages/funcionario/clientes-funcionario/clientes-funcionario.component';
-import { PetsFuncionarioComponent } from './pages/funcionario/pets-funcionario/pets-funcionario.component';
 import { PerfilFuncionarioComponent } from './pages/funcionario/perfil-funcionario/perfil-funcionario.component';
+import { AjudaFuncionarioComponent } from './pages/funcionario/ajuda-funcionario/ajuda-funcionario.component';
 
 // ADM
 import { HomeAdmComponent } from './pages/adm/home-adm/home-adm.component';
@@ -133,13 +133,19 @@ export const routes: Routes = [
     canActivate: [authFuncionarioGuard]
   },
   {
+    // Pets agora fica dentro de "Clientes e pets", na aba Pets
     path: 'funcionario/pets',
-    component: PetsFuncionarioComponent,
-    canActivate: [authFuncionarioGuard]
+    redirectTo: '/funcionario/clientes?aba=pets',
+    pathMatch: 'full'
   },
   {
     path: 'funcionario/perfil',
     component: PerfilFuncionarioComponent,
+    canActivate: [authFuncionarioGuard]
+  },
+  {
+    path: 'funcionario/ajuda',
+    component: AjudaFuncionarioComponent,
     canActivate: [authFuncionarioGuard]
   },
 

@@ -1,266 +1,307 @@
 <div class="page">
 
-  <section class="hero-area">
-    <div class="hero-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      <div>
-        <h1>Olá, {{ saudacaoNome }}!</h1>
-        <br>
-        <p>
-          Você possui <strong>{{ totalHoje }} atendimentos</strong> agendados para hoje, <strong>{{ dataAtual }}.</strong>
-        </p>
+  <!-- CABEÇALHO -->
+  <header class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg class="ico" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
       </div>
-      <button class="btn-outline" type="button" (click)="baterPonto()" style="border-color: #2563eb; color: #2563eb;">
-        ⏱ Bater Ponto
+      <div>
+        <h1>Olá, {{ saudacaoNome }}</h1>
+        <p class="data-atual">{{ dataFormatada }}</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-ghost" (click)="carregarDadosHome()">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+        Atualizar
+      </button>
+      <button type="button" class="btn btn-primary" (click)="abrirConfirmacaoPonto()">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Bater ponto
       </button>
     </div>
+  </header>
+
+  <!-- INDICADORES -->
+  <section class="kpis">
+    <button type="button" class="kpi" [class.ativo]="filtroSelecionado === 'Todos'" (click)="aplicarFiltro('Todos')">
+      <span class="kpi-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+      </span>
+      <div class="kpi-texto">
+        <span>Consultas hoje</span>
+        <small>{{ finalizadas }} finalizadas</small>
+      </div>
+      <strong>{{ carregando ? '–' : totalHoje }}</strong>
+    </button>
+
+    <button type="button" class="kpi" [class.ativo]="filtroSelecionado === 'EM ESPERA'" (click)="aplicarFiltro('EM ESPERA')">
+      <span class="kpi-icon kpi-warn">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M17 22v-4.17a2 2 0 0 0-.59-1.42L12 12l-4.41 4.41A2 2 0 0 0 7 17.83V22M7 2v4.17a2 2 0 0 0 .59 1.42L12 12l4.41-4.41A2 2 0 0 0 17 6.17V2"/></svg>
+      </span>
+      <div class="kpi-texto">
+        <span>Em espera</span>
+        <small>aguardando triagem</small>
+      </div>
+      <strong>{{ carregando ? '–' : laudosPendentes }}</strong>
+    </button>
+
+    <button type="button" class="kpi" [class.ativo]="filtroSelecionado === 'EM ATENDIMENTO'" (click)="aplicarFiltro('EM ATENDIMENTO')">
+      <span class="kpi-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </span>
+      <div class="kpi-texto">
+        <span>Em atendimento</span>
+        <small>no consultório agora</small>
+      </div>
+      <strong>{{ carregando ? '–' : emAtendimento }}</strong>
+    </button>
+
+    <div class="kpi" [class.kpi-alerta]="!carregando && cargaDisponivel <= 0">
+      <span class="kpi-icon">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </span>
+      <div class="kpi-texto">
+        <span>Carga disponível</span>
+        <small>atendimentos restantes</small>
+      </div>
+      <strong>{{ carregando ? '–' : cargaDisponivel }}</strong>
+    </div>
   </section>
 
-  <section class="stats">
+  <!-- CONTEÚDO -->
+  <section class="dash-grid">
 
-    <div class="box blue-line">
-      <div class="box-icon blue">
-        <i class="fa-regular fa-calendar-days"></i>
+    <!-- Agenda do dia -->
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Agenda do dia</h3>
+          <p>{{ especialidade || 'Colaborador' }} · {{ dataAtual }}</p>
+        </div>
+        <a routerLink="/funcionario/consultas" class="link-action">
+          Agenda completa
+          <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
       </div>
-      <div>
-        <span>ATENDIMENTOS HOJE</span>
-        <h2>{{ totalHoje }}</h2>
-        <p>consultas na agenda</p>
+
+      <div class="chips filtros">
+        <button type="button" class="chip" [class.ativo]="filtroSelecionado === 'Todos'" (click)="aplicarFiltro('Todos')">
+          Todas <span class="chip-count">{{ contarStatus('Todos') }}</span>
+        </button>
+        <button type="button" class="chip" [class.ativo]="filtroSelecionado === 'EM ESPERA'" (click)="aplicarFiltro('EM ESPERA')">
+          Em espera <span class="chip-count">{{ contarStatus('EM ESPERA') }}</span>
+        </button>
+        <button type="button" class="chip" [class.ativo]="filtroSelecionado === 'EM ATENDIMENTO'" (click)="aplicarFiltro('EM ATENDIMENTO')">
+          Em atendimento <span class="chip-count">{{ contarStatus('EM ATENDIMENTO') }}</span>
+        </button>
+        <button type="button" class="chip" [class.ativo]="filtroSelecionado === 'FINALIZADO'" (click)="aplicarFiltro('FINALIZADO')">
+          Finalizadas <span class="chip-count">{{ contarStatus('FINALIZADO') }}</span>
+        </button>
       </div>
+
+      <div class="carregando" *ngIf="carregando">
+        <div class="loader"></div>
+        <span>Sincronizando sua agenda...</span>
+      </div>
+
+      <ng-container *ngIf="!carregando">
+        <ul class="lista" *ngIf="consultasFiltradas.length > 0">
+          <li *ngFor="let consulta of consultasHomePaginadas"
+              [class.selecionada]="consultaSelecionada === consulta"
+              (click)="selecionarConsulta(consulta)">
+            <span class="hora">{{ consulta.horario }}</span>
+
+            <span class="avatar avatar-pet">{{ inicialPet(consulta) }}</span>
+
+            <div class="lista-info">
+              <strong>{{ consulta.pet }}</strong>
+              <span>{{ consulta.motivo }} · Tutor: {{ consulta.tutor }}</span>
+            </div>
+
+            <span class="pill" [ngClass]="pillClasse(consulta.status)"><i></i>{{ consulta.status | titlecase }}</span>
+
+            <div class="acoes-linha">
+              <button type="button" class="btn btn-ghost btn-sm"
+                (click)="selecionarConsulta(consulta); abrirProntuario(); $event.stopPropagation()">
+                Prontuário
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" *ngIf="consulta.status === 'EM ESPERA'"
+                (click)="selecionarConsulta(consulta); iniciarConsulta(); $event.stopPropagation()">
+                Iniciar
+              </button>
+            </div>
+          </li>
+        </ul>
+
+        <a class="ver-mais" routerLink="/funcionario/consultas" *ngIf="consultasFiltradas.length > consultasHomePaginadas.length">
+          + {{ consultasFiltradas.length - consultasHomePaginadas.length }} consultas na agenda completa
+        </a>
+
+        <div class="vazio" *ngIf="consultasFiltradas.length === 0">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          <span *ngIf="filtroSelecionado === 'Todos'">Nenhuma consulta agendada para hoje.</span>
+          <span *ngIf="filtroSelecionado !== 'Todos'">
+            Nenhuma consulta neste filtro.
+            <button type="button" class="link-action" (click)="aplicarFiltro('Todos')">Ver todas</button>
+          </span>
+        </div>
+      </ng-container>
+    </article>
+
+    <!-- Coluna lateral -->
+    <div class="coluna">
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Próximo atendimento</h3>
+            <p>Quem você atende a seguir</p>
+          </div>
+        </div>
+
+        <div class="proximo" *ngIf="proximaConsulta as prox; else semProximo">
+          <span class="avatar avatar-lg">{{ inicialPet(prox) }}</span>
+          <div class="proximo-info">
+            <strong>{{ prox.pet }}</strong>
+            <span>{{ prox.horario }} · {{ prox.motivo }}</span>
+            <span>Tutor: {{ prox.tutor }}</span>
+          </div>
+        </div>
+        <div class="proximo-acoes" *ngIf="proximaConsulta">
+          <button type="button" class="btn btn-ghost btn-sm" (click)="selecionarConsulta(proximaConsulta!); abrirProntuario()">Ver prontuário</button>
+          <button type="button" class="btn btn-primary btn-sm" *ngIf="proximaConsulta?.status === 'EM ESPERA'"
+            (click)="selecionarConsulta(proximaConsulta!); iniciarConsulta()">Iniciar atendimento</button>
+        </div>
+        <ng-template #semProximo>
+          <div class="vazio">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            Nada pendente por agora.
+          </div>
+        </ng-template>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Acesso rápido</h3>
+          </div>
+        </div>
+        <nav class="atalhos">
+          <a routerLink="/funcionario/consultas">
+            <span class="kpi-icon"><svg class="ico" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></span>
+            <div><strong>Minha agenda</strong><small>Todas as suas consultas</small></div>
+            <svg class="ico seta" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+          <a routerLink="/funcionario/clientes">
+            <span class="kpi-icon"><svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <div><strong>Tutores</strong><small>Dados, pets e histórico</small></div>
+            <svg class="ico seta" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+          <a routerLink="/funcionario/clientes" [queryParams]="{ aba: 'pets' }">
+            <span class="kpi-icon"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></svg></span>
+            <div><strong>Pets</strong><small>Fichas dos pacientes</small></div>
+            <svg class="ico seta" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+          <a routerLink="/funcionario/perfil">
+            <span class="kpi-icon"><svg class="ico" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+            <div><strong>Meu perfil</strong><small>Dados e senha</small></div>
+            <svg class="ico seta" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </nav>
+      </article>
+
     </div>
-
-    <div class="box purple-line">
-      <div class="box-icon purple">
-        <i class="fa-regular fa-file-lines"></i>
-      </div>
-      <div>
-        <span>EM ESPERA</span>
-        <h2>{{ laudosPendentes }}</h2>
-        <p>aguardando triagem</p>
-      </div>
-    </div>
-
-   <div class="box green-line">
-      <div class="box-icon green">
-        <i class="fa-solid fa-stethoscope"></i>
-      </div>
-      <div>
-        <span>SUA FUNÇÃO</span>
-        <h2 style="font-size: 18px; margin-top: 14px; font-weight: 800; color: #08245f; text-transform: uppercase;">
-          {{ especialidade }}
-        </h2>
-        <p>Especialidade cadastrada</p>
-      </div>
-    </div>
-
-    <div class="box red-line danger-box">
-      <div class="box-icon red">
-        <i class="fa-solid fa-clock"></i>
-      </div>
-      <div>
-        <span>CARGA DISPONÍVEL</span>
-        <h2>{{ cargaDisponivel }}</h2>
-        <p>atendimentos restantes</p>
-      </div>
-    </div>
-
   </section>
 
-  <section class="main-grid">
-
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <h2>Agenda do Dia</h2>
-          <p class="card-subtitle">
-            Selecione uma consulta para iniciar atendimento ou abrir o prontuário.
-          </p>
-        </div>
-
-        <div class="buttons">
-          <button class="btn-outline" type="button" (click)="abrirFiltros()">
-            <i class="fa-solid fa-filter"></i>
-            Filtros
-          </button>
-          <button class="btn-main" type="button" routerLink="/funcionario/consultas">
-            <i class="fa-regular fa-calendar"></i>
-            Ver Agenda Completa
-          </button>
-        </div>
-      </div>
-
-      <div class="row" *ngFor="let consulta of consultasHomePaginadas"
-        [class.selecionada]="consultaSelecionada === consulta" (click)="selecionarConsulta(consulta)">
-
-        <div class="time">
-          <strong>{{ consulta.horario }}</strong>
-        </div>
-
-        <div class="pet-avatar">
-          {{ inicialPet(consulta) }}
-        </div>
-
-        <div class="content">
-          <h3>{{ consulta.pet }}</h3>
-          <p>Tutor: {{ consulta.tutor }}</p>
-        </div>
-
-        <span class="reason-pill">
-          {{ consulta.motivo }}
-        </span>
-
-        <div class="tag" [ngClass]="consulta.tipo">
-          {{ consulta.status }}
-        </div>
-
-        <div class="row-actions">
-          <button type="button" class="mini-btn"
-            (click)="selecionarConsulta(consulta); abrirProntuario(); $event.stopPropagation()">
-            <i class="fa-regular fa-file-lines"></i>
-            Prontuário
-          </button>
-
-          <button type="button" class="mini-btn primary" *ngIf="consulta.status === 'EM ESPERA'"
-            (click)="selecionarConsulta(consulta); iniciarConsulta(); $event.stopPropagation()">
-            <i class="fa-solid fa-play"></i>
-            Iniciar
-          </button>
-        </div>
-      </div>
-
-      <div class="empty-state" *ngIf="consultasFiltradas.length === 0">
-        <div class="empty-icon">
-          <i class="fa-solid fa-check"></i>
-        </div>
-        <h3>Nenhuma consulta para este filtro</h3>
-        <p>Você pode limpar os filtros ou acessar a agenda completa.</p>
-        <button class="btn-main" type="button" (click)="aplicarFiltro('Todos')">
-          Ver todas
-        </button>
-      </div>
-    </div>
-
-    <aside class="side">
-      <div class="side-card">
-        <h3>Acesso rápido</h3>
-        <button type="button" routerLink="/funcionario/consultas">
-          <span class="quick-icon blue"><i class="fa-regular fa-calendar-plus"></i></span>
+  <!-- MODAL: PRONTUÁRIO -->
+  <div class="modal-backdrop" *ngIf="prontuarioAberto" (click)="fecharProntuario()">
+    <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div class="pessoa" *ngIf="consultaSelecionada">
+          <span class="avatar">{{ inicialPet(consultaSelecionada) }}</span>
           <div>
-            <strong>Minha Agenda</strong>
-            <small>Gerenciar escala</small>
+            <h2>Ficha de atendimento</h2>
+            <p>{{ consultaSelecionada.pet }} · {{ consultaSelecionada.horario }}</p>
           </div>
-          <b>›</b>
+        </div>
+        <button type="button" class="icon-btn" aria-label="Fechar" (click)="fecharProntuario()">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         </button>
+      </div>
 
-        <button type="button" routerLink="/funcionario/clientes">
-          <span class="quick-icon purple"><i class="fa-solid fa-users"></i></span>
-          <div>
-            <strong>Clientes</strong>
-            <small>Ver todos os tutores</small>
+      <div class="modal-body" *ngIf="consultaSelecionada">
+        <div class="detalhes">
+          <div class="detalhe">
+            <small>Paciente</small>
+            <strong>{{ consultaSelecionada.pet }}</strong>
           </div>
-          <b>›</b>
-        </button>
-
-        <button type="button" routerLink="/funcionario/pets">
-          <span class="quick-icon green"><i class="fa-solid fa-paw"></i></span>
-          <div>
-            <strong>Pets</strong>
-            <small>Ver todos os pacientes</small>
+          <div class="detalhe">
+            <small>Status</small>
+            <strong><span class="pill" [ngClass]="pillClasse(consultaSelecionada.status)"><i></i>{{ consultaSelecionada.status | titlecase }}</span></strong>
           </div>
-          <b>›</b>
-        </button>
-      </div>
-
-      <div class="tip-card">
-        <div>
-          <strong>Dica do dia</strong>
-          <p>Mantenha os dados do paciente sempre atualizados para um atendimento mais eficiente.</p>
-        </div>
-      </div>
-    </aside>
-
-  </section>
-
-  <div class="modal-fundo" *ngIf="filtroAberto">
-    <div class="modal-card pequeno">
-      <button class="fechar-modal" type="button" (click)="fecharFiltros()">×</button>
-      <h2>Filtros</h2>
-      <p>Escolha quais consultas deseja visualizar.</p>
-      <div class="opcoes-filtro">
-        <button type="button" (click)="aplicarFiltro('Todos')">Todos os registros</button>
-        <button type="button" (click)="aplicarFiltro('EM ESPERA')">Em espera / Triagem</button>
-        <button type="button" (click)="aplicarFiltro('EM ATENDIMENTO')">Em atendimento</button>
-        <button type="button" (click)="aplicarFiltro('FINALIZADO')">Finalizados</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-fundo" *ngIf="prontuarioAberto">
-    <div class="modal-card prontuario-modal">
-      <button class="fechar-modal" type="button" (click)="fecharProntuario()">×</button>
-      <div class="prontuario-topo" *ngIf="consultaSelecionada">
-        <div class="prontuario-avatar">{{ inicialPet(consultaSelecionada) }}</div>
-        <div>
-          <h2>Ficha de Atendimento</h2>
-          <p>Acompanhamento médico do paciente.</p>
-        </div>
-      </div>
-
-      <div class="prontuario-card" *ngIf="consultaSelecionada">
-        <div class="prontuario-nome">
-          <h3>{{ consultaSelecionada.pet }}</h3>
-          <span class="tag" [ngClass]="consultaSelecionada.tipo">{{ consultaSelecionada.status }}</span>
-        </div>
-        <div class="prontuario-info">
-          <div>
-            <small>Responsável / Tutor</small>
+          <div class="detalhe">
+            <small>Tutor</small>
             <strong>{{ consultaSelecionada.tutor }}</strong>
           </div>
-          <div>
-            <small>Horário de Entrada</small>
-            <strong>{{ consultaSelecionada.horario }}</strong>
-          </div>
-          <div>
+          <div class="detalhe">
             <small>Procedimento</small>
             <strong>{{ consultaSelecionada.motivo }}</strong>
           </div>
-          <div>
-            <small>Data Atual</small>
-            <strong>{{ dataAtual }}</strong>
-          </div>
         </div>
-        <div class="prontuario-observacao">
-          <small>Queixa Principal / Sintomas relatados pelo tutor</small>
+
+        <div class="observacao">
+          <small>Queixa principal / sintomas relatados pelo tutor</small>
           <p>{{ consultaSelecionada.observacoes }}</p>
         </div>
       </div>
 
-      <div class="modal-botoes">
-        <button class="btn-cancelar" type="button" (click)="fecharProntuario()">Voltar</button>
-        <button class="btn-salvar" type="button" *ngIf="consultaSelecionada?.status !== 'FINALIZADO'" (click)="iniciarConsulta()">
-          Iniciar Consulta
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" (click)="fecharProntuario()">Voltar</button>
+        <button type="button" class="btn btn-primary"
+          *ngIf="consultaSelecionada?.status === 'EM ESPERA'"
+          (click)="iniciarConsulta()">
+          Iniciar consulta
         </button>
       </div>
     </div>
   </div>
 
-  <div class="modal-fundo" *ngIf="dialogoAberto">
-    <div class="dialogo-card" [ngClass]="{'erro-card': dialogoTipo === 'atencao' || dialogoTipo === 'erro'}">
-      <div class="dialogo-icone" *ngIf="dialogoTipo === 'sucesso'">
-        <i class="fa-solid fa-check"></i>
+  <!-- MODAL: CONFIRMAR PONTO -->
+  <div class="modal-backdrop" *ngIf="pontoConfirmAberto" (click)="fecharConfirmacaoPonto()">
+    <div class="modal modal-sm modal-confirm" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <div class="modal-body">
+        <div class="modal-icon modal-icon-info">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h2>Bater ponto agora?</h2>
+        <p>Seu ponto será registrado e sua carga de atendimentos restaurada.</p>
       </div>
-      
-      <div class="dialogo-icone erro" *ngIf="dialogoTipo === 'atencao' || dialogoTipo === 'erro'" style="background-color: #fef2f2; color: #dc2626;">
-        <i class="fa-solid fa-xmark"></i>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" (click)="fecharConfirmacaoPonto()">Cancelar</button>
+        <button type="button" class="btn btn-primary" [disabled]="registrandoPonto" (click)="baterPonto()">
+          {{ registrandoPonto ? 'Registrando...' : 'Confirmar ponto' }}
+        </button>
       </div>
+    </div>
+  </div>
 
-      <h2>{{ dialogoTitulo }}</h2>
-      <p>{{ dialogoMensagem }}</p>
-
-      <button class="btn-dialogo" type="button" 
-              [style.background-color]="dialogoTipo === 'sucesso' ? '#2563eb' : '#dc2626'" 
-              (click)="fecharDialogo()">
-        OK
-      </button>
+  <!-- MODAL: AVISO -->
+  <div class="modal-backdrop" *ngIf="dialogoAberto" (click)="fecharDialogo()">
+    <div class="modal modal-sm modal-confirm" role="alertdialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <div class="modal-body">
+        <div class="modal-icon" [class.modal-icon-ok]="dialogoTipo === 'sucesso'">
+          <svg *ngIf="dialogoTipo === 'sucesso'" class="ico" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+          <svg *ngIf="dialogoTipo !== 'sucesso'" class="ico" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>
+        </div>
+        <h2>{{ dialogoTitulo }}</h2>
+        <p>{{ dialogoMensagem }}</p>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-primary btn-block" (click)="fecharDialogo()">OK</button>
+      </div>
     </div>
   </div>
 

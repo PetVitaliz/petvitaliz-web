@@ -1,388 +1,174 @@
-<section class="perfil-page">
+<div class="page">
 
-  <h1>Meu Perfil</h1>
-
-  <div class="perfil-container">
-
-    <div class="topo">
-
-      <div class="foto-area">
-
-        <img [src]="fotoPerfil" alt="Foto do funcionário">
-
-        <label class="btn-foto">
-
-          <svg viewBox="0 0 24 24">
-            <path d="M12 20h9" />
-            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
-          </svg>
-
-          <input type="file" accept="image/*" (change)="alterarFoto($event)">
-
-        </label>
-
+  <!-- CABEÇALHO -->
+  <header class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
-
-      <div class="dados-principais">
-        <span>Clinical Guardian</span>
-        <h2>{{ funcionario.nome }} {{ funcionario.sobrenome }}</h2>
-        
-        <div class="info-linha">
-
-          <p>
-            <svg viewBox="0 0 24 24">
-              <path d="M20 21a8 8 0 0 0-16 0" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            {{ funcionario.cargo }}
-          </p>
-
-          <p>
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2v20" />
-              <path d="M2 12h20" />
-            </svg>
-            CRMV: {{ funcionario.crmv }}
-          </p>
-
-        </div>
-
+      <div>
+        <h1>Meu perfil</h1>
+        <p>Seus dados de contato, foto e acesso.</p>
       </div>
-
     </div>
 
-    <div class="conteudo-principal">
-
-      <div class="card info-pessoais">
-
-        <div class="card-titulo">
-
-          <h3>Informações Pessoais</h3>
-
-          <span class="icon-box">
-            <svg viewBox="0 0 24 24">
-              <path d="M20 21a8 8 0 0 0-16 0" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </span>
-
-        </div>
-
-       <div class="form-grid">
-
-          <div>
-            <label>Nome</label>
-            <input type="text" [(ngModel)]="dadosTemp.nome" [disabled]="!editando">
-          </div>
-
-          <div>
-            <label>Sobrenome</label>
-            <input type="text" [(ngModel)]="dadosTemp.sobrenome" [disabled]="!editando">
-          </div>
-
-          <div>
-            <label>E-mail</label>
-            <input type="email" [(ngModel)]="dadosTemp.email" [disabled]="true" style="background-color: #f3f4f6; cursor: not-allowed; color: #9d9d9d;">
-          </div>
-
-          <div>
-            <label>Telefone de contato</label>
-            <input type="text" [(ngModel)]="dadosTemp.telefone" [disabled]="!editando" appDataMask="phone" placeholder="(00) 00000-0000">
-          </div>
-
-          <div>
-            <label>Data de nascimento</label>
-            <input type="text" [(ngModel)]="dadosTemp.nascimento" [disabled]="!editando" appDataMask="date" placeholder="DD/MM/AAAA">
-          </div>
-
-        </div>
-
-        <div class="botoes-edicao">
-
-          <button type="button" *ngIf="!editando" (click)="habilitarEdicao()">
-            Editar informações
-          </button>
-
-          <div *ngIf="editando" class="grupo-edicao">
-
-            <button type="button" (click)="salvarEdicao()">
-              Salvar
-            </button>
-
-            <button type="button" class="cancelar" (click)="cancelarEdicao()">
-              Cancelar
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="card desempenho">
-
-        <div class="card-titulo">
-
-          <h3>Desempenho Mensal</h3>
-
-          <span class="icon-box">
-            <svg viewBox="0 0 24 24">
-              <path d="M3 3v18h18" />
-              <path d="M7 15l4-4 3 3 5-6" />
-            </svg>
-          </span>
-
-        </div>
-
-        <div class="meta">
-
-          <div>
-            <p>Consultas Realizadas</p>
-
-            <div class="barra">
-              <span style="width: 90%;"></span>
-            </div>
-          </div>
-
-          <strong>142</strong>
-
-        </div>
-
-        <div class="meta">
-
-          <div>
-            <p>Cirurgias de Sucesso</p>
-
-            <div class="barra">
-              <span style="width: 78%;"></span>
-            </div>
-          </div>
-
-          <strong>28</strong>
-
-        </div>
-
-        <div class="pacientes">
-
-          <div class="avatar-list">
-
-            <div class="avatar-letter">
-              L
-            </div>
-
-            <div class="avatar-letter">
-              M
-            </div>
-
-            <span>+15</span>
-
-          </div>
-
-          <p>Pacientes atendidos hoje</p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="credenciais">
-
-      <div class="titulo-secao">
-
-        <div class="titulo-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2v20" />
-            <path d="M2 12h20" />
-          </svg>
-        </div>
-
-        <div>
-          <span class="section-mini-title">Área Clínica</span>
-          <h3>Credenciais Clínicas</h3>
-        </div>
-
-      </div>
-
-      <div class="credenciais-grid">
-
-        <div class="mini-card">
-
-          <h4>
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7Z" />
-            </svg>
-            Especialidades
-          </h4>
-
-          <div class="tags">
-            <span>Cirurgia de Pequenos Animais</span>
-            <span>Ortopedia</span>
-            <span>Diagnóstico por Imagem</span>
-          </div>
-
-        </div>
-
-        <div class="mini-card">
-
-          <h4>
-            <svg viewBox="0 0 24 24">
-              <path d="M22 10L12 4 2 10l10 6 10-6Z" />
-              <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
-            </svg>
-            Formação Acadêmica
-          </h4>
-
-          <p><b>Medicina Veterinária</b></p>
-          <small>Universidade de São Paulo, 2005</small>
-
-          <p><b>Mestrado em Clínica Cirúrgica</b></p>
-          <small>Unesp Botucatu, 2009</small>
-
-        </div>
-
-        <div class="mini-card">
-
-          <h4>
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7Z" />
-              <path d="M9 12l2 2 4-5" />
-            </svg>
-            Certificações
-          </h4>
-
-          <p>
-            <svg viewBox="0 0 24 24">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-            Board Certified Surgeon (AVS)
-          </p>
-
-          <p>
-            <svg viewBox="0 0 24 24">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-            Especialista em Anestesiologia Pet
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="rodape-grid">
-
-      <div class="card configuracoes">
-
-        <div class="card-titulo">
-
-          <h3>Configurações da Conta</h3>
-
-          <span class="icon-box">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
-              <path
-                d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.8 1.8 0 0 0 15 19.4a1.8 1.8 0 0 0-1 .6 1.8 1.8 0 0 0-.5 1.3V21a2 2 0 1 1-4 0v-.1A1.8 1.8 0 0 0 8 19.4a1.8 1.8 0 0 0-1.98.36l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.8 1.8 0 0 0 4.6 15a1.8 1.8 0 0 0-.6-1 1.8 1.8 0 0 0-1.3-.5H2.6a2 2 0 1 1 0-4h.1A1.8 1.8 0 0 0 4.6 8a1.8 1.8 0 0 0-.36-1.98l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.8 1.8 0 0 0 9 4.6a1.8 1.8 0 0 0 1-.6 1.8 1.8 0 0 0 .5-1.3V2.6a2 2 0 1 1 4 0v.1A1.8 1.8 0 0 0 16 4.6a1.8 1.8 0 0 0 1.98-.36l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.8 1.8 0 0 0 19.4 9c.2.4.5.8.9 1 .4.3.8.5 1.3.5h.1a2 2 0 1 1 0 4h-.1a1.8 1.8 0 0 0-1.3.5c-.4.2-.7.6-.9 1Z" />
-            </svg>
-          </span>
-
-        </div>
-
-        <div class="config-linha">
-
-          <div class="config-info">
-
-            <span class="config-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7Z" />
-              </svg>
-            </span>
-
-            <div>
-              <h4>Segurança</h4>
-              <p>Gerencie senha, acessos e autenticação.</p>
-            </div>
-
-          </div>
-
-          <div class="botoes-config">
-
-            <button type="button" (click)="abrirModalSenha()">
-              Alterar senha
-            </button>
-
-            <button type="button" *ngIf="!doisFatoresAtivo" (click)="abrirModal2FA()">
-              Ativar 2FA
-            </button>
-
-            <button type="button" *ngIf="doisFatoresAtivo" class="ativo" (click)="desativar2FA()">
-              2FA ativo
-            </button>
-
-          </div>
-
-        </div>
-
-        <div class="config-linha notificacoes">
-
-          <div class="config-info">
-
-            <span class="config-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7" />
-                <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-              </svg>
-            </span>
-
-            <div>
-              <h4>Notificações</h4>
-              <p>Preferências de alertas do sistema.</p>
-            </div>
-
-          </div>
-
-          <div class="switches">
-
-            <label>
-              <span>E-mails de novos agendamentos</span>
-              <input type="checkbox" checked>
-              <i></i>
-            </label>
-
-            <label>
-              <span>Alertas de urgência no celular</span>
-              <input type="checkbox" checked>
-              <i></i>
-            </label>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="ajuda">
-
-        <h3>Precisa de ajuda?</h3>
-
-        <p>
-          Nossa equipe de suporte técnico está disponível para auxiliar você
-          com qualquer dúvida sobre as ferramentas clínicas do PetVitaliz.
-        </p>
-
-        <button type="button" class="btn-branco" (click)="suporteChat()">
-          Suporte via Chat
+    <div class="header-actions">
+      <button type="button" class="btn btn-ghost" *ngIf="!editando" (click)="habilitarEdicao()" [disabled]="carregando">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Editar informações
+      </button>
+      <ng-container *ngIf="editando">
+        <button type="button" class="btn btn-ghost" (click)="cancelarEdicao()" [disabled]="salvando">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="salvarEdicao()" [disabled]="salvando">
+          {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
         </button>
-
-        <button type="button" class="btn-azul" (click)="centralAjuda()">
-          Central de Ajuda
-        </button>
-
-      </div>
-
+      </ng-container>
     </div>
+  </header>
 
+  <div class="alert alert-erro" *ngIf="erroMensagem" role="alert">
+    <span>{{ erroMensagem }}</span>
+    <button type="button" class="link-action" (click)="erroMensagem = ''">Fechar</button>
   </div>
 
-</section>
+  <!-- IDENTIDADE -->
+  <section class="panel identidade">
+    <div class="foto-wrap">
+      <span class="avatar avatar-xl">
+        <img *ngIf="fotoPerfil" [src]="fotoPerfil" alt="Sua foto de perfil">
+        <span *ngIf="!fotoPerfil">{{ iniciais }}</span>
+      </span>
+      <label class="foto-btn" title="Trocar foto">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+        <span class="sr-only">Trocar foto</span>
+        <input type="file" accept="image/*" (change)="alterarFoto($event)">
+      </label>
+    </div>
+
+    <div class="identidade-info">
+      <h2>{{ ehVeterinario ? 'Dr(a). ' : '' }}{{ nomeCompleto }}</h2>
+      <p>{{ funcionario.email }}</p>
+      <div class="identidade-tags">
+        <span class="pill pill-info"><i></i>{{ funcionario.cargo }}</span>
+        <span class="pill pill-muted" *ngIf="ehVeterinario">CRMV: {{ funcionario.crmv || 'não informado' }}</span>
+        <span class="pill pill-ok"><i></i>Conta ativa</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="perfil-grid">
+
+    <!-- DADOS PESSOAIS -->
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Informações pessoais</h3>
+          <p>{{ editando ? 'Edite os campos e clique em Salvar alterações.' : 'Clique em Editar informações para alterar.' }}</p>
+        </div>
+      </div>
+
+      <div class="carregando" *ngIf="carregando">
+        <div class="loader"></div>
+        <span>Carregando seus dados...</span>
+      </div>
+
+      <div class="form-grid" *ngIf="!carregando">
+        <div class="campo">
+          <label for="perfil-nome">Nome</label>
+          <input id="perfil-nome" type="text" [(ngModel)]="dadosTemp.nome" [readonly]="!editando">
+        </div>
+
+        <div class="campo">
+          <label for="perfil-sobrenome">Sobrenome</label>
+          <input id="perfil-sobrenome" type="text" [(ngModel)]="dadosTemp.sobrenome" [readonly]="!editando">
+        </div>
+
+        <div class="campo">
+          <label for="perfil-email">E-mail de acesso</label>
+          <input id="perfil-email" type="email" [value]="funcionario.email" readonly>
+          <small>Só o administrador pode alterar.</small>
+        </div>
+
+        <div class="campo">
+          <label for="perfil-telefone">Telefone</label>
+          <input id="perfil-telefone" type="text" [(ngModel)]="dadosTemp.telefone" [readonly]="!editando"
+            appDataMask="phone" placeholder="(00) 00000-0000">
+        </div>
+
+        <div class="campo">
+          <label for="perfil-nascimento">Data de nascimento</label>
+          <input id="perfil-nascimento" type="text" [(ngModel)]="dadosTemp.nascimento" [readonly]="!editando"
+            appDataMask="date" placeholder="DD/MM/AAAA">
+          <small>Fica salva apenas neste navegador.</small>
+        </div>
+
+        <div class="campo">
+          <label for="perfil-funcao">Função</label>
+          <input id="perfil-funcao" type="text" [value]="funcionario.cargo" readonly>
+          <small>Definida pelo administrador.</small>
+        </div>
+      </div>
+    </article>
+
+    <div class="coluna">
+
+      <!-- RESUMO REAL -->
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Seus atendimentos</h3>
+            <p>Com base na sua agenda</p>
+          </div>
+          <a routerLink="/funcionario/consultas" class="link-action">
+            Ver agenda
+            <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <div class="carregando" *ngIf="carregandoResumo">
+          <div class="loader"></div>
+          <span>Calculando...</span>
+        </div>
+
+        <dl class="resumo" *ngIf="!carregandoResumo">
+          <div><dt>Hoje</dt><dd>{{ resumo.hoje }}</dd></div>
+          <div><dt>Em espera</dt><dd>{{ resumo.emEspera }}</dd></div>
+          <div><dt>Finalizadas</dt><dd>{{ resumo.finalizadas }}</dd></div>
+          <div><dt>Total na agenda</dt><dd>{{ resumo.total }}</dd></div>
+        </dl>
+      </article>
+
+      <!-- SEGURANÇA -->
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Acesso e segurança</h3>
+          </div>
+        </div>
+
+        <ul class="seguranca">
+          <li>
+            <span class="kpi-icon"><svg class="ico" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <div>
+              <strong>Senha</strong>
+              <small>A troca de senha é feita pelo administrador da clínica.</small>
+            </div>
+            <a routerLink="/funcionario/ajuda" class="btn btn-ghost btn-sm">Solicitar</a>
+          </li>
+          <li>
+            <span class="kpi-icon"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
+            <div>
+              <strong>Precisa de ajuda?</strong>
+              <small>Perguntas frequentes e relato de problemas.</small>
+            </div>
+            <a routerLink="/funcionario/ajuda" class="btn btn-ghost btn-sm">Abrir</a>
+          </li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+
+  <div class="toast" *ngIf="toastMensagem" role="status">{{ toastMensagem }}</div>
+
+</div>

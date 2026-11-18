@@ -39,6 +39,10 @@ export class HomeFuncionarioComponent implements OnInit {
   consultaSelecionada: ConsultaHome | null = null;
 
   dataAtual = '';
+  dataFormatada = '';
+  carregando = true;
+  pontoConfirmAberto = false;
+  registrandoPonto = false;
   saudacaoNome = 'Funcionário';
   cargaDisponivel = 0;
   especialidade = '';
@@ -58,11 +62,19 @@ export class HomeFuncionarioComponent implements OnInit {
       day: 'numeric',
       month: 'long'
     });
+    this.dataFormatada = hoje.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
   }
 
   carregarDadosHome(): void {
+    this.carregando = true;
     this.http.get<any>(`${environment.apiUrl}/funcionario`, { withCredentials: true }).subscribe({
       next: (res) => {
+        this.carregando = false;
         if (res.funcionario) {
           const prefixo = res.funcionario.especialidade === 'veterinario' ? 'Dr(a).' : 'Prof.';
           this.saudacaoNome = `${prefixo} ${res.funcionario.nome}`;
@@ -103,27 +115,36 @@ export class HomeFuncionarioComponent implements OnInit {
         }
         this.consultaSelecionada = null;
       },
-      error: (err) => console.error('Erro ao carregar dashboard:', err)
+      error: (err) => {
+        this.carregando = false;
+        console.error('Erro ao carregar dashboard:', err);
+      }
     });
   }
 
-  baterPonto(): void {
-    if (!confirm('Bater ponto? (restaura carga)')) return;
+  abrirConfirmacaoPonto(): void { this.pontoConfirmAberto = true; }
+  fecharConfirmacaoPonto(): void { this.pontoConfirmAberto = false; }
 
+  baterPonto(): void {
+    this.registrandoPonto = true;
     this.http.post<any>(`${environment.apiUrl}/funcionario/bater-ponto`, {}, { withCredentials: true }).subscribe({
       next: (res) => {
+        this.registrandoPonto = false;
+        this.pontoConfirmAberto = false;
         this.abrirDialogo('Ponto Registrado', res.mensagem || 'Sua carga foi reestabelecida.');
         this.carregarDadosHome();
       },
       error: (err) => {
         console.error(err);
-        this.abrirDialogo('Erro', 'Não foi possível registrar o ponto.');
+        this.registrandoPonto = false;
+        this.pontoConfirmAberto = false;
+        this.abrirDialogo('Erro', 'Não foi possível registrar o ponto.', 'erro');
       }
     });
   }
 
   get consultasHomePaginadas(): ConsultaHome[] {
-    return this.consultasFiltradas.slice(0, 3);
+    return this.consultasFiltradas.slice(0, 6);
   }
 
   get consultasFiltradas(): ConsultaHome[] {
@@ -139,6 +160,32 @@ export class HomeFuncionarioComponent implements OnInit {
 
   get laudosPendentes(): number {
     return this.consultas.filter(c => c.status === 'EM ESPERA').length;
+  }
+
+  get emAtendimento(): number {
+    return this.consultas.filter(c => c.status === 'EM ATENDIMENTO' || c.status === 'ATRASADO').length;
+  }
+
+  get finalizadas(): number {
+    return this.consultas.filter(c => c.status === 'FINALIZADO').length;
+  }
+
+  get proximaConsulta(): ConsultaHome | null {
+    return this.consultas.find(c => c.status === 'EM ESPERA' || c.status === 'AGENDADO') || null;
+  }
+
+  contarStatus(status: string): number {
+    return status === 'Todos' ? this.consultas.length : this.consultas.filter(c => c.status === status).length;
+  }
+
+  pillClasse(status: string): string {
+    switch (status) {
+      case 'FINALIZADO': return 'pill-ok';
+      case 'ATRASADO': return 'pill-danger';
+      case 'EM ATENDIMENTO': return 'pill-info';
+      case 'EM ESPERA': return 'pill-warn';
+      default: return 'pill-muted';
+    }
   }
 
   selecionarConsulta(consulta: ConsultaHome): void {

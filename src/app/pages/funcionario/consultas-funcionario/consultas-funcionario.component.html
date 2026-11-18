@@ -1,150 +1,254 @@
-<div class="container">
+<div class="page">
 
-  <section class="page-header">
-    <div>
-      <span class="subtitle">CALENDÁRIO PROFISSIONAL</span>
-      <h1>Próximas Consultas</h1>
-      <p>Gerencie atendimentos, datas, status e informações clínicas da sua agenda.</p>
+  <!-- CABEÇALHO -->
+  <header class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+      </div>
+      <div>
+        <h1>Minha agenda</h1>
+        <p>Seus atendimentos, status e fichas dos pacientes.</p>
+      </div>
     </div>
 
     <div class="header-actions">
-      <div class="header-summary">
-        <div>
-          <span>Seus Atendimentos</span>
-          <strong>{{ consultas.length }}</strong>
-        </div>
-      </div>
+      <button type="button" class="btn btn-ghost" (click)="carregarConsultasDoBanco()" [disabled]="carregando">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+        Atualizar
+      </button>
     </div>
+  </header>
+
+  <div class="alert alert-erro" *ngIf="erroMensagem" role="alert">
+    <span>{{ erroMensagem }}</span>
+    <button type="button" class="link-action" (click)="erroMensagem = ''">Fechar</button>
+  </div>
+
+  <!-- INDICADORES -->
+  <section class="stats">
+    <button type="button" class="stat-card" [class.ativo]="periodo === 'hoje' && statusSelecionado === 'Todos'" (click)="filtrarHoje()">
+      <span class="stat-icon">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      </span>
+      <div>
+        <span>Hoje</span>
+        <strong>{{ carregando ? '–' : totalHoje }}</strong>
+        <small>consultas no dia</small>
+      </div>
+    </button>
+
+    <button type="button" class="stat-card" [class.ativo]="statusSelecionado === 'EM ESPERA'" (click)="definirStatus('EM ESPERA')">
+      <span class="stat-icon icon-amber">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M17 22v-4.17a2 2 0 0 0-.59-1.42L12 12l-4.41 4.41A2 2 0 0 0 7 17.83V22M7 2v4.17a2 2 0 0 0 .59 1.42L12 12l4.41-4.41A2 2 0 0 0 17 6.17V2"/></svg>
+      </span>
+      <div>
+        <span>Em espera</span>
+        <strong>{{ carregando ? '–' : totalEmEspera }}</strong>
+        <small>aguardando atendimento</small>
+      </div>
+    </button>
+
+    <button type="button" class="stat-card" [class.ativo]="statusSelecionado === 'EM ATENDIMENTO'" (click)="definirStatus('EM ATENDIMENTO')">
+      <span class="stat-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </span>
+      <div>
+        <span>Em atendimento</span>
+        <strong>{{ carregando ? '–' : totalEmAtendimento }}</strong>
+        <small>no consultório agora</small>
+      </div>
+    </button>
+
+    <button type="button" class="stat-card" [class.ativo]="statusSelecionado === 'FINALIZADO'" (click)="definirStatus('FINALIZADO')">
+      <span class="stat-icon icon-green">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+      </span>
+      <div>
+        <span>Finalizadas</span>
+        <strong>{{ carregando ? '–' : totalFinalizadas }}</strong>
+        <small>atendimentos concluídos</small>
+      </div>
+    </button>
   </section>
 
-  <p class="erro" *ngIf="erroMensagem" style="background: #fef2f2; color: #dc2626; padding: 12px; border-radius: 6px; font-weight: 500;">
-    ⚠️ {{ erroMensagem }}
-  </p>
+  <!-- FERRAMENTAS -->
+  <section class="toolbar">
+    <label class="search">
+      <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Buscar pet ou tutor" [(ngModel)]="termoBusca" (input)="aplicarFiltros()">
+      <button *ngIf="termoBusca" type="button" class="clear-btn" (click)="limparBusca()" aria-label="Limpar busca">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </label>
 
-  <section class="card">
-    <div class="filters">
-      <div class="input-group pet-filter">
-        <label>Buscar pet</label>
-        <input type="text" [(ngModel)]="filtros.pet" placeholder="Digite o nome do pet">
-      </div>
-
-      <div class="input-group">
-        <label>Data</label>
-        <input type="date" [(ngModel)]="filtros.data">
-      </div>
-
-      <div class="input-group">
-        <label>Status</label>
-        <select [(ngModel)]="filtros.status">
-          <option value="Todos os Status">Todos os Status</option>
-          <option value="EM ESPERA">Em espera / Triagem</option>
-          <option value="EM ATENDIMENTO">Em atendimento</option>
-          <option value="FINALIZADO">Finalizado</option>
-        </select>
-      </div>
-
-      <div class="filter-actions">
-        <button class="btn-primary" type="button" (click)="aplicarFiltros()">Aplicar filtros</button>
-        <button class="btn-secondary" type="button" (click)="limparFiltros()">Limpar</button>
-      </div>
+    <div class="segmented" role="group" aria-label="Período">
+      <button type="button" [class.ativo]="periodo === 'hoje'" (click)="definirPeriodo('hoje')">Hoje</button>
+      <button type="button" [class.ativo]="periodo === 'proximas'" (click)="definirPeriodo('proximas')">Próximas</button>
+      <button type="button" [class.ativo]="periodo === 'todas'" (click)="definirPeriodo('todas')">Todas</button>
     </div>
 
-    <div class="list-header" *ngIf="consultasFiltradas.length > 0">
-      <span>Horário</span>
-      <span>Paciente</span>
-      <span>Tutor</span>
-      <span>Status</span>
-      <span>Ações</span>
+    <input type="date" class="sort" aria-label="Filtrar por data"
+      [(ngModel)]="dataSelecionada" (change)="periodo = 'todas'; aplicarFiltros()">
+
+    <button type="button" class="btn btn-ghost btn-sm" *ngIf="temFiltroAtivo" (click)="limparFiltros()">
+      Limpar filtros
+    </button>
+  </section>
+
+  <div class="chips chips-linha">
+    <button type="button" class="chip" *ngFor="let f of filtrosStatus"
+      [class.ativo]="statusSelecionado === f.valor" (click)="definirStatus(f.valor)">
+      {{ f.rotulo }}
+      <span class="chip-count">{{ contarStatus(f.valor) }}</span>
+    </button>
+  </div>
+
+  <!-- TABELA -->
+  <div class="table-card">
+    <div class="carregando" *ngIf="carregando">
+      <div class="loader"></div>
+      <span>Sincronizando sua agenda...</span>
     </div>
 
-    <div class="list" *ngIf="consultasFiltradas.length > 0">
-      <article class="item" *ngFor="let consulta of consultasPaginadas">
-        <div class="time">
-          <strong>{{ consulta.hora }} até {{ consulta.hora_fim }}</strong>
-          <small>{{ formatarData(consulta.data) }}</small>
-          <span *ngIf="consulta.expirado && consulta.status !== 'FINALIZADO'" 
-                style="color: #dc2626; font-size: 11px; display: block; font-weight: 700;">
-            ⚠️ Prazo expirado
-          </span>
-        </div>
+    <div class="table-wrap" *ngIf="!carregando">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Horário</th>
+            <th>Paciente</th>
+            <th>Tutor</th>
+            <th>Status</th>
+            <th class="col-acoes">Ações</th>
+          </tr>
+        </thead>
 
-        <div class="pet">
-          <div class="pet-avatar">{{ inicialPet(consulta) }}</div>
-          <div class="pet-text">
-            <strong>{{ consulta.pet }}</strong>
-            <span>{{ consulta.especie }} • {{ consulta.idade }}</span>
+        <tbody>
+          <tr *ngFor="let c of consultasPaginadas" class="linha" (click)="abrirDetalhes(c)">
+            <td>
+              <div class="horario">
+                <strong>{{ c.hora }} – {{ c.hora_fim }}</strong>
+                <small>
+                  <span class="tag tag-hoje" *ngIf="ehHoje(c.data)">Hoje</span>
+                  <ng-container *ngIf="!ehHoje(c.data)">{{ formatarData(c.data) }}</ng-container>
+                </small>
+              </div>
+            </td>
+
+            <td>
+              <div class="pessoa">
+                <div class="avatar">{{ inicialPet(c) }}</div>
+                <div>
+                  <strong>{{ c.pet }}</strong>
+                  <small>{{ c.especie }} · {{ c.idade }}</small>
+                </div>
+              </div>
+            </td>
+
+            <td class="cell-muted">{{ c.tutor }}</td>
+
+            <td>
+              <span class="pill" [ngClass]="pillClasse(c.status)"><i></i>{{ statusRotulo(c.status) }}</span>
+              <small class="aviso-tempo" *ngIf="c.expirado && c.status !== 'FINALIZADO' && c.status !== 'ATRASADO'">Prazo expirado</small>
+            </td>
+
+            <td class="col-acoes" (click)="$event.stopPropagation()">
+              <div class="acoes">
+                <button type="button" class="btn btn-ghost btn-sm" (click)="abrirDetalhes(c)">Ficha</button>
+
+                <button type="button" class="btn btn-primary btn-sm"
+                  *ngIf="c.status === 'EM ESPERA'"
+                  [disabled]="salvando"
+                  [title]="c.podeIniciar ? 'Iniciar atendimento' : 'Horário agendado para ' + c.hora"
+                  (click)="alterarStatus(c, 'EM ATENDIMENTO')">
+                  Iniciar
+                </button>
+
+                <button type="button" class="btn btn-primary btn-sm"
+                  *ngIf="c.status === 'EM ATENDIMENTO' || c.status === 'ATRASADO'"
+                  [disabled]="salvando"
+                  [title]="c.podeFinalizar ? 'Encerrar consulta' : 'Consulta programada até ' + c.hora_fim"
+                  (click)="alterarStatus(c, 'FINALIZADO')">
+                  Concluir
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="consultasFiltradas.length === 0">
+            <td colspan="5" class="empty">
+              <ng-container *ngIf="!temFiltroAtivo">Você ainda não tem consultas na agenda.</ng-container>
+              <ng-container *ngIf="temFiltroAtivo">
+                Nenhuma consulta encontrada com esses filtros.
+                <button type="button" class="link-action" (click)="limparFiltros()">Limpar filtros</button>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer" *ngIf="!carregando && consultasFiltradas.length > 0">
+      <span>Mostrando {{ consultasPaginadas.length }} de {{ consultasFiltradas.length }} consultas</span>
+
+      <div class="paginas" *ngIf="totalPaginas > 1">
+        <button type="button" class="pag-btn" [disabled]="paginaAtual === 1" (click)="mudarPagina(paginaAtual - 1)" aria-label="Anterior"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button type="button" class="pag-btn" *ngFor="let p of paginas" [class.ativo]="p === paginaAtual" (click)="mudarPagina(p)">{{ p }}</button>
+        <button type="button" class="pag-btn" [disabled]="paginaAtual === totalPaginas" (click)="mudarPagina(paginaAtual + 1)" aria-label="Próxima"><svg class="ico" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FICHA -->
+  <div class="modal-backdrop" *ngIf="modalDetalhesAberto && consultaSelecionada" (click)="fecharDetalhes()">
+    <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div class="pessoa">
+          <span class="avatar">{{ inicialPet(consultaSelecionada) }}</span>
+          <div>
+            <h2>{{ consultaSelecionada.pet }}</h2>
+            <p>{{ consultaSelecionada.especie }} · {{ consultaSelecionada.idade }}</p>
           </div>
         </div>
-
-        <div class="info">
-          <span>Tutor</span>
-          <strong>{{ consulta.tutor }}</strong>
-        </div>
-
-        <div class="status" [ngClass]="statusClasse(consulta.status)">
-          {{ consulta.status }}
-        </div>
-
-        <div class="actions">
-          <button type="button" class="action-btn ver" (click)="abrirDetalhes(consulta)">Ver Ficha</button>
-
-          <button 
-            type="button" 
-            class="action-btn iniciar" 
-            *ngIf="consulta.status === 'EM ESPERA'"
-            [title]="consulta.podeIniciar ? 'Iniciar Atendimento' : 'Atenção: Horário agendado para ' + consulta.hora"
-            (click)="alterarStatus(consulta, 'EM ATENDIMENTO')">
-            Iniciar
-          </button>
-
-          <button 
-            type="button" 
-            class="action-btn finalizar" 
-            *ngIf="consulta.status === 'EM ATENDIMENTO'"
-            [title]="consulta.podeFinalizar ? 'Encerrar Consulta' : 'Atenção: Consulta programada até ' + consulta.hora_fim"
-            (click)="alterarStatus(consulta, 'FINALIZADO')"
-            style="background: #1e23a2; color: #fff;" onmouseover="this.style.background='#13166a'" onmouseleave="this.style.background='#1e23a2'">
-            Concluir Atendimento
-          </button>
-        </div>
-      </article>
-    </div>
-
-    <div class="empty" *ngIf="consultasFiltradas.length === 0">
-      <div class="empty-icon">✓</div>
-      <h3>Nenhum atendimento listado</h3>
-      <p>Não há registros correspondentes aos filtros selecionados.</p>
-    </div>
-
-    <div class="footer" *ngIf="consultasFiltradas.length > 0">
-      <span>Mostrando {{ consultasPaginadas.length }} de {{ consultasFiltradas.length }} consultas</span>
-      <div class="pagination" *ngIf="totalPaginas > 1">
-        <button type="button" [disabled]="paginaAtual === 1" (click)="mudarPagina(paginaAtual - 1)">Anterior</button>
-        <button type="button" *ngFor="let p of paginas" [class.active]="paginaAtual === p" (click)="mudarPagina(p)">{{ p }}</button>
-        <button type="button" [disabled]="paginaAtual === totalPaginas" (click)="mudarPagina(paginaAtual + 1)">Próxima</button>
+        <button type="button" class="icon-btn" aria-label="Fechar" (click)="fecharDetalhes()">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
       </div>
-    </div>
-  </section>
 
-  <div class="modal-fundo" *ngIf="modalDetalhesAberto && consultaSelecionada">
-    <div class="modal-card">
-      <button class="fechar-modal" type="button" (click)="fecharDetalhes()">×</button>
-      <div class="modal-top">
-        <div class="modal-avatar">{{ inicialPet(consultaSelecionada) }}</div>
-        <div>
-          <span class="modal-label">Histórico Clínico do Paciente</span>
-          <h2>{{ consultaSelecionada.pet }}</h2>
-          <p>{{ consultaSelecionada.especie }} • {{ consultaSelecionada.idade }}</p>
+      <div class="modal-body">
+        <div class="detalhes">
+          <div class="detalhe">
+            <small>Tutor responsável</small>
+            <strong>{{ consultaSelecionada.tutor }}</strong>
+          </div>
+          <div class="detalhe">
+            <small>Data</small>
+            <strong>{{ formatarData(consultaSelecionada.data) }}</strong>
+          </div>
+          <div class="detalhe">
+            <small>Horário</small>
+            <strong>{{ consultaSelecionada.hora }} – {{ consultaSelecionada.hora_fim }}</strong>
+          </div>
+          <div class="detalhe">
+            <small>Status</small>
+            <strong><span class="pill" [ngClass]="pillClasse(consultaSelecionada.status)"><i></i>{{ statusRotulo(consultaSelecionada.status) }}</span></strong>
+          </div>
         </div>
+        <p class="nota">Procedimento: {{ consultaSelecionada.motivo }}</p>
       </div>
-      <div class="details-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-        <div><span>Responsável</span><br><strong>{{ consultaSelecionada.tutor }}</strong></div>
-        <div><span>Data</span><br><strong>{{ formatarData(consultaSelecionada.data) }}</strong></div>
-        <div><span>Janela de Horário</span><br><strong>{{ consultaSelecionada.hora }} - {{ consultaSelecionada.hora_fim }}</strong></div>
-        <div><span>Status Atual</span><br><strong>{{ consultaSelecionada.status }}</strong></div>
-      </div>
-      <div class="modal-actions" style="margin-top: 25px; display: flex; justify-content: flex-end;">
-        <button type="button" class="btn-secondary" (click)="fecharDetalhes()">Fechar Ficha</button>
+
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" (click)="fecharDetalhes()">Fechar</button>
+        <button type="button" class="btn btn-primary"
+          *ngIf="consultaSelecionada.status === 'EM ESPERA'" [disabled]="salvando"
+          (click)="alterarStatus(consultaSelecionada, 'EM ATENDIMENTO')">
+          Iniciar atendimento
+        </button>
+        <button type="button" class="btn btn-primary"
+          *ngIf="consultaSelecionada.status === 'EM ATENDIMENTO' || consultaSelecionada.status === 'ATRASADO'" [disabled]="salvando"
+          (click)="alterarStatus(consultaSelecionada, 'FINALIZADO')">
+          Concluir atendimento
+        </button>
       </div>
     </div>
   </div>
