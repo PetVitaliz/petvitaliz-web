@@ -93,7 +93,7 @@ export class HomeFuncionarioComponent implements OnInit {
 
             if (statusBanco === 'em_espera' || statusBanco === 'em espera') { 
               statusPill = 'EM ESPERA'; corTag = 'gray'; 
-            } else if (statusBanco === 'em_endamento' || statusBanco === 'em andamento') { 
+            } else if (statusBanco === 'em_andamento' || statusBanco === 'em_endamento' || statusBanco === 'em andamento') { 
               statusPill = expirado ? 'ATRASADO' : 'EM ATENDIMENTO';
               corTag = expirado ? 'red' : 'blue'; 
             } else if (statusBanco === 'finalizado') { 
@@ -214,7 +214,7 @@ export class HomeFuncionarioComponent implements OnInit {
   iniciarConsulta(): void {
     if (!this.consultaSelecionada) return;
 
-    const payload = { novoStatus: 'em_endamento' };
+    const payload = { novoStatus: 'em_andamento' };
 
     this.http.put(`${environment.apiUrl}/funcionario/consultas/atualizar/${this.consultaSelecionada.id_consulta}`, payload, { withCredentials: true }).subscribe({
       next: (res: any) => {

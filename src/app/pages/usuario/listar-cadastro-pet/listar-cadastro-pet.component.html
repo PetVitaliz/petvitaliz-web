@@ -154,7 +154,7 @@
                 <strong>{{ planoContratado.preco }} /mês</strong>
               </div>
 
-              <a routerLink="/user/planos-pet">Alterar plano</a>
+              <a routerLink="/user/meu-plano">Gerenciar plano</a>
             </div>
           </article>
 
@@ -173,7 +173,7 @@
                 <strong>Nenhum plano ativo</strong>
               </div>
               
-              <a routerLink="/user/planos-pet">Contratar plano</a>
+              <a routerLink="/user/planos-pet" [queryParams]="{ pet: petSelecionado?.id_pet }">Contratar plano</a>
             </div>
           </article>
 

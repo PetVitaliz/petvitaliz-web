@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -75,7 +76,7 @@ export class ResetSenhaComponent {
         error: (err) => {
           this.carregando = false;
           console.error(err);
-          this.erro = err.error || err.error?.mensagem || 'Não foi possível redefinir sua senha. Tente novamente.';
+          this.erro = mensagemDeErro(err, 'Não foi possível redefinir sua senha. Tente novamente.');
         }
       });
   }

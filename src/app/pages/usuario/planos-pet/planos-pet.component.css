@@ -380,3 +380,43 @@
   }
 
 }
+
+.escolha-pet {
+  margin-bottom: 24px;
+}
+
+.escolha-pet strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #1f3b82;
+}
+
+.escolha-pet-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.escolha-pet-lista button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 16px;
+  border: 1px solid #dbe1ee;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #1f3b82;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.escolha-pet-lista button small {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.escolha-pet-lista button.ativo {
+  border-color: #4055c8;
+  background: #eef1ff;
+}

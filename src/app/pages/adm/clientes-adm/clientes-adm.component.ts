@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 import { environment } from '../../../environments/environment';
 
 interface ClienteAdm {
@@ -185,7 +186,32 @@ export class ClientesAdmComponent implements OnInit {
   abrirAgendamento(cliente: ClienteAdm): void {
     this.clienteSelecionado = cliente;
     this.novaConsulta = this.criarConsultaVazia();
+    this.horarioSemProfissional = false;
     this.modalAgendarAberto = true;
+  }
+
+  horarioSemProfissional = false;
+
+  private servicoDaConsulta(): string {
+    return this.novaConsulta.procedimento.toLowerCase().includes('tosa') ? 'tosador' : 'veterinario';
+  }
+
+  verificarDisponibilidade(): void {
+    this.horarioSemProfissional = false;
+    const { data, horario } = this.novaConsulta;
+    if (!data || !horario) return;
+
+    const params = new HttpParams().set('servico', this.servicoDaConsulta()).set('data', data);
+    this.http.get<any>(`${environment.apiUrl}/adm/agendamento/horarios`, { params, withCredentials: true }).subscribe({
+      next: (res) => {
+        if (data !== this.novaConsulta.data || horario !== this.novaConsulta.horario) return;
+        const indisponiveis: string[] = res?.indisponiveis || [];
+        this.horarioSemProfissional = res?.profissionais === 0 || indisponiveis.includes(horario.slice(0, 5));
+      },
+      error: () => {
+        this.horarioSemProfissional = false;
+      }
+    });
   }
 
   salvarAgendamento(): void {
@@ -195,20 +221,23 @@ export class ClientesAdmComponent implements OnInit {
     }
 
     const payload = {
-      servico: this.novaConsulta.procedimento.toLowerCase().includes('tosa') ? 'tosador' : 'veterinario',
+      servico: this.servicoDaConsulta(),
       id_pet: this.clienteSelecionado?.id_pet,
       data_consulta: this.novaConsulta.data,
       hora_inicio: this.novaConsulta.horario,
       observacoes: this.novaConsulta.observacao
     };
 
-    this.http.post(`${environment.apiUrl}/agendamento`, payload, { withCredentials: true }).subscribe({
+    this.http.post(`${environment.apiUrl}/adm/agendamento`, payload, { withCredentials: true }).subscribe({
       next: () => {
         this.mostrarToast(`Consulta para ${this.clienteSelecionado?.nome} agendada com sucesso!`, 'ok');
         this.fecharModais();
       },
       error: (err) => {
-        this.mostrarToast(err.error?.mensagem || 'Erro ao processar agendamento.', 'erro');
+        this.mostrarToast(mensagemDeErro(err, 'Erro ao processar agendamento.'), 'erro');
+        if (err?.status === 409) {
+          this.verificarDisponibilidade();
+        }
       }
     });
   }
@@ -231,12 +260,12 @@ export class ClientesAdmComponent implements OnInit {
     if (!cliente) return;
 
     if (cliente.id_pet) {
-      this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${cliente.id_pet}`, { withCredentials: true }).subscribe({
+      this.http.delete(`${environment.apiUrl}/adm/listar/clientes/excluir/${cliente.id_pet}`, { withCredentials: true }).subscribe({
         next: () => {
           this.carregarClientesDoBanco();
           this.paginaAtual = 1;
         },
-        error: (err) => console.error('Erro ao excluir pet:', err)
+        error: (err) => this.mostrarToast(mensagemDeErro(err, 'Erro ao excluir pet.'), 'erro')
       });
     } else {
       this.clientes = this.clientes.filter(c => c !== cliente);

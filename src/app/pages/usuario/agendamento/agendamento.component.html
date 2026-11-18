@@ -113,12 +113,20 @@
             type="button"
             *ngFor="let horario of horarios"
             [class.active]="horarioSelecionado === horario"
-            [disabled]="horarioIndisponivel(horario) || horarioJaOcupado(horario) || carregando"
+            [disabled]="horarioIndisponivel(horario) || horarioJaOcupado(horario) || horarioSemProfissional(horario) || carregando || carregandoHorarios"
+            [title]="horarioSemProfissional(horario) ? 'Sem profissionais livres' : ''"
             (click)="selecionarHorario(horario)"
           >
             {{ horario }}
           </button>
         </div>
+        <p class="aviso-horarios" *ngIf="carregandoHorarios">Verificando horários disponíveis...</p>
+        <p class="aviso-horarios" *ngIf="!carregandoHorarios && semProfissionais">
+          Nenhum {{ servicoSelecionadoValor === 'veterinario' ? 'veterinário' : 'tosador' }} disponível no momento.
+        </p>
+        <p class="aviso-horarios" *ngIf="!carregandoHorarios && !semProfissionais && horariosSemProfissional.length > 0">
+          Horários em cinza já estão ocupados ou já passaram.
+        </p>
       </div>
 
       <div *ngIf="etapaAtual === 4">

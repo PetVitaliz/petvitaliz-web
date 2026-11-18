@@ -1,0 +1,266 @@
+<section class="page-container">
+
+  <div class="breadcrumb">
+    <span>ADMIN</span>
+    <small>›</small>
+    <small>CONSULTAS</small>
+  </div>
+
+  <div class="page-header">
+    <div>
+      <h1>Consultas Agendadas</h1>
+      <p>
+        Gerencie o fluxo de atendimento da clínica, acompanhe status e facilite
+        o agendamento de retorno dos pacientes.
+      </p>
+    </div>
+
+    <div class="cards-resumo">
+      <div class="resumo-card azul">
+        <div class="resumo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 2V5"></path>
+            <path d="M16 2V5"></path>
+            <path d="M3 9H21"></path>
+            <path d="M5 4H19A2 2 0 0 1 21 6V20A2 2 0 0 1 19 22H5A2 2 0 0 1 3 20V6A2 2 0 0 1 5 4Z"></path>
+          </svg>
+        </div>
+        <div>
+          <span>HOJE</span>
+          <strong>{{ totalHoje }}</strong>
+        </div>
+      </div>
+
+      <div class="resumo-card">
+        <div class="resumo-icon laranja">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 7V12L15 15"></path>
+          </svg>
+        </div>
+        <div>
+          <span>PENDENTES</span>
+          <strong>{{ totalPendentes }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-card">
+
+    <div class="filters">
+
+      <div class="filter-pet">
+        <label>FILTRAR POR PET</label>
+        <input
+          type="text"
+          placeholder="Nome do pet ou ID..."
+          [(ngModel)]="filtroPet"
+          (ngModelChange)="aplicarFiltros()">
+      </div>
+
+      <div class="filter-small">
+        <label>DATA</label>
+        <input
+          type="date"
+          [(ngModel)]="filtroData"
+          (change)="aplicarFiltros()">
+      </div>
+
+      <div class="filter-small">
+        <label>STATUS</label>
+        <select [(ngModel)]="filtroStatus" (change)="aplicarFiltros()">
+          <option value="Todos">Todos os Status</option>
+          <option value="Confirmado">Confirmado</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+      </div>
+
+      <button class="btn-filtrar" type="button" (click)="aplicarFiltros()">
+        Aplicar Filtros
+      </button>
+
+      <button class="btn-limpar" type="button" (click)="limparFiltros()">
+        Limpar
+      </button>
+
+    </div>
+
+    <div class="consultas-lista">
+
+      <div class="consulta-card" *ngFor="let consulta of consultasPaginadas">
+
+        <div class="horario">
+          <strong>{{ consulta.horario }}</strong>
+          <span>{{ consulta.periodo }}</span>
+        </div>
+
+        <div class="pet-area">
+          <div class="pet-avatar">
+            {{ consulta.pet.charAt(0) }}
+          </div>
+
+          <div>
+            <strong>{{ consulta.pet }}</strong>
+            <span>IDADE: {{ consulta.idade }}</span>
+          </div>
+        </div>
+
+        <div class="info">
+          <span>TUTOR</span>
+          <strong>{{ consulta.tutor }}</strong>
+        </div>
+
+        <div class="info">
+          <span>MOTIVO</span>
+          <strong>{{ consulta.motivo }}</strong>
+        </div>
+
+        <div>
+          <span
+            class="status"
+            [class.pendente]="consulta.status === 'Pendente'"
+            [class.cancelado]="consulta.status === 'Cancelado'">
+            {{ consulta.status }}
+          </span>
+        </div>
+
+        <div class="acoes">
+
+          <button type="button" class="btn-ver" title="Detalhes" (click)="abrirDetalhes(consulta)">
+            <svg viewBox="0 0 24 24">
+              <path d="M1 12S5 5 12 5s11 7 11 7-4 7-11 7S1 12 1 12Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+
+          <button type="button" class="btn-confirmar" title="Confirmar" (click)="confirmarConsulta(consulta)">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6L9 17L4 12"></path>
+            </svg>
+          </button>
+
+          <button type="button" class="btn-editar" title="Reagendar" (click)="reagendarConsulta(consulta)">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 20H21"></path>
+              <path d="M16.5 3.5A2.12 2.12 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z"></path>
+            </svg>
+          </button>
+
+          <button type="button" class="btn-cancelar-consulta" title="Cancelar" (click)="cancelarConsulta(consulta.id)">
+            <svg viewBox="0 0 24 24">
+              <path d="M18 6L6 18"></path>
+              <path d="M6 6L18 18"></path>
+            </svg>
+          </button>
+
+          <button type="button" class="btn-excluir" title="Excluir" (click)="excluirConsulta(consulta.id)">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 6H21"></path>
+              <path d="M8 6V4H16V6"></path>
+              <path d="M19 6L18 20H6L5 6"></path>
+              <path d="M10 11V17"></path>
+              <path d="M14 11V17"></path>
+            </svg>
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="empty" *ngIf="consultasPaginadas.length === 0">
+        Nenhuma consulta encontrada.
+      </div>
+
+    </div>
+
+    <div class="footer-lista">
+      <span>
+        Mostrando {{ consultasFiltradas.length }} de {{ consultas.length }} consultas para hoje
+      </span>
+
+      <div class="pagination" *ngIf="totalPaginas > 1">
+        <button type="button" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
+          ‹
+        </button>
+
+        <button type="button" class="active">
+          {{ paginaAtual }}
+        </button>
+
+        <button type="button" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
+          ›
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-overlay" *ngIf="modalAberto">
+
+    <div class="modal">
+
+      <h2>Detalhes da Consulta</h2>
+
+      <div class="modal-grid">
+
+        <label>
+          Pet
+          <input type="text" [(ngModel)]="consultaSelecionada.pet">
+        </label>
+
+        <label>
+          Idade
+          <input type="text" [(ngModel)]="consultaSelecionada.idade">
+        </label>
+
+        <label>
+          Tutor
+          <input type="text" [(ngModel)]="consultaSelecionada.tutor">
+        </label>
+
+        <label>
+          Horário
+          <input type="time" [(ngModel)]="consultaSelecionada.horario">
+        </label>
+
+        <label>
+          Período
+          <select [(ngModel)]="consultaSelecionada.periodo">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </label>
+
+        <label>
+          Status
+          <select [(ngModel)]="consultaSelecionada.status">
+            <option value="Confirmado">Confirmado</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+        </label>
+
+      </div>
+
+      <label class="full">
+        Motivo
+        <textarea [(ngModel)]="consultaSelecionada.motivo"></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancelar" (click)="fecharModal()">
+          Fechar
+        </button>
+
+        <button type="button" class="btn-salvar" (click)="salvarAlteracoes()">
+          Salvar Alterações
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

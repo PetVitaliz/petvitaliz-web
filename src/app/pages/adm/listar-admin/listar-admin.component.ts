@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -174,7 +175,7 @@ export class ListarAdminComponent implements OnInit {
         error: (err) => {
           this.salvando = false;
           console.error(err);
-          this.avisar(err.error || 'Erro ao cadastrar novo administrador.', 'erro');
+          this.avisar(mensagemDeErro(err, 'Erro ao cadastrar novo administrador.'), 'erro');
         }
       });
     } else {
@@ -186,7 +187,7 @@ export class ListarAdminComponent implements OnInit {
         error: (err) => {
           this.salvando = false;
           console.error(err);
-          this.avisar(err.error?.mensagem || 'Erro ao atualizar informações.', 'erro');
+          this.avisar(mensagemDeErro(err, 'Erro ao atualizar informações.'), 'erro');
         }
       });
     }
@@ -226,7 +227,7 @@ export class ListarAdminComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.avisar('Erro ao excluir o registro.', 'erro');
+          this.avisar(mensagemDeErro(err, 'Erro ao excluir o registro.'), 'erro');
         }
       });
     }

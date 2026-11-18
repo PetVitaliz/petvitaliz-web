@@ -15,11 +15,11 @@
   <div *ngIf="!carregando">
     <p class="erro" *ngIf="erro">{{ erro }}</p>
 
-    <div *ngIf="plano; else semPlano">
-      <div class="plano-card">
+    <div *ngIf="planos.length > 0; else semPlano">
+      <div class="plano-card" *ngFor="let plano of planos">
         <div class="plano-header">
           <div>
-            <small>PLANO ATIVO</small>
+            <small>PLANO DE {{ plano.nomePet | uppercase }}</small>
             <h2>{{ plano.nome }}</h2>
           </div>
           <div class="status">
@@ -35,8 +35,8 @@
         <div class="beneficios">
           <h4>Benefícios inclusos</h4>
           <p class="descricao-plano" *ngIf="plano.descricao">{{ plano.descricao }}</p>
-          
-          <ul *ngIf="plano.listaBeneficios && plano.listaBeneficios.length > 0">
+
+          <ul *ngIf="plano.listaBeneficios.length > 0">
             <li *ngFor="let beneficio of plano.listaBeneficios">
               ✓ {{ beneficio }}
             </li>
@@ -45,11 +45,11 @@
 
         <div class="acoes">
           <a routerLink="/user/planos-pet" class="btn-secondary">
-            Alterar Plano
+            Contratar para outro pet
           </a>
 
-          <button class="btn-danger" [disabled]="cancelando" (click)="cancelarPlano()">
-            {{ cancelando ? 'Cancelando...' : 'Cancelar Plano' }}
+          <button class="btn-danger" [disabled]="cancelandoPet !== null" (click)="cancelarPlano(plano)">
+            {{ cancelandoPet === plano.id_pet ? 'Cancelando...' : 'Cancelar Plano' }}
           </button>
         </div>
       </div>
@@ -60,7 +60,7 @@
         <div class="icone">🐾</div>
         <h2>Nenhum plano contratado</h2>
         <p>
-          Seu pet ainda não possui um plano ativo no momento.
+          Nenhum dos seus pets possui um plano ativo no momento.
         </p>
         <a routerLink="/user/planos-pet" class="btn-primary">
           Contratar Plano

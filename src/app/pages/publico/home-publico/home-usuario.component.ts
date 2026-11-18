@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { formatarPreco } from '../../../core/utils/formato-plano';
 import { environment } from '../../../environments/environment';
 import { HeaderUsuarioComponent } from '../../usuario/header-usuario/header-usuario.component';
 import { AuthRedirectService } from '../../../core/services/auth-redirect.service';
@@ -87,9 +88,9 @@ export class HomeUsuarioComponent implements OnInit {
               id_produto: p.id_produto,
               tag: partesNome[1] || 'PLANO ATIVO',
               nome: nomePlano,
-              preco: p.preco,
+              preco: formatarPreco(p.preco),
               descricao: p.descricao,
-              beneficiosArray: this.getBeneficiosDoPlano(nomePlano)
+              beneficiosArray: this.beneficiosDoBanco(p.beneficios) ?? this.getBeneficiosDoPlano(nomePlano)
             };
           });
         }
@@ -101,6 +102,11 @@ export class HomeUsuarioComponent implements OnInit {
         this.carregandoPlanos = false;
       }
     });
+  }
+
+  beneficiosDoBanco(beneficios: string | null | undefined): string[] | null {
+    const itens = (beneficios ?? '').split(/[\n;]+/).map((b) => b.trim()).filter((b) => b.length > 0);
+    return itens.length > 0 ? itens : null;
   }
 
   getBeneficiosDoPlano(nomePlano: string): string[] {

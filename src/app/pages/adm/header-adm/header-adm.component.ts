@@ -71,7 +71,7 @@ export class HeaderAdmComponent implements OnInit {
   logout() {
     this.fecharMenus();
 
-    this.http.get(`${environment.apiUrl}/user/logout`, { withCredentials: true }).subscribe({
+    this.http.get(`${environment.apiUrl}/adm/logout`, { withCredentials: true }).subscribe({
       next: () => {
         this.limparSessaoLocal();
       },

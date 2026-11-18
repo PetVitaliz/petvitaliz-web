@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
+import { formatarPreco, nomeDoPlano } from '../../../core/utils/formato-plano';
 import { environment } from '../../../environments/environment';
 import { DataMaskDirective } from './data-mask.directive';
 
@@ -18,7 +20,7 @@ export class ListarCadastroPetComponent implements OnInit {
 
   pets: any[] = [];
   petSelecionado: any = null;
-  planoContratado: any = null;
+  planosPorPet: Record<number, any> = {};
   usuarioLogado: any = null;
 
   editando = false;
@@ -78,19 +80,22 @@ export class ListarCadastroPetComponent implements OnInit {
   buscarPlanoAtivoReal(): void {
     this.http.get<any>(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
       next: (response: any) => {
-        if (response && response.tem_plano && response.include) {
-          const partesNome = response.include.nome ? response.include.nome.split(' | ') : ['Plano'];
-          this.planoContratado = {
-            nome: partesNome[0],
-            preco: `R$ ${response.include.preco}`,
-            descricao: response.include.descricao
+        const planos: any[] = response?.planos || [];
+        this.planosPorPet = {};
+        planos.forEach((p: any) => {
+          this.planosPorPet[p.id_pet] = {
+            nome: nomeDoPlano(p.produto?.nome) || 'Plano',
+            preco: `R$ ${formatarPreco(p.produto?.preco)}`,
+            descricao: p.produto?.descricao
           };
-        } else {
-          this.planoContratado = null;
-        }
+        });
       },
       error: (err) => console.error(err)
     });
+  }
+
+  get planoContratado(): any {
+    return this.petSelecionado ? this.planosPorPet[this.petSelecionado.id_pet] || null : null;
   }
 
   get nomeTutor(): string { return this.usuarioLogado?.nome || 'Responsável'; }
@@ -277,7 +282,7 @@ export class ListarCadastroPetComponent implements OnInit {
           this.buscarPetsDoBanco();
         },
         error: (err) => {
-          this.exibirErro(err.error || 'Erro ao cadastrar pet.');
+          this.exibirErro(mensagemDeErro(err, 'Erro ao cadastrar pet.'));
           this.salvando = false;
         }
       });
@@ -348,7 +353,7 @@ export class ListarCadastroPetComponent implements OnInit {
     this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${this.petSelecionado.id_pet}`, { withCredentials: true })
       .subscribe({
         next: () => { this.sucesso = 'Pet removido.'; this.buscarPetsDoBanco(); },
-        error: (err) => this.exibirErro('Não foi possível excluir o registro.')
+        error: (err) => this.exibirErro(mensagemDeErro(err, 'Não foi possível excluir o registro.'))
       });
   }
 

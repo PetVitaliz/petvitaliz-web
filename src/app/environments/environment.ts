@@ -1,4 +1,4 @@
 export const environment = {
-    production: true,
-    apiUrl: 'https://petvitaliz-service.onrender.com'
-  };
+  production: false,
+  apiUrl: 'https://petvitaliz-service-spring.onrender.com'
+};

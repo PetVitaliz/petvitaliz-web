@@ -25,3 +25,11 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## API
+
+O site usa a API PetVitaliz em Spring Boot.
+
+- `ng serve` usa `src/app/environments/environment.ts` (`http://localhost:3000`).
+- `ng build` (produção, usado pela Vercel) troca para `environment.prod.ts`, que aponta para `https://petvitaliz-service-spring.onrender.com`.
+- Na API, coloque a URL do site em `FRONTEND_URL` para o CORS liberar os cookies.

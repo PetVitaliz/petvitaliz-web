@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 
 /* =========================================================
    Níveis de plano — mesmos do app mobile (src/data/planCoverage.ts)
@@ -138,6 +139,9 @@ export class PlanosAdmComponent implements OnInit {
   form: Plano = this.formVazio('bronze');
 
   planoParaExcluir: Plano | null = null;
+  confirmandoCancelamento = false;
+  cancelandoAssinaturas = false;
+  avisoPagina: { texto: string; tipo: 'ok' | 'erro' } | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -268,8 +272,35 @@ export class PlanosAdmComponent implements OnInit {
     if (!plano?.id_produto) return;
 
     this.http.delete(`${environment.apiUrl}/adm/listar/produtos/excluir/${plano.id_produto}`, { withCredentials: true }).subscribe({
-      next: () => this.carregarPlanos(),
-      error: (err) => console.error('Erro ao excluir plano:', err)
+      next: () => {
+        this.avisoPagina = { texto: `${plano.nome} excluído.`, tipo: 'ok' };
+        this.carregarPlanos();
+      },
+      error: (err) => {
+        const texto = mensagemDeErro(err, 'Não foi possível excluir o plano.');
+        this.avisoPagina = {
+          texto: err?.status === 409 ? `${texto}. Cancele os planos contratados antes de excluir.` : texto,
+          tipo: 'erro'
+        };
+      }
+    });
+  }
+
+  cancelarTodasAssinaturas(): void {
+    this.confirmandoCancelamento = false;
+    this.cancelandoAssinaturas = true;
+    this.avisoPagina = null;
+    this.http.delete<any>(`${environment.apiUrl}/adm/listar/produtos/assinaturas/cancelar`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        this.cancelandoAssinaturas = false;
+        this.avisoPagina = { texto: res?.mensagem || 'Planos contratados cancelados.', tipo: 'ok' };
+        this.carregarPlanos();
+        this.carregarAssinantes();
+      },
+      error: (err) => {
+        this.cancelandoAssinaturas = false;
+        this.avisoPagina = { texto: mensagemDeErro(err, 'Não foi possível cancelar os planos contratados.'), tipo: 'erro' };
+      }
     });
   }
 

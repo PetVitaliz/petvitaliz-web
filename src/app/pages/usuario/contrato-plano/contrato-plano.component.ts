@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { formatarPreco } from '../../../core/utils/formato-plano';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -42,7 +43,8 @@ export class ContratoPlanoComponent implements OnInit {
     this.processandoContratacao = true;
 
     const payload = {
-      id_produto: Number(this.plano.id_produto)
+      id_produto: Number(this.plano.id_produto),
+      id_pet: Number(this.plano.id_pet)
     };
 
     this.http.post(`${environment.apiUrl}/user/planos/pagamento`, payload, { withCredentials: true })
@@ -66,7 +68,7 @@ export class ContratoPlanoComponent implements OnInit {
         if (response && response.tem_plano && response.include) {
           localStorage.setItem('planoSelecionado', JSON.stringify({
             nome: response.include.nome.split(' | ')[0],
-            preco: response.include.preco,
+            preco: `R$ ${formatarPreco(response.include.preco)}`,
             descricao: response.include.descricao
           }));
         } else {

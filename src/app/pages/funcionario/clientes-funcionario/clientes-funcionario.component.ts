@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import {
@@ -63,6 +63,7 @@ export class ClientesFuncionarioComponent implements OnInit {
 
   /** Consultas já marcadas (usadas para cota do mês e horários ocupados) */
   consultasExistentes: any[] = [];
+  horariosSemProfissional: string[] = [];
 
   agendarTutor = '';
   agendarPets: any[] = [];
@@ -130,12 +131,16 @@ export class ClientesFuncionarioComponent implements OnInit {
   }
 
   /** Quantas vezes o pet já usou o serviço neste mês (sem canceladas). */
+  private consultasDoPet(pet: any): any[] {
+    return Array.isArray(pet?.consultasDoMes) ? pet.consultasDoMes : this.consultasExistentes;
+  }
+
   usoNoMes(pet: any, serviceId: ServiceId): number {
     const id = this.idDoPet(pet);
     const nome = String(pet?.nome || '').trim().toLowerCase();
     const agora = new Date();
 
-    return this.consultasExistentes.filter(c => {
+    return this.consultasDoPet(pet).filter(c => {
       const status = String(c?.status || '').toLowerCase();
       if (status.includes('cancel')) return false;
 
@@ -512,12 +517,35 @@ export class ClientesFuncionarioComponent implements OnInit {
     this.horaSelecionada = '';
     this.observacoesAgendamento = '';
     this.erroAgendamento = '';
+    this.horariosSemProfissional = [];
   }
 
   escolherServico(situacao: SituacaoServico): void {
     if (!situacao.liberado) return;
     this.servicoSelecionado = situacao.servico.id;
     this.erroAgendamento = '';
+    this.buscarDisponibilidade();
+  }
+
+  buscarDisponibilidade(): void {
+    this.horariosSemProfissional = [];
+    if (!this.servicoSelecionado || !this.dataSelecionada) return;
+
+    const servico = getService(this.servicoSelecionado).servicoApi;
+    const data = this.dataSelecionada;
+    const params = new HttpParams().set('servico', servico).set('data', data);
+    this.http.get<any>(`${environment.apiUrl}/funcionario/agendamento/horarios`, { params, withCredentials: true }).subscribe({
+      next: (res) => {
+        if (!this.servicoSelecionado || getService(this.servicoSelecionado).servicoApi !== servico || this.dataSelecionada !== data) return;
+        this.horariosSemProfissional = res?.profissionais === 0 ? [...this.horarios] : (res?.indisponiveis || []);
+        if (this.horaSelecionada && this.horarioOcupado(this.horaSelecionada)) {
+          this.horaSelecionada = '';
+        }
+      },
+      error: () => {
+        this.horariosSemProfissional = [];
+      }
+    });
   }
 
   escolherData(data: string): void {
@@ -525,14 +553,19 @@ export class ClientesFuncionarioComponent implements OnInit {
     if (this.horaSelecionada && this.horarioOcupado(this.horaSelecionada)) {
       this.horaSelecionada = '';
     }
+    this.buscarDisponibilidade();
   }
 
-  /** Horário já tem consulta ativa nesse dia (mesmo pet ou mesmo profissional). */
+  /** Horário sem profissional livre para o serviço ou em que o pet já tem consulta. */
   horarioOcupado(hora: string): boolean {
     if (!this.dataSelecionada) return false;
-    return this.consultasExistentes.some(c => {
+    if (this.horariosSemProfissional.includes(hora)) return true;
+    const pet = this.petAgendamento;
+    const idPet = this.idDoPet(pet);
+    return this.consultasDoPet(pet).some(c => {
       const status = String(c?.status || '').toLowerCase();
       if (status.includes('cancel') || status.includes('final')) return false;
+      if (idPet != null && c.id_pet != null && c.id_pet !== idPet) return false;
       const data = String(c.data_consulta || '').split('T')[0];
       const horaC = String(c.hora_inicio || '').slice(0, 5);
       return data === this.dataSelecionada && horaC === hora;
@@ -588,20 +621,22 @@ export class ClientesFuncionarioComponent implements OnInit {
 
     this.salvandoAgendamento = true;
     this.erroAgendamento = '';
-    this.http.post<any>(`${environment.apiUrl}/agendamento`, payload, { withCredentials: true }).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/funcionario/agendamento`, payload, { withCredentials: true }).subscribe({
       next: (res) => {
         this.salvandoAgendamento = false;
         this.fecharAgendar();
         this.mostrarToast(res?.mensagem || `${servico.nome} agendado para ${pet.nome}.`);
         this.carregarConsultasExistentes();
+        this.carregarPetsDaAPI();
       },
       error: (err) => {
         this.salvandoAgendamento = false;
         console.error('Erro ao agendar:', err);
         if (err.status === 401 || err.status === 403) {
-          this.erroAgendamento = 'O servidor não permitiu que o funcionário agende por esta rota (POST /agendamento).';
+          this.erroAgendamento = 'Sua sessão expirou. Entre novamente para agendar.';
         } else {
           this.erroAgendamento = err.error?.mensagem || 'Não foi possível salvar o agendamento.';
+          if (err.status === 409) this.buscarDisponibilidade();
         }
       }
     });
