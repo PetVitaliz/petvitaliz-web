@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 import { environment } from '../../../environments/environment';
 
 interface Funcionario {
@@ -220,7 +221,7 @@ export class EquipeFuncionariosComponent implements OnInit {
         error: (err) => {
           this.salvando = false;
           console.error(err);
-          this.mensagemErro = err.error || err.error?.mensagem || 'Erro ao salvar alterações.';
+          this.mensagemErro = mensagemDeErro(err, 'Erro ao salvar alterações.');
         }
       });
     } else {
@@ -265,7 +266,7 @@ export class EquipeFuncionariosComponent implements OnInit {
         next: () => {
           this.carregarFuncionarios();
         },
-        error: (err) => console.error(err)
+        error: (err) => alert(mensagemDeErro(err, 'Não foi possível remover o colaborador.'))
       });
     }
   }

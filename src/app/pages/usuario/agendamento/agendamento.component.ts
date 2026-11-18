@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 type StatusAgendamento = 'em espera' | 'em andamento' | 'finalizado' | 'cancelado';
@@ -56,6 +56,10 @@ export class AgendamentoComponent implements OnInit {
   mensagemSucesso = '';
   carregando = false;
 
+  horariosSemProfissional: string[] = [];
+  semProfissionais = false;
+  carregandoHorarios = false;
+
   constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {
     this.gerarGradeHorarios();
   }
@@ -96,6 +100,7 @@ export class AgendamentoComponent implements OnInit {
             nome_pet: c.pet?.nome || 'Seu Pet',
             servico: c.funcionario?.especialidade === 'veterinario' ? 'Veterinário' : 'Tosador',
             data_consulta: c.data_consulta ? c.data_consulta.split('T')[0] : '',
+            hora_inicio: c.hora_inicio,
             status: c.status,
             nome_funcionario: c.funcionario?.nome,
             observacoes: c.observacoes
@@ -136,11 +141,16 @@ export class AgendamentoComponent implements OnInit {
     this.servicoSelecionadoValor = valor;
     this.mensagemErro = '';
     this.horarioSelecionado = '';
+    this.buscarDisponibilidade();
   }
 
   selecionarHorario(horario: string): void {
     if (this.horarioIndisponivel(horario)) {
       this.mensagemErro = 'Esse horário já passou no dia de hoje.';
+      return;
+    }
+    if (this.horarioSemProfissional(horario)) {
+      this.mensagemErro = 'Não há profissionais livres nesse horário.';
       return;
     }
     this.horarioSelecionado = horario;
@@ -153,6 +163,38 @@ export class AgendamentoComponent implements OnInit {
     if (this.dataSelecionada && this.dataPassada()) {
       this.mensagemErro = 'Não é possível selecionar uma data passada.';
     }
+    this.buscarDisponibilidade();
+  }
+
+  buscarDisponibilidade(): void {
+    this.horariosSemProfissional = [];
+    this.semProfissionais = false;
+    if (!this.servicoSelecionadoValor || !this.dataSelecionada || this.dataPassada()) {
+      return;
+    }
+
+    const servico = this.servicoSelecionadoValor;
+    const data = this.dataSelecionada;
+    const params = new HttpParams().set('servico', servico).set('data', data);
+    this.carregandoHorarios = true;
+    this.http.get<any>(`${environment.apiUrl}/agendamento/horarios`, { params, withCredentials: true }).subscribe({
+      next: (res) => {
+        if (servico !== this.servicoSelecionadoValor || data !== this.dataSelecionada) return;
+        this.horariosSemProfissional = res?.indisponiveis || [];
+        this.semProfissionais = (res?.profissionais ?? 1) === 0;
+        if (this.horarioSelecionado && this.horarioSemProfissional(this.horarioSelecionado)) {
+          this.horarioSelecionado = '';
+        }
+        this.carregandoHorarios = false;
+      },
+      error: () => {
+        this.carregandoHorarios = false;
+      }
+    });
+  }
+
+  horarioSemProfissional(horario: string): boolean {
+    return this.semProfissionais || this.horariosSemProfissional.includes(horario);
   }
 
   continuar(): void {
@@ -180,7 +222,8 @@ export class AgendamentoComponent implements OnInit {
     if (this.etapaAtual === 1) return !!this.petSelecionadoId;
     if (this.etapaAtual === 2) return !!this.servicoSelecionadoValor;
     if (this.etapaAtual === 3) {
-      return !!this.dataSelecionada && !!this.horarioSelecionado && !this.dataPassada() && !this.horarioIndisponivel(this.horarioSelecionado);
+      return !!this.dataSelecionada && !!this.horarioSelecionado && !this.dataPassada()
+        && !this.horarioIndisponivel(this.horarioSelecionado) && !this.horarioSemProfissional(this.horarioSelecionado);
     }
     return true;
   }
@@ -210,6 +253,9 @@ export class AgendamentoComponent implements OnInit {
         this.carregando = false;
         console.error(err);
         this.mensagemErro = err.error?.mensagem || 'Erro ao efetuar o agendamento no servidor.';
+        if (err.status === 409) {
+          this.buscarDisponibilidade();
+        }
       }
     });
   }

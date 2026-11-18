@@ -119,10 +119,10 @@ export class ConsultasAdmComponent implements OnInit {
 
   alterarStatusBanco(consulta: ConsultaAdm, statusDestino: string): void {
     let statusBanco = 'em_espera';
-    if (statusDestino === 'Em andamento') statusBanco = 'em_endamento';
+    if (statusDestino === 'Em andamento') statusBanco = 'em_andamento';
     if (statusDestino === 'Finalizada') statusBanco = 'finalizado';
 
-    this.http.put(`${environment.apiUrl}/funcionario/consultas/atualizar/${consulta.id_consulta}`, { novoStatus: statusBanco }, { withCredentials: true })
+    this.http.put(`${environment.apiUrl}/adm/consultas/atualizar/${consulta.id_consulta}`, { novoStatus: statusBanco }, { withCredentials: true })
       .subscribe({
         next: () => {
           this.menuAberto = null;
@@ -358,7 +358,7 @@ export class ConsultasAdmComponent implements OnInit {
     if (!status) return 'Pendente';
     const st = status.trim().toUpperCase();
     if (st === 'EM_ESPERA' || st === 'EM ESPERA') return 'Pendente';
-    if (st === 'EM_ENDAMENTO' || st === 'EM ANDAMENTO') return 'Em andamento';
+    if (st === 'EM_ANDAMENTO' || st === 'EM_ENDAMENTO' || st === 'EM ANDAMENTO') return 'Em andamento';
     if (st === 'FINALIZADO' || st === 'FINALIZADA') return 'Finalizada';
     return status;
   }

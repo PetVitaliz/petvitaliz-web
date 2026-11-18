@@ -405,3 +405,13 @@
   .header-actions .ciclo { width: 100%; }
   .beneficio-linha { grid-template-columns: 1fr 90px 32px; }
 }
+
+.btn.btn-cancelar-assinaturas { color: #b33a3a; }
+.btn.btn-cancelar-assinaturas:hover:not(:disabled) { background: #fdecec; }
+
+.aviso-pagina {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}

@@ -228,7 +228,7 @@ export class ConsultasFuncionarioComponent implements OnInit {
   alterarStatus(consulta: ConsultaFuncionario, statusDestino: string): void {
     this.erroMensagem = '';
     let statusBanco = 'em_espera';
-    if (statusDestino === 'EM ATENDIMENTO') statusBanco = 'em_endamento';
+    if (statusDestino === 'EM ATENDIMENTO') statusBanco = 'em_andamento';
     if (statusDestino === 'FINALIZADO') statusBanco = 'finalizado';
 
     this.salvando = true;
@@ -282,7 +282,7 @@ export class ConsultasFuncionarioComponent implements OnInit {
     if (!status) return 'PENDENTE';
     const st = status.trim().toUpperCase();
     if (st === 'EM_ESPERA') return 'EM ESPERA';
-    if (st === 'EM_ENDAMENTO') return 'EM ATENDIMENTO';
+    if (st === 'EM_ANDAMENTO' || st === 'EM_ENDAMENTO' || st === 'EM ANDAMENTO') return 'EM ATENDIMENTO';
     return st;
   }
 

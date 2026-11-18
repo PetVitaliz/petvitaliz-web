@@ -9,6 +9,18 @@
       </p>
     </div>
 
+    <div class="escolha-pet" *ngIf="pets.length > 0">
+      <strong>Para qual pet é o plano?</strong>
+      <div class="escolha-pet-lista">
+        <button type="button" *ngFor="let pet of pets"
+          [class.ativo]="petEscolhidoId === pet.id_pet"
+          (click)="escolherPet(pet.id_pet)">
+          {{ pet.nome }}
+          <small>{{ planosPorPet[pet.id_pet] || 'Sem plano' }}</small>
+        </button>
+      </div>
+    </div>
+
     <div *ngIf="carregandoPlanos" style="text-align: center; font-weight: bold; color: #1f3b82; padding: 40px; width: 100%;">
       Buscando planos de saúde ativos na PetVitaliz...
     </div>
@@ -47,10 +59,10 @@
         <button
           type="button"
           [disabled]="usuarioJaPossuiPlano"
-          [title]="usuarioJaPossuiPlano ? 'Você já possui uma assinatura ativa.' : 'Inscreva seu pet'"
+          [title]="usuarioJaPossuiPlano ? mensagemAvisoPlano : 'Inscreva seu pet'"
           (click)="abrirDetalhes(plano)"
         >
-          {{ usuarioJaPossuiPlano ? 'Plano Bloqueado' : 'Inscreva-se agora' }}
+          {{ usuarioJaPossuiPlano ? 'Indisponível para este pet' : 'Inscreva-se agora' }}
         </button>
 
       </article>
@@ -121,6 +133,7 @@
       </span>
 
       <h2>{{ planoSelecionado.nome }}</h2>
+      <p class="modal-description" *ngIf="petEscolhido">Para {{ petEscolhido.nome }}</p>
 
       <p class="modal-description">
         {{ planoSelecionado.descricao }}

@@ -506,7 +506,7 @@
                 <button type="button" class="horario-btn" *ngFor="let h of horarios"
                   [class.ativo]="horaSelecionada === h"
                   [disabled]="horarioOcupado(h)"
-                  [title]="horarioOcupado(h) ? 'Horário já ocupado' : ''"
+                  [title]="horarioOcupado(h) ? 'Sem profissional livre ou pet já agendado' : ''"
                   (click)="horaSelecionada = h">
                   {{ h }}
                 </button>

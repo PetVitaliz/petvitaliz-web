@@ -238,3 +238,6 @@
     width: 100%;
   }
 }
+.plano-card + .plano-card {
+  margin-top: 24px;
+}

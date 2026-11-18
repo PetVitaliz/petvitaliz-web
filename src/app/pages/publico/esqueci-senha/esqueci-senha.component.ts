@@ -60,7 +60,7 @@ export class EsqueciSenhaComponent {
 
     this.carregando = true;
 
-    this.http.post(`${environment.apiUrl}/user/login/esqueci-a-senha-confirmar`, { codigo: this.codigoOtp.trim() }, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/user/login/esqueci-a-senha-confirmar`, { email: this.email.trim().toLowerCase(), codigo: this.codigoOtp.trim() }, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.carregando = false;

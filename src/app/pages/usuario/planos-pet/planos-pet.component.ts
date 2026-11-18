@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { formatarPreco, nomeDoPlano } from '../../../core/utils/formato-plano';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -17,26 +18,52 @@ export class PlanosPetComponent implements OnInit {
   planos: any[] = [];
   carregandoPlanos = true;
   
-  usuarioJaPossuiPlano = false;
-  mensagemAvisoPlano = '';
+  pets: any[] = [];
+  planosPorPet: Record<number, string> = {};
+  petEscolhidoId: number | null = null;
 
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.verificarPlanoAtivoDoUsuario();
+    this.carregarPetsEPlanos();
     this.buscarPlanosDoBanco();
   }
 
-  verificarPlanoAtivoDoUsuario(): void {
+  carregarPetsEPlanos(): void {
+    const petDaUrl = Number(this.route.snapshot.queryParamMap.get('pet')) || null;
+    this.http.get<any>(`${environment.apiUrl}/user/listar/pet`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        this.pets = res?.pets || res?.Pets || [];
+        const preferido = this.pets.find(p => p.id_pet === petDaUrl);
+        this.petEscolhidoId = (preferido || this.pets.find(p => !this.planosPorPet[p.id_pet]) || this.pets[0])?.id_pet ?? null;
+      },
+      error: (err) => console.error('Erro ao buscar pets:', err)
+    });
     this.http.get<any>(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
       next: (res) => {
-        if (res && res.tem_plano) {
-          this.usuarioJaPossuiPlano = true;
-          this.mensagemAvisoPlano = `Você já possui o plano "${res.include?.nome?.split(' | ')[0]}" ativo. Cancele-o na sua Área de Planos antes de assinar uma nova opção.`;
-        }
+        this.planosPorPet = {};
+        (res?.planos || []).forEach((p: any) => this.planosPorPet[p.id_pet] = nomeDoPlano(p.produto?.nome));
       },
-      error: (err) => console.error('Erro ao checar plano ativo:', err)
+      error: (err) => console.error('Erro ao checar planos dos pets:', err)
     });
+  }
+
+  escolherPet(idPet: number): void {
+    this.petEscolhidoId = idPet;
+  }
+
+  get petEscolhido(): any {
+    return this.pets.find(p => p.id_pet === this.petEscolhidoId) || null;
+  }
+
+  get usuarioJaPossuiPlano(): boolean {
+    return !this.petEscolhido || !!this.planosPorPet[this.petEscolhido.id_pet];
+  }
+
+  get mensagemAvisoPlano(): string {
+    if (this.pets.length === 0) return 'Cadastre um pet antes de contratar um plano.';
+    if (!this.petEscolhido) return 'Escolha o pet que vai receber o plano.';
+    return `${this.petEscolhido.nome} já possui o ${this.planosPorPet[this.petEscolhido.id_pet]}. Cancele-o em Meu Plano antes de assinar outro.`;
   }
 
   buscarPlanosDoBanco(): void {
@@ -50,14 +77,14 @@ export class PlanosPetComponent implements OnInit {
             const tagReal = partesNome[1] || 'ATIVO';
 
             const beneficiosListados = p.beneficios 
-              ? p.beneficios.split(/[\n,;]+/).map((b: string) => b.trim()).filter((b: string) => b.length > 0)
+              ? p.beneficios.split(/[\n;]+/).map((b: string) => b.trim()).filter((b: string) => b.length > 0)
               : [];
 
             return {
               id_produto: p.id_produto,
               tag: tagReal,
               nome: nomeReal,
-              preco: `R$ ${p.preco}`,
+              preco: `R$ ${formatarPreco(p.preco)}`,
               descricao: p.descricao || 'Plano de saúde preventivo adaptado para as necessidades do seu pet.',
               recomendado: tagReal === 'RECOMENDADO' || index === 2,
               beneficios: beneficiosListados,
@@ -91,7 +118,7 @@ export class PlanosPetComponent implements OnInit {
 
     localStorage.setItem(
       'planoSelecionado',
-      JSON.stringify(this.planoSelecionado)
+      JSON.stringify({ ...this.planoSelecionado, id_pet: this.petEscolhido.id_pet, nome_pet: this.petEscolhido.nome })
     );
 
     this.router.navigate(['/user/pagamento-plano']);

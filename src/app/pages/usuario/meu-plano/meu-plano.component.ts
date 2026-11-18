@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
+import { formatarPreco, nomeDoPlano } from '../../../core/utils/formato-plano';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -13,10 +15,10 @@ import { environment } from '../../../environments/environment';
 })
 export class MeuPlanoComponent implements OnInit {
 
-  plano: any = null;
+  planos: any[] = [];
   erro: string = '';
   carregando: boolean = true;
-  cancelando: boolean = false;
+  cancelandoPet: number | null = null;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -28,23 +30,26 @@ export class MeuPlanoComponent implements OnInit {
     this.carregando = true;
     this.erro = '';
 
-    this.http.get(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
-      next: (response: any) => {
+    forkJoin({
+      planos: this.http.get<any>(`${environment.apiUrl}/user/planos`, { withCredentials: true }),
+      pets: this.http.get<any>(`${environment.apiUrl}/user/listar/pet`, { withCredentials: true })
+    }).subscribe({
+      next: ({ planos, pets }) => {
         this.carregando = false;
-        if (response && response.tem_plano) {
-          this.plano = response.include;
-          
-          if (this.plano.beneficios && typeof this.plano.beneficios === 'string') {
-            this.plano.listaBeneficios = this.plano.beneficios
-              .split(/[\n,;]+/)
-              .map((b: string) => b.trim())
-              .filter((b: string) => b.length > 0);
-          } else {
-            this.plano.listaBeneficios = [];
-          }
-        } else {
-          this.plano = null;
-        }
+        const listaPets: any[] = pets?.pets || pets?.Pets || [];
+        this.planos = (planos?.planos || []).map((p: any) => {
+          const produto = p.produto || {};
+          return {
+            ...produto,
+            id_pet: p.id_pet,
+            nomePet: listaPets.find(pet => pet.id_pet === p.id_pet)?.nome || 'Pet',
+            nome: nomeDoPlano(produto.nome),
+            preco: formatarPreco(produto.preco),
+            listaBeneficios: typeof produto.beneficios === 'string'
+              ? produto.beneficios.split(/[\n;]+/).map((b: string) => b.trim()).filter((b: string) => b.length > 0)
+              : []
+          };
+        });
       },
       error: (err) => {
         this.carregando = false;
@@ -56,21 +61,21 @@ export class MeuPlanoComponent implements OnInit {
     });
   }
 
-  cancelarPlano(): void {
-    if (this.cancelando) return;
+  cancelarPlano(plano: any): void {
+    if (this.cancelandoPet !== null) return;
 
-    if (confirm('Deseja realmente cancelar seu plano? Esta ação removerá a cobertura do seu pet.')) {
-      this.cancelando = true;
+    if (confirm(`Deseja realmente cancelar o plano de ${plano.nomePet}? Esta ação removerá a cobertura do pet.`)) {
+      this.cancelandoPet = plano.id_pet;
       this.erro = '';
 
-      this.http.delete(`${environment.apiUrl}/user/planos/cancelar`, { withCredentials: true }).subscribe({
+      this.http.delete(`${environment.apiUrl}/user/planos/cancelar/${plano.id_pet}`, { withCredentials: true }).subscribe({
         next: (response: any) => {
-          this.cancelando = false;
-          this.plano = null;
+          this.cancelandoPet = null;
+          this.planos = this.planos.filter(p => p.id_pet !== plano.id_pet);
           alert(response.mensagem || 'Plano cancelado com sucesso.');
         },
         error: (err) => {
-          this.cancelando = false;
+          this.cancelandoPet = null;
           console.error('Erro ao cancelar plano:', err);
           this.erro = err.error?.mensagem || 'Erro interno ao processar o cancelamento.';
         }

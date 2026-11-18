@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -70,7 +71,7 @@ export class ContatoUsuarioComponent implements OnInit {
       error: (err) => {
         this.enviando = false;
         console.error('Erro ao enviar mensagem de contato:', err);
-        this.erro = err.error?.mensagem || err.error || 'Não foi possível enviar sua mensagem no momento.';
+        this.erro = mensagemDeErro(err, 'Não foi possível enviar sua mensagem no momento.');
       }
     });
   }

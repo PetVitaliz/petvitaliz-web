@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header-usuario',
@@ -13,7 +15,7 @@ export class HeaderUsuarioComponent {
   menuMobileAberto = false;
   avatarMenuAberto = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   get usuario() {
     const usuarioLogado = localStorage.getItem('usuarioLogado');
@@ -44,6 +46,9 @@ export class HeaderUsuarioComponent {
   sair(): void {
     if (confirm('Deseja realmente fazer logout?')) {
       this.fecharMenus();
+      this.http.get(`${environment.apiUrl}/user/logout`, { withCredentials: true }).subscribe({
+        error: (err) => console.error('Erro ao realizar logout no servidor:', err)
+      });
       localStorage.removeItem('usuarioLogado');
       this.router.navigate(['/']);
     }

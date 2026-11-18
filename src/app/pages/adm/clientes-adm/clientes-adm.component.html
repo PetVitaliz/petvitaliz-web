@@ -315,12 +315,13 @@
       <div class="form-grid">
         <div class="campo">
           <label>Data</label>
-          <input type="date" [(ngModel)]="novaConsulta.data">
+          <input type="date" [(ngModel)]="novaConsulta.data" (ngModelChange)="verificarDisponibilidade()">
         </div>
 
         <div class="campo">
           <label>Horário</label>
-          <input type="time" [(ngModel)]="novaConsulta.horario">
+          <input type="time" [(ngModel)]="novaConsulta.horario" (ngModelChange)="verificarDisponibilidade()">
+          <small class="aviso-horario" *ngIf="horarioSemProfissional">Sem profissionais livres nesse horário.</small>
         </div>
 
         <div class="campo">
@@ -334,7 +335,7 @@
 
         <div class="campo">
           <label>Procedimento</label>
-          <select [(ngModel)]="novaConsulta.procedimento">
+          <select [(ngModel)]="novaConsulta.procedimento" (ngModelChange)="verificarDisponibilidade()">
             <option>Consulta de Rotina</option>
             <option>Vacinação</option>
             <option>Retorno</option>
@@ -352,7 +353,7 @@
 
     <div class="modal-foot">
       <button type="button" class="btn btn-ghost" (click)="fecharModais()">Cancelar</button>
-      <button type="button" class="btn btn-primary" (click)="salvarAgendamento()">Confirmar agendamento</button>
+      <button type="button" class="btn btn-primary" (click)="salvarAgendamento()" [disabled]="horarioSemProfissional">Confirmar agendamento</button>
     </div>
   </div>
 </div>

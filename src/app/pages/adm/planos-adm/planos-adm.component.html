@@ -21,12 +21,22 @@
         </button>
       </div>
 
+      <button type="button" class="btn btn-ghost btn-cancelar-assinaturas" (click)="confirmandoCancelamento = true" [disabled]="cancelandoAssinaturas">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>
+        {{ cancelandoAssinaturas ? 'Cancelando...' : 'Cancelar planos contratados' }}
+      </button>
+
       <button type="button" class="btn btn-primary" (click)="novoPlano()">
         <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         Novo plano
       </button>
     </div>
   </header>
+
+  <div class="alert aviso aviso-pagina" *ngIf="avisoPagina" [class.alert-ok]="avisoPagina.tipo === 'ok'" [class.alert-erro]="avisoPagina.tipo === 'erro'">
+    <span>{{ avisoPagina.texto }}</span>
+    <button type="button" class="link-action" (click)="avisoPagina = null">Fechar</button>
+  </div>
 
   <div class="alert alert-erro aviso" *ngIf="erroCarregar">
     {{ erroCarregar }}
@@ -344,6 +354,22 @@
     <div class="modal-foot">
       <button type="button" class="btn btn-ghost" (click)="planoParaExcluir = null">Cancelar</button>
       <button type="button" class="btn btn-danger" (click)="confirmarExclusao()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="confirmandoCancelamento" (click)="confirmandoCancelamento = false">
+  <div class="modal modal-sm modal-confirm" (click)="$event.stopPropagation()" role="alertdialog" aria-modal="true">
+    <div class="modal-body">
+      <div class="modal-icon">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>
+      </div>
+      <h2>Cancelar todos os planos contratados?</h2>
+      <p>Todos os tutores ficam sem plano e precisam assinar de novo. Os planos continuam cadastrados. Essa ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="confirmandoCancelamento = false">Voltar</button>
+      <button type="button" class="btn btn-danger" (click)="cancelarTodasAssinaturas()">Cancelar todos</button>
     </div>
   </div>
 </div>

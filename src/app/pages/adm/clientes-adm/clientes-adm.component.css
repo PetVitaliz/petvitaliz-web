@@ -18,3 +18,10 @@
 .avatar.esp-coelho { background: #fdecf3; color: #c2417a; }
 .avatar.esp-reptil { background: #e3f5f4; color: #13867c; }
 .avatar.esp-outro  { background: #eef1f8; color: #626b85; }
+
+.aviso-horario {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #b33a3a;
+}
