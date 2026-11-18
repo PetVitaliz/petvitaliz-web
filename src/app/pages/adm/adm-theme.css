@@ -1,0 +1,1108 @@
+/* =========================================================
+   PetVitaliz — Tema do painel administrativo
+   Layout inspirado no admin da Biblioteca, com a paleta
+   PetVitaliz (azul-marinho / índigo).
+   Tudo escopado em .adm-shell para não afetar o site público.
+   ========================================================= */
+
+.adm-shell {
+  /* Base */
+  --ink: #141a33;
+  --ink-soft: #626b85;
+  --ink-mute: #98a0b6;
+  --surface: #ffffff;
+  --page: #f4f6fb;
+  --line: #e4e8f2;
+  --track: #eef1f8;
+
+  /* Marca PetVitaliz */
+  --navy-950: #10164a;
+  --navy-900: #1a237e;
+  --navy-800: #283593;
+  --navy-700: #3949ab;
+  --primary: #4055c8;
+  --primary-hover: #3546b0;
+  --accent: #5d6ed3;
+  --accent-soft: #eef1ff;
+  --accent-line: #d9defb;
+  --heart: #e53950;
+
+  /* Estados */
+  --ok: #1f9d6b;
+  --ok-bg: #e4f6ee;
+  --warn: #b7770f;
+  --warn-bg: #fdf3dc;
+  --danger: #dc4b4b;
+  --danger-bg: #fdecec;
+  --info: #4055c8;
+  --info-bg: #eef1ff;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px rgba(20, 26, 74, 0.05), 0 4px 16px rgba(20, 26, 74, 0.05);
+  --shadow-hover: 0 2px 4px rgba(20, 26, 74, 0.06), 0 10px 24px rgba(20, 26, 74, 0.1);
+
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--page);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.adm-main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--page);
+}
+
+.adm-main::-webkit-scrollbar { width: 8px; }
+.adm-main::-webkit-scrollbar-track { background: transparent; }
+.adm-main::-webkit-scrollbar-thumb { background: #cfd5e6; border-radius: 10px; }
+.adm-main::-webkit-scrollbar-thumb:hover { background: #a6aecb; }
+
+.adm-shell button,
+.adm-shell input,
+.adm-shell select,
+.adm-shell textarea {
+  font-family: inherit;
+}
+
+.adm-shell button { cursor: pointer; }
+
+.adm-shell :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.adm-shell .ico {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* =========================================================
+   Página
+   ========================================================= */
+.adm-shell .page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 32px 48px;
+}
+
+.adm-shell .page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.adm-shell .page-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.adm-shell .title-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, var(--navy-800), var(--navy-950));
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(26, 35, 126, 0.22);
+  flex-shrink: 0;
+}
+
+.adm-shell .title-icon .ico { width: 20px; height: 20px; stroke-width: 1.6; }
+
+.adm-shell .page-title h1 {
+  margin: 0 0 2px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--navy-950);
+}
+
+.adm-shell .page-title p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.adm-shell .header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   Botões
+   ========================================================= */
+.adm-shell .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.adm-shell .btn:active:not(:disabled) { transform: translateY(1px); }
+.adm-shell .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.adm-shell .btn-block { width: 100%; }
+
+.adm-shell .btn-sm { height: 34px; padding: 0 12px; font-size: 13px; border-radius: 8px; }
+
+.adm-shell .btn-primary {
+  background: var(--navy-800);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(40, 53, 147, 0.25);
+}
+
+.adm-shell .btn-primary:hover:not(:disabled) {
+  background: var(--primary);
+  transform: translateY(-1px);
+}
+
+.adm-shell .btn-ghost {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.adm-shell .btn-ghost:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--navy-800);
+}
+
+.adm-shell .btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.adm-shell .btn-danger:hover:not(:disabled) { background: #c43c3c; }
+
+.adm-shell .btn-soft {
+  background: var(--accent-soft);
+  color: var(--navy-800);
+  border-color: var(--accent-line);
+}
+
+.adm-shell .btn-soft:hover:not(:disabled) { background: #e2e7ff; }
+
+.adm-shell .link-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.adm-shell .link-action:hover { color: var(--navy-900); }
+.adm-shell .link-action .ico { width: 14px; height: 14px; }
+
+.adm-shell .icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.adm-shell .icon-btn .ico { width: 15px; height: 15px; }
+
+.adm-shell .icon-btn:hover {
+  color: var(--navy-800);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.adm-shell .icon-btn-danger:hover {
+  color: var(--danger);
+  border-color: #f2b8b8;
+  background: var(--danger-bg);
+}
+
+.adm-shell .acoes {
+  display: inline-flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+/* =========================================================
+   Indicadores
+   ========================================================= */
+.adm-shell .stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.adm-shell .stat-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  font-size: inherit;
+  transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.adm-shell a.stat-card:hover,
+.adm-shell button.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--accent-line);
+}
+
+.adm-shell .stat-card.ativo {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.15);
+}
+
+.adm-shell .stat-card > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.adm-shell .stat-card span.stat-label,
+.adm-shell .stat-card > div > span {
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.adm-shell .stat-card strong {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--navy-950);
+  line-height: 1.2;
+}
+
+.adm-shell .stat-card small {
+  color: var(--ink-mute);
+  font-size: 12px;
+}
+
+.adm-shell .stat-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f5f6fb;
+  border: 1px solid var(--line);
+  color: var(--navy-800);
+  flex-shrink: 0;
+}
+
+/* Todos os ícones de indicador seguem o mesmo padrão (sem cores variadas) */
+.adm-shell .stat-icon .ico { width: 18px; height: 18px; }
+.adm-shell .stat-icon.icon-green,
+.adm-shell .stat-icon.icon-amber,
+.adm-shell .stat-icon.icon-red { background: #f5f6fb; color: var(--navy-800); }
+
+/* =========================================================
+   Painéis
+   ========================================================= */
+.adm-shell .panel {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.adm-shell .panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.adm-shell .panel-head h3 {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy-950);
+}
+
+.adm-shell .panel-head p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.adm-shell .panel-flush { padding: 0; overflow: hidden; }
+.adm-shell .panel-flush > .panel-head { padding: 20px 20px 0; }
+
+/* =========================================================
+   Barra de ferramentas
+   ========================================================= */
+.adm-shell .toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.adm-shell .search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  min-width: 220px;
+  height: 40px;
+  padding: 0 12px;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink-mute);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.adm-shell .search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.15);
+}
+
+.adm-shell .search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.adm-shell .search input::placeholder { color: var(--ink-mute); }
+
+.adm-shell .clear-btn {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--track);
+  color: var(--ink-soft);
+}
+
+.adm-shell .clear-btn .ico { width: 12px; height: 12px; }
+
+.adm-shell .chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.adm-shell .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.adm-shell .chip:hover { border-color: var(--accent); color: var(--navy-800); }
+
+.adm-shell .chip.ativo {
+  background: var(--navy-800);
+  border-color: var(--navy-800);
+  color: #fff;
+}
+
+.adm-shell .chip-count {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--track);
+  color: var(--ink-soft);
+  font-size: 11px;
+  text-align: center;
+}
+
+.adm-shell .chip.ativo .chip-count {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.adm-shell .sort,
+.adm-shell .select-sm {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.adm-shell .segmented {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--track);
+}
+
+.adm-shell .segmented button {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.adm-shell .segmented button.ativo {
+  background: var(--surface);
+  color: var(--navy-800);
+  box-shadow: 0 1px 3px rgba(20, 26, 74, 0.1);
+}
+
+/* =========================================================
+   Tabelas
+   ========================================================= */
+.adm-shell .table-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.adm-shell .table-wrap { overflow-x: auto; }
+
+.adm-shell table.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.adm-shell .tbl th {
+  padding: 12px 16px;
+  background: #f8f9fd;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.adm-shell .tbl td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.adm-shell .tbl tbody tr:last-child td { border-bottom: 0; }
+.adm-shell .tbl tbody tr { transition: background 0.15s; }
+.adm-shell .tbl tbody tr:hover { background: #fafbff; }
+
+.adm-shell .tbl .col-acoes { text-align: right; width: 1%; white-space: nowrap; }
+.adm-shell .cell-strong { font-weight: 600; color: var(--navy-950); }
+.adm-shell .cell-muted { color: var(--ink-soft); }
+
+.adm-shell .pessoa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.adm-shell .pessoa > div:not(.avatar) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.adm-shell .pessoa strong {
+  font-weight: 600;
+  color: var(--navy-950);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-shell .pessoa small {
+  color: var(--ink-soft);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-shell .avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--navy-800);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.adm-shell .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.adm-shell .avatar-lg { width: 56px; height: 56px; border-radius: 14px; font-size: 18px; }
+
+.adm-shell .empty {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.adm-shell .table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.adm-shell .paginas { display: flex; gap: 4px; }
+
+.adm-shell .pag-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.adm-shell .pag-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--navy-800); }
+.adm-shell .pag-btn.ativo { background: var(--navy-800); border-color: var(--navy-800); color: #fff; }
+.adm-shell .pag-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* =========================================================
+   Pills / badges
+   ========================================================= */
+.adm-shell .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--track);
+  color: var(--ink-soft);
+}
+
+.adm-shell .pill i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.adm-shell .pill-ok { background: var(--ok-bg); color: var(--ok); }
+.adm-shell .pill-warn { background: var(--warn-bg); color: var(--warn); }
+.adm-shell .pill-danger { background: var(--danger-bg); color: var(--danger); }
+.adm-shell .pill-info { background: var(--info-bg); color: var(--info); }
+.adm-shell .pill-muted { background: var(--track); color: var(--ink-soft); }
+
+.adm-shell .tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--navy-800);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   Medidores
+   ========================================================= */
+.adm-shell .meter {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.adm-shell .meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--navy-800), var(--accent));
+}
+
+/* =========================================================
+   Estados
+   ========================================================= */
+.adm-shell .loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 0;
+  color: var(--ink-soft);
+}
+
+.adm-shell .loader {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--track);
+  border-top-color: var(--navy-800);
+  border-radius: 50%;
+  animation: adm-girar 0.7s linear infinite;
+}
+
+.adm-shell .skeleton {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--track) 25%, #f7f8fc 50%, var(--track) 75%);
+  background-size: 200% 100%;
+  animation: adm-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes adm-girar { to { transform: rotate(360deg); } }
+@keyframes adm-shimmer { to { background-position: -200% 0; } }
+
+.adm-shell .alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.adm-shell .alert-erro { background: var(--danger-bg); color: #b33a3a; border: 1px solid #f5c6c6; }
+.adm-shell .alert-ok { background: var(--ok-bg); color: #177d55; border: 1px solid #bfe7d4; }
+.adm-shell .alert-info { background: var(--info-bg); color: var(--navy-800); border: 1px solid var(--accent-line); }
+
+/* =========================================================
+   Formulários
+   ========================================================= */
+.adm-shell .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.adm-shell .form-grid .span-2 { grid-column: 1 / -1; }
+
+.adm-shell .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.adm-shell .campo > label,
+.adm-shell .campo-label {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.adm-shell .campo input,
+.adm-shell .campo select,
+.adm-shell .campo textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.adm-shell .campo textarea { min-height: 96px; resize: vertical; }
+
+.adm-shell .campo input:focus,
+.adm-shell .campo select:focus,
+.adm-shell .campo textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(93, 110, 211, 0.15);
+}
+
+.adm-shell .campo input:disabled,
+.adm-shell .campo input[readonly] {
+  background: #f8f9fd;
+  color: var(--ink-soft);
+}
+
+.adm-shell .campo small { color: var(--ink-mute); font-size: 12px; }
+.adm-shell .campo .erro-campo { color: var(--danger); font-weight: 500; }
+
+.adm-shell .senha-wrap { position: relative; }
+.adm-shell .senha-wrap input { padding-right: 42px; }
+.adm-shell .senha-wrap button {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  padding: 6px;
+}
+
+.adm-shell .upload {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* =========================================================
+   Modais
+   ========================================================= */
+.adm-shell .modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(16, 22, 74, 0.45);
+  backdrop-filter: blur(3px);
+  animation: adm-fade 0.15s ease-out;
+}
+
+.adm-shell .modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: calc(100dvh - 48px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(16, 22, 74, 0.25);
+  overflow: hidden;
+  animation: adm-subir 0.18s ease-out;
+}
+
+.adm-shell .modal-lg { max-width: 760px; }
+.adm-shell .modal-sm { max-width: 420px; }
+
+.adm-shell .modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.adm-shell .modal-head h2 {
+  margin: 0 0 2px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--navy-950);
+}
+
+.adm-shell .modal-head p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.adm-shell .modal-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+}
+
+.adm-shell .modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--line);
+  background: #fafbfe;
+}
+
+.adm-shell .modal-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  border-radius: 14px;
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.adm-shell .modal-icon .ico { width: 22px; height: 22px; }
+
+.adm-shell .modal-confirm .modal-body { text-align: center; }
+.adm-shell .modal-confirm h2 { margin: 0 0 6px; font-size: 17px; color: var(--navy-950); }
+.adm-shell .modal-confirm p { margin: 0; color: var(--ink-soft); }
+
+@keyframes adm-fade { from { opacity: 0; } }
+@keyframes adm-subir { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+
+/* =========================================================
+   Lista de detalhes (chave/valor)
+   ========================================================= */
+.adm-shell .detalhes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.adm-shell .detalhe {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fafbfe;
+  min-width: 0;
+}
+
+.adm-shell .detalhe small {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--ink-mute);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.adm-shell .detalhe strong {
+  display: block;
+  color: var(--navy-950);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   Responsivo
+   ========================================================= */
+@media (max-width: 900px) {
+  .adm-shell .page { padding: 24px 18px 40px; }
+}
+
+@media (max-width: 640px) {
+  .adm-shell .form-grid,
+  .adm-shell .detalhes { grid-template-columns: 1fr; }
+  .adm-shell .page-title h1 { font-size: 20px; }
+  .adm-shell .page-header .btn { width: 100%; }
+  .adm-shell .header-actions { width: 100%; }
+}
+
+@media (max-width: 900px) {
+  .adm-shell { flex-direction: column; }
+  .adm-main { flex: 1; min-height: 0; height: auto; }
+}
+
+/* =========================================================
+   Calendário compacto
+   ========================================================= */
+.adm-shell .cal-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.adm-shell .cal-topo h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy-950);
+}
+
+.adm-shell .cal-nav { display: flex; gap: 6px; }
+
+.adm-shell .dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.adm-shell .dias.semana { margin-bottom: 6px; }
+
+.adm-shell .dias.semana span {
+  text-align: center;
+  color: var(--ink-mute);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.adm-shell .dias button {
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.adm-shell .dias button:hover:not(.outro-mes) { background: var(--accent-soft); color: var(--navy-800); }
+.adm-shell .dias button.outro-mes { color: #c5cada; cursor: default; }
+.adm-shell .dias button.hoje { box-shadow: inset 0 0 0 1.5px var(--accent); color: var(--navy-800); font-weight: 700; }
+.adm-shell .dias button.selecionado { background: var(--navy-800); color: #fff; font-weight: 700; }
+
+.adm-shell .stat-card.stat-alerta { border-color: #f5c6c6; }
+.adm-shell .chips-linha { margin-bottom: 14px; }
+
+.adm-shell .horario {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.adm-shell .horario strong {
+  color: var(--navy-800);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-shell .horario small { color: var(--ink-mute); font-size: 12px; }
+
+.adm-shell input.sort { min-width: 150px; }
+
+/* =========================================================
+   Toast
+   ========================================================= */
+.adm-shell .toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1200;
+  max-width: 380px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border-left: 4px solid var(--ok);
+  background: var(--navy-950);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 12px 32px rgba(16, 22, 74, 0.3);
+  animation: adm-subir 0.2s ease-out;
+}
+
+.adm-shell .toast-erro { border-left-color: var(--danger); }
+
+/* =========================================================
+   Blocos de texto em modais
+   ========================================================= */
+.adm-shell .secao-titulo {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-950);
+}
+
+.adm-shell .observacao {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: #f8f9fd;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.adm-shell .nota {
+  margin: 10px 0 0;
+  color: var(--ink-mute);
+  font-size: 12px;
+}
+
+.adm-shell .upload {
+  margin-bottom: 18px;
+  cursor: pointer;
+}
+
+.adm-shell .upload .avatar-lg .ico { width: 22px; height: 22px; }
+
+.adm-shell .upload-texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-shell .upload-texto strong { color: var(--navy-800); font-size: 14px; }
+.adm-shell .upload-texto small { color: var(--ink-mute); font-size: 12px; }
+.adm-shell .pag-btn .ico { width: 14px; height: 14px; vertical-align: middle; }

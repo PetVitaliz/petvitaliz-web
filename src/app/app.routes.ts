@@ -36,7 +36,6 @@ import { PerfilFuncionarioComponent } from './pages/funcionario/perfil-funcionar
 import { HomeAdmComponent } from './pages/adm/home-adm/home-adm.component';
 import { PlanosAdmComponent } from './pages/adm/planos-adm/planos-adm.component';
 import { EquipeFuncionariosComponent } from './pages/adm/equipe-funcionarios/equipe-funcionarios.component';
-import { ConsultasAgendadasComponent } from './pages/adm/consultas-agendadas/consultas-agendadas.component';
 import { ConsultasAdmComponent } from './pages/adm/consultas-adm/consultas-adm.component';
 import { ClientesAdmComponent } from './pages/adm/clientes-adm/clientes-adm.component';
 import { FinanceiroAdmComponent } from './pages/adm/financeiro-adm/financeiro-adm.component';
@@ -172,8 +171,8 @@ export const routes: Routes = [
   },
   {
     path: 'adm/consultas-agendadas',
-    component: ConsultasAgendadasComponent,
-    canActivate: [authAdminGuard]
+    redirectTo: 'adm/consultas',
+    pathMatch: 'full'
   },
   {
     path: 'adm/financeiro',

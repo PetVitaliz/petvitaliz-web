@@ -1,222 +1,271 @@
-<section class="consultas-page">
+<div class="page">
 
-  <div class="topo">
-    <h1>Gestão de Consultas</h1>
-    <p>Controle total dos agendamentos e histórico clínico do dia.</p>
+  <header class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </div>
+      <div>
+        <h1>Gestão de consultas</h1>
+        <p>Controle dos agendamentos e do histórico clínico.</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-ghost" (click)="carregarConsultasDoBanco()">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+        Atualizar
+      </button>
+    </div>
+  </header>
+
+  <div class="alert alert-erro" *ngIf="erroMensagem" role="alert">
+    {{ erroMensagem }}
+    <button type="button" class="link-action" (click)="carregarConsultasDoBanco()">Tentar novamente</button>
   </div>
 
-  <div class="consultas-box">
+  <!-- INDICADORES -->
+  <section class="stats">
+    <button type="button" class="stat-card" [class.ativo]="periodoSelecionado === 'Hoje'"
+      (click)="periodoSelecionado = 'Hoje'; aplicarFiltros()">
+      <span class="stat-icon">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      </span>
+      <div>
+        <span>Consultas hoje</span>
+        <strong>{{ consultasHoje | number:'2.0' }}</strong>
+        <small>clique para filtrar</small>
+      </div>
+    </button>
 
-    <div class="layout">
+    <button type="button" class="stat-card" [class.ativo]="statusSelecionado === 'Pendente'"
+      (click)="definirStatus('Pendente')">
+      <span class="stat-icon icon-amber">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M17 22v-4.17a2 2 0 0 0-.59-1.42L12 12l-4.41 4.41A2 2 0 0 0 7 17.83V22M7 2v4.17a2 2 0 0 0 .59 1.42L12 12l4.41-4.41A2 2 0 0 0 17 6.17V2"/></svg>
+      </span>
+      <div>
+        <span>Pendentes / triagem</span>
+        <strong>{{ totalPendentes | number:'2.0' }}</strong>
+        <small>aguardando atendimento</small>
+      </div>
+    </button>
 
-      <main class="principal">
+    <button type="button" class="stat-card" [class.ativo]="statusSelecionado === 'Em andamento'"
+      (click)="definirStatus('Em andamento')">
+      <span class="stat-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </span>
+      <div>
+        <span>Em andamento</span>
+        <strong>{{ totalEmAndamento | number:'2.0' }}</strong>
+        <small>em consultório agora</small>
+      </div>
+    </button>
 
-        <section class="filtros">
+    <div class="stat-card" [class.stat-alerta]="totalAtrasadas > 0">
+      <span class="stat-icon icon-red">
+        <svg class="ico" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>
+      </span>
+      <div>
+        <span>Tempo excedido</span>
+        <strong>{{ totalAtrasadas | number:'2.0' }}</strong>
+        <small>não finalizadas a tempo</small>
+      </div>
+    </div>
+  </section>
 
-          <div class="campo busca">
-            <label>Paciente ou tutor</label>
-            <input type="text" placeholder="Nome do pet ou tutor..." [(ngModel)]="termoBusca" (input)="aplicarFiltros()">
-          </div>
+  <!-- ABAS -->
+  <nav class="abas" role="tablist">
+    <button type="button" role="tab" class="aba" [class.ativa]="aba === 'agendadas'"
+      [attr.aria-selected]="aba === 'agendadas'" (click)="definirAba('agendadas')">
+      <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Agendadas
+      <span class="chip-count">{{ consultasAgendadas.length }}</span>
+    </button>
+    <button type="button" role="tab" class="aba" [class.ativa]="aba === 'todas'"
+      [attr.aria-selected]="aba === 'todas'" (click)="definirAba('todas')">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      Todas as consultas
+      <span class="chip-count">{{ consultas.length }}</span>
+    </button>
+  </nav>
 
-          <div class="campo">
-            <label>Status</label>
-            <select [(ngModel)]="statusSelecionado" (change)="aplicarFiltros()">
-              <option value="Todos">Todos</option>
-              <option value="Pendente">Pendente / Triagem</option>
-              <option value="Em andamento">Em andamento</option>
-              <option value="Finalizada">Finalizada</option>
-              <option value="Cancelada">Cancelada</option>
-            </select>
-          </div>
+  <div class="layout">
 
-          <div class="campo">
-            <label>Veterinário</label>
-            <select [(ngModel)]="vetSelecionado" (change)="aplicarFiltros()">
-              <option value="Todos">Todos</option>
-              <option *ngFor="let vet of listaVeterinarios" [value]="vet">{{ vet }}</option>
-            </select>
-          </div>
+    <div class="principal">
 
-          <div class="campo">
-            <label>Período</label>
-            <select [(ngModel)]="periodoSelecionado" (change)="aplicarFiltros()">
-              <option value="Todos">Todos</option>
-              <option value="Hoje">Hoje</option>
-              <option value="Semana">Semana</option>
-              <option value="Mês">Mês</option>
-              <option value="Dia selecionado">Dia selecionado</option>
-            </select>
-          </div>
+      <!-- FERRAMENTAS -->
+      <section class="toolbar">
+        <label class="search">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Buscar pet, tutor ou procedimento" [(ngModel)]="termoBusca" (input)="aplicarFiltros()">
+          <button *ngIf="termoBusca" type="button" class="clear-btn" (click)="limparBusca()" aria-label="Limpar busca">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </label>
 
-        </section>
+        <select class="sort" [(ngModel)]="vetSelecionado" (change)="aplicarFiltros()" aria-label="Veterinário">
+          <option value="Todos">Todos os veterinários</option>
+          <option *ngFor="let vet of listaVeterinarios" [value]="vet">{{ vet }}</option>
+        </select>
 
-        <section class="tabela-card">
+        <select class="sort" [(ngModel)]="periodoSelecionado" (change)="aplicarFiltros()" aria-label="Período">
+          <option value="Todos">Qualquer período</option>
+          <option value="Hoje">Hoje</option>
+          <option value="Semana">Próximos 7 dias</option>
+          <option value="Mês">Mês do calendário</option>
+          <option value="Dia selecionado">Dia selecionado</option>
+        </select>
+      </section>
 
-          <div class="linha cabecalho">
-            <span>Horário/Data</span>
-            <span>Paciente</span>
-            <span>Veterinário</span>
-            <span>Procedimento</span>
-            <span>Status</span>
-            <span></span>
-          </div>
+      <div class="chips chips-linha">
+        <button type="button" class="chip" *ngFor="let f of filtrosDaAba"
+          [class.ativo]="statusSelecionado === f.valor" (click)="definirStatus(f.valor)">
+          {{ f.rotulo }}
+          <span class="chip-count">{{ contagemStatus(f.valor) }}</span>
+        </button>
+      </div>
 
-          <div class="linha" *ngFor="let c of consultasPaginadas; let i = index">
+      <!-- TABELA -->
+      <div class="table-card">
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Paciente</th>
+                <th>Veterinário</th>
+                <th>Procedimento</th>
+                <th>Status</th>
+                <th class="col-acoes">Ações</th>
+              </tr>
+            </thead>
 
-            <div class="horario">
-              <strong>{{ c.hora }}</strong>
-              <small>{{ formatarData(c.dataObj) }}</small>
-            </div>
+            <tbody>
+              <tr *ngFor="let c of consultasPaginadas">
+                <td>
+                  <div class="horario">
+                    <strong>{{ c.hora }}</strong>
+                    <small>
+                      <span class="tag tag-hoje" *ngIf="ehHoje(c.dataObj)">Hoje</span>
+                      <ng-container *ngIf="!ehHoje(c.dataObj)">{{ formatarData(c.dataObj) }}</ng-container>
+                    </small>
+                  </div>
+                </td>
 
-            <div class="paciente">
-              <div class="avatar-pet">
-                {{ c.pet.charAt(0) }}
-              </div>
-              <div>
-                <strong>{{ c.pet }}</strong>
-                <small>Tutor: {{ c.tutor }}</small>
-              </div>
-            </div>
+                <td>
+                  <div class="pessoa">
+                    <div class="avatar">{{ c.pet.charAt(0) }}</div>
+                    <div>
+                      <strong>{{ c.pet }}</strong>
+                      <small>Tutor: {{ c.tutor }}</small>
+                    </div>
+                  </div>
+                </td>
 
-            <div class="vet">
-              {{ c.vet }}
-            </div>
+                <td class="cell-muted">{{ c.vet }}</td>
 
-            <div>
-              <span class="procedimento">
-                {{ c.motivo }}
-              </span>
-              <div *ngIf="c.passouDoTempo" style="color: #dc2626; font-size: 9px; font-weight: 800; margin-top: 4px; display: flex; align-items: center; gap: 3px; text-transform: uppercase; letter-spacing: 0.3px;">
-                ⚠️ Tempo Excedido
-              </div>
-            </div>
+                <td>
+                  <span class="procedimento">{{ c.motivo }}</span>
+                  <small class="aviso-tempo" *ngIf="c.passouDoTempo">Tempo excedido</small>
+                </td>
 
-            <div>
-              <span class="status" [ngClass]="c.tipo">
-                {{ c.passouDoTempo ? 'Atrasada' : normalizarStatus(c.status) }}
-              </span>
-            </div>
+                <td>
+                  <span class="pill"
+                    [class.pill-ok]="c.tipo === 'green'"
+                    [class.pill-info]="c.tipo === 'blue'"
+                    [class.pill-warn]="c.tipo === 'gray'"
+                    [class.pill-danger]="c.tipo === 'red'">
+                    <i></i>{{ c.passouDoTempo ? 'Atrasada' : normalizarStatus(c.status) }}
+                  </span>
+                </td>
 
-            <div class="acoes">
-              <button type="button" class="menu-btn" (click)="abrirMenu(i)">
-                ⋮
-              </button>
+                <td class="col-acoes">
+                  <div class="acoes">
+                    <button type="button" class="icon-btn" title="Confirmar" (click)="confirmar(c)">
+                      <svg class="ico" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+                    </button>
+                    <button type="button" class="icon-btn" title="Finalizar" (click)="finalizar(c)">
+                      <svg class="ico" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>
+                    </button>
+                    <button type="button" class="icon-btn icon-btn-danger" title="Cancelar" (click)="cancelar(c)">
+                      <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
 
-              <div class="menu" *ngIf="menuAberto === i">
-                <button type="button" (click)="confirmar(c)">
-                  Confirmar
-                </button>
-                <button type="button" (click)="finalizar(c)">
-                  Finalizar
-                </button>
-                <button type="button" (click)="cancelar(c)">
-                  Cancelar
-                </button>
-              </div>
-            </div>
+              <tr *ngIf="consultasFiltradas.length === 0">
+                <td colspan="6" class="empty">
+                  {{ aba === 'agendadas' && !termoBusca && statusSelecionado === 'Todos' && periodoSelecionado === 'Todos'
+                    ? 'Nenhuma consulta agendada daqui para frente.'
+                    : 'Nenhuma consulta encontrada com esses filtros.' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-          </div>
-
-          <div class="vazio" *ngIf="consultasFiltradas.length === 0">
-            Nenhuma consulta encontrada para esse período.
-          </div>
-
-        </section>
-
-        <section class="paginacao">
-
-          <span>
-            Mostrando {{ consultasPaginadas.length }} de {{ consultasFiltradas.length }} agendamentos
-          </span>
+        <div class="table-footer">
+          <span>Mostrando {{ consultasPaginadas.length }} de {{ consultasFiltradas.length }} agendamentos</span>
 
           <div class="paginas" *ngIf="totalPaginas > 1">
-
-            <button type="button" (click)="mudarPagina(paginaAtual - 1)">
-              ‹
-            </button>
-
-            <button type="button" *ngFor="let p of paginas" [class.ativo]="p === paginaAtual" (click)="mudarPagina(p)">
-              {{ p }}
-            </button>
-
-            <button type="button" (click)="mudarPagina(paginaAtual + 1)">
-              ›
-            </button>
-
-          </div>
-
-        </section>
-
-      </main>
-
-      <aside class="sidebar">
-
-        <div class="calendario">
-
-          <div class="calendario-topo">
-            <h4>Calendário</h4>
-
-            <div>
-              <button type="button" (click)="mesAnterior()">
-                ‹
-              </button>
-
-              <button type="button" (click)="proximoMes()">
-                ›
-              </button>
-            </div>
-          </div>
-
-          <h5>{{ meses[mesAtual] }} {{ anoAtual }}</h5>
-
-          <div class="dias semana">
-            <span>D</span>
-            <span>S</span>
-            <span>T</span>
-            <span>Q</span>
-            <span>Q</span>
-            <span>S</span>
-            <span>S</span>
-          </div>
-
-          <div class="dias">
-            <button type="button" *ngFor="let dia of diasCalendario" [class.outro-mes]="dia.outroMes"
-              [class.selecionado]="dia.numero === diaSelecionado && !dia.outroMes"
-              [class.hoje]="dia.numero === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear() && !dia.outroMes"
-              (click)="selecionarDia(dia)">
-              {{ dia.numero }}
-            </button>
-          </div>
-
-        </div>
-
-        <div class="resumo azul">
-          <small>Consultas hoje</small>
-
-          <div>
-            <h2>{{ consultasHoje | number:'2.0' }}</h2>
-            <span>↗ +15%</span>
+            <button type="button" class="pag-btn" [disabled]="paginaAtual === 1" (click)="mudarPagina(paginaAtual - 1)" aria-label="Anterior"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button type="button" class="pag-btn" *ngFor="let p of paginas" [class.ativo]="p === paginaAtual" (click)="mudarPagina(p)">{{ p }}</button>
+            <button type="button" class="pag-btn" [disabled]="paginaAtual === totalPaginas" (click)="mudarPagina(paginaAtual + 1)" aria-label="Próxima"><svg class="ico" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
           </div>
         </div>
-
-        <div class="resumo claro" *ngIf="temUrgentes">
-          <div>
-            <small>Aguardando confirmação</small>
-            <h2>{{ totalPendentes | number:'2.0' }}</h2>
-          </div>
-
-          <span>Urgente</span>
-        </div>
-
-        <div class="lembrete">
-          <h4>Lembretes Clínicos</h4>
-          <p>Confirmar retornos pós-cirúrgicos agendados para amanhã.</p>
-        </div>
-
-      </aside>
+      </div>
 
     </div>
 
+    <!-- LATERAL -->
+    <aside class="lateral">
+
+      <article class="panel">
+        <div class="cal-topo">
+          <h3>{{ meses[mesAtual] | titlecase }} {{ anoAtual }}</h3>
+          <div class="cal-nav">
+            <button type="button" class="icon-btn" (click)="mesAnterior()" aria-label="Mês anterior">
+              <svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button type="button" class="icon-btn" (click)="proximoMes()" aria-label="Próximo mês">
+              <svg class="ico" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="dias semana">
+          <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+        </div>
+
+        <div class="dias">
+          <button type="button" *ngFor="let dia of diasCalendario"
+            [class.outro-mes]="dia.outroMes"
+            [class.selecionado]="dia.numero === diaSelecionado && !dia.outroMes && periodoSelecionado === 'Dia selecionado'"
+            [class.hoje]="dia.numero === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear() && !dia.outroMes"
+            (click)="selecionarDia(dia)">
+            {{ dia.numero }}
+          </button>
+        </div>
+
+        <button type="button" class="btn btn-ghost btn-sm btn-block" *ngIf="periodoSelecionado !== 'Todos'"
+          (click)="periodoSelecionado = 'Todos'; aplicarFiltros()">
+          Limpar filtro de data
+        </button>
+      </article>
+
+      <article class="panel lembrete">
+        <div class="panel-head">
+          <div>
+            <h3>Lembretes clínicos</h3>
+            <p>Confirmar retornos pós-cirúrgicos agendados para amanhã.</p>
+          </div>
+        </div>
+      </article>
+
+    </aside>
+
   </div>
 
-</section>
+</div>

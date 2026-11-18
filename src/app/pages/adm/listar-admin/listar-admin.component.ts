@@ -28,6 +28,10 @@ export class ListarAdminComponent implements OnInit {
   fotoPreview: string | ArrayBuffer | null = null;
   fotoArquivo: File | null = null;
 
+  adminParaExcluir: any = null;
+  toast: { texto: string; tipo: 'ok' | 'erro' } | null = null;
+  private toastTimer: any;
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -95,7 +99,7 @@ export class ListarAdminComponent implements OnInit {
 
     const arquivo = input.files[0];
     if (!arquivo.type.startsWith('image/')) {
-      alert('Selecione uma imagem válida.');
+      this.avisar('Selecione uma imagem válida.', 'erro');
       return;
     }
 
@@ -134,18 +138,18 @@ export class ListarAdminComponent implements OnInit {
 
   salvarEdicao() {
     if (!this.adminEditando.nome || !this.adminEditando.email) {
-      alert('Preencha os campos obrigatórios (Nome e E-mail).');
+      this.avisar('Preencha os campos obrigatórios (Nome e E-mail).', 'erro');
       return;
     }
 
     const emailFormatado = this.adminEditando.email.trim().toLowerCase();
     if (!emailFormatado.endsWith('@petvitaliz.com')) {
-      alert('Apenas e-mails corporativos (@petvitaliz.com) podem ser cadastrados como Administrador.');
+      this.avisar('Apenas e-mails corporativos (@petvitaliz.com) podem ser cadastrados como Administrador.', 'erro');
       return;
     }
 
     if (this.isNovoAdmin && (!this.adminEditando.senha || this.adminEditando.senha.length < 6)) {
-      alert('A senha é obrigatória e deve conter pelo menos 6 caracteres para novos cadastros.');
+      this.avisar('A senha é obrigatória e deve conter pelo menos 6 caracteres para novos cadastros.', 'erro');
       return;
     }
 
@@ -164,25 +168,25 @@ export class ListarAdminComponent implements OnInit {
     if (this.isNovoAdmin) {
       this.http.post(`${environment.apiUrl}/adm/listar/adm/cadastrar`, formData, { withCredentials: true }).subscribe({
         next: () => {
-          alert('Administrador cadastrado com sucesso');
+          this.avisar('Administrador cadastrado com sucesso', 'ok');
           this.finalizarSalvar();
         },
         error: (err) => {
           this.salvando = false;
           console.error(err);
-          alert(err.error || 'Erro ao cadastrar novo administrador.');
+          this.avisar(err.error || 'Erro ao cadastrar novo administrador.', 'erro');
         }
       });
     } else {
       this.http.put(`${environment.apiUrl}/adm/listar/adm/editar/${this.adminEditando.id}`, formData, { withCredentials: true }).subscribe({
         next: () => {
-          alert('Administrador atualizado com sucesso');
+          this.avisar('Administrador atualizado com sucesso', 'ok');
           this.finalizarSalvar();
         },
         error: (err) => {
           this.salvando = false;
           console.error(err);
-          alert(err.error?.mensagem || 'Erro ao atualizar informações.');
+          this.avisar(err.error?.mensagem || 'Erro ao atualizar informações.', 'erro');
         }
       });
     }
@@ -203,18 +207,46 @@ export class ListarAdminComponent implements OnInit {
   }
 
   excluirAdmin(id: number) {
-    if (confirm('Tem certeza que deseja remover este administrador do sistema?')) {
+    this.adminParaExcluir = this.administradores.find(a => a.id === id) || { id, nome: 'este administrador' };
+  }
+
+  cancelarExclusao() {
+    this.adminParaExcluir = null;
+  }
+
+  confirmarExclusao() {
+    const id = this.adminParaExcluir?.id;
+    this.adminParaExcluir = null;
+
+    if (id !== undefined && id !== null) {
       this.http.delete(`${environment.apiUrl}/adm/listar/adm/excluir/${id}`, { withCredentials: true }).subscribe({
         next: () => {
-          alert('Administrador removido com sucesso.');
+          this.avisar('Administrador removido com sucesso.', 'ok');
           this.carregarAdministradores();
         },
         error: (err) => {
           console.error(err);
-          alert('Erro ao excluir o registro.');
+          this.avisar('Erro ao excluir o registro.', 'erro');
         }
       });
     }
+  }
+
+  avisar(texto: any, tipo: 'ok' | 'erro') {
+    this.toast = { texto: typeof texto === 'string' ? texto : 'Ocorreu um erro inesperado.', tipo };
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.toast = null, 3500);
+  }
+
+  get totalInativos() {
+    return this.administradores.filter(admin => admin.status === 'Inativo').length;
+  }
+
+  iniciais(nome: string): string {
+    const partes = (nome || '').trim().split(/[\s_.]+/).filter(Boolean);
+    if (partes.length === 0) return 'AD';
+    if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
+    return (partes[0].charAt(0) + partes[partes.length - 1].charAt(0)).toUpperCase();
   }
 
   paginaAnterior() { if (this.paginaAtual > 1) this.paginaAtual--; }

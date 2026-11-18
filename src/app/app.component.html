@@ -1,23 +1,33 @@
-<app-header
-  *ngIf="
-    !isFuncionarioRoute() &&
-    !isAdmRoute() &&
-    !isUsuarioRoute()
-  ">
-</app-header>
+@if (isAdmRoute()) {
 
-<app-header-usuario
-  *ngIf="isUsuarioRoute()">
-</app-header-usuario>
+  <!-- PAINEL ADMINISTRATIVO: sidebar + conteúdo, sem header/footer públicos -->
+  <div class="adm-shell">
+    <app-header-adm></app-header-adm>
 
-<app-header-funcionario
-  *ngIf="isFuncionarioRoute()">
-</app-header-funcionario>
+    <main class="adm-main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 
-<app-header-adm
-  *ngIf="isAdmRoute()">
-</app-header-adm>
+} @else {
 
-<router-outlet></router-outlet>
+  <app-header
+    *ngIf="
+      !isFuncionarioRoute() &&
+      !isUsuarioRoute()
+    ">
+  </app-header>
 
-<app-footer></app-footer>
+  <app-header-usuario
+    *ngIf="isUsuarioRoute()">
+  </app-header-usuario>
+
+  <app-header-funcionario
+    *ngIf="isFuncionarioRoute()">
+  </app-header-funcionario>
+
+  <router-outlet></router-outlet>
+
+  <app-footer></app-footer>
+
+}

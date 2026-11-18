@@ -45,6 +45,18 @@ export class EquipeFuncionariosComponent implements OnInit {
   fotoArquivo: File | null = null;
   modalRHAberto = false;
 
+  funcionarioParaExcluir: Funcionario | null = null;
+  toast: string | null = null;
+  private toastTimer: any;
+
+  readonly cargos = [
+    { valor: 'Todos os Cargos', rotulo: 'Todos' },
+    { valor: 'veterinario', rotulo: 'Veterinários' },
+    { valor: 'tosador', rotulo: 'Tosadores' },
+    { valor: 'recepcionista', rotulo: 'Recepção' },
+    { valor: 'financeiro', rotulo: 'Financeiro' }
+  ];
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -237,7 +249,18 @@ export class EquipeFuncionariosComponent implements OnInit {
   }
 
   excluirFuncionario(funcionario: Funcionario): void {
-    if (confirm(`Tem certeza que deseja remover ${funcionario.nome} do sistema?`)) {
+    this.funcionarioParaExcluir = funcionario;
+  }
+
+  cancelarExclusao(): void {
+    this.funcionarioParaExcluir = null;
+  }
+
+  confirmarExclusao(): void {
+    const funcionario = this.funcionarioParaExcluir;
+    this.funcionarioParaExcluir = null;
+
+    if (funcionario) {
       this.http.delete(`${environment.apiUrl}/adm/listar/funcionario/excluir/${funcionario.id}`, { withCredentials: true }).subscribe({
         next: () => {
           this.carregarFuncionarios();
@@ -261,7 +284,45 @@ export class EquipeFuncionariosComponent implements OnInit {
   fecharModal(): void { this.modalAberto = false; }
   falarComRH(): void { this.modalRHAberto = true; }
   fecharModalRH(): void { this.modalRHAberto = false; }
-  abrirManual(): void { alert('Manual do colaborador aberto.'); }
+  abrirManual(): void { this.mostrarToast('Manual do colaborador aberto.'); }
+
+  mostrarToast(texto: string): void {
+    this.toast = texto;
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.toast = null, 3000);
+  }
+
+  get paginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  }
+
+  get funcionariosAtivos(): number {
+    return this.funcionarios.filter(f => f.status === 'Ativo').length;
+  }
+
+  contagemCargo(cargo: string): number {
+    if (cargo === 'Todos os Cargos') return this.funcionarios.length;
+    return this.funcionarios.filter(f => f.cargo === cargo).length;
+  }
+
+  definirCargo(cargo: string): void {
+    this.filtroCargo = cargo;
+    this.paginaAtual = 1;
+  }
+
+  rotuloCargo(cargo: string): string {
+    const mapa: Record<string, string> = {
+      veterinario: 'Veterinário',
+      tosador: 'Tosador',
+      recepcionista: 'Recepcionista',
+      financeiro: 'Financeiro'
+    };
+    return mapa[cargo] || cargo;
+  }
+
+  iniciais(f: Funcionario): string {
+    return ((f.nome || '').charAt(0) + (f.sobrenome || f.nome || '').charAt(f.sobrenome ? 0 : 1)).toUpperCase();
+  }
 
   private criarFuncionarioVazio(): Funcionario {
     return { id: '', nome: '', sobrenome: '', cargo: 'veterinario', email: '', status: 'Ativo', avatar: null, senha: '' };

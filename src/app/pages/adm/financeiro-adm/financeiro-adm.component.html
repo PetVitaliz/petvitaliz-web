@@ -1,537 +1,277 @@
-<section class="financeiro-page">
+<div class="page">
 
-  <div class="page-header">
-
-    <div>
-      <h1>Visão Financeira</h1>
-
-      <p>
-        Gestão de fluxo e saúde econômica da clínica.
-      </p>
+  <header class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>
+      </div>
+      <div>
+        <h1>Visão financeira</h1>
+        <p>Fluxo de caixa e saúde econômica da clínica.</p>
+      </div>
     </div>
 
-    <div class="actions">
-
-      <button
-        class="btn-primary"
-        type="button"
-        (click)="abrirModal()"
-      >
-        + Nova Transação
+    <div class="header-actions">
+      <button type="button" class="btn btn-ghost" (click)="exportarRelatorio()">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Exportar CSV
       </button>
-
+      <button type="button" class="btn btn-primary" (click)="abrirModal()">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Nova transação
+      </button>
     </div>
+  </header>
 
-  </div>
+  <!-- INDICADORES -->
+  <section class="stats">
+    <button type="button" class="stat-card" [class.ativo]="cardAtivo === 'receita'" (click)="selecionarCard('receita')">
+      <span class="stat-icon icon-green">
+        <svg class="ico" viewBox="0 0 24 24"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
+      </span>
+      <div>
+        <span>Receita total</span>
+        <strong>{{ formatarMoeda(receitaTotal) }}</strong>
+        <small class="trend-up">+12,5% no mês</small>
+      </div>
+    </button>
 
-  <div class="financeiro-box">
+    <button type="button" class="stat-card" [class.ativo]="cardAtivo === 'despesa'" (click)="selecionarCard('despesa')">
+      <span class="stat-icon icon-red">
+        <svg class="ico" viewBox="0 0 24 24"><path d="m22 17-8.5-8.5-5 5L2 7"/><path d="M16 17h6v-6"/></svg>
+      </span>
+      <div>
+        <span>Despesas</span>
+        <strong class="negativo">{{ formatarMoeda(despesasTotal) }}</strong>
+        <small class="trend-down">+21% no mês</small>
+      </div>
+    </button>
 
-    <div class="financeiro-content">
+    <button type="button" class="stat-card" [class.ativo]="cardAtivo === 'saldo'" (click)="selecionarCard('saldo')">
+      <span class="stat-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+      </span>
+      <div class="saldo">
+        <span>Saldo</span>
+        <strong>{{ formatarMoeda(saldoTotal) }}</strong>
+        <span class="meter"><span class="meter-fill" [style.width.%]="margemSaldo"></span></span>
+        <small>{{ margemSaldo }}% da receita</small>
+      </div>
+    </button>
 
-      <section class="cards-resumo">
+    <button type="button" class="stat-card" [class.ativo]="cardAtivo === 'pendente'" (click)="selecionarCard('pendente')">
+      <span class="stat-icon icon-amber">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      </span>
+      <div>
+        <span>Pendentes</span>
+        <strong>{{ formatarMoeda(pendentesTotal) }}</strong>
+        <small>{{ quantidadePendentes }} {{ quantidadePendentes === 1 ? 'item' : 'itens' }}</small>
+      </div>
+    </button>
+  </section>
 
-        <div
-          class="resumo-card"
-          [class.ativo]="cardAtivo === 'receita'"
-          (click)="selecionarCard('receita')"
-        >
+  <!-- GRÁFICOS -->
+  <section class="charts-grid">
 
-          <div class="resumo-topo">
-
-            <span class="icon azul">
-
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 1V23"></path>
-                <path d="M17 5H9.5A3.5 3.5 0 0 0 9.5 12H14.5A3.5 3.5 0 0 1 14.5 19H6"></path>
-              </svg>
-
-            </span>
-
-            <span class="tag verde">
-              +12.5%
-            </span>
-
-          </div>
-
-          <small>
-            RECEITA TOTAL
-          </small>
-
-          <h2>
-            {{ formatarMoeda(receitaTotal) }}
-          </h2>
-
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Fluxo de caixa</h3>
+          <p>{{ periodoFluxo === 'Mensal' ? 'Movimentação mensal consolidada' : 'Movimentação anual consolidada' }}</p>
         </div>
 
-        <div
-          class="resumo-card"
-          [class.ativo]="cardAtivo === 'despesa'"
-          (click)="selecionarCard('despesa')"
-        >
+        <div class="segmented" role="group" aria-label="Período">
+          <button type="button" [class.ativo]="periodoFluxo === 'Mensal'" (click)="alterarPeriodoFluxo('Mensal')">Mensal</button>
+          <button type="button" [class.ativo]="periodoFluxo === 'Anual'" (click)="alterarPeriodoFluxo('Anual')">Anual</button>
+        </div>
+      </div>
 
-          <div class="resumo-topo">
-
-            <span class="icon vermelho">
-
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 3V21H21"></path>
-                <path d="M7 9L12 14L21 5"></path>
-              </svg>
-
-            </span>
-
-            <span class="tag vermelho-tag">
-              +21%
-            </span>
-
-          </div>
-
-          <small>
-            DESPESAS
-          </small>
-
-          <h2 class="vermelho-texto">
-            {{ formatarMoeda(despesasTotal) }}
-          </h2>
-
+      <div class="chart">
+        <div class="chart-grid">
+          <span></span><span></span><span></span><span></span>
         </div>
 
-        <div
-          class="saldo-card"
-          [class.ativo]="cardAtivo === 'saldo'"
-          (click)="selecionarCard('saldo')"
-        >
-
-          <small>
-            SALDO
-          </small>
-
-          <h2>
-            {{ formatarMoeda(saldoTotal) }}
-          </h2>
-
-          <div class="saldo-barra">
-            <div></div>
+        <div class="chart-col" *ngFor="let f of fluxoAtual">
+          <div class="chart-bars">
+            <div class="bar bar-receita" [style.height.%]="alturaBarra(f.receita)">
+              <span class="tooltip">Receita<br><strong>{{ formatarCompacto(f.receita) }}</strong></span>
+            </div>
+            <div class="bar bar-despesa" [style.height.%]="alturaBarra(f.despesa)">
+              <span class="tooltip">Despesa<br><strong>{{ formatarCompacto(f.despesa) }}</strong></span>
+            </div>
           </div>
+          <span class="chart-label">{{ f.rotulo }}</span>
+        </div>
+      </div>
 
-          <span>
-            75%
-          </span>
+      <div class="legenda">
+        <span><i class="dot dot-receita"></i>Receitas</span>
+        <span><i class="dot dot-despesa"></i>Despesas</span>
+      </div>
+    </article>
 
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Gastos por categoria</h3>
+          <p>Distribuição das despesas</p>
+        </div>
+      </div>
+
+      <div class="categorias">
+        <div class="categoria" *ngFor="let c of categoriasGasto">
+          <div class="categoria-linha">
+            <span>{{ c.nome }}</span>
+            <strong>{{ c.percentual }}%</strong>
+          </div>
+          <span class="meter"><span class="meter-fill" [style.width.%]="c.percentual"></span></span>
+        </div>
+      </div>
+
+      <div class="alert alert-info dica">
+        A economia em medicamentos este mês foi de 8% em relação ao período anterior.
+      </div>
+    </article>
+
+  </section>
+
+  <!-- TRANSAÇÕES -->
+  <section class="bottom-grid">
+
+    <article class="panel panel-flush">
+      <div class="panel-head">
+        <div>
+          <h3>Transações recentes</h3>
+          <p>{{ transacoesFiltradas.length }} {{ transacoesFiltradas.length === 1 ? 'registro' : 'registros' }}</p>
         </div>
 
-        <div
-          class="resumo-card"
-          [class.ativo]="cardAtivo === 'pendente'"
-          (click)="selecionarCard('pendente')"
-        >
-
-          <div class="resumo-topo">
-
-            <span class="icon cinza">
-
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="9"></circle>
-                <path d="M12 7V12L15 15"></path>
-              </svg>
-
-            </span>
-
-            <span class="tag laranja">
-              8 itens
-            </span>
-
-          </div>
-
-          <small>
-            PAGAMENTOS PENDENTES
-          </small>
-
-          <h2>
-            {{ formatarMoeda(pendentesTotal) }}
-          </h2>
-
-        </div>
-
-      </section>
-
-      <section class="conteudo-meio">
-
-        <div class="fluxo-card">
-
-          <div class="card-header">
-
-            <div>
-
-              <h3>
-                Fluxo de Caixa
-              </h3>
-
-              <p>
-                {{
-                  periodoFluxo === 'Mensal'
-                    ? 'Movimentação mensal consolidada'
-                    : 'Movimentação anual consolidada'
-                }}
-              </p>
-
-            </div>
-
-            <div class="tabs">
-
-              <button
-                type="button"
-                [class.ativo]="periodoFluxo === 'Mensal'"
-                (click)="alterarPeriodoFluxo('Mensal')"
-              >
-                Mensal
-              </button>
-
-              <button
-                type="button"
-                [class.ativo]="periodoFluxo === 'Anual'"
-                (click)="alterarPeriodoFluxo('Anual')"
-              >
-                Anual
-              </button>
-
-            </div>
-
-          </div>
-
-          <div class="grafico">
-
-            <div class="linha-grafico"></div>
-            <div class="linha-grafico"></div>
-            <div class="linha-grafico"></div>
-            <div class="linha-grafico"></div>
-
-            <div class="meses">
-              <span>JAN</span>
-              <span>FEV</span>
-              <span>MAR</span>
-              <span>ABR</span>
-              <span>MAI</span>
-              <span>JUN</span>
-            </div>
-
-          </div>
-
-          <div class="legenda">
-
-            <span>
-              <i class="bolinha azul-b"></i>
-              Receitas
-            </span>
-
-            <span>
-              <i class="bolinha cinza-b"></i>
-              Despesas
-            </span>
-
-          </div>
-
-        </div>
-
-        <div class="categorias-card">
-
-          <h3>
-            Gastos por Categoria
-          </h3>
-
-          <div class="categoria">
-
-            <p>
-              Medicamentos
-              <span>45%</span>
-            </p>
-
-            <div class="barra">
-              <div style="width: 45%;"></div>
-            </div>
-
-          </div>
-
-          <div class="categoria">
-
-            <p>
-              Salários
-              <span>30%</span>
-            </p>
-
-            <div class="barra">
-              <div style="width: 30%;"></div>
-            </div>
-
-          </div>
-
-          <div class="categoria">
-
-            <p>
-              Infraestrutura
-              <span>15%</span>
-            </p>
-
-            <div class="barra">
-              <div style="width: 15%;"></div>
-            </div>
-
-          </div>
-
-          <div class="categoria">
-
-            <p>
-              Marketing
-              <span>10%</span>
-            </p>
-
-            <div class="barra">
-              <div style="width: 10%;"></div>
-            </div>
-
-          </div>
-
-          <div class="dica">
-            A economia em medicamentos este mês foi de 8% em relação ao período anterior.
-          </div>
-
-        </div>
-
-      </section>
-
-      <section class="baixo-financeiro">
-
-        <div class="transacoes">
-
-          <div class="transacoes-header">
-
-            <h3>
-              Transações Recentes
-            </h3>
-
-            <div class="busca">
-
-              <span class="busca-icon">
-
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M21 21L16.65 16.65"></path>
-                  <circle cx="11" cy="11" r="8"></circle>
-                </svg>
-
-              </span>
-
-              <input
-                type="text"
-                placeholder="Buscar transação..."
-                [(ngModel)]="busca"
-              >
-
-            </div>
-
-          </div>
-
-          <div class="tabela">
-
-            <div class="linha cabecalho">
-
-              <span>Data</span>
-              <span>Descrição</span>
-              <span>Categoria</span>
-              <span>Valor</span>
-              <span>Status</span>
-              <span></span>
-
-            </div>
-
-            <div
-              class="linha"
-              *ngFor="let t of transacoesFiltradas; let i = index"
-            >
-
-              <span>
-                {{ t.data }}
-              </span>
-
-              <div>
-
-                <strong>
-                  {{ t.descricao }}
-                </strong>
-
-                <small>
-                  {{ t.cliente }}
-                </small>
-
-              </div>
-
-              <span class="categoria-tag">
-                {{ t.categoria }}
-              </span>
-
-              <span
-                class="valor"
-                [class.negativo]="t.valor < 0"
-              >
-                {{ formatarMoeda(t.valor) }}
-              </span>
-
-              <span
-                class="status"
-                [class.pendente]="t.status === 'Pendente'"
-              >
-                {{ t.status }}
-              </span>
-
-              <div class="acoes">
-
-                <button
-                  type="button"
-                  (click)="abrirMenu(i)"
-                >
-                  ⋮
-                </button>
-
-                <div
-                  class="menu-acoes"
-                  *ngIf="menuAberto === i"
-                >
-
-                  <button
-                    type="button"
-                    (click)="marcarComoPago(t)"
-                  >
-                    Marcar como pago
-                  </button>
-
-                  <button
-                    type="button"
-                    (click)="marcarComoPendente(t)"
-                  >
-                    Marcar pendente
-                  </button>
-
-                  <button
-                    type="button"
-                    class="perigo"
-                    (click)="excluirTransacao(t)"
-                  >
-                    Excluir
-                  </button>
-
+        <label class="search search-sm">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Buscar transação" [(ngModel)]="busca">
+        </label>
+      </div>
+
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th class="col-valor">Valor</th>
+              <th>Status</th>
+              <th class="col-acoes">Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let t of transacoesFiltradas">
+              <td class="cell-muted nowrap">{{ t.data }}</td>
+              <td>
+                <div class="descricao">
+                  <strong>{{ t.descricao }}</strong>
+                  <small>{{ t.cliente }}</small>
                 </div>
+              </td>
+              <td><span class="tag">{{ t.categoria }}</span></td>
+              <td class="col-valor valor" [class.negativo]="t.valor < 0">{{ formatarMoeda(t.valor) }}</td>
+              <td>
+                <span class="pill" [class.pill-ok]="t.status === 'Pago'" [class.pill-warn]="t.status === 'Pendente'">
+                  <i></i>{{ t.status }}
+                </span>
+              </td>
+              <td class="col-acoes">
+                <div class="acoes">
+                  <button type="button" class="icon-btn" *ngIf="t.status !== 'Pago'" title="Marcar como pago" (click)="marcarComoPago(t)">
+                    <svg class="ico" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+                  </button>
+                  <button type="button" class="icon-btn" *ngIf="t.status === 'Pago'" title="Marcar como pendente" (click)="marcarComoPendente(t)">
+                    <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                  </button>
+                  <button type="button" class="icon-btn icon-btn-danger" title="Excluir" (click)="excluirTransacao(t)">
+                    <svg class="ico" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
 
-              </div>
+            <tr *ngIf="transacoesFiltradas.length === 0">
+              <td colspan="6" class="empty">Nenhuma transação encontrada.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
 
-            </div>
-
-          </div>
-
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Performance mensal</h3>
+          <p>Metas da clínica</p>
         </div>
+      </div>
 
-        <div class="performance">
-
-          <h3>
-            Performance Mensal
-          </h3>
-
-          <p>
-            Metas de Vendas (Planos)
-            <span>82%</span>
-          </p>
-
-          <div class="barra-dark">
-            <div style="width: 82%;"></div>
-          </div>
-
-          <p>
-            Capacidade Clínica
-            <span>65%</span>
-          </p>
-
-          <div class="barra-dark">
-            <div style="width: 65%;"></div>
-          </div>
-
+      <div class="categorias">
+        <div class="categoria">
+          <div class="categoria-linha"><span>Metas de vendas (planos)</span><strong>82%</strong></div>
+          <span class="meter"><span class="meter-fill" style="width: 82%"></span></span>
         </div>
+        <div class="categoria">
+          <div class="categoria-linha"><span>Capacidade clínica</span><strong>65%</strong></div>
+          <span class="meter"><span class="meter-fill" style="width: 65%"></span></span>
+        </div>
+      </div>
+    </article>
 
-      </section>
+  </section>
 
+</div>
+
+<!-- MODAL: NOVA TRANSAÇÃO -->
+<div class="modal-backdrop" *ngIf="modalAberto" (click)="fecharModal()">
+  <div class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div>
+        <h2>Nova transação</h2>
+        <p>Registre uma receita ou despesa.</p>
+      </div>
+      <button type="button" class="icon-btn" (click)="fecharModal()" aria-label="Fechar">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
     </div>
 
-  </div>
+    <div class="modal-body">
+      <div class="alert alert-erro erro-form" *ngIf="erroForm">{{ erroForm }}</div>
 
-  <div
-    class="modal-fundo"
-    *ngIf="modalAberto"
-  >
-
-    <div class="modal">
-
-      <div class="modal-header">
-
-        <h2>
-          Nova Transação
-        </h2>
-
-        <button
-          type="button"
-          (click)="fecharModal()"
-        >
-          ×
-        </button>
-
+      <div class="tipo-toggle segmented">
+        <button type="button" [class.ativo]="novaTransacao.tipo === 'Receita'" (click)="novaTransacao.tipo = 'Receita'">Receita</button>
+        <button type="button" [class.ativo]="novaTransacao.tipo === 'Despesa'" (click)="novaTransacao.tipo = 'Despesa'">Despesa</button>
       </div>
 
       <div class="form-grid">
+        <div class="campo span-2">
+          <label>Descrição</label>
+          <input type="text" [(ngModel)]="novaTransacao.descricao" placeholder="Ex: Consulta clínica - Luna">
+        </div>
 
-        <label>
+        <div class="campo">
+          <label>Data</label>
+          <input type="date" [(ngModel)]="novaTransacao.data">
+        </div>
 
-          Data
+        <div class="campo">
+          <label>Valor (R$)</label>
+          <input type="number" [(ngModel)]="novaTransacao.valor">
+        </div>
 
-          <input
-            type="date"
-            [(ngModel)]="novaTransacao.data"
-          >
+        <div class="campo span-2">
+          <label>Cliente / fornecedor</label>
+          <input type="text" [(ngModel)]="novaTransacao.cliente">
+        </div>
 
-        </label>
-
-        <label>
-
-          Tipo
-
-          <select [(ngModel)]="novaTransacao.tipo">
-            <option>Receita</option>
-            <option>Despesa</option>
-          </select>
-
-        </label>
-
-        <label class="campo-full">
-
-          Descrição
-
-          <input
-            type="text"
-            [(ngModel)]="novaTransacao.descricao"
-          >
-
-        </label>
-
-        <label>
-
-          Cliente/Fornecedor
-
-          <input
-            type="text"
-            [(ngModel)]="novaTransacao.cliente"
-          >
-
-        </label>
-
-        <label>
-
-          Categoria
-
+        <div class="campo">
+          <label>Categoria</label>
           <select [(ngModel)]="novaTransacao.categoria">
             <option>Serviço</option>
             <option>Procedimento</option>
@@ -540,55 +280,38 @@
             <option>Salários</option>
             <option>Marketing</option>
           </select>
+        </div>
 
-        </label>
-
-        <label>
-
-          Status
-
+        <div class="campo">
+          <label>Status</label>
           <select [(ngModel)]="novaTransacao.status">
             <option>Pago</option>
             <option>Pendente</option>
           </select>
-
-        </label>
-
-        <label>
-
-          Valor
-
-          <input
-            type="number"
-            [(ngModel)]="novaTransacao.valor"
-          >
-
-        </label>
-
+        </div>
       </div>
-
-      <div class="modal-actions">
-
-        <button
-          class="btn-light"
-          type="button"
-          (click)="fecharModal()"
-        >
-          Cancelar
-        </button>
-
-        <button
-          class="btn-primary"
-          type="button"
-          (click)="salvarTransacao()"
-        >
-          Salvar Transação
-        </button>
-
-      </div>
-
     </div>
 
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="fecharModal()">Cancelar</button>
+      <button type="button" class="btn btn-primary" (click)="salvarTransacao()">Salvar transação</button>
+    </div>
   </div>
+</div>
 
-</section>
+<!-- CONFIRMAR EXCLUSÃO -->
+<div class="modal-backdrop" *ngIf="transacaoParaExcluir" (click)="cancelarExclusao()">
+  <div class="modal modal-sm modal-confirm" (click)="$event.stopPropagation()" role="alertdialog" aria-modal="true">
+    <div class="modal-body">
+      <div class="modal-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+      </div>
+      <h2>Excluir transação?</h2>
+      <p>"{{ transacaoParaExcluir.descricao }}" será removida da lista.</p>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="cancelarExclusao()">Cancelar</button>
+      <button type="button" class="btn btn-danger" (click)="confirmarExclusao()">Excluir</button>
+    </div>
+  </div>
+</div>

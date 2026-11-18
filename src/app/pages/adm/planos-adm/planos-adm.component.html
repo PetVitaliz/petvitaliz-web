@@ -1,237 +1,349 @@
-<section class="page-container">
+<div class="page">
 
-  <div class="breadcrumb">
-    <span>ADMIN</span>
-    <small>›</small>
-    <small>PLANOS DE ASSINATURA</small>
-  </div>
-
-  <div class="page-header">
-    <div>
-      <h1>Planos de Assinatura</h1>
-      <p>
-        Gerencie configurações de níveis, preços e disponibilidade para o
-        ecossistema de saúde PetVital. Mostrando {{ planos.length }} de 4 planos permitidos.
-      </p>
+  <header class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+      </div>
+      <div>
+        <h1>Planos de assinatura</h1>
+        <p>Os planos que os tutores veem no site e no app.</p>
+      </div>
     </div>
 
-    <button class="btn-novo" type="button" (click)="novoPlano()" [style.opacity]="planos.length >= 4 ? '0.5' : '1'">
-      <span class="icon-plus">+</span>
-      Criar Novo Plano
+    <div class="header-actions">
+      <!-- Mensal / Anual (igual ao mobile) -->
+      <div class="ciclo" role="group" aria-label="Ciclo de cobrança">
+        <button type="button" [class.ativo]="ciclo === 'mensal'" (click)="ciclo = 'mensal'">Mensal</button>
+        <button type="button" [class.ativo]="ciclo === 'anual'" (click)="ciclo = 'anual'">
+          Anual
+          <span class="selo-off">até {{ maiorEconomia }}% off</span>
+        </button>
+      </div>
+
+      <button type="button" class="btn btn-primary" (click)="novoPlano()">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Novo plano
+      </button>
+    </div>
+  </header>
+
+  <div class="alert alert-erro aviso" *ngIf="erroCarregar">
+    {{ erroCarregar }}
+    <button type="button" class="link-action" (click)="carregarPlanos()">Tentar novamente</button>
+  </div>
+
+  <!-- Faltam níveis do app -->
+  <div class="alert alert-info aviso faltando" *ngIf="!carregando && !erroCarregar && niveisFaltando.length > 0">
+    <span>
+      Faltam no sistema os planos do app:
+      <strong *ngFor="let n of niveisFaltando; let ultimo = last">{{ n.nome.replace('Plano ', '') }}{{ ultimo ? '' : ', ' }}</strong>.
+    </span>
+    <button type="button" class="btn btn-soft btn-sm" (click)="cadastrarPlanosDoApp()" [disabled]="cadastrandoPadroes">
+      {{ cadastrandoPadroes ? 'Cadastrando...' : 'Cadastrar planos do app' }}
     </button>
   </div>
 
-  <div class="content-card">
+  <!-- INDICADORES -->
+  <section class="stats">
+    <div class="stat-card">
+      <span class="stat-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+      </span>
+      <div>
+        <span>Planos ativos</span>
+        <strong>{{ carregando ? '–' : planos.length }}</strong>
+        <small>{{ 4 - niveisFaltando.length }} de 4 níveis do app</small>
+      </div>
+    </div>
 
-    <div class="planos-grid">
-      <div
-        class="plano-card"
-        *ngFor="let plano of planos"
-        [class.recomendado]="plano.tag === 'RECOMENDADO'"
-      >
-        <div class="plano-top">
-          <span class="tag">{{ plano.tag }}</span>
-          <span class="status">
-            <span class="status-dot"></span>
-            {{ plano.status }}
-          </span>
+    <div class="stat-card">
+      <span class="stat-icon icon-green">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </span>
+      <div>
+        <span>Assinantes</span>
+        <strong>{{ carregandoAssinantes ? '–' : assinantes.length }}</strong>
+        <small>{{ apiTemPlanoDoCliente ? 'pets com plano ativo' : 'aguardando dados da API' }}</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-icon icon-amber">
+        <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>
+      </span>
+      <div>
+        <span>Receita mensal estimada</span>
+        <strong>{{ moeda(receitaMensalEstimada) }}</strong>
+        <small>assinantes × preço mensal</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDS DOS PLANOS -->
+  <div class="loading-state" *ngIf="carregando">
+    <div class="loader"></div>
+    <span>Carregando planos...</span>
+  </div>
+
+  <section class="niveis" *ngIf="!carregando">
+    <article class="nivel-card" *ngFor="let p of planos"
+      [class.destaque]="p.nivel === 'ouro'"
+      [style.--cor-nivel]="corDo(p.nivel)">
+
+      <span class="faixa" *ngIf="p.nivel === 'ouro'">Mais escolhido</span>
+
+      <div class="nivel-topo">
+        <span class="coroa" [style.background]="corDo(p.nivel)">
+          <svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+        </span>
+        <div class="nivel-nome">
+          <h2>{{ nomeCurto(p) }}</h2>
+          <p>{{ p.resumo }}</p>
         </div>
+      </div>
 
-        <h2>{{ plano.nome }}</h2>
-
-        <p class="plano-descricao">
-          {{ plano.descricao }}
-        </p>
-
-        <div class="preco">
-          R$ {{ plano.preco }}<small>/mês</small>
+      <div class="nivel-preco" [class.anual]="ciclo === 'anual'">
+        <span class="preco-de" *ngIf="ciclo === 'anual' && economia(p) > 0">{{ moeda(p.mensal) }}</span>
+        <strong>{{ moeda(precoPorMes(p)) }}</strong><small>/mês</small>
+        <div class="preco-anual" *ngIf="ciclo === 'anual'">
+          {{ moeda(totalAnual(p)) }}/ano
+          <span class="economia" *ngIf="economia(p) > 0">economia de {{ economia(p) }}%</span>
         </div>
+        <div class="preco-anual" *ngIf="ciclo === 'mensal'">
+          ou {{ moeda(p.anual) }}/mês no anual
+        </div>
+      </div>
 
-        <ul class="beneficios-preview">
-          <li *ngFor="let beneficio of plano.beneficiosArray">
-            <span class="beneficio-check">✓</span>
-            {{ beneficio }}
-          </li>
-        </ul>
+      <ul class="nivel-beneficios">
+        <li *ngFor="let b of p.beneficios">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+          <span class="b-texto">{{ b.texto }}</span>
+          <span class="b-qtd">{{ b.quantidade }}</span>
+        </li>
+      </ul>
 
-        <div class="linha"></div>
-
-        <div class="plano-actions">
-          <div class="action-buttons">
-            <button
-              type="button"
-              class="action-btn edit"
-              title="Editar"
-              (click)="editarPlano(plano)"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 20H21"></path>
-                <path d="M16.5 3.5A2.12 2.12 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z"></path>
-              </svg>
-            </button>
-
-            <button
-              type="button"
-              class="action-btn delete"
-              title="Excluir"
-              (click)="excluirPlano(plano.id_produto)"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 6H21"></path>
-                <path d="M8 6V4H16V6"></path>
-                <path d="M19 6L18 20H6L5 6"></path>
-                <path d="M10 11V17"></path>
-                <path d="M14 11V17"></path>
-              </svg>
-            </button>
-          </div>
-
-          <button
-            type="button"
-            class="detalhes"
-            (click)="verDetalhes(plano)"
-          >
-            Ver Detalhes
+      <div class="nivel-rodape">
+        <span class="assinantes-nivel">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg>
+          {{ assinantesDo(p) }} {{ assinantesDo(p) === 1 ? 'assinante' : 'assinantes' }}
+        </span>
+        <div class="acoes">
+          <button type="button" class="icon-btn" title="Editar" (click)="editar(p)">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button type="button" class="icon-btn icon-btn-danger" title="Excluir" (click)="excluir(p)">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
           </button>
         </div>
       </div>
+    </article>
+
+    <!-- Adicionar outro plano -->
+    <button type="button" class="nivel-novo" (click)="novoPlano()">
+      <span class="novo-icone">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </span>
+      <strong>Adicionar plano</strong>
+      <small>Bronze, Prata, Ouro, Diamante ou personalizado</small>
+    </button>
+  </section>
+
+  <!-- ASSINANTES -->
+  <article class="panel panel-flush assinantes">
+    <div class="panel-head">
+      <div>
+        <h3>Quem contratou</h3>
+        <p>Pets com plano ativo</p>
+      </div>
+      <label class="search search-sm">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" placeholder="Buscar pet ou tutor" [(ngModel)]="buscaAssinante">
+      </label>
     </div>
 
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-        </div>
-        <div>
-          <span>TOTAL DE ASSINANTES</span>
-          <strong>12.482</strong>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon yellow">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 17L9 11L13 15L21 7"></path>
-            <path d="M14 7H21V14"></path>
-          </svg>
-        </div>
-        <div>
-          <span>CRESCIMENTO (MÊS)</span>
-          <strong>+18.4%</strong>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 12A9 9 0 1 1 12 3"></path>
-            <path d="M21 3V9H15"></path>
-            <path d="M21 3L12 12"></path>
-          </svg>
-        </div>
-        <div>
-          <span>TAXA DE RENOVAÇÃO</span>
-          <strong>94.2%</strong>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" *ngIf="modalAberto">
-    <div class="modal">
-      <h2>
-        {{ modoEdicao ? 'Editar Plano' : 'Criar Novo Plano' }}
-      </h2>
-
-      <div class="feedback-msg erro" *ngIf="mensagemErro">
-        <span>⚠️</span> {{ mensagemErro }}
-      </div>
-      <div class="feedback-msg sucesso" *ngIf="mensagemSucesso">
-        <span>✅</span> {{ mensagemSucesso }}
-      </div>
-
-      <label>Nome do Plano</label>
-      <input type="text" [(ngModel)]="planoSelecionado.nome" placeholder="Ex: Cuidados Essenciais" [disabled]="salvando">
-
-      <label>Tag de Exibição</label>
-      <select [(ngModel)]="planoSelecionado.tag" [disabled]="salvando">
-        <option value="NÍVEL DE ENTRADA">Plano Inicial</option>
-        <option value="ESCOLHA POPULAR">Plano de Cuidados Essenciais</option>
-        <option value="RECOMENDADO">Plano Abrangente</option>
-        <option value="NÍVEL ELITE">Plano Premium</option>
-      </select>
-
-      <label>Preço Mensal (Apenas Números)</label>
-      <input type="number" [(ngModel)]="planoSelecionado.preco" placeholder="Ex: 89.90" [disabled]="salvando">
-
-      <label>Descrição do Nível</label>
-      <textarea [(ngModel)]="planoSelecionado.descricao" placeholder="Escreva um breve resumo sobre a cobertura..." [disabled]="salvando"></textarea>
-
-      <label>Benefícios Inclusos (Separe por vírgula)</label>
-      <textarea style="height: 70px;" [(ngModel)]="planoSelecionado.beneficios" placeholder="Ex: Consultas de rotina, Vacinas inclusas, Banho e Tosa" [disabled]="salvando"></textarea>
-
-      <div class="modal-actions">
-        <button
-          type="button"
-          class="btn-cancelar"
-          (click)="fecharModal()"
-          [disabled]="salvando"
-        >
-          Cancelar
+    <div class="chips chips-assinantes">
+      <button type="button" class="chip" [class.ativo]="filtroAssinantes === 'todos'" (click)="filtroAssinantes = 'todos'">
+        Todos <span class="chip-count">{{ assinantes.length }}</span>
+      </button>
+      <ng-container *ngFor="let p of planos">
+        <button type="button" class="chip" *ngIf="p.id_produto"
+          [class.ativo]="filtroAssinantes === p.id_produto" (click)="filtroAssinantes = p.id_produto ?? 'todos'">
+          <i class="ponto" [style.background]="corDo(p.nivel)"></i>
+          {{ nomeCurto(p) }}
+          <span class="chip-count">{{ assinantesDo(p) }}</span>
         </button>
+      </ng-container>
+    </div>
 
-        <button
-          type="button"
-          class="btn-salvar"
-          (click)="salvarPlano()"
-          [disabled]="salvando"
-        >
-          {{ salvando ? 'Salvando...' : 'Salvar Plano' }}
+    <div class="loading-state" *ngIf="carregandoAssinantes">
+      <div class="loader"></div>
+      <span>Carregando assinantes...</span>
+    </div>
+
+    <ng-container *ngIf="!carregandoAssinantes">
+      <div class="alert alert-info aviso-api" *ngIf="!apiTemPlanoDoCliente">
+        A API de clientes ainda não informa qual plano cada pet contratou. Assim que o backend
+        passar a enviar o campo <code>plano</code> em <code>/adm/listar/clientes</code>,
+        os assinantes aparecem aqui automaticamente.
+      </div>
+
+      <div class="table-wrap" *ngIf="apiTemPlanoDoCliente">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Pet</th>
+              <th>Tutor</th>
+              <th>Telefone</th>
+              <th>Plano</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of assinantesFiltrados">
+              <td class="cell-strong">{{ a.pet }}</td>
+              <td>{{ a.tutor }}</td>
+              <td class="cell-muted">{{ a.telefone }}</td>
+              <td>
+                <ng-container *ngIf="planoDoAssinante(a) as pa; else semPlanoCadastrado">
+                  <span class="selo-nivel">
+                    <i class="ponto" [style.background]="corDo(pa.nivel)"></i>
+                    {{ nomeCurto(pa) }}
+                  </span>
+                </ng-container>
+                <ng-template #semPlanoCadastrado>
+                  <span class="selo-nivel">{{ a.planoTexto }}</span>
+                </ng-template>
+              </td>
+              <td>
+                <span class="pill" [class.pill-ok]="a.status === 'Ativo'" [class.pill-muted]="a.status !== 'Ativo'">
+                  <i></i>{{ a.status }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="assinantesFiltrados.length === 0">
+              <td colspan="5" class="empty">Nenhum assinante encontrado.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </article>
+
+</div>
+
+<!-- MODAL: NOVO / EDITAR -->
+<div class="modal-backdrop" *ngIf="modalAberto" (click)="fecharModal()">
+  <div class="modal modal-lg" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div class="pessoa">
+        <span class="coroa" [style.background]="corDo(form.nivel)">
+          <svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+        </span>
+        <div>
+          <h2>{{ modoEdicao ? 'Editar plano' : 'Novo plano' }}</h2>
+          <p>Os valores aparecem para os tutores no site e no app.</p>
+        </div>
+      </div>
+      <button type="button" class="icon-btn" (click)="fecharModal()" [disabled]="salvando" aria-label="Fechar">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="alert alert-erro aviso" *ngIf="mensagemErro">{{ mensagemErro }}</div>
+      <div class="alert alert-ok aviso" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</div>
+
+      <div class="campo">
+        <label>Nível</label>
+        <div class="seletor-nivel">
+          <button type="button" *ngFor="let n of niveis"
+            [class.ativo]="form.nivel === n.id" [style.--cor-nivel]="n.cor"
+            [disabled]="salvando" (click)="trocarNivelDoForm(n.id)">
+            <i class="ponto" [style.background]="n.cor"></i>
+            {{ n.nome.replace('Plano ', '') }}
+          </button>
+          <button type="button"
+            [class.ativo]="form.nivel === 'personalizado'" [style.--cor-nivel]="corDo('personalizado')"
+            [disabled]="salvando" (click)="trocarNivelDoForm('personalizado')">
+            <i class="ponto" [style.background]="corDo('personalizado')"></i>
+            Personalizado
+          </button>
+        </div>
+        <small *ngIf="!modoEdicao && form.nivel !== 'personalizado'">Já vem preenchido com os valores do app. Ajuste o que quiser.</small>
+      </div>
+
+      <div class="form-grid form-espaco">
+        <div class="campo span-2">
+          <label>Nome do plano</label>
+          <input type="text" [(ngModel)]="form.nome" placeholder="Ex: Plano Ouro" [disabled]="salvando">
+        </div>
+
+        <div class="campo">
+          <label>Preço mensal (R$/mês)</label>
+          <input type="number" step="0.01" [(ngModel)]="form.mensal" [disabled]="salvando">
+        </div>
+
+        <div class="campo">
+          <label>Preço no plano anual (R$/mês)</label>
+          <input type="number" step="0.01" [(ngModel)]="form.anual" [disabled]="salvando">
+          <small *ngIf="form.mensal && form.anual">
+            {{ moeda(form.anual * 12) }}/ano · economia de {{ economia(form) }}%
+          </small>
+        </div>
+
+        <div class="campo span-2">
+          <label>Resumo</label>
+          <input type="text" [(ngModel)]="form.resumo" placeholder="Ex: + exames e consultas ilimitadas" [disabled]="salvando">
+        </div>
+      </div>
+
+      <div class="beneficios-form">
+        <div class="beneficios-topo">
+          <span class="campo-label">Benefícios</span>
+          <button type="button" class="link-action" *ngIf="form.nivel !== 'personalizado'"
+            (click)="restaurarPadraoDoApp()" [disabled]="salvando">
+            Usar padrão do app
+          </button>
+        </div>
+
+        <div class="beneficio-linha" *ngFor="let b of form.beneficios; let i = index">
+          <input type="text" [(ngModel)]="b.texto" placeholder="Benefício (ex: Banho e Tosa)" [disabled]="salvando">
+          <input type="text" class="qtd" [(ngModel)]="b.quantidade" placeholder="2x/mês" [disabled]="salvando">
+          <button type="button" class="icon-btn icon-btn-danger" title="Remover" (click)="removerBeneficio(i)" [disabled]="salvando">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <button type="button" class="btn btn-soft btn-sm" (click)="adicionarBeneficio()" [disabled]="salvando">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Adicionar benefício
         </button>
       </div>
     </div>
-  </div>
 
-  <div class="modal-overlay" *ngIf="modalDetalhesAberto && planoDetalhes">
-    <div class="modal-detalhes">
-      <div class="detalhes-topo">
-        <div>
-          <span>{{ planoDetalhes.tag }}</span>
-          <h2>{{ planoDetalhes.nome }}</h2>
-        </div>
-        <button type="button" (click)="fecharDetalhes()">×</button>
-      </div>
-
-      <div class="detalhes-preco">
-        R$ {{ planoDetalhes.preco }}<small>/mês</small>
-      </div>
-
-      <p class="detalhes-texto">
-        {{ planoDetalhes.descricao }}
-      </p>
-
-      <div class="beneficios">
-        <h3>Benefícios inclusos</h3>
-        <ul>
-          <li *ngFor="let beneficio of planoDetalhes.beneficiosArray">
-            <span>✓</span>
-            {{ beneficio }}
-          </li>
-        </ul>
-      </div>
-
-      <button
-        type="button"
-        class="btn-fechar-detalhes"
-        (click)="fecharDetalhes()"
-      >
-        Fechar Painel
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="fecharModal()" [disabled]="salvando">Cancelar</button>
+      <button type="button" class="btn btn-primary" (click)="salvar()" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : 'Salvar plano' }}
       </button>
     </div>
   </div>
-</section>
+</div>
+
+<!-- CONFIRMAR EXCLUSÃO -->
+<div class="modal-backdrop" *ngIf="planoParaExcluir" (click)="planoParaExcluir = null">
+  <div class="modal modal-sm modal-confirm" (click)="$event.stopPropagation()" role="alertdialog" aria-modal="true">
+    <div class="modal-body">
+      <div class="modal-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+      </div>
+      <h2>Excluir {{ planoParaExcluir.nome }}?</h2>
+      <p>O plano deixa de aparecer para os tutores.</p>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="planoParaExcluir = null">Cancelar</button>
+      <button type="button" class="btn btn-danger" (click)="confirmarExclusao()">Excluir</button>
+    </div>
+  </div>
+</div>

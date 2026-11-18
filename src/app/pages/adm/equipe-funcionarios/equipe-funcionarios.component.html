@@ -1,265 +1,309 @@
 <div class="page">
 
-  <section class="top">
-    <div>
-      <p class="breadcrumb">ADMIN <span>› FUNCIONÁRIOS</span></p>
-      <h1>Equipe e Funcionários</h1>
+  <header class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div>
+        <h1>Equipe e funcionários</h1>
+        <p>Colaboradores, especialidades e acessos da clínica.</p>
+      </div>
     </div>
 
-    <button class="btn-new" type="button" (click)="abrirNovoFuncionario()">
-      <i class="bi bi-plus-lg"></i>
-      Novo Funcionário
+    <button type="button" class="btn btn-primary" (click)="abrirNovoFuncionario()">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Novo funcionário
     </button>
+  </header>
+
+  <!-- INDICADORES -->
+  <section class="stats">
+    <div class="stat-card">
+      <span class="stat-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </span>
+      <div>
+        <span>Total de funcionários</span>
+        <strong>{{ totalFuncionarios }}</strong>
+        <small>{{ funcionariosAtivos }} ativos</small>
+      </div>
+    </div>
+
+    <button type="button" class="stat-card" [class.ativo]="filtroCargo === 'veterinario'" (click)="definirCargo(filtroCargo === 'veterinario' ? 'Todos os Cargos' : 'veterinario')">
+      <span class="stat-icon icon-green">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+      </span>
+      <div>
+        <span>Veterinários ativos</span>
+        <strong>{{ veterinariosAtivos }}</strong>
+        <small>em regime clínico</small>
+      </div>
+    </button>
+
+    <div class="stat-card">
+      <span class="stat-icon icon-amber">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6.12-6.12A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12.9.36 1.76.72 2.54a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.54-1.18a2 2 0 0 1 2.11-.45c.78.36 1.64.6 2.54.72A2 2 0 0 1 22 16.92z"/></svg>
+      </span>
+      <div>
+        <span>Equipe de apoio</span>
+        <strong>{{ equipeApoio | number:'2.0' }}</strong>
+        <small>recepção, tosa e financeiro</small>
+      </div>
+    </div>
   </section>
 
-  <section class="content">
+  <!-- FERRAMENTAS -->
+  <section class="toolbar">
+    <label class="search">
+      <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Buscar por nome, sobrenome ou e-mail" [(ngModel)]="busca" (ngModelChange)="paginaAtual = 1">
+      <button *ngIf="busca" type="button" class="clear-btn" (click)="busca = ''; paginaAtual = 1" aria-label="Limpar busca">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </label>
 
-    <div class="cards">
-      <div class="stat-card">
-        <div>
-          <p>TOTAL DE FUNCIONÁRIOS</p>
-          <h2>{{ totalFuncionarios }}</h2>
-          <small>Sincronizados na Nuvem</small>
-        </div>
-        <span class="icon-bg">▣</span>
-      </div>
+    <select class="sort" [(ngModel)]="filtroStatus" (change)="paginaAtual = 1" aria-label="Status">
+      <option value="Status: Todos">Todos os status</option>
+      <option value="Ativo">Ativos</option>
+      <option value="Inativo">Inativos</option>
+    </select>
 
-      <div class="stat-card">
-        <div>
-          <p>VETERINÁRIOS ATIVOS</p>
-          <h2>{{ veterinariosAtivos }}</h2>
-          <small>Em regime clínico</small>
-        </div>
-        <span class="icon-bg">✚</span>
-      </div>
+    <button type="button" class="btn btn-ghost" (click)="limparFiltros()">Limpar</button>
+  </section>
 
-      <div class="stat-card">
-        <div>
-          <p>EQUIPE DE APOIO</p>
-          <h2>{{ equipeApoio | number:'2.0' }}</h2>
-          <small>Recepcionistas e Auxiliares</small>
-        </div>
-        <span class="icon-bg">☏</span>
-      </div>
-    </div>
+  <div class="chips chips-linha">
+    <button type="button" class="chip" *ngFor="let c of cargos"
+      [class.ativo]="filtroCargo === c.valor" (click)="definirCargo(c.valor)">
+      {{ c.rotulo }}
+      <span class="chip-count">{{ contagemCargo(c.valor) }}</span>
+    </button>
+  </div>
 
-    <div class="filters">
-      <div class="search">
-        <span>⌕</span>
-        <input type="text" placeholder="Buscar por nome, sobrenome, e-mail..." [(ngModel)]="busca" (ngModelChange)="paginaAtual = 1" />
-      </div>
+  <div class="layout">
 
-      <select [(ngModel)]="filtroCargo" (change)="paginaAtual = 1">
-        <option value="Todos os Cargos">Todos os Cargos</option>
-        <option value="veterinario">Veterinário</option>
-        <option value="tosador">Tosador</option>
-        <option value="recepcionista">Recepcionista</option>
-        <option value="financeiro">Financeiro</option>
-      </select>
-
-      <select [(ngModel)]="filtroStatus" (change)="paginaAtual = 1">
-        <option value="Status: Todos">Status: Todos</option>
-        <option value="Ativo">Ativos</option>
-        <option value="Inativo">Inativos</option>
-      </select>
-
-      <button class="filter-icon" (click)="limparFiltros()">≡</button>
-    </div>
-
-    <div class="main-grid">
-      <div class="table-card">
-        <table>
+    <!-- TABELA -->
+    <div class="table-card">
+      <div class="table-wrap">
+        <table class="tbl">
           <thead>
             <tr>
               <th>Funcionário</th>
               <th>Especialidade</th>
               <th>E-mail</th>
               <th>Status</th>
-              <th>Ações</th>
+              <th class="col-acoes">Ações</th>
             </tr>
           </thead>
 
           <tbody>
             <tr *ngFor="let funcionario of funcionariosPaginados">
               <td>
-                <div class="employee">
-                  <div class="avatar-admin">
-                    <img *ngIf="funcionario.avatar" [src]="funcionario.avatar" alt="Foto" class="avatar-img">
-                    <span *ngIf="!funcionario.avatar" class="avatar-text">
-                      {{ funcionario.nome.substring(0, 2).toUpperCase() }}
-                    </span>
-                    <span class="status-dot" [class.inativo]="funcionario.status === 'Inativo'"></span>
+                <div class="pessoa">
+                  <div class="avatar">
+                    <img *ngIf="funcionario.avatar" [src]="funcionario.avatar" alt="Foto">
+                    <span *ngIf="!funcionario.avatar">{{ iniciais(funcionario) }}</span>
                   </div>
-
                   <div>
                     <strong>{{ funcionario.nome }} {{ funcionario.sobrenome }}</strong>
-                    <small>ID: #{{ funcionario.id }}</small>
+                    <small>ID #{{ funcionario.id }}</small>
                   </div>
                 </div>
               </td>
 
-              <td>
-                <span class="cargo">{{ funcionario.cargo.toUpperCase() }}</span>
-              </td>
+              <td><span class="tag">{{ rotuloCargo(funcionario.cargo) }}</span></td>
 
-              <td>{{ funcionario.email }}</td>
+              <td class="cell-muted">{{ funcionario.email }}</td>
 
               <td>
-                <span class="status-badge-exibir" [class.inativo]="funcionario.status === 'Inativo'">
-                  {{ funcionario.status }}
+                <span class="pill" [class.pill-ok]="funcionario.status === 'Ativo'" [class.pill-muted]="funcionario.status === 'Inativo'">
+                  <i></i>{{ funcionario.status }}
                 </span>
               </td>
 
-              <td>
-                <button class="action edit" (click)="editarFuncionario(funcionario)" title="Editar">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 20H21"></path>
-                    <path d="M16.5 3.5A2.12 2.12 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z"></path>
-                  </svg>
-                </button>
-
-                <button class="action delete" (click)="excluirFuncionario(funcionario)" title="Excluir">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 6H21"></path>
-                    <path d="M8 6V4H16V6"></path>
-                    <path d="M19 6L18 20H6L5 6"></path>
-                    <path d="M10 11V17"></path>
-                    <path d="M14 11V17"></path>
-                  </svg>
-                </button>
+              <td class="col-acoes">
+                <div class="acoes">
+                  <button type="button" class="icon-btn" title="Editar" (click)="editarFuncionario(funcionario)">
+                    <svg class="ico" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  </button>
+                  <button type="button" class="icon-btn icon-btn-danger" title="Excluir" (click)="excluirFuncionario(funcionario)">
+                    <svg class="ico" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
+                  </button>
+                </div>
               </td>
             </tr>
 
             <tr *ngIf="funcionariosFiltrados.length === 0">
-              <td colspan="5" class="empty">Nenhum funcionário encontrado na base de dados.</td>
+              <td colspan="5" class="empty">Nenhum funcionário encontrado.</td>
             </tr>
           </tbody>
         </table>
-
-        <div class="pagination" *ngIf="totalPaginas > 1">
-          <p>Mostrando {{ funcionariosPaginados.length }} de {{ funcionariosFiltrados.length }} funcionários</p>
-          <div>
-            <button (click)="mudarPagina(paginaAtual - 1)" [disabled]="paginaAtual === 1">‹</button>
-            <button *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
-              [class.active]="paginaAtual === i + 1" (click)="mudarPagina(i + 1)">
-              {{ i + 1 }}
-            </button>
-            <button (click)="mudarPagina(paginaAtual + 1)" [disabled]="paginaAtual === totalPaginas">›</button>
-          </div>
-        </div>
       </div>
 
-      <aside class="side">
-        <div class="info-card">
-          <div class="info-title">
-            <span>ⓘ</span>
-            <h3>Diretrizes da Equipe</h3>
-          </div>
-          <p>Todos os novos colaboradores devem validar suas credenciais institucionais corporativas junto ao painel interno do PetVitaliz.</p>
-          <button (click)="abrirManual()">Ver manual do colaborador</button>
-        </div>
+      <div class="table-footer">
+        <span>Mostrando {{ funcionariosPaginados.length }} de {{ funcionariosFiltrados.length }} funcionários</span>
 
-        <div class="help-card">
-          <h3>Precisa de Ajuda?</h3>
-          <p>Nossa central de suporte administrativo está disponível para esclarecer fluxos internos de recursos humanos.</p>
-          <button (click)="falarComRH()">Falar com RH</button>
+        <div class="paginas" *ngIf="totalPaginas > 1">
+          <button type="button" class="pag-btn" (click)="mudarPagina(paginaAtual - 1)" [disabled]="paginaAtual === 1" aria-label="Anterior"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button type="button" class="pag-btn" *ngFor="let p of paginas" [class.ativo]="paginaAtual === p" (click)="mudarPagina(p)">{{ p }}</button>
+          <button type="button" class="pag-btn" (click)="mudarPagina(paginaAtual + 1)" [disabled]="paginaAtual === totalPaginas" aria-label="Próxima"><svg class="ico" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
         </div>
-      </aside>
+      </div>
     </div>
-  </section>
 
-  <div class="modal-overlay" *ngIf="modalAberto">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>{{ modoEdicao ? 'Editar Funcionário' : 'Novo Funcionário' }}</h2>
-        <button type="button" (click)="fecharModal()">×</button>
-      </div>
-
-      <div class="feedback-msg erro" *ngIf="mensagemErro">
-         <span>⚠️</span> {{ mensagemErro }}
-      </div>
-      <div class="feedback-msg sucesso" *ngIf="mensagemSucesso">
-         <span>✅</span> {{ mensagemSucesso }}
-      </div>
-
-      <label class="modal-adm-photo-upload">
-        <input type="file" accept="image/*" (change)="carregarFoto($event)" [disabled]="salvando">
-        <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Preview">
-        <div *ngIf="!fotoPreview" class="adm-photo-placeholder">
-          <span>Adicionar Foto</span>
+    <!-- LATERAL -->
+    <aside class="lateral">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Diretrizes da equipe</h3>
+            <p>Novos colaboradores devem validar as credenciais institucionais no painel interno do PetVitaliz.</p>
+          </div>
         </div>
-        <strong>+</strong>
+        <button type="button" class="btn btn-soft btn-sm btn-block" (click)="abrirManual()">Ver manual do colaborador</button>
+      </article>
+
+      <article class="panel ajuda">
+        <div class="panel-head">
+          <div>
+            <h3>Precisa de ajuda?</h3>
+            <p>O suporte administrativo esclarece fluxos internos de RH.</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm btn-block" (click)="falarComRH()">Falar com RH</button>
+      </article>
+    </aside>
+
+  </div>
+
+</div>
+
+<!-- MODAL: CRIAR / EDITAR -->
+<div class="modal-backdrop" *ngIf="modalAberto" (click)="!salvando && fecharModal()">
+  <div class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div>
+        <h2>{{ modoEdicao ? 'Editar funcionário' : 'Novo funcionário' }}</h2>
+        <p>Use o e-mail corporativo &#64;petvitalizfuncionario.com</p>
+      </div>
+      <button type="button" class="icon-btn" (click)="fecharModal()" [disabled]="salvando" aria-label="Fechar">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="alert alert-erro aviso" *ngIf="mensagemErro">{{ mensagemErro }}</div>
+      <div class="alert alert-ok aviso" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</div>
+
+      <label class="upload">
+        <input type="file" accept="image/*" (change)="carregarFoto($event)" [disabled]="salvando" hidden>
+        <span class="avatar avatar-lg">
+          <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Pré-visualização">
+          <svg *ngIf="!fotoPreview" class="ico" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </span>
+        <span class="upload-texto">
+          <strong>{{ fotoPreview ? 'Trocar foto' : 'Adicionar foto' }}</strong>
+          <small>JPG, PNG ou WEBP</small>
+        </span>
       </label>
 
       <div class="form-grid">
-        <label>
-          Nome
+        <div class="campo">
+          <label>Nome</label>
           <input type="text" [(ngModel)]="funcionarioForm.nome" placeholder="Ex: Carlos" [disabled]="salvando">
-        </label>
+        </div>
 
-        <label>
-          Sobrenome
+        <div class="campo">
+          <label>Sobrenome</label>
           <input type="text" [(ngModel)]="funcionarioForm.sobrenome" placeholder="Ex: Silva" [disabled]="salvando">
-        </label>
+        </div>
 
-        <label>
-          Especialidade Clínica
+        <div class="campo">
+          <label>Especialidade</label>
           <select [(ngModel)]="funcionarioForm.cargo" [disabled]="salvando">
             <option value="veterinario">Veterinário</option>
             <option value="tosador">Tosador</option>
             <option value="recepcionista">Recepcionista</option>
             <option value="financeiro">Financeiro</option>
           </select>
-        </label>
-
-        <label>
-          E-mail Corporativo
-          <input type="email" [(ngModel)]="funcionarioForm.email" placeholder="Ex: nome@petvitalizfuncionario.com" [disabled]="salvando">
-        </label>
-
-        <div style="display: flex; flex-direction: column;">
-          <label>Senha de Acesso</label>
-          <input type="password" [(ngModel)]="funcionarioForm.senha" placeholder="{{ modoEdicao ? 'Preencha apenas para alterar' : 'Mínimo 6 caracteres' }}" [disabled]="salvando">
         </div>
 
-        <label *ngIf="modoEdicao">
-          Status Operacional
+        <div class="campo">
+          <label>E-mail corporativo</label>
+          <input type="email" [(ngModel)]="funcionarioForm.email" placeholder="nome@petvitalizfuncionario.com" [disabled]="salvando">
+        </div>
+
+        <div class="campo" [class.span-2]="!modoEdicao">
+          <label>Senha de acesso</label>
+          <input type="password" [(ngModel)]="funcionarioForm.senha" [placeholder]="modoEdicao ? 'Preencha apenas para alterar' : 'Mínimo 6 caracteres'" [disabled]="salvando">
+        </div>
+
+        <div class="campo" *ngIf="modoEdicao">
+          <label>Status</label>
           <select [(ngModel)]="funcionarioForm.status" [disabled]="salvando">
             <option value="Ativo">Ativo</option>
             <option value="Inativo">Inativo</option>
           </select>
-        </label>
+        </div>
       </div>
+    </div>
 
-      <div class="modal-actions">
-        <button class="cancel" type="button" (click)="fecharModal()" [disabled]="salvando">Cancelar</button>
-        <button class="save" type="button" (click)="salvarFuncionario()" [disabled]="salvando">
-          {{ salvando ? 'Salvando...' : 'Salvar' }}
-        </button>
-      </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="fecharModal()" [disabled]="salvando">Cancelar</button>
+      <button type="button" class="btn btn-primary" (click)="salvarFuncionario()" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : 'Salvar' }}
+      </button>
     </div>
   </div>
 </div>
 
-<div class="rh-overlay" *ngIf="modalRHAberto" (click)="fecharModalRH()">
-  <div class="rh-card" (click)="$event.stopPropagation()">
-    <button class="rh-close" type="button" (click)="fecharModalRH()">×</button>
-    <div class="rh-icon">ⓘ</div>
-    <h2>Central de RH</h2>
-    <p class="rh-text">Nossa equipe está disponível para solucionar dúvidas corporativas e solicitações internas de controle operacional.</p>
-    
-    <div class="rh-info">
+<!-- MODAL: RH -->
+<div class="modal-backdrop" *ngIf="modalRHAberto" (click)="fecharModalRH()">
+  <div class="modal modal-sm" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="modal-head">
       <div>
-        <span>☎</span>
-        <p><strong>Telefone Corporativo</strong>(11) 99999-9999</p>
+        <h2>Central de RH</h2>
+        <p>Dúvidas corporativas e solicitações internas.</p>
       </div>
-      <div>
-        <span>✉</span>
-        <p><strong>E-mail Corporativo</strong>rh&#64;petvitaliz.com</p>
+      <button type="button" class="icon-btn" (click)="fecharModalRH()" aria-label="Fechar">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="detalhes uma-coluna">
+        <div class="detalhe">
+          <small>Telefone corporativo</small>
+          <strong>(11) 99999-9999</strong>
+        </div>
+        <div class="detalhe">
+          <small>E-mail corporativo</small>
+          <strong>rh&#64;petvitaliz.com</strong>
+        </div>
       </div>
     </div>
-    <div class="rh-actions">
-      <button class="rh-secondary" type="button" (click)="fecharModalRH()">Fechar Janela</button>
+
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="fecharModalRH()">Fechar</button>
     </div>
   </div>
 </div>
+
+<!-- CONFIRMAR EXCLUSÃO -->
+<div class="modal-backdrop" *ngIf="funcionarioParaExcluir" (click)="cancelarExclusao()">
+  <div class="modal modal-sm modal-confirm" (click)="$event.stopPropagation()" role="alertdialog" aria-modal="true">
+    <div class="modal-body">
+      <div class="modal-icon">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+      </div>
+      <h2>Remover {{ funcionarioParaExcluir.nome }}?</h2>
+      <p>O colaborador perderá o acesso ao sistema.</p>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" (click)="cancelarExclusao()">Cancelar</button>
+      <button type="button" class="btn btn-danger" (click)="confirmarExclusao()">Remover</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" *ngIf="toast" role="status">{{ toast }}</div>

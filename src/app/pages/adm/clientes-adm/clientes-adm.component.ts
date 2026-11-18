@@ -53,6 +53,12 @@ export class ClientesAdmComponent implements OnInit {
   clientes: ClienteAdm[] = [];
   carregando = false;
 
+  clienteParaExcluir: ClienteAdm | null = null;
+  toast: { texto: string; tipo: 'ok' | 'erro' } | null = null;
+  private toastTimer: any;
+
+  readonly filtrosStatus = ['Todos', 'Ativo', 'Em tratamento', 'Inativo'];
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -113,7 +119,7 @@ export class ClientesAdmComponent implements OnInit {
       `.toLowerCase();
 
       const passaBusca = texto.includes(termo);
-      const passaEspecie = this.especie === 'Todas' || cliente.especie === this.especie;
+      const passaEspecie = this.especie === 'Todas' || this.especieDoPet(cliente) === this.especie;
       const passaStatus = this.status === 'Todos' || cliente.status === this.status;
 
       return passaBusca && passaEspecie && passaStatus;
@@ -159,7 +165,7 @@ export class ClientesAdmComponent implements OnInit {
 
   salvarCliente(): void {
     if (!this.novoCliente.nome.trim() || !this.novoCliente.pet.trim()) {
-      alert('Preencha os campos obrigatórios identificadores do Pet.');
+      this.mostrarToast('Preencha os campos obrigatórios identificadores do Pet.', 'erro');
       return;
     }
 
@@ -184,7 +190,7 @@ export class ClientesAdmComponent implements OnInit {
 
   salvarAgendamento(): void {
     if (!this.novaConsulta.data || !this.novaConsulta.horario) {
-      alert('Informe a data e o horário da consulta.');
+      this.mostrarToast('Informe a data e o horário da consulta.', 'erro');
       return;
     }
 
@@ -198,11 +204,11 @@ export class ClientesAdmComponent implements OnInit {
 
     this.http.post(`${environment.apiUrl}/agendamento`, payload, { withCredentials: true }).subscribe({
       next: () => {
-        alert(`Consulta para ${this.clienteSelecionado?.nome} agendada com sucesso via painel do Administrador!`);
+        this.mostrarToast(`Consulta para ${this.clienteSelecionado?.nome} agendada com sucesso!`, 'ok');
         this.fecharModais();
       },
       error: (err) => {
-        alert(err.error?.mensagem || 'Erro ao processar agendamento.');
+        this.mostrarToast(err.error?.mensagem || 'Erro ao processar agendamento.', 'erro');
       }
     });
   }
@@ -212,7 +218,17 @@ export class ClientesAdmComponent implements OnInit {
   }
 
   excluirCliente(cliente: ClienteAdm): void {
-    if (!confirm(`Deseja remover ${cliente.nome} do diretório clínico?`)) return;
+    this.clienteParaExcluir = cliente;
+  }
+
+  cancelarExclusao(): void {
+    this.clienteParaExcluir = null;
+  }
+
+  confirmarExclusao(): void {
+    const cliente = this.clienteParaExcluir;
+    this.clienteParaExcluir = null;
+    if (!cliente) return;
 
     if (cliente.id_pet) {
       this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${cliente.id_pet}`, { withCredentials: true }).subscribe({
@@ -225,6 +241,64 @@ export class ClientesAdmComponent implements OnInit {
     } else {
       this.clientes = this.clientes.filter(c => c !== cliente);
     }
+  }
+
+  get totalCaes(): number {
+    return this.clientes.filter(c => this.especieDoPet(c) === 'Cão').length;
+  }
+
+  get totalGatos(): number {
+    return this.clientes.filter(c => this.especieDoPet(c) === 'Gato').length;
+  }
+
+  /**
+   * Descobre a espécie do pet olhando o campo "especie" e, se não bater,
+   * o campo "pet" (a API às vezes manda a espécie ali: "cachorro", "gato"...).
+   */
+  especieDoPet(cliente: ClienteAdm): string {
+    const texto = `${cliente.especie || ''} ${cliente.pet || ''}`
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+    if (/\b(cao|caes|cachorr|canin|dog)/.test(texto)) return 'Cão';
+    if (/\b(gat|felin|cat)/.test(texto)) return 'Gato';
+    if (/\b(ave|aves|passaro|calopsita|periquito|papagaio|bird)/.test(texto)) return 'Ave';
+    if (/\b(coelh|rabbit)/.test(texto)) return 'Coelho';
+    if (/\b(reptil|repteis|tartaruga|jabuti|lagart|cobra|iguana|serpente)/.test(texto)) return 'Réptil';
+    return 'Outro';
+  }
+
+  classeEspecie(especie: string): string {
+    const mapa: Record<string, string> = {
+      'Cão': 'esp-cao', 'Gato': 'esp-gato', 'Ave': 'esp-ave',
+      'Coelho': 'esp-coelho', 'Réptil': 'esp-reptil'
+    };
+    return mapa[especie] || 'esp-outro';
+  }
+
+  get totalTratamento(): number {
+    return this.clientes.filter(c => c.status === 'Em tratamento').length;
+  }
+
+  contagemStatus(status: string): number {
+    if (status === 'Todos') return this.clientes.length;
+    return this.clientes.filter(c => c.status === status).length;
+  }
+
+  definirStatus(status: string): void {
+    this.status = status;
+    this.aplicarFiltros();
+  }
+
+  definirEspecie(especie: string): void {
+    this.especie = this.especie === especie ? 'Todas' : especie;
+    this.aplicarFiltros();
+  }
+
+  mostrarToast(texto: string, tipo: 'ok' | 'erro'): void {
+    this.toast = { texto, tipo };
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.toast = null, 3500);
   }
 
   fecharModais(): void {

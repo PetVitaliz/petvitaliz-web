@@ -27,6 +27,60 @@ export class FinanceiroAdmComponent {
     status: 'Pago'
   };
 
+  erroForm = '';
+  transacaoParaExcluir: any = null;
+
+  readonly fluxoMensal = [
+    { rotulo: 'JAN', receita: 18400, despesa: 11200 },
+    { rotulo: 'FEV', receita: 21300, despesa: 12800 },
+    { rotulo: 'MAR', receita: 19800, despesa: 13900 },
+    { rotulo: 'ABR', receita: 24600, despesa: 14100 },
+    { rotulo: 'MAI', receita: 26900, despesa: 15300 },
+    { rotulo: 'JUN', receita: 29200, despesa: 16100 }
+  ];
+
+  readonly fluxoAnual = [
+    { rotulo: '2021', receita: 182000, despesa: 121000 },
+    { rotulo: '2022', receita: 214000, despesa: 139000 },
+    { rotulo: '2023', receita: 248000, despesa: 152000 },
+    { rotulo: '2024', receita: 291000, despesa: 171000 }
+  ];
+
+  readonly categoriasGasto = [
+    { nome: 'Medicamentos', percentual: 45 },
+    { nome: 'Salários', percentual: 30 },
+    { nome: 'Infraestrutura', percentual: 15 },
+    { nome: 'Marketing', percentual: 10 }
+  ];
+
+  get fluxoAtual() {
+    return this.periodoFluxo === 'Mensal' ? this.fluxoMensal : this.fluxoAnual;
+  }
+
+  get maxFluxo() {
+    return Math.max(...this.fluxoAtual.map(f => Math.max(f.receita, f.despesa)), 1);
+  }
+
+  alturaBarra(valor: number) {
+    return (valor / this.maxFluxo) * 100;
+  }
+
+  formatarCompacto(valor: number) {
+    if (valor >= 1000) {
+      return 'R$ ' + (valor / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k';
+    }
+    return this.formatarMoeda(valor);
+  }
+
+  get quantidadePendentes() {
+    return this.transacoes.filter(t => t.status === 'Pendente').length;
+  }
+
+  get margemSaldo() {
+    if (this.receitaTotal === 0) return 0;
+    return Math.max(0, Math.min(100, Math.round((this.saldoTotal / this.receitaTotal) * 100)));
+  }
+
   transacoes = [
     { data: '15 Out, 2024', descricao: 'Cirurgia Ortopédica - Max', cliente: 'Cliente: Roberto Silva', categoria: 'Procedimento', valor: 2400, tipo: 'Receita', status: 'Pago' },
     { data: '14 Out, 2024', descricao: 'Reposição de Vacinas V10', cliente: 'Fornecedor: PetHealth SA', categoria: 'Estoque', valor: -850, tipo: 'Despesa', status: 'Pendente' },
@@ -76,6 +130,7 @@ export class FinanceiroAdmComponent {
       status: 'Pago'
     };
 
+    this.erroForm = '';
     this.modalAberto = true;
   }
 
@@ -85,7 +140,7 @@ export class FinanceiroAdmComponent {
 
   salvarTransacao() {
     if (!this.novaTransacao.data || !this.novaTransacao.descricao || !this.novaTransacao.valor) {
-      alert('Preencha data, descrição e valor.');
+      this.erroForm = 'Preencha data, descrição e valor.';
       return;
     }
 
@@ -134,13 +189,18 @@ export class FinanceiroAdmComponent {
   }
 
   excluirTransacao(transacao: any) {
-    const confirmar = confirm(`Deseja excluir "${transacao.descricao}"?`);
-
-    if (confirmar) {
-      this.transacoes = this.transacoes.filter(t => t !== transacao);
-    }
-
+    this.transacaoParaExcluir = transacao;
     this.menuAberto = null;
+  }
+
+  cancelarExclusao() {
+    this.transacaoParaExcluir = null;
+  }
+
+  confirmarExclusao() {
+    const alvo = this.transacaoParaExcluir;
+    this.transacoes = this.transacoes.filter(t => t !== alvo);
+    this.transacaoParaExcluir = null;
   }
 
   exportarRelatorio() {

@@ -27,6 +27,8 @@ interface ConsultaAdm {
 })
 export class ConsultasAdmComponent implements OnInit {
 
+  aba: 'agendadas' | 'todas' = 'agendadas';
+
   termoBusca = '';
   statusSelecionado = 'Todos';
   vetSelecionado = 'Todos';
@@ -127,7 +129,7 @@ export class ConsultasAdmComponent implements OnInit {
           this.carregarConsultasDoBanco();
         },
         error: (err) => {
-          alert(err.error?.mensagem || 'Erro ao atualizar status pelo administrador.');
+          this.erroMensagem = err.error?.mensagem || 'Erro ao atualizar status pelo administrador.';
           this.menuAberto = null;
         }
       });
@@ -156,8 +158,32 @@ export class ConsultasAdmComponent implements OnInit {
     return dias;
   }
 
+  /** Consultas futuras (de hoje em diante) que ainda não foram finalizadas. */
+  get consultasAgendadas(): ConsultaAdm[] {
+    const hojeZero = this.inicioDoDia(new Date());
+    return this.consultas
+      .filter((c: ConsultaAdm) => c.dataObj >= hojeZero && c.status !== 'Finalizada')
+      .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime() || (a.hora || '').localeCompare(b.hora || ''));
+  }
+
+  /** Base da aba atual, antes dos filtros de busca/status/período. */
+  get consultasDaAba(): ConsultaAdm[] {
+    if (this.aba === 'agendadas') return this.consultasAgendadas;
+    return [...this.consultas].sort((a, b) => b.dataObj.getTime() - a.dataObj.getTime() || (b.hora || '').localeCompare(a.hora || ''));
+  }
+
+  definirAba(aba: 'agendadas' | 'todas'): void {
+    this.aba = aba;
+    this.statusSelecionado = 'Todos';
+    this.aplicarFiltros();
+  }
+
+  ehHoje(data: Date): boolean {
+    return this.ehMesmaData(data, new Date());
+  }
+
   get consultasFiltradas(): ConsultaAdm[] {
-    return this.consultas.filter((c: ConsultaAdm) => {
+    return this.consultasDaAba.filter((c: ConsultaAdm) => {
       const busca = this.termoBusca.toLowerCase();
 
       const passaBusca =
@@ -202,6 +228,44 @@ export class ConsultasAdmComponent implements OnInit {
 
   get consultasHoje(): number {
     return this.consultas.filter((c: ConsultaAdm) => this.ehMesmaData(c.dataObj, this.hoje)).length;
+  }
+
+  readonly filtrosStatus = [
+    { valor: 'Todos', rotulo: 'Todas' },
+    { valor: 'Pendente', rotulo: 'Pendentes' },
+    { valor: 'Em andamento', rotulo: 'Em andamento' },
+    { valor: 'Finalizada', rotulo: 'Finalizadas' }
+  ];
+
+  get totalEmAndamento(): number {
+    return this.consultas.filter((c: ConsultaAdm) => c.status === 'Em andamento').length;
+  }
+
+  get totalAtrasadas(): number {
+    return this.consultas.filter((c: ConsultaAdm) => c.passouDoTempo).length;
+  }
+
+  contagemStatus(status: string): number {
+    const base = this.consultasDaAba;
+    if (status === 'Todos') return base.length;
+    return base.filter((c: ConsultaAdm) => c.status === status).length;
+  }
+
+  get filtrosDaAba() {
+    if (this.aba === 'agendadas') {
+      return this.filtrosStatus.filter(f => f.valor !== 'Finalizada');
+    }
+    return this.filtrosStatus;
+  }
+
+  definirStatus(status: string): void {
+    this.statusSelecionado = status;
+    this.aplicarFiltros();
+  }
+
+  limparBusca(): void {
+    this.termoBusca = '';
+    this.aplicarFiltros();
   }
 
   aplicarFiltros(): void {
