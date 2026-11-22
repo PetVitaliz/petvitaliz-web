@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 
 import { authAdminGuard } from './guards/auth-admin.guard';
 import { authFuncionarioGuard } from './guards/auth-funcionario.guard';
@@ -12,7 +13,6 @@ import { CadastroComponent } from './pages/publico/cadastro/cadastro.component';
 import { ResetSenhaComponent } from './pages/publico/reset-senha/reset-senha.component';
 import { ServicosComponent } from './pages/publico/servicos/servicos.component';
 import { SobreNosComponent } from './pages/publico/sobre-nos/sobre-nos.component';
-import { ContatoComponent } from './pages/publico/contato/contato.component';
 import { AdocaoComponent } from './pages/publico/adocao/adocao.component';
 
 // USUÁRIO
@@ -41,6 +41,11 @@ import { ClientesAdmComponent } from './pages/adm/clientes-adm/clientes-adm.comp
 import { FinanceiroAdmComponent } from './pages/adm/financeiro-adm/financeiro-adm.component';
 import { ListarAdminComponent } from './pages/adm/listar-admin/listar-admin.component';
 
+// Redireciona um endereço antigo para a home, já na seção certa
+function irParaSecaoDaHome(secao: string) {
+  return () => inject(Router).createUrlTree(['/'], { fragment: secao });
+}
+
 export const routes: Routes = [
   // PÚBLICO
   { path: '', component: HomeUsuarioComponent },
@@ -49,10 +54,11 @@ export const routes: Routes = [
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'cadastro', component: CadastroComponent },
   { path: 'reset-senha', component: ResetSenhaComponent },
-  { path: 'servicos', component: ServicosComponent },
-  { path: 'sobre-nos', component: SobreNosComponent },
-  { path: 'contato', component: ContatoComponent },
-  { path: 'adocao', component: AdocaoComponent },
+  // Páginas públicas antigas: agora são seções da home
+  { path: 'servicos', canActivate: [irParaSecaoDaHome('servicos')], children: [] },
+  { path: 'sobre-nos', canActivate: [irParaSecaoDaHome('sobre')], children: [] },
+  { path: 'contato', canActivate: [irParaSecaoDaHome('contato')], children: [] },
+  { path: 'adocao', canActivate: [irParaSecaoDaHome('adocao')], children: [] },
 
 // USUÁRIO
 {

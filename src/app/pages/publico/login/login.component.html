@@ -1,124 +1,161 @@
 <section class="login-page">
 
-  <div class="login-card">
+  <a routerLink="/" class="btn-voltar">
+    <span class="ms">arrow_back</span>
+    Voltar para a home
+  </a>
 
-    <h2>Entrar com e-mail e senha</h2>
+  <div class="login-shell">
 
-    <form (ngSubmit)="entrar()">
+    <!-- Painel da marca (some no celular) -->
+    <aside class="brand-panel">
 
-      <div class="form-group">
+      <span class="deco deco-1"></span>
+      <span class="deco deco-2"></span>
 
-        <label for="email">E-mail</label>
+      <div class="brand-top">
 
-        <div class="input-box">
+        <h1>Uma plataforma, todo o cuidado com o seu pet</h1>
 
-          <span class="material-icons input-icon">
-            mail
-          </span>
-
-          <input type="email" id="email" name="email" placeholder="Digite seu e-mail" [(ngModel)]="email">
-
-        </div>
-
-      </div>
-
-      <div class="form-group">
-
-        <div class="label-row">
-
-          <label for="senha">Senha</label>
-
-          <a routerLink="/esqueci-senha" class="forgot-password">
-
-            Esqueci minha senha
-
-          </a>
-
-        </div>
-
-        <div class="input-box">
-
-          <span class="material-icons input-icon">
-            lock
-          </span>
-
-          <input [type]="senhaVisivel ? 'text' : 'password'" id="senha" name="senha" placeholder="Digite sua senha"
-            [(ngModel)]="senha">
-
-          <button type="button" class="eye-btn" (click)="senhaVisivel = !senhaVisivel">
-
-            <span class="material-icons" *ngIf="!senhaVisivel">
-
-              visibility
-
-            </span>
-
-            <span class="material-icons" *ngIf="senhaVisivel">
-
-              visibility_off
-
-            </span>
-
-          </button>
-
-        </div>
+        <p>Tutores, equipe e administração conectados no mesmo lugar.</p>
 
       </div>
 
-      <label class="remember">
+      <ul class="perfis">
 
-        <input type="checkbox" name="lembrar" [(ngModel)]="lembrar">
+        <li>
+          <span class="perfil-icon ms">person</span>
+          <div>
+            <strong>Tutores</strong>
+            <small>Consultas, pets e plano</small>
+          </div>
+        </li>
 
-        <span>
-          Lembrar-me neste dispositivo
-        </span>
+        <li>
+          <span class="perfil-icon ms">stethoscope</span>
+          <div>
+            <strong>Equipe</strong>
+            <small>Agenda e atendimentos</small>
+          </div>
+        </li>
 
-      </label>
+        <li>
+          <span class="perfil-icon ms">bar_chart</span>
+          <div>
+            <strong>Administração</strong>
+            <small>Gestão da clínica</small>
+          </div>
+        </li>
 
-      <p class="erro" *ngIf="erro">
+      </ul>
 
-        {{ erro }}
-
+      <p class="brand-footer">
+        <span class="ms">verified_user</span>
+        Ambiente seguro e dados protegidos
       </p>
 
-      <button type="submit" class="btn-login">
+    </aside>
 
-        Entrar
+    <!-- Formulário -->
+    <div class="form-panel">
 
-      </button>
+      <h2>Acesse sua conta</h2>
+      <p class="subtitle">Use seu e-mail e senha. Vamos te levar para a área certa.</p>
 
-    </form>
+      <form (ngSubmit)="entrar()">
 
-    <div class="security-box">
+        <div class="form-group">
 
-      <div class="security-icon">
+          <label for="email">E-mail</label>
 
-        <span class="material-icons">
-          verified_user
-        </span>
+          <div class="input-box">
 
-      </div>
+            <span class="ms input-icon">mail</span>
 
-      <div class="security-content">
+            <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email"
+              [(ngModel)]="email">
 
-        <strong>
-          AMBIENTE SEGURO
-        </strong>
+          </div>
 
-        <p>
-          Utilizamos protocolos avançados de segurança para proteger suas informações
-          e garantir uma experiência confiável dentro da plataforma PetVitaliz.
+          <span class="perfil-badge" *ngIf="perfilDetectado === 'funcionario'">
+            <span class="ms">stethoscope</span>
+            Acesso da equipe
+          </span>
+
+          <span class="perfil-badge" *ngIf="perfilDetectado === 'admin'">
+            <span class="ms">admin_panel_settings</span>
+            Acesso administrativo
+          </span>
+
+        </div>
+
+        <div class="form-group">
+
+          <div class="label-row">
+
+            <label for="senha">Senha</label>
+
+            <a routerLink="/esqueci-senha" class="forgot-password">Esqueci minha senha</a>
+
+          </div>
+
+          <div class="input-box">
+
+            <span class="ms input-icon">lock</span>
+
+            <input [type]="senhaVisivel ? 'text' : 'password'" id="senha" name="senha" placeholder="Digite sua senha"
+              autocomplete="current-password" [(ngModel)]="senha">
+
+            <button type="button" class="eye-btn" (click)="senhaVisivel = !senhaVisivel"
+              [attr.aria-label]="senhaVisivel ? 'Ocultar senha' : 'Mostrar senha'">
+
+              <span class="ms">{{ senhaVisivel ? 'visibility_off' : 'visibility' }}</span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+        <label class="remember">
+
+          <input type="checkbox" name="lembrar" [(ngModel)]="lembrar">
+
+          <span>Lembrar-me neste dispositivo</span>
+
+        </label>
+
+        <p class="erro" *ngIf="erro">
+
+          <span class="ms">error</span>
+          {{ erro }}
+
         </p>
 
-      </div>
+        <button type="submit" class="btn-login" [disabled]="carregando">
+
+          <ng-container *ngIf="!carregando">
+            Entrar
+            <span class="ms">arrow_forward</span>
+          </ng-container>
+
+          <ng-container *ngIf="carregando">
+            <span class="spinner"></span>
+            Entrando…
+          </ng-container>
+
+        </button>
+
+      </form>
+
+      <div class="divider"><span>ou</span></div>
+
+      <p class="register">
+        É tutor e ainda não tem conta?
+        <a routerLink="/cadastro">Cadastre-se grátis</a>
+      </p>
 
     </div>
-
-    <button class="btn-register" type="button" routerLink="/cadastro">
-
-      Cadastre-se
-
-    </button>
 
   </div>
 

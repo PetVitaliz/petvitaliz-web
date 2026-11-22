@@ -13,6 +13,11 @@
     </main>
   </div>
 
+} @else if (isAuthRoute()) {
+
+  <!-- LOGIN e CADASTRO: tela cheia, sem header/footer públicos -->
+  <router-outlet></router-outlet>
+
 } @else {
 
   <app-header

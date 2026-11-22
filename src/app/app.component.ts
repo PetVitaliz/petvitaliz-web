@@ -36,6 +36,12 @@ export class AppComponent {
     return this.router.url.includes('/adm');
   }
 
+  // Páginas de acesso (login e cadastro): tela cheia, sem header/footer
+  isAuthRoute(): boolean {
+    const rota = this.router.url.split('?')[0].split('#')[0];
+    return rota === '/login' || rota === '/cadastro';
+  }
+
   isUsuarioRoute(): boolean {
     return this.router.url.includes('/user');
   }

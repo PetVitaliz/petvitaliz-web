@@ -1,0 +1,367 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,900,100&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300,0,0&display=block');
+
+.ms {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+:host {
+  display: block;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.carrossel {
+  padding: 16px 0 4px;
+}
+
+.janela {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Trilho: cada banner ocupa 88% e o próximo aparece cortado na lateral */
+.trilho {
+  --largura: 88%;
+  --espaco: 16px;
+  display: flex;
+  gap: var(--espaco);
+  /* centraliza o banner atual e deixa os vizinhos aparecendo nas laterais */
+  transform: translateX(calc((100% - var(--largura)) / 2 - var(--i) * (var(--largura) + var(--espaco)) + var(--drag, 0px)));
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+}
+
+.trilho.arrastando {
+  transition: none;
+  cursor: grabbing;
+}
+
+.slide {
+  flex: 0 0 var(--largura);
+  min-width: 0;
+  display: flex;
+  padding: 8px;
+  border-radius: 24px;
+  background: #E8EEFA;
+  transition: opacity 0.4s ease;
+}
+
+.slide[aria-hidden='true'] {
+  opacity: 0.55;
+}
+
+/* ---------- Card ---------- */
+
+.card {
+  --fundo: #183B72;
+  --texto: #ffffff;
+  --suave: #C9D6EE;
+  --destaque: #FECA3E;
+  --circulo: #ffffff;
+  --botao: #FECA3E;
+  --botao-texto: #183B72;
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  min-height: 300px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+.card[data-tema='amarelo'] {
+  --fundo: #FECA3E;
+  --texto: #183B72;
+  --suave: #183B72;
+  --destaque: #183C98;
+  --circulo: #ffffff;
+  --botao: #183B72;
+  --botao-texto: #ffffff;
+}
+
+.card[data-tema='verde'] {
+  --fundo: #7BB9B2;
+  --texto: #183B72;
+  --suave: #183B72;
+  --destaque: #ffffff;
+  --circulo: #E8EEFA;
+  --botao: #183B72;
+  --botao-texto: #ffffff;
+}
+
+.card[data-tema='claro'] {
+  --fundo: #21479B;
+  --texto: #ffffff;
+  --suave: #C9D6EE;
+  --destaque: #FECA3E;
+  --circulo: #ffffff;
+  --botao: #FECA3E;
+  --botao-texto: #183B72;
+}
+
+.texto {
+  position: relative;
+  z-index: 1;
+  padding: 28px 0 28px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.etiqueta {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--suave);
+}
+
+.etiqueta strong {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-variation-settings: 'SOFT' 100;
+  color: var(--texto);
+}
+
+h2 {
+  margin: 0 0 14px;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-variation-settings: 'SOFT' 100;
+  font-size: clamp(28px, 3.3vw, 44px);
+  line-height: 1.02;
+}
+
+h2 span {
+  display: block;
+}
+
+.destaque {
+  color: var(--destaque);
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.checks li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.checks .ms {
+  font-size: 18px;
+  color: var(--destaque);
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--botao);
+  color: var(--botao-texto);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.botao:hover {
+  transform: translateY(-2px);
+}
+
+.botao .ms {
+  font-size: 18px;
+}
+
+.nota {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--suave);
+}
+
+/* ---------- Foto ---------- */
+
+.foto {
+  position: relative;
+}
+
+/* Círculo centralizado na área da foto */
+.circulo {
+  position: absolute;
+  left: calc(50% + var(--ajuste, 0px));
+  top: 55%;
+  height: 106%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--circulo);
+}
+
+/* Pet centralizado sobre o círculo, apoiado na base do banner */
+.foto img {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  height: 94%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+}
+
+/* Foto encostada na direita (corte reto na borda) e maior que o círculo */
+.foto.direita {
+  container-type: size;
+}
+
+.foto.direita img {
+  left: auto;
+  right: 0;
+  transform: none;
+  height: 100%;
+}
+
+/* círculo menor, atrás do centro do pet (largura do pet = 0,74 x altura) */
+.foto.direita .circulo {
+  left: auto;
+  right: 37cqh;
+  top: 58%;
+  height: 76%;
+  transform: translate(50%, -50%);
+}
+
+/* Fotos com o lado esquerdo cortado somem suavemente nesse lado */
+.foto img.suave {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 28%);
+  mask-image: linear-gradient(to right, transparent 0, #000 28%);
+}
+
+/* ---------- Setas e pontos ---------- */
+
+.seta {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #21479B;
+  box-shadow: 0 6px 18px rgba(24, 59, 114, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.seta:hover {
+  transform: scale(1.06);
+}
+
+.seta-esq { left: calc(6% - 22px); }
+.seta-dir { right: calc(6% - 22px); }
+
+.pontos {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pontos button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: #D3D9E6;
+  cursor: pointer;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.pontos button.ativo {
+  width: 28px;
+  background: #21479B;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trilho { transition: none; }
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 900px) {
+  .trilho { --largura: 90%; --espaco: 12px; }
+  .seta-esq { left: calc(5% - 20px); }
+  .seta-dir { right: calc(5% - 20px); }
+  .seta { width: 42px; height: 42px; margin-top: -21px; }
+
+  .texto { padding: 20px 0 20px 28px; }
+  .checks li { font-size: 12px; padding: 4px 10px; }
+  .card { min-height: 260px; }
+}
+
+/* Celular: foto em cima do texto */
+@media (max-width: 620px) {
+  .carrossel { padding-top: 14px; }
+  .trilho { --largura: 92%; --espaco: 10px; }
+  .slide { padding: 8px; border-radius: 22px; }
+  .seta { display: none; }
+
+  .card {
+    grid-template-columns: 1fr;
+    height: auto;
+    border-radius: 16px;
+  }
+
+  .foto {
+    order: -1;
+    height: 170px;
+  }
+
+  .circulo { height: 112%; top: 58%; }
+
+  .texto {
+    padding: 14px 18px 18px;
+  }
+
+  .etiqueta { font-size: 14px; }
+  h2 { font-size: 26px; margin-bottom: 10px; }
+  .checks { margin-bottom: 14px; }
+  .nota { display: none; }
+  .botao { width: 100%; justify-content: center; }
+}
