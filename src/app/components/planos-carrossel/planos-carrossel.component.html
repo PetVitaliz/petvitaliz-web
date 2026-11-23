@@ -1,0 +1,73 @@
+<div class="ciclo" role="group" aria-label="Ciclo de cobrança">
+  <button type="button" [class.ativo]="ciclo === 'mensal'" (click)="mudarCiclo('mensal')">Mensal</button>
+  <button type="button" [class.ativo]="ciclo === 'anual'" (click)="mudarCiclo('anual')">
+    Anual <span class="ciclo-off">economize</span>
+  </button>
+</div>
+
+<div class="planos-carrossel"
+  (pointerdown)="inicioToque = $event.clientX" (pointerup)="soltarToque($event.clientX)"
+  (mouseenter)="pausar(true)" (mouseleave)="pausar(false)" (focusin)="pausar(true)" (focusout)="pausar(false)">
+
+  <button type="button" class="planos-seta esq" (click)="anterior()" aria-label="Plano anterior">
+    <span class="ms">arrow_back</span>
+  </button>
+
+  <div class="planos-janela">
+    <div class="niveis" [class.sem-animacao]="semAnimacao" [style.--i]="posPlano">
+      @for (p of planosLoop; track p.chave; let k = $index) {
+        <article class="nivel-card" [class.destaque]="p.nivel === 'ouro'" [class.ativo]="k === posPlano"
+          [style.--cor-nivel]="p.cor" (click)="irParaPosicao(k)" [attr.aria-hidden]="k !== posPlano ? 'true' : null">
+
+          @if (p.nivel === 'ouro') { <span class="faixa-nivel">Mais escolhido</span> }
+
+          <div class="nivel-topo">
+            <span class="coroa" [style.background]="p.cor">
+              <svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+            </span>
+            <div class="nivel-nome">
+              <h3>{{ p.nomeCurto }}</h3>
+              <p>{{ p.resumo }}</p>
+            </div>
+          </div>
+
+          <div class="nivel-preco" [class.anual]="ciclo === 'anual'">
+            @if (ciclo === 'anual' && economia(p) > 0) { <span class="preco-de">{{ moeda(p.mensal) }}</span> }
+            <strong>{{ moeda(ciclo === 'anual' ? p.anual : p.mensal) }}</strong><small>/mês</small>
+            @if (ciclo === 'anual') {
+              <div class="preco-anual">{{ moeda(p.anual * 12) }}/ano
+                @if (economia(p) > 0) { <span class="economia">economia de {{ economia(p) }}%</span> }
+              </div>
+            } @else if (p.anual < p.mensal) {
+              <div class="preco-anual">ou {{ moeda(p.anual) }}/mês no anual</div>
+            }
+          </div>
+
+          <ul class="nivel-beneficios">
+            @for (b of p.beneficios; track b.texto) {
+              <li>
+                <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+                <span class="b-texto">{{ b.texto }}</span>
+                <span class="b-qtd">{{ b.quantidade }}</span>
+              </li>
+            }
+          </ul>
+
+          <button type="button" class="nivel-botao" (click)="$event.stopPropagation(); clicarBotao(k, p)">
+            {{ textoBotao }} {{ p.nomeCurto }}
+          </button>
+        </article>
+      }
+    </div>
+  </div>
+
+  <button type="button" class="planos-seta dir" (click)="proximo()" aria-label="Próximo plano">
+    <span class="ms">arrow_forward</span>
+  </button>
+
+  <div class="planos-pontos">
+    @for (p of planos; track p.id_produto; let i = $index) {
+      <button type="button" [class.ativo]="i === planoAtual" (click)="irParaPlano(i)" [attr.aria-label]="'Ver ' + p.nomeCurto"></button>
+    }
+  </div>
+</div>

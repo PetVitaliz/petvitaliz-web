@@ -1,252 +1,223 @@
-<section class="page-container">
+<main class="consultas-pagina">
 
-  <div class="hero">
-    <div>
-      <span>AGENDAMENTO</span>
-      <h1>Agende um horário para seu Pet</h1>
-      <p>Cuidados profissionais e carinhosos que o seu pet merece.</p>
-    </div>
-  </div>
+  <header class="topo">
+    <h1>Consultas</h1>
+    <p>Agende os serviços cobertos pelo plano do seu pet.</p>
+  </header>
 
-  <div class="stepper-card">
-    <div class="stepper-top">
-      <div class="step" [class.active]="etapaAtual >= 1">
-        <div class="circle">1</div>
-        <span>Selecionar Pet</span>
-      </div>
-      <div class="step" [class.active]="etapaAtual >= 2">
-        <div class="circle">2</div>
-        <span>Escolher Serviço</span>
-      </div>
-      <div class="step" [class.active]="etapaAtual >= 3">
-        <div class="circle">3</div>
-        <span>Data e Horário</span>
-      </div>
-      <div class="step" [class.active]="etapaAtual >= 4">
-        <div class="circle">4</div>
-        <span>Confirmação</span>
-      </div>
-    </div>
+  <!-- ================= Agendar ================= -->
+  <section class="card agendar">
 
-    <div class="content-box">
-      <div class="alert-error" *ngIf="mensagemErro">
-        {{ mensagemErro }}
-      </div>
-      <div class="alert-success" *ngIf="mensagemSucesso">
-        {{ mensagemSucesso }}
+    @if (carregandoDados) {
+      <p class="carregando">Carregando seus pets e planos…</p>
+    } @else if (!pets.length) {
+
+      <!-- Sem pets -->
+      <div class="bloqueio">
+        <span class="bloqueio-icone"><app-icone-pet especie=""></app-icone-pet></span>
+        <h2>Cadastre seu pet primeiro</h2>
+        <p>Para agendar uma consulta, o pet precisa estar cadastrado e ter um plano.</p>
+        <a class="btn btn-amarelo" routerLink="/user/listar/pet"><span class="ms">add</span> Cadastrar pet</a>
       </div>
 
-      <div *ngIf="etapaAtual === 1">
-        <div class="section-title">
-          <h2>Para qual pet é o atendimento?</h2>
-          <p>Selecione um de seus pets cadastrados na sua conta.</p>
+    } @else if (!petsComPlano.length) {
+
+      <!-- Nenhum pet com plano -->
+      <div class="bloqueio">
+        <span class="bloqueio-icone"><span class="ms">health_and_safety</span></span>
+        <h2>O agendamento é exclusivo para pets com plano</h2>
+        <p>Contrate um plano para {{ pets.length === 1 ? pets[0].nome : 'um dos seus pets' }} e agende consultas, vacinas, banho e muito mais.</p>
+        <div class="bloqueio-botoes">
+          <a class="btn btn-amarelo" routerLink="/user/planos-pet">Ver planos</a>
+          <a class="btn btn-contorno" routerLink="/user/listar/pet">Meus pets</a>
         </div>
+      </div>
 
-        <div class="pets-grid">
-          <div
-            class="pet-card"
-            *ngFor="let pet of pets"
-            [class.selected]="petSelecionadoId === pet.id_pet"
-            (click)="selecionarPet(pet)"
-          >
-            <div class="check">✓</div>
-            <img [src]="pet.foto_url || 'assets/img/banner.png'" [alt]="pet.nome">
-            <h3>{{ pet.nome }}</h3>
-            <small>ESPÉCIE: {{ pet.especie }}</small>
+    } @else {
+
+      <!-- Etapas -->
+      <div class="etapas">
+        @for (nome of nomesEtapas; track nome; let i = $index) {
+          <div class="etapa" [class.feita]="etapaAtual > i + 1" [class.atual]="etapaAtual === i + 1">
+            <span class="etapa-num">
+              @if (etapaAtual > i + 1) { <span class="ms">check</span> } @else { {{ i + 1 }} }
+            </span>
+            <span class="etapa-nome">{{ nome }}</span>
           </div>
-
-          <button type="button" class="pet-card add-card" (click)="irParaCadastroPet()">
-            <div class="plus">+</div>
-            <h3>Novo Pet</h3>
-            <small>Cadastrar Pet</small>
-          </button>
-        </div>
+        }
       </div>
 
-      <div *ngIf="etapaAtual === 2">
-        <div class="section-title">
-          <h2>Escolha o serviço</h2>
-          <p>Selecione o tipo de atendimento clínico ou estético desejado.</p>
+      @if (mensagemErro) { <p class="alerta erro"><span class="ms">error</span> {{ mensagemErro }}</p> }
+
+      <!-- Etapa 1: pet -->
+      @if (etapaAtual === 1) {
+        <h2 class="titulo-etapa">Para qual pet é o atendimento?</h2>
+        <div class="pets">
+          @for (pet of pets; track pet.id_pet) {
+            @if (planoDe(pet); as plano) {
+              <button type="button" class="pet" [class.ativo]="petSelecionado?.id_pet === pet.id_pet" (click)="selecionarPet(pet)"
+                [attr.aria-pressed]="petSelecionado?.id_pet === pet.id_pet">
+                <span class="pet-foto">
+                  @if (pet.foto_url) { <img [src]="pet.foto_url" [alt]="'Foto de ' + pet.nome" /> }
+                  @else { <app-icone-pet [especie]="pet.especie"></app-icone-pet> }
+                </span>
+                <strong>{{ pet.nome }}</strong>
+                <span class="selo-plano" [style.--cor]="coresPlanos[plano]">{{ nomesPlanos[plano] }}</span>
+                <span class="marca"><span class="ms">check</span></span>
+              </button>
+            } @else {
+              <div class="pet sem-plano">
+                <span class="pet-foto">
+                  @if (pet.foto_url) { <img [src]="pet.foto_url" [alt]="'Foto de ' + pet.nome" /> }
+                  @else { <app-icone-pet [especie]="pet.especie"></app-icone-pet> }
+                </span>
+                <strong>{{ pet.nome }}</strong>
+                <span class="sem">Sem plano</span>
+                <a routerLink="/user/planos-pet">Contratar plano</a>
+              </div>
+            }
+          }
+        </div>
+      }
+
+      <!-- Etapa 2: serviço -->
+      @if (etapaAtual === 2 && petSelecionado && planoAtual) {
+        <div class="resumo-plano" [style.--cor]="coresPlanos[planoAtual]">
+          <span class="ponto"><span class="ms">workspace_premium</span></span>
+          <span><strong>{{ nomesPlanos[planoAtual] }}</strong> de {{ petSelecionado.nome }}</span>
+          <a routerLink="/user/meu-plano">Ver cobertura</a>
         </div>
 
-        <div class="services-grid">
-          <button
-            type="button"
-            *ngFor="let s of servicosCard"
-            [class.active]="servicoSelecionadoValor === s.valor"
-            (click)="selecionarServico(s.valor)"
-          >
-            {{ s.label }}
-          </button>
+        <h2 class="titulo-etapa">Qual serviço?</h2>
+        <div class="servicos">
+          @for (s of servicos; track s.id) {
+            <button type="button" class="servico" [attr.data-estado]="estado(s.id)"
+              [class.ativo]="servicoSelecionado?.id === s.id" [disabled]="estado(s.id) !== 'liberado'"
+              (click)="selecionarServico(s)">
+              <img [src]="imagens[s.id]" alt="" aria-hidden="true" />
+              <span class="servico-texto">
+                <strong>{{ s.nome }}</strong>
+                <small>{{ s.descricao }}</small>
+                <span class="cota">
+                  @if (estado(s.id) === 'fora') { <span class="ms">lock</span> }
+                  @else if (estado(s.id) === 'esgotado') { <span class="ms">hourglass_empty</span> }
+                  @else { <span class="ms">check_circle</span> }
+                  {{ textoCota(s.id) }}
+                </span>
+              </span>
+            </button>
+          }
         </div>
-      </div>
+        <p class="nota"><span class="ms">info</span> As cotas renovam todo dia 1º. Consultas canceladas não contam.
+          Quer mais serviços? <a routerLink="/user/planos-pet">Conheça os outros planos</a>.</p>
+      }
 
-      <div *ngIf="etapaAtual === 3">
-        <div class="section-title">
-          <h2>Escolha a data, horário e detalhes</h2>
-          <p>Selecione o dia e digite observações clínicas importantes.</p>
-        </div>
-
-        <input
-          type="date"
-          name="dataSelecionada"
-          [(ngModel)]="dataSelecionada"
-          [min]="obterDataMinima()"
-          (change)="aoAlterarData()"
-          [disabled]="carregando"
-        >
-
-        <div style="margin-bottom: 24px;">
-          <label style="color: #082c75; font-weight: 800; font-size: 14px; display: block; margin-bottom: 8px;">
-            Observações ou Sintomas (Opcional):
+      <!-- Etapa 3: data e horário -->
+      @if (etapaAtual === 3) {
+        <h2 class="titulo-etapa">Quando?</h2>
+        <div class="data-linha">
+          <label>Data
+            <input type="date" [(ngModel)]="dataSelecionada" [min]="obterDataMinima()" (change)="aoAlterarData()" [disabled]="carregando" />
           </label>
-          <textarea 
-            [(ngModel)]="observacoes" 
-            placeholder="Ex: Pet está tossindo ou precisa de cuidado especial com a pele no banho..." 
-            style="width: 100%; min-height: 80px; border-radius: 16px; border: 1px solid #dbe1ee; padding: 12px; outline: none; font-size: 14px;"
-            [disabled]="carregando">
-          </textarea>
         </div>
 
-        <div class="horarios-grid">
-          <button
-            type="button"
-            *ngFor="let horario of horarios"
-            [class.active]="horarioSelecionado === horario"
-            [disabled]="horarioIndisponivel(horario) || horarioJaOcupado(horario) || horarioSemProfissional(horario) || carregando || carregandoHorarios"
-            [title]="horarioSemProfissional(horario) ? 'Sem profissionais livres' : ''"
-            (click)="selecionarHorario(horario)"
-          >
-            {{ horario }}
+        @if (dataSelecionada && !dataPassada()) {
+          <p class="rotulo">Horário</p>
+          <div class="horarios">
+            @for (h of horarios; track h) {
+              <button type="button" [class.ativo]="horarioSelecionado === h"
+                [disabled]="horarioBloqueado(h) || carregando || carregandoHorarios" (click)="selecionarHorario(h)">{{ h }}</button>
+            }
+          </div>
+          @if (carregandoHorarios) {
+            <p class="aviso">Verificando horários disponíveis…</p>
+          } @else if (semProfissionais) {
+            <p class="aviso">Nenhum profissional disponível nesse dia. Tente outra data.</p>
+          } @else {
+            <p class="aviso">Horários em cinza já estão ocupados ou já passaram.</p>
+          }
+        }
+
+        <label class="obs">Observações ou sintomas <span class="opcional">(opcional)</span>
+          <textarea rows="3" [(ngModel)]="observacoes" [disabled]="carregando"
+            placeholder="Ex.: está tossindo há dois dias, tem a pele sensível…"></textarea>
+        </label>
+      }
+
+      <!-- Etapa 4: confirmação -->
+      @if (etapaAtual === 4) {
+        <div class="confirmacao">
+          <span class="ok-icone"><span class="ms">check</span></span>
+          <h2>Agendamento confirmado!</h2>
+          <p>{{ mensagemSucesso }}</p>
+          <dl class="resumo">
+            <div><dt>Pet</dt><dd>{{ petSelecionado?.nome }}</dd></div>
+            <div><dt>Serviço</dt><dd>{{ servicoSelecionado?.nome }}</dd></div>
+            <div><dt>Data</dt><dd>{{ formatarData(dataSelecionada) }}</dd></div>
+            <div><dt>Horário</dt><dd>{{ horarioSelecionado }}</dd></div>
+          </dl>
+          <button type="button" class="btn btn-azul" (click)="novoAgendamento()">Novo agendamento</button>
+        </div>
+      }
+
+      @if (etapaAtual < 4) {
+        <div class="acoes">
+          @if (etapaAtual > 1) {
+            <button type="button" class="btn btn-texto" (click)="voltar()" [disabled]="carregando"><span class="ms">arrow_back</span> Voltar</button>
+          }
+          <button type="button" class="btn btn-azul" [disabled]="!podeContinuar() || carregando" (click)="continuar()">
+            {{ carregando ? 'Agendando…' : etapaAtual === 3 ? 'Confirmar agendamento' : 'Continuar' }}
           </button>
         </div>
-        <p class="aviso-horarios" *ngIf="carregandoHorarios">Verificando horários disponíveis...</p>
-        <p class="aviso-horarios" *ngIf="!carregandoHorarios && semProfissionais">
-          Nenhum {{ servicoSelecionadoValor === 'veterinario' ? 'veterinário' : 'tosador' }} disponível no momento.
-        </p>
-        <p class="aviso-horarios" *ngIf="!carregandoHorarios && !semProfissionais && horariosSemProfissional.length > 0">
-          Horários em cinza já estão ocupados ou já passaram.
-        </p>
-      </div>
+      }
+    }
+  </section>
 
-      <div *ngIf="etapaAtual === 4">
-        <div class="confirmacao">
-          <div class="success-icon">✓</div>
-          <h2>Agendamento confirmado!</h2>
-          <p>Seu horário foi transmitido aos profissionais da clínica.</p>
+  <!-- ================= Listas ================= -->
+  <div class="listas">
+    <section class="card">
+      <h2 class="titulo-lista">Próximas consultas</h2>
+      @if (mensagemSucesso && etapaAtual !== 4) { <p class="alerta ok"><span class="ms">check_circle</span> {{ mensagemSucesso }}</p> }
+      @if (proximas.length) {
+        <ul class="lista">
+          @for (c of proximas; track c.id_consulta) {
+            <li class="item">
+              <span class="item-data"><strong>{{ c.data_consulta.slice(8, 10) }}</strong><small>{{ diaDaSemana(c.data_consulta) }}</small></span>
+              <span class="item-info">
+                <strong>{{ nomeServico(c.servicoId) }} · {{ c.nome_pet }}</strong>
+                <small>{{ c.hora_inicio }}{{ c.nome_funcionario ? ' · ' + c.nome_funcionario : '' }}</small>
+              </span>
+              <span class="status" [attr.data-status]="c.status">{{ formatarStatus(c.status) }}</span>
+              @if (podeCancelar(c)) {
+                <button type="button" class="cancelar" (click)="cancelarAgendamento(c)">Cancelar</button>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="vazio">Nenhuma consulta marcada.</p>
+      }
+    </section>
 
-          <div class="summary">
-            <div>
-              <span>Pet</span>
-              <strong>{{ petSelecionadoNome }}</strong>
-            </div>
-            <div>
-              <span>Serviço</span>
-              <strong>{{ servicoSelecionadoValor === 'veterinario' ? 'Veterinário' : 'Tosador' }}</strong>
-            </div>
-            <div>
-              <span>Data</span>
-              <strong>{{ formatarData(dataSelecionada) }}</strong>
-            </div>
-            <div>
-              <span>Horário</span>
-              <strong>{{ horarioSelecionado }}</strong>
-            </div>
-          </div>
-
-          <div class="confirm-actions">
-            <button type="button" class="btn-primary" (click)="limparFormulario()">
-              Novo agendamento
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="bottom-actions" *ngIf="etapaAtual < 4">
-        <button
-          type="button"
-          class="btn-secondary"
-          *ngIf="etapaAtual > 1"
-          (click)="voltar()"
-          [disabled]="carregando"
-        >
-          Voltar
-        </button>
-
-        <button
-          type="button"
-          class="btn-primary"
-          [disabled]="!podeContinuar() || carregando"
-          (click)="continuar()"
-        >
-          {{ carregando ? 'Processando...' : 'Continuar' }}
-        </button>
-      </div>
-    </div>
+    <section class="card">
+      <h2 class="titulo-lista">Histórico</h2>
+      @if (historico.length) {
+        <ul class="lista">
+          @for (c of historico; track c.id_consulta) {
+            <li class="item">
+              <span class="item-data"><strong>{{ c.data_consulta.slice(8, 10) }}</strong><small>{{ diaDaSemana(c.data_consulta) }}</small></span>
+              <span class="item-info">
+                <strong>{{ nomeServico(c.servicoId) }} · {{ c.nome_pet }}</strong>
+                <small>{{ formatarData(c.data_consulta) }} · {{ c.hora_inicio }}</small>
+              </span>
+              <span class="status" [attr.data-status]="c.status">{{ formatarStatus(c.status) }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="vazio">Nenhum atendimento encerrado ainda.</p>
+      }
+    </section>
   </div>
 
-  <div class="management-grid">
-    <div class="management-card">
-      <div class="management-header">
-        <div>
-          <span>ATIVOS</span>
-          <h2>Consultas Marcadas</h2>
-        </div>
-      </div>
-
-      <div class="empty-state" *ngIf="agendamentosAtivos.length === 0">
-        Nenhuma consulta ativa agendada no momento.
-      </div>
-
-      <div class="appointment-list" *ngIf="agendamentosAtivos.length > 0">
-        <div class="appointment-card" *ngFor="let a of agendamentosAtivos">
-          <div>
-            <h3>{{ a.nome_pet }}</h3>
-            <p>{{ a.servico }} <span *ngIf="a.nome_funcionario">({{ a.nome_funcionario }})</span></p>
-          </div>
-          <div class="appointment-info">
-            <span>{{ formatarData(a.data_consulta) }}</span>
-            <strong>{{ a.hora_inicio }}</strong>
-          </div>
-          <div class="status active-status">
-            {{ formatarStatus(a.status) }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="management-card">
-      <div class="management-header">
-        <div>
-          <span>HISTÓRICO</span>
-          <h2>Histórico Clínico</h2>
-        </div>
-      </div>
-
-      <div class="empty-state" *ngIf="historicoAgendamentos.length === 0">
-        Nenhum histórico de atendimento encerrado.
-      </div>
-
-      <div class="appointment-list" *ngIf="agendamentosAtivos.length > 0">
-        <div class="appointment-card" *ngFor="let a of agendamentosAtivos" style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <h3>{{ a.nome_pet }}</h3>
-            <p>{{ a.servico }} <span *ngIf="a.nome_funcionario">({{ a.nome_funcionario }})</span></p>
-          </div>
-          <div class="appointment-info">
-            <span>{{ formatarData(a.data_consulta) }}</span>
-            <strong>{{ a.hora_inicio }}</strong>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
-            <div class="status active-status">
-              {{ formatarStatus(a.status) }}
-            </div>
-            <button type="button" (click)="cancelarAgendamento(a.id_consulta)" style="background: transparent; color: #dc2626; border: none; font-size: 11px; font-weight: bold; cursor: pointer; text-decoration: underline; padding: 0;">
-              Cancelar
-            </button>
-          </div>
-        </div>
-      </div>
-  </div>
-</div>
-</section>
+</main>

@@ -7,7 +7,6 @@ import { FooterComponent } from './components/footer/footer.component';
 
 import { HeaderFuncionarioComponent } from './pages/funcionario/header-funcionario/header-funcionario.component';
 import { HeaderAdmComponent } from './pages/adm/header-adm/header-adm.component';
-import { HeaderUsuarioComponent } from './pages/usuario/header-usuario/header-usuario.component';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +15,6 @@ import { HeaderUsuarioComponent } from './pages/usuario/header-usuario/header-us
     RouterOutlet,
     NgIf,
     HeaderComponent,
-    HeaderUsuarioComponent,
     HeaderFuncionarioComponent,
     HeaderAdmComponent,
     FooterComponent

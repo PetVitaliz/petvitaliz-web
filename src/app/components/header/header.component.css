@@ -715,3 +715,125 @@
     width: 160px;
   }
 }
+
+/* ---------- Área do cliente ---------- */
+
+.btn-agendar {
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: #FECA3E;
+  color: #183B72;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: filter 0.2s ease;
+}
+
+.btn-agendar:hover { filter: brightness(1.04); }
+.btn-agendar .ms { font-size: 20px; }
+
+.conta { position: relative; flex-shrink: 0; }
+
+.conta-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 10px 0 5px;
+  border: 1px solid #C9D6EE;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #183B72;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.conta-btn:hover, .conta-btn[aria-expanded='true'] { border-color: #21479B; }
+
+.conta-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #183B72;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.conta-nome { display: flex; flex-direction: column; text-align: left; line-height: 1.15; }
+.conta-nome small { font-size: 12px; color: #71809A; }
+.conta-nome strong { font-size: 14px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.conta-seta { font-size: 20px; transition: transform 0.2s ease; }
+.conta-btn[aria-expanded='true'] .conta-seta { transform: rotate(180deg); }
+
+.conta-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: 260px;
+  padding: 8px;
+  border: 1px solid #E8EEFA;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(24, 59, 114, 0.16);
+}
+
+.conta-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #E8EEFA;
+  text-decoration: none;
+}
+
+.conta-topo > span:last-child { display: flex; flex-direction: column; min-width: 0; }
+.conta-topo strong { font-size: 15px; color: #183B72; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.conta-topo small { font-size: 12px; color: #21479B; font-weight: 600; }
+.conta-item.divisor { margin-top: 4px; border-top: 1px solid #E8EEFA; border-radius: 0 0 10px 10px; padding-top: 12px; }
+.conta-menu { max-height: calc(100vh - 140px); overflow-y: auto; }
+
+.conta-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  color: #183B72;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.conta-item:hover { background: #F6F8FC; }
+.conta-item .ms { color: #21479B; }
+
+.conta-sair { margin-top: 4px; border-top: 1px solid #E8EEFA; border-radius: 0 0 10px 10px; color: #B3261E; }
+.conta-sair .ms { color: #B3261E; }
+
+@media (max-width: 900px) {
+  .conta-btn { padding: 0 4px; border: none; height: 44px; }
+  .conta-nome, .conta-seta { display: none; }
+  .buttons-mobile .btn-agendar { width: 100%; }
+  .btn-agendar.buttons-desktop { display: none; }
+}
+
+.ico-pata { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: #21479B; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }

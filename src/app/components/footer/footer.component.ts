@@ -48,8 +48,18 @@ export class FooterComponent {
     this.irPara('/user/servicos', 'servicos');
   }
 
+  // Adoção fica só na home (inclusive para quem está logado)
   irParaAdocao(): void {
-    this.irPara('/user/adocao', 'adocao');
+    if (!localStorage.getItem('usuarioLogado')) {
+      this.irPara('', 'adocao');
+      return;
+    }
+    const el = document.getElementById('adocao');
+    if (this.router.url.split('#')[0] === '/user/home' && el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      this.router.navigate(['/user/home'], { fragment: 'adocao' });
+    }
   }
 
   irParaSobreNos(): void {

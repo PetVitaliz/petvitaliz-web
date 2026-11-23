@@ -20,13 +20,8 @@
 
 } @else {
 
-  <app-header
-    *ngIf="!isUsuarioRoute()">
-  </app-header>
-
-  <app-header-usuario
-    *ngIf="isUsuarioRoute()">
-  </app-header-usuario>
+  <!-- Mesmo topo do site; na área do cliente mostra os atalhos da conta -->
+  <app-header [logado]="isUsuarioRoute()"></app-header>
 
   <router-outlet></router-outlet>
 

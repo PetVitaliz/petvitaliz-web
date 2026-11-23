@@ -1,7 +1,9 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { Subscription, filter } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 type Sugestao = {
   texto: string;
@@ -28,12 +30,38 @@ type SugestaoExibida = Sugestao & {
   standalone: true,
   imports: [
     FormsModule,
-    RouterLink
+    RouterLink,
+    RouterLinkActive
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+
+  // true nas páginas da área do cliente (/user/...)
+  @Input() logado = false;
+
+  // Barra de categorias do cliente (mesmos atalhos do app)
+  readonly linksLogado = [
+    { texto: 'Início', rota: '/user/home' },
+    { texto: 'Meus pets', rota: '/user/listar/pet' },
+    { texto: 'Consultas', rota: '/user/agendamento' },
+    { texto: 'Meu plano', rota: '/user/meu-plano' },
+    { texto: 'Serviços', rota: '/user/servicos' }
+  ];
+
+  // Menu da conta: mesmos itens do "Meu perfil" do app
+  readonly menuConta = [
+    { icone: 'pets', texto: 'Meus pets', rota: '/user/listar/pet', divisor: false },
+    { icone: 'calendar_month', texto: 'Consultas', rota: '/user/agendamento', divisor: false },
+    { icone: 'workspace_premium', texto: 'Meu plano', rota: '/user/meu-plano', divisor: false },
+    { icone: 'person', texto: 'Dados pessoais', rota: '/user/conta/dados', divisor: true },
+    { icone: 'credit_card', texto: 'Formas de pagamento', rota: '/user/conta/pagamento', divisor: false },
+    { icone: 'notifications', texto: 'Notificações', rota: '/user/conta/notificacoes', divisor: false },
+    { icone: 'shield', texto: 'Segurança', rota: '/user/conta/seguranca', divisor: false },
+    { icone: 'support_agent', texto: 'Ajuda e suporte', rota: '/user/contato', divisor: true },
+    { icone: 'description', texto: 'Termos e privacidade', rota: '/user/conta/termos', divisor: false }
+  ];
 
   menuAberto = false;
   submenuAberto: 'servicos' | 'planos' | null = null;
@@ -77,7 +105,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { texto: 'Esqueci minha senha', palavras: ['senha', 'recuperar', 'esqueci'], rota: '/esqueci-senha' }
   ];
 
-  constructor(private router: Router) {}
+  // Buscas da área do cliente
+  private readonly sugestoesLogado: Sugestao[] = [
+    { texto: 'Agendar consulta', palavras: ['agendar', 'consulta', 'veterinario', 'vet', 'marcar'], rota: '/user/agendamento' },
+    { texto: 'Minhas consultas', palavras: ['consulta', 'agendamento', 'horario'], rota: '/user/agendamento' },
+    { texto: 'Meus pets', palavras: ['pet', 'cachorro', 'gato', 'animal'], rota: '/user/listar/pet' },
+    { texto: 'Cadastrar pet', palavras: ['cadastrar', 'novo', 'pet', 'adicionar'], rota: '/user/listar/pet' },
+    { texto: 'Meu plano', palavras: ['plano', 'assinatura', 'cobertura', 'beneficio'], rota: '/user/meu-plano' },
+    { texto: 'Contratar plano', palavras: ['plano', 'contratar', 'assinar', 'preco', 'valor'], rota: '/user/planos-pet' },
+    { texto: 'Serviços', palavras: ['servico', 'banho', 'tosa', 'vacina', 'exame', 'hospedagem'], rota: '/user/servicos' },
+    { texto: 'Adotar um pet', palavras: ['adotar', 'adocao', 'adote', 'abrigo'], rota: '/user/home', fragment: 'adocao' },
+    { texto: 'Ajuda e suporte', palavras: ['ajuda', 'suporte', 'contato', 'duvida', 'telefone'], rota: '/user/contato' }
+  ];
+
+  private readonly popularesLogado = ['Agendar consulta', 'Meus pets', 'Meu plano', 'Serviços'];
+
+  private get listaSugestoes(): Sugestao[] {
+    return this.logado ? this.sugestoesLogado : this.sugestoes;
+  }
+
+  private get listaPopulares(): string[] {
+    return this.logado ? this.popularesLogado : this.populares;
+  }
+
+  constructor(private router: Router, private http: HttpClient) {}
 
   private normalizar(valor: string): string {
     return valor.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
@@ -104,8 +155,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.indiceAtivo = -1;
 
     if (!termo) {
-      this.sugestoesFiltradas = this.sugestoes
-        .filter((s) => this.populares.includes(s.texto))
+      this.sugestoesFiltradas = this.listaSugestoes
+        .filter((s) => this.listaPopulares.includes(s.texto))
         .map((s) => this.marcar(s, ''));
       return;
     }
@@ -115,7 +166,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const contem: Sugestao[] = [];
     const porPalavra: Sugestao[] = [];
 
-    for (const s of this.sugestoes) {
+    for (const s of this.listaSugestoes) {
       const texto = this.normalizar(s.texto);
       if (texto.startsWith(termo)) {
         comeca.push(s);
@@ -171,7 +222,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.router.navigate([sugestao.rota]);
+    this.router.navigate([sugestao.rota], sugestao.fragment ? { fragment: sugestao.fragment } : {});
     this.fecharMenu();
   }
 
@@ -191,7 +242,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.escolher(this.sugestoesFiltradas[0]);
     } else {
       // Nada parecido: leva para Serviços
-      this.escolher({ texto: '', palavras: [], rota: '/', fragment: 'servicos' });
+      this.escolher(this.logado
+        ? { texto: '', palavras: [], rota: '/user/servicos' }
+        : { texto: '', palavras: [], rota: '/', fragment: 'servicos' });
     }
   }
 
@@ -285,11 +338,79 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.cepAberto && this.cepArea && !this.cepArea.nativeElement.contains(e.target as Node)) {
       this.cepAberto = false;
     }
+    if (this.contaAberta && this.contaArea && !this.contaArea.nativeElement.contains(e.target as Node)) {
+      this.contaAberta = false;
+    }
   }
 
   @HostListener('document:keydown.escape')
   aoApertarEsc(): void {
     this.cepAberto = false;
+    this.contaAberta = false;
+  }
+
+  // ---------- Conta do cliente ----------
+
+  @ViewChild('contaArea') contaArea?: ElementRef<HTMLElement>;
+
+  contaAberta = false;
+
+  get usuario(): any {
+    try {
+      const salvo = localStorage.getItem('usuarioLogado');
+      return salvo ? JSON.parse(salvo) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  get nomeUsuario(): string {
+    const u = this.usuario;
+    return (u?.nome || u?.nomeCompleto || 'Cliente PetVitaliz').trim();
+  }
+
+  get primeiroNome(): string {
+    return this.nomeUsuario.split(' ')[0];
+  }
+
+  get emailUsuario(): string {
+    return this.usuario?.email || '';
+  }
+
+  get inicialUsuario(): string {
+    const u = this.usuario;
+    return (u?.nome || u?.nomeCompleto || u?.email || 'C').trim().charAt(0).toUpperCase();
+  }
+
+  toggleConta(): void {
+    this.contaAberta = !this.contaAberta;
+    this.cepAberto = false;
+  }
+
+  fecharConta(): void {
+    this.contaAberta = false;
+    this.fecharMenu();
+  }
+
+  sair(): void {
+    if (!confirm('Deseja realmente sair da sua conta?')) {
+      return;
+    }
+    this.fecharConta();
+    this.http.get(`${environment.apiUrl}/user/logout`, { withCredentials: true }).subscribe({
+      error: (err) => console.error('Erro ao realizar logout no servidor:', err)
+    });
+    localStorage.removeItem('usuarioLogado');
+    this.router.navigate(['/']);
+  }
+
+  clicarLogo(evento: Event): void {
+    if (this.logado) {
+      this.fecharMenu();
+      this.router.navigate(['/user/home']);
+      return;
+    }
+    this.irPara(evento, 'topo');
   }
 
   // ---------- Seções da home ----------

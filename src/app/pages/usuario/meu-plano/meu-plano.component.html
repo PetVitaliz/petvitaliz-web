@@ -1,72 +1,77 @@
-<section class="plano-page">
+<main class="plano-pagina">
 
-  <div class="hero">
-    <span>MEU PLANO</span>
-    <h1>Gerencie o plano do seu Pet</h1>
-    <p>
-      Consulte benefícios, cobertura e informações da sua assinatura.
-    </p>
-  </div>
+  <header class="topo">
+    <h1>Meu plano</h1>
+    <p>Acompanhe a cobertura dos seus pets e contrate novos planos.</p>
+  </header>
 
-  <div *ngIf="carregando" class="loading-state">
-    <p>Carregando informações do plano...</p>
-  </div>
+  @if (erro) { <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p> }
+  @if (sucesso) { <p class="alerta ok"><span class="ms">check_circle</span> {{ sucesso }}</p> }
 
-  <div *ngIf="!carregando">
-    <p class="erro" *ngIf="erro">{{ erro }}</p>
+  @if (carregando) {
+    <p class="carregando">Carregando seus planos…</p>
+  } @else {
 
-    <div *ngIf="planos.length > 0; else semPlano">
-      <div class="plano-card" *ngFor="let plano of planos">
-        <div class="plano-header">
-          <div>
-            <small>PLANO DE {{ plano.nomePet | uppercase }}</small>
-            <h2>{{ plano.nome }}</h2>
-          </div>
-          <div class="status">
-            Ativo
-          </div>
-        </div>
+    @if (ativos.length) {
+      <!-- Planos ativos -->
+      <section class="ativos">
+        @for (a of ativos; track a.id_pet) {
+          <article class="ativo" [style.--cor]="a.plano.cor">
+            <div class="ativo-topo">
+              <span class="coroa grande">
+                <svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+              </span>
+              <div class="ativo-nome">
+                <small>Plano de {{ a.nomePet }}</small>
+                <h2>{{ a.plano.nome }}</h2>
+              </div>
+              <span class="selo-ativo">Ativo</span>
+            </div>
 
-        <div class="valor">
-          <span>Mensalidade</span>
-          <h3>R$ {{ plano.preco }}/mês</h3>
-        </div>
+            <p class="ativo-preco"><strong>{{ moeda(a.plano.mensal) }}</strong>/mês</p>
 
-        <div class="beneficios">
-          <h4>Benefícios inclusos</h4>
-          <p class="descricao-plano" *ngIf="plano.descricao">{{ plano.descricao }}</p>
+            @if (a.plano.beneficios.length) {
+              <ul class="ativo-beneficios">
+                @for (b of a.plano.beneficios; track b.texto) {
+                  <li><span class="ms">check_circle</span><span class="b-texto">{{ b.texto }}</span><span class="b-qtd">{{ b.quantidade }}</span></li>
+                }
+              </ul>
+            }
 
-          <ul *ngIf="plano.listaBeneficios.length > 0">
-            <li *ngFor="let beneficio of plano.listaBeneficios">
-              ✓ {{ beneficio }}
-            </li>
-          </ul>
-        </div>
-
-        <div class="acoes">
-          <a routerLink="/user/planos-pet" class="btn-secondary">
-            Contratar para outro pet
-          </a>
-
-          <button class="btn-danger" [disabled]="cancelandoPet !== null" (click)="cancelarPlano(plano)">
-            {{ cancelandoPet === plano.id_pet ? 'Cancelando...' : 'Cancelar Plano' }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #semPlano>
-      <div class="sem-plano">
-        <div class="icone">🐾</div>
+            <div class="ativo-acoes">
+              <a class="btn btn-azul" routerLink="/user/agendamento" [queryParams]="{ pet: a.id_pet }">
+                <span class="ms">calendar_add_on</span> Agendar consulta
+              </a>
+              <button type="button" class="btn-cancelar" [disabled]="cancelandoPet !== null" (click)="cancelarPlano(a)">
+                {{ cancelandoPet === a.id_pet ? 'Cancelando…' : 'Cancelar plano' }}
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+    } @else {
+      <!-- Nenhum plano -->
+      <section class="vazio">
+        <span class="vazio-coroa">
+          <svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+        </span>
         <h2>Nenhum plano contratado</h2>
-        <p>
-          Nenhum dos seus pets possui um plano ativo no momento.
-        </p>
-        <a routerLink="/user/planos-pet" class="btn-primary">
-          Contratar Plano
-        </a>
-      </div>
-    </ng-template>
-  </div>
+        <p>Escolha abaixo o plano ideal e garanta consultas, vacinas e cuidados para o seu pet.</p>
+      </section>
+    }
 
-</section>
+    <!-- Planos para escolher (mesmo carrossel da home) -->
+    @if (disponiveis.length && (!ativos.length || petsSemPlano.length || !pets.length)) {
+      <section class="escolher">
+        <h2>{{ ativos.length ? 'Contrate para seus outros pets' : 'Escolha um plano' }}</h2>
+        @if (!pets.length) {
+          <p class="aviso-pet"><span class="ms">info</span> Você vai precisar cadastrar um pet para contratar. <a routerLink="/user/listar/pet">Cadastrar pet</a></p>
+        } @else if (petsSemPlano.length) {
+          <p class="aviso-pet">Disponível para {{ petsSemPlano.length === 1 ? petsSemPlano[0].nome : petsSemPlano.length + ' pets sem plano' }}.</p>
+        }
+        <app-planos-carrossel [planos]="disponiveis" [(ciclo)]="ciclo" textoBotao="Contratar" (escolher)="escolherPlano($event)"></app-planos-carrossel>
+      </section>
+    }
+  }
+
+</main>

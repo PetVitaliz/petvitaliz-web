@@ -18,12 +18,13 @@ import { AdocaoComponent } from './pages/publico/adocao/adocao.component';
 // USUÁRIO
 import { AgendamentoComponent } from './pages/usuario/agendamento/agendamento.component';
 import { ListarCadastroPetComponent } from './pages/usuario/listar-cadastro-pet/listar-cadastro-pet.component';
-import { PlanosPetComponent } from './pages/usuario/planos-pet/planos-pet.component';
 import { PagamentoPlanoComponent } from './pages/usuario/pagamento-plano/pagamento-plano.component';
 import { ContratoPlanoComponent } from './pages/usuario/contrato-plano/contrato-plano.component';
 import { PlanoSucessoComponent } from './pages/usuario/plano-sucesso/plano-sucesso.component';
 import { ContatoUsuarioComponent } from './pages/usuario/contato-usuario/contato-usuario.component';
 import { MeuPlanoComponent } from './pages/usuario/meu-plano/meu-plano.component';
+import { MinhaContaComponent } from './pages/usuario/minha-conta/minha-conta.component';
+import { ContratarPlanoComponent } from './pages/usuario/contratar-plano/contratar-plano.component';
 
 // FUNCIONÁRIO
 import { HomeFuncionarioComponent } from './pages/funcionario/home-funcionario/home-funcionario.component';
@@ -91,14 +92,29 @@ export const routes: Routes = [
   component: ListarCadastroPetComponent,
   canActivate: [authUsuarioGuard]
 },
+// A escolha de planos agora fica em "Meu plano"
 {
   path: 'user/planos-pet',
-  component: PlanosPetComponent,
+  redirectTo: 'user/meu-plano'
+},
+{
+  path: 'user/contratar-plano',
+  component: ContratarPlanoComponent,
   canActivate: [authUsuarioGuard]
 },
 {
   path: 'user/meu-plano',
   component: MeuPlanoComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/conta',
+  component: MinhaContaComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/conta/:secao',
+  component: MinhaContaComponent,
   canActivate: [authUsuarioGuard]
 },
 {
