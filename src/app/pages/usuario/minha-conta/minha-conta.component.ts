@@ -444,7 +444,7 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
     return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
   }
 
-  salvarDados(): void {
+    salvarDados(): void {
     const e = this.edicao;
     const tel = e.telefone.replace(/\D/g, '');
     if (!e.nome.trim()) { this.erroDados = 'Informe seu nome.'; return; }
