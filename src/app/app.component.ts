@@ -5,6 +5,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { ConfirmarSairComponent } from './components/confirmar-sair/confirmar-sair.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { AssistenteComponent } from './components/assistente/assistente.component';
 
 import { HeaderFuncionarioComponent } from './pages/funcionario/header-funcionario/header-funcionario.component';
 import { HeaderAdmComponent } from './pages/adm/header-adm/header-adm.component';
@@ -18,7 +19,8 @@ import { HeaderAdmComponent } from './pages/adm/header-adm/header-adm.component'
     HeaderComponent,
     HeaderFuncionarioComponent,
     HeaderAdmComponent,
-    FooterComponent
+    FooterComponent,
+    AssistenteComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -44,4 +46,4 @@ export class AppComponent {
   isUsuarioRoute(): boolean {
     return this.router.url.includes('/user');
   }
-}
+}

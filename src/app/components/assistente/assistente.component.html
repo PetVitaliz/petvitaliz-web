@@ -1,0 +1,100 @@
+<!-- Avatar do Vitalino (dog robô), reutilizado no botão e no chat -->
+<ng-template #avatar>
+  <svg class="dog" viewBox="0 0 64 64" aria-hidden="true">
+    <!-- antena -->
+    <line x1="32" y1="9" x2="32" y2="15" stroke="#183B72" stroke-width="2.5" stroke-linecap="round" />
+    <circle class="antena" cx="32" cy="7" r="3.2" fill="#FECA3E" />
+    <!-- orelhas -->
+    <path d="M13 20 L7 38 Q7 42 11 41 L19 30 Z" fill="#183B72" />
+    <path d="M51 20 L57 38 Q57 42 53 41 L45 30 Z" fill="#183B72" />
+    <!-- cabeça -->
+    <rect x="13" y="15" width="38" height="34" rx="13" fill="#E8EEFA" stroke="#183B72" stroke-width="2.5" />
+    <!-- visor -->
+    <rect x="18" y="22" width="28" height="14" rx="7" fill="#183B72" />
+    <g class="olhos">
+      <circle cx="26" cy="29" r="3" fill="#7FE3FF" />
+      <circle cx="38" cy="29" r="3" fill="#7FE3FF" />
+    </g>
+    <!-- focinho -->
+    <ellipse cx="32" cy="41" rx="4" ry="2.8" fill="#183B72" />
+    <path d="M28 45 Q32 48 36 45" stroke="#183B72" stroke-width="2" fill="none" stroke-linecap="round" />
+    <!-- parafusos -->
+    <circle cx="17" cy="44" r="1.3" fill="#71809A" />
+    <circle cx="47" cy="44" r="1.3" fill="#71809A" />
+  </svg>
+</ng-template>
+
+<div class="flutuantes" [class.chat-aberto]="aberto">
+
+  <!-- Voltar ao topo -->
+  <button type="button" class="btn-topo" [class.visivel]="mostrarTopo" (click)="voltarAoTopo()"
+    aria-label="Voltar ao topo" title="Voltar ao topo" [attr.tabindex]="mostrarTopo ? 0 : -1">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <!-- Botão do chat -->
+  <button type="button" class="btn-chat" (click)="alternar()" [attr.aria-expanded]="aberto"
+    aria-controls="chat-vitalino" [attr.aria-label]="aberto ? 'Fechar chat' : 'Conversar com o Vitalino, o dog robô'">
+    @if (aberto) {
+      <i class="bi bi-x-lg"></i>
+    } @else {
+      <ng-container [ngTemplateOutlet]="avatar"></ng-container>
+      @if (naoLidas) { <span class="badge">{{ naoLidas }}</span> }
+    }
+  </button>
+  @if (!aberto) { <span class="dica" aria-hidden="true">Fale com o Vitalino</span> }
+</div>
+
+<!-- Janela do chat -->
+<section id="chat-vitalino" class="chat" [class.aberto]="aberto" role="dialog" aria-label="Chat com o Vitalino" [attr.aria-hidden]="!aberto">
+  <header class="chat-topo">
+    <span class="chat-avatar"><ng-container [ngTemplateOutlet]="avatar"></ng-container></span>
+    <div class="chat-titulo">
+      <strong>Vitalino</strong>
+      <span><i class="ponto"></i> Dog robô · online</span>
+    </div>
+    <button type="button" class="chat-fechar" (click)="fechar()" aria-label="Fechar chat" [attr.tabindex]="aberto ? 0 : -1">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </header>
+
+  <div class="chat-lista" #lista aria-live="polite">
+    @for (m of mensagens; track $index) {
+      <div class="msg" [class.eu]="m.de === 'eu'">
+        @if (m.de === 'bot') { <span class="msg-avatar"><ng-container [ngTemplateOutlet]="avatar"></ng-container></span> }
+        <div class="bolha">
+          <p>{{ m.texto }}</p>
+          @if (m.links?.length) {
+            <div class="msg-links">
+              @for (l of m.links; track l.texto) {
+                <button type="button" (click)="abrirLink(l)" [attr.tabindex]="aberto ? 0 : -1">
+                  {{ l.texto }} <i class="bi" [class.bi-box-arrow-up-right]="l.externo" [class.bi-arrow-right]="!l.externo"></i>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+    @if (digitando) {
+      <div class="msg">
+        <span class="msg-avatar"><ng-container [ngTemplateOutlet]="avatar"></ng-container></span>
+        <div class="bolha digitando" aria-label="Vitalino está digitando"><i></i><i></i><i></i></div>
+      </div>
+    }
+  </div>
+
+  <div class="chat-sugestoes">
+    @for (s of sugestoes; track s) {
+      <button type="button" (click)="enviar(s)" [disabled]="digitando" [attr.tabindex]="aberto ? 0 : -1">{{ s }}</button>
+    }
+  </div>
+
+  <form class="chat-form" (ngSubmit)="enviar()">
+    <input #campo type="text" name="msg" [(ngModel)]="texto" placeholder="Escreva sua dúvida..." autocomplete="off"
+      aria-label="Mensagem para o Vitalino" maxlength="300" [attr.tabindex]="aberto ? 0 : -1" />
+    <button type="submit" [disabled]="!texto.trim() || digitando" aria-label="Enviar" [attr.tabindex]="aberto ? 0 : -1">
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </form>
+</section>

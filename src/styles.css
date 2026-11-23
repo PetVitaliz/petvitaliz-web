@@ -11,3 +11,6 @@ html, body {
   background-color: #f5f5f5;
   color: #1f1f1f;
 }
+/* Chat do Vitalino aberto: esconde o botão do VLibras, que ficaria por cima da janela */
+body.chat-vitalino-aberto [vw],
+body.chat-vitalino-aberto #vlibras-access-wrapper { display: none !important; }
