@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 
 import { authAdminGuard } from './guards/auth-admin.guard';
 import { authFuncionarioGuard } from './guards/auth-funcionario.guard';
@@ -10,20 +11,20 @@ import { LoginComponent } from './pages/publico/login/login.component';
 import { EsqueciSenhaComponent } from './pages/publico/esqueci-senha/esqueci-senha.component';
 import { CadastroComponent } from './pages/publico/cadastro/cadastro.component';
 import { ResetSenhaComponent } from './pages/publico/reset-senha/reset-senha.component';
-import { ServicosComponent } from './pages/publico/servicos/servicos.component';
+import { ServicosPlanoComponent } from './pages/usuario/servicos-plano/servicos-plano.component';
 import { SobreNosComponent } from './pages/publico/sobre-nos/sobre-nos.component';
-import { ContatoComponent } from './pages/publico/contato/contato.component';
 import { AdocaoComponent } from './pages/publico/adocao/adocao.component';
 
 // USUÁRIO
 import { AgendamentoComponent } from './pages/usuario/agendamento/agendamento.component';
 import { ListarCadastroPetComponent } from './pages/usuario/listar-cadastro-pet/listar-cadastro-pet.component';
-import { PlanosPetComponent } from './pages/usuario/planos-pet/planos-pet.component';
 import { PagamentoPlanoComponent } from './pages/usuario/pagamento-plano/pagamento-plano.component';
 import { ContratoPlanoComponent } from './pages/usuario/contrato-plano/contrato-plano.component';
 import { PlanoSucessoComponent } from './pages/usuario/plano-sucesso/plano-sucesso.component';
 import { ContatoUsuarioComponent } from './pages/usuario/contato-usuario/contato-usuario.component';
 import { MeuPlanoComponent } from './pages/usuario/meu-plano/meu-plano.component';
+import { MinhaContaComponent } from './pages/usuario/minha-conta/minha-conta.component';
+import { ContratarPlanoComponent } from './pages/usuario/contratar-plano/contratar-plano.component';
 
 // FUNCIONÁRIO
 import { HomeFuncionarioComponent } from './pages/funcionario/home-funcionario/home-funcionario.component';
@@ -41,6 +42,11 @@ import { ClientesAdmComponent } from './pages/adm/clientes-adm/clientes-adm.comp
 import { FinanceiroAdmComponent } from './pages/adm/financeiro-adm/financeiro-adm.component';
 import { ListarAdminComponent } from './pages/adm/listar-admin/listar-admin.component';
 
+// Redireciona um endereço antigo para a home, já na seção certa
+function irParaSecaoDaHome(secao: string) {
+  return () => inject(Router).createUrlTree(['/'], { fragment: secao });
+}
+
 export const routes: Routes = [
   // PÚBLICO
   { path: '', component: HomeUsuarioComponent },
@@ -49,10 +55,11 @@ export const routes: Routes = [
   { path: 'esqueci-senha', component: EsqueciSenhaComponent },
   { path: 'cadastro', component: CadastroComponent },
   { path: 'reset-senha', component: ResetSenhaComponent },
-  { path: 'servicos', component: ServicosComponent },
-  { path: 'sobre-nos', component: SobreNosComponent },
-  { path: 'contato', component: ContatoComponent },
-  { path: 'adocao', component: AdocaoComponent },
+  // Páginas públicas antigas: agora são seções da home
+  { path: 'servicos', canActivate: [irParaSecaoDaHome('servicos')], children: [] },
+  { path: 'sobre-nos', canActivate: [irParaSecaoDaHome('sobre')], children: [] },
+  { path: 'contato', canActivate: [irParaSecaoDaHome('contato')], children: [] },
+  { path: 'adocao', canActivate: [irParaSecaoDaHome('adocao')], children: [] },
 
 // USUÁRIO
 {
@@ -62,7 +69,7 @@ export const routes: Routes = [
 },
 {
   path: 'user/servicos',
-  component: ServicosComponent,
+  component: ServicosPlanoComponent,
   canActivate: [authUsuarioGuard]
 },
 {
@@ -85,14 +92,29 @@ export const routes: Routes = [
   component: ListarCadastroPetComponent,
   canActivate: [authUsuarioGuard]
 },
+// A escolha de planos agora fica em "Meu plano"
 {
   path: 'user/planos-pet',
-  component: PlanosPetComponent,
+  redirectTo: 'user/meu-plano'
+},
+{
+  path: 'user/contratar-plano',
+  component: ContratarPlanoComponent,
   canActivate: [authUsuarioGuard]
 },
 {
   path: 'user/meu-plano',
   component: MeuPlanoComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/conta',
+  component: MinhaContaComponent,
+  canActivate: [authUsuarioGuard]
+},
+{
+  path: 'user/conta/:secao',
+  component: MinhaContaComponent,
   canActivate: [authUsuarioGuard]
 },
 {

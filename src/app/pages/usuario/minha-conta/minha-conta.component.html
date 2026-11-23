@@ -1,0 +1,325 @@
+<main class="conta-pagina" [class.com-secao]="secao">
+
+
+  <!-- ===== Conteúdo ===== -->
+  <section class="conteudo">
+
+    @if (secao) {
+      <a class="voltar" routerLink="/user/conta"><span class="ms">arrow_back</span> Minha conta</a>
+      <h1 class="titulo">{{ titulos[secao] }}</h1>
+    } @else {
+      <header class="cabeca">
+        <span class="avatar avatar-g">{{ inicial }}</span>
+        <div>
+          <p class="sobre">Minha conta</p>
+          <h1 class="titulo">{{ perfil.nome || 'Cliente PetVitaliz' }}</h1>
+          <p class="cabeca-email">{{ perfil.email }}</p>
+        </div>
+        <a class="btn btn-contorno" [routerLink]="['/user/conta', 'dados']" [queryParams]="{ editar: 1 }">Editar dados</a>
+      </header>
+    }
+
+    @switch (secao) {
+
+      <!-- ---------- Início da conta ---------- -->
+      @case (null) {
+        <section class="resumo" aria-label="Resumo da conta">
+          <div>
+            <span class="r-rotulo">Pets cadastrados</span>
+            <strong class="r-valor">{{ numero(qtdPets, falhouPets) }}</strong>
+            <a routerLink="/user/listar/pet">Ver meus pets</a>
+          </div>
+          <div>
+            <span class="r-rotulo">Próximas consultas</span>
+            <strong class="r-valor">{{ numero(qtdConsultas, falhouConsultas) }}</strong>
+            <a routerLink="/user/agendamento">{{ qtdConsultas ? 'Ver consultas' : 'Agendar consulta' }}</a>
+          </div>
+          <div>
+            <span class="r-rotulo">Planos ativos</span>
+            <strong class="r-valor">{{ numero(qtdPlanos, falhouPlanos) }}</strong>
+            <a routerLink="/user/meu-plano">Ver meu plano</a>
+          </div>
+        </section>
+
+        <div class="duas-colunas">
+          <section class="painel">
+            <div class="painel-topo">
+              <h2>Seus pets</h2>
+              <a routerLink="/user/listar/pet"><span class="ms">add</span> Cadastrar pet</a>
+            </div>
+            @if (carregando) {
+              <p class="painel-vazio">Carregando…</p>
+            } @else if (falhouPets) {
+              <p class="painel-vazio">Não foi possível carregar seus pets agora. Atualize a página.</p>
+            } @else if (!petsResumo.length) {
+              <p class="painel-vazio">Você ainda não cadastrou nenhum pet.</p>
+            } @else {
+              <ul class="pets-lista">
+                @for (p of petsResumo; track p.id_pet) {
+                  <li><a routerLink="/user/listar/pet">
+                    <span class="pet-av">
+                      @if (p.foto_url) { <img [src]="p.foto_url" [alt]="'Foto de ' + p.nome" /> } @else { <app-icone-pet [especie]="p.especie"></app-icone-pet> }
+                    </span>
+                    <span class="pet-txt">
+                      <strong>{{ p.nome }}</strong>
+                      <small>{{ p.especie | titlecase }}{{ p.especie && p.idade ? ' · ' : '' }}{{ p.idade }}</small>
+                    </span>
+                    <span class="pet-plano"><i [style.background]="p.cor || '#C9D6EE'"></i>{{ p.plano || 'Sem plano' }}</span>
+                    <span class="ms seta">chevron_right</span>
+                  </a></li>
+                }
+              </ul>
+            }
+          </section>
+
+          <section class="painel">
+            <div class="painel-topo">
+              <h2>Dados pessoais</h2>
+              <a [routerLink]="['/user/conta', 'dados']" [queryParams]="{ editar: 1 }">Editar</a>
+            </div>
+            <dl class="info">
+              <div><dt>Telefone</dt><dd>{{ perfil.telefone ? mascaraTelefone(perfil.telefone) : '—' }}</dd></div>
+              <div><dt>Data de nascimento</dt><dd>{{ perfil.nascimento || '—' }}</dd></div>
+              <div><dt>CPF</dt><dd>{{ perfil.cpf || '—' }}</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <h2 class="secao-titulo">Configurações</h2>
+        <nav class="config">
+          <a [routerLink]="['/user/conta', 'pagamento']"><span class="ms">credit_card</span><span><strong>Formas de pagamento</strong><small>Cartões salvos para as cobranças</small></span><span class="ms seta">chevron_right</span></a>
+          <a [routerLink]="['/user/conta', 'notificacoes']"><span class="ms">notifications</span><span><strong>Notificações</strong><small>Lembretes de consultas e avisos do plano</small></span><span class="ms seta">chevron_right</span></a>
+          <a [routerLink]="['/user/conta', 'seguranca']"><span class="ms">shield</span><span><strong>Segurança</strong><small>Senha e exclusão da conta</small></span><span class="ms seta">chevron_right</span></a>
+          <a routerLink="/user/contato"><span class="ms">help</span><span><strong>Ajuda e suporte</strong><small>Fale com a equipe PetVitaliz</small></span><span class="ms seta">chevron_right</span></a>
+          <a [routerLink]="['/user/conta', 'termos']"><span class="ms">description</span><span><strong>Termos e privacidade</strong><small>Como cuidamos dos seus dados</small></span><span class="ms seta">chevron_right</span></a>
+          <button type="button" class="sair" (click)="sair()"><span class="ms">logout</span><span><strong>Sair da conta</strong><small>Encerrar a sessão neste aparelho</small></span></button>
+        </nav>
+      }
+
+      <!-- ---------- Dados pessoais ---------- -->
+      @case ('dados') {
+        <div class="card" [class.editando]="editando">
+          <div class="dados-topo">
+            <span class="avatar grande">{{ inicial }}</span>
+            <div>
+              <strong>{{ perfil.nome || '—' }}</strong>
+              <small>Cliente PetVitaliz</small>
+            </div>
+            @if (!editando) {
+              <button type="button" class="btn btn-amarelo btn-editar" (click)="comecarEdicao()">
+                <span class="ms">edit</span> Editar dados
+              </button>
+            }
+          </div>
+
+          @if (okDados) { <p class="msg ok"><span class="ms">check_circle</span> {{ okDados }}</p> }
+
+          @if (!editando) {
+            <dl class="dados">
+              <div><dt>Nome completo</dt><dd>{{ perfil.nome || '—' }}</dd></div>
+              <div><dt>E-mail</dt><dd>{{ perfil.email || '—' }}</dd></div>
+              <div><dt>Data de nascimento</dt><dd>{{ perfil.nascimento || '—' }}</dd></div>
+              <div><dt>Telefone</dt><dd>{{ perfil.telefone || '—' }}</dd></div>
+              <div><dt>CPF</dt><dd>{{ perfil.cpf || '—' }}</dd></div>
+            </dl>
+          } @else {
+            <form class="form form-dados" (ngSubmit)="salvarDados()">
+              <label>Nome<input name="nome" [(ngModel)]="edicao.nome" required autocomplete="given-name" /></label>
+              <label>Sobrenome<input name="sobrenome" [(ngModel)]="edicao.sobrenome" autocomplete="family-name" /></label>
+              <label>Telefone<input name="telefone" [ngModel]="edicao.telefone" (ngModelChange)="edicao.telefone = mascaraTelefone($event)" inputmode="tel" placeholder="(11) 91234-5678" autocomplete="tel" /></label>
+              <label>Data de nascimento<input name="nascimento" type="date" [(ngModel)]="edicao.nascimento" [max]="hojeIso" /></label>
+              <label class="travado">E-mail<input [value]="perfil.email" disabled /></label>
+              <label class="travado">CPF<input [value]="perfil.cpf" disabled /></label>
+              <p class="nota inteira"><span class="ms">lock</span> E-mail e CPF não podem ser alterados.</p>
+              @if (erroDados) { <p class="msg erro inteira"><span class="ms">error</span> {{ erroDados }}</p> }
+              <div class="acoes-form inteira">
+                <button type="button" class="btn-texto" (click)="editando = false" [disabled]="salvandoDados">Cancelar</button>
+                <button type="submit" class="btn btn-azul" [disabled]="salvandoDados">{{ salvandoDados ? 'Salvando…' : 'Salvar alterações' }}</button>
+              </div>
+            </form>
+          }
+        </div>
+      }
+
+      <!-- ---------- Formas de pagamento ---------- -->
+      @case ('pagamento') {
+        @if (avisoCartao) {
+          <p class="alerta"><span class="ms">check_circle</span> {{ avisoCartao }}</p>
+        }
+
+        @if (!cartoes.length && !formCartaoAberto) {
+          <div class="card vazio-card">
+            <span class="ms grande">credit_card_off</span>
+            <h2>Nenhum cartão salvo</h2>
+            <p>Adicione um cartão para pagar seus planos.</p>
+            <button type="button" class="btn btn-azul" (click)="abrirFormCartao()">Adicionar cartão</button>
+          </div>
+        }
+
+        @if (cartoes.length) {
+          <div class="cartoes">
+            @for (c of cartoes; track c.id) {
+              <div class="cartao" [class.principal]="c.principal">
+                <div class="cartao-topo">
+                  <span class="bandeira">{{ c.bandeira }}</span>
+                  @if (c.principal) { <span class="selo">Principal</span> }
+                </div>
+                <p class="cartao-numero">•••• •••• •••• {{ c.final }}</p>
+                <div class="cartao-base">
+                  <span>{{ c.nome }}</span><span>{{ c.validade }}</span>
+                </div>
+                <div class="cartao-acoes">
+                  @if (!c.principal) {
+                    <button type="button" (click)="tornarPrincipal(c)">Tornar principal</button>
+                  }
+                  <button type="button" class="perigo" (click)="excluirCartao(c)">Excluir</button>
+                </div>
+              </div>
+            }
+          </div>
+          @if (!formCartaoAberto) {
+            <button type="button" class="btn btn-contorno" (click)="abrirFormCartao()"><span class="ms">add</span> Adicionar cartão</button>
+          }
+        }
+
+        @if (formCartaoAberto) {
+          <form class="card form" (ngSubmit)="adicionarCartao()">
+            <h2>Adicionar cartão</h2>
+            <label>Número do cartão
+              <input name="numero" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000"
+                [(ngModel)]="novo.numero" (ngModelChange)="mascararNumero()" />
+            </label>
+            <label>Nome no cartão
+              <input name="nome" autocomplete="cc-name" placeholder="Como está impresso" [(ngModel)]="novo.nome" />
+            </label>
+            <div class="duas">
+              <label>Validade
+                <input name="validade" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA"
+                  [(ngModel)]="novo.validade" (ngModelChange)="mascararValidade()" />
+              </label>
+              <label>CVV
+                <input name="cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123"
+                  [(ngModel)]="novo.cvv" (ngModelChange)="mascararCvv()" />
+              </label>
+            </div>
+            <label class="check"><input type="checkbox" name="principal" [(ngModel)]="novo.principal" /> Usar como cartão principal</label>
+            @if (erroCartao) { <p class="erro">{{ erroCartao }}</p> }
+            <div class="botoes">
+              <button type="submit" class="btn btn-azul">Adicionar cartão</button>
+              <button type="button" class="btn btn-texto" (click)="fecharFormCartao()">Cancelar</button>
+            </div>
+            <p class="nota"><span class="ms">lock</span> Guardamos só os 4 últimos números do cartão.</p>
+          </form>
+        }
+      }
+
+      <!-- ---------- Notificações ---------- -->
+      @case ('notificacoes') {
+        <div class="card">
+          <h2>Seus avisos</h2>
+          @if (avisos.length) {
+            <ul class="avisos">
+              @for (a of avisos; track a.titulo + a.texto) {
+                <li><a [routerLink]="a.rota" class="aviso">
+                  <span class="aviso-icone" [attr.data-tom]="a.tom"><span class="ms">{{ a.icone }}</span></span>
+                  <span><strong>{{ a.titulo }}</strong><small>{{ a.texto }}</small></span>
+                </a></li>
+              }
+            </ul>
+          } @else {
+            <div class="vazio-card">
+              <span class="ms grande">notifications_none</span>
+              <h2>Tudo em dia por aqui</h2>
+              <p>Avisos de consultas, vacinas e pagamentos aparecem aqui.</p>
+            </div>
+          }
+        </div>
+
+        <div class="card">
+          <h2>Avisos que você recebe</h2>
+          @for (o of opcoesAviso; track o.chave) {
+            <label class="toggle">
+              <span><strong>{{ o.titulo }}</strong><small>{{ o.texto }}</small></span>
+              <input type="checkbox" role="switch" [name]="o.chave" [(ngModel)]="prefs[o.chave]" (ngModelChange)="salvarPreferencias()" />
+              <i aria-hidden="true"></i>
+            </label>
+          }
+        </div>
+      }
+
+      <!-- ---------- Segurança ---------- -->
+      @case ('seguranca') {
+        <p class="sub">Proteja o acesso à sua conta e aos dados dos seus pets.</p>
+
+        <div class="card status-conta">
+          <span class="ms circulo verde">verified_user</span>
+          <span><strong>Você está conectado com segurança</strong><small>{{ perfil.email }} · {{ aparelho }}</small></span>
+        </div>
+
+        <h2 class="secao-titulo">Acesso</h2>
+        <div class="card lista-seg">
+          <div class="linha-acao">
+            <span class="ms circulo">key</span>
+            <span><strong>Alterar senha</strong><small>Enviamos um código para {{ perfil.email || 'o seu e-mail' }} para criar uma nova senha.</small></span>
+            <a class="btn btn-contorno" routerLink="/esqueci-senha">Alterar</a>
+          </div>
+          <div class="linha-acao">
+            <span class="ms circulo">computer</span>
+            <span><strong>Este aparelho <em class="tag-sessao">Sessão atual</em></strong><small>{{ aparelho }}</small></span>
+            <button type="button" class="btn btn-contorno" (click)="sair()">Sair deste aparelho</button>
+          </div>
+        </div>
+
+        <h2 class="secao-titulo">Privacidade e dados</h2>
+        <div class="card lista-seg">
+          <div class="linha-acao">
+            <span class="ms circulo">download</span>
+            <span><strong>Baixar meus dados</strong><small>Um arquivo com seu perfil, pets, planos e consultas.</small></span>
+            <button type="button" class="btn btn-contorno" [disabled]="carregando" (click)="baixarDados()">{{ carregando ? 'Carregando…' : 'Baixar' }}</button>
+          </div>
+          <div class="linha-acao">
+            <span class="ms circulo">description</span>
+            <span><strong>Termos e privacidade</strong><small>Como a PetVitaliz usa e protege seus dados.</small></span>
+            <a class="btn btn-contorno" [routerLink]="['/user/conta', 'termos']">Ver</a>
+          </div>
+        </div>
+
+        <h2 class="secao-titulo">Dicas de segurança</h2>
+        <div class="card">
+          <ul class="dicas">
+            <li>A PetVitaliz nunca pede sua senha por WhatsApp, telefone ou e-mail.</li>
+            <li>Use uma senha só para a PetVitaliz, com letras, números e símbolos.</li>
+            <li>Em computador compartilhado, saia da conta ao terminar.</li>
+          </ul>
+        </div>
+
+        <h2 class="zona">Zona de perigo</h2>
+        <div class="card perigo-card">
+          <div class="linha-acao">
+            <span class="ms circulo">delete_forever</span>
+            <span><strong>Excluir conta</strong><small>Cancela os planos e apaga pets e agendamentos. Essa ação não pode ser desfeita.</small></span>
+            <a class="btn btn-perigo" routerLink="/user/contato">Solicitar exclusão</a>
+          </div>
+        </div>
+      }
+
+      <!-- ---------- Termos e privacidade ---------- -->
+      @case ('termos') {
+        <div class="abas" role="tablist">
+          <button type="button" role="tab" [class.ativa]="abaTermos === 'termos'" [attr.aria-selected]="abaTermos === 'termos'" (click)="abaTermos = 'termos'">Termos de uso</button>
+          <button type="button" role="tab" [class.ativa]="abaTermos === 'privacidade'" [attr.aria-selected]="abaTermos === 'privacidade'" (click)="abaTermos = 'privacidade'">Privacidade</button>
+        </div>
+        <div class="card texto-legal">
+          <p class="atualizado">Atualizado em {{ atualizadoEm }}</p>
+          @for (t of textos[abaTermos]; track t.titulo) {
+            <h3>{{ t.titulo }}</h3>
+            <p>{{ t.texto }}</p>
+          }
+          <p class="nota">Ficou com dúvida? <a routerLink="/user/contato">Fale com a gente</a></p>
+        </div>
+      }
+    }
+
+  </section>
+
+</main>

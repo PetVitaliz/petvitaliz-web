@@ -1,0 +1,75 @@
+<p class="titulo-marca">serviços <strong>petvitaliz</strong></p>
+
+<!-- Banner de assinatura -->
+<div class="promo">
+
+  <div class="promo-esq">
+    <h3>
+      @if (maiorEconomia > 0) {
+        Assine e tenha<br />até {{ maiorEconomia }}% OFF<br />sempre
+      } @else {
+        Assine e<br />economize<br />sempre
+      }
+    </h3>
+
+    @if (menorAnual) {
+      <div class="estrela" role="img" [attr.aria-label]="'Plano anual a partir de R$ ' + menorAnual + ' por mês'">
+        <span>Plano<br />anual</span>
+        <small>a partir de R$</small>
+        <strong>{{ menorAnualReais }}<sup>,{{ menorAnualCentavos }}</sup><em>/mês</em></strong>
+      </div>
+    }
+  </div>
+
+  <ul class="promo-itens">
+    <li>
+      <span class="promo-icone"><span class="ms">stethoscope</span></span>
+      <strong>Equipe especializada:</strong>
+      veterinários dedicados e atenciosos
+    </li>
+    <li>
+      <span class="promo-icone"><span class="ms">pets</span></span>
+      <strong>Todo tipo de cuidado:</strong>
+      consultas, vacinas, banho e tosa
+    </li>
+    <li>
+      <span class="promo-icone"><span class="ms">schedule</span></span>
+      <strong>Atendimento 24h:</strong>
+      incluso em todos os planos
+    </li>
+  </ul>
+
+  <div class="promo-botoes">
+    <button type="button" class="b-amarelo" (click)="verPlanos.emit(false)">Ver planos</button>
+    <button type="button" class="b-claro" (click)="verPlanos.emit(true)">Calcular economia</button>
+  </div>
+
+</div>
+
+<!-- Carrossel de serviços -->
+<div class="carrossel-topo">
+  <button type="button" class="seta" (click)="rolar(-1)" aria-label="Serviços anteriores">
+    <span class="ms">arrow_back</span>
+  </button>
+  <button type="button" class="seta" (click)="rolar(1)" aria-label="Próximos serviços">
+    <span class="ms">arrow_forward</span>
+  </button>
+</div>
+
+<div class="trilho" #trilho>
+  @for (s of servicos; track s.titulo) {
+    <article class="servico">
+      <img [src]="s.imagem" [alt]="s.titulo" loading="lazy" />
+      <h3>{{ s.titulo }}</h3>
+      <strong>{{ s.subtitulo }}</strong>
+      <p>{{ s.descricao }}</p>
+      @if (s.extra) {
+        <p class="extra">{{ s.extra }}</p>
+      }
+      <div class="servico-botoes">
+        <button type="button" class="b-azul" (click)="agendar.emit()">{{ s.botao }}</button>
+        <button type="button" class="b-suave" (click)="saibaMais.emit(s)">Saiba mais</button>
+      </div>
+    </article>
+  }
+</div>

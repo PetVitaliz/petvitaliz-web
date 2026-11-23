@@ -1,30 +1,244 @@
 <header class="header">
-  <div class="logo" routerLink="/">
-    <img src="assets/img/logo.png" alt="PetVitaliz" />
+
+  <!-- Linha de cima: logo + botões -->
+  <div class="header-top">
+
+    <div class="logo" (click)="clicarLogo($event)">
+      <img src="assets/img/logo.png" alt="PetVitaliz" />
+    </div>
+
+    <!-- CEP (estilo Petlove) -->
+    <div class="cep" #cepArea>
+
+      <button type="button" class="cep-btn" (click)="toggleCep()" [attr.aria-expanded]="cepAberto"
+        aria-haspopup="dialog">
+        <span class="ms">location_on</span>
+        <span class="cep-texto">
+          @if (cepInfo) {
+            <small>Atendimento para</small>
+            <strong>{{ cepInfo.cidade }} - {{ cepInfo.uf }}</strong>
+          } @else {
+            <strong>Informar CEP</strong>
+          }
+        </span>
+      </button>
+
+      @if (cepAberto) {
+        <div class="cep-pop" role="dialog" aria-label="Informar CEP">
+          <p class="cep-titulo">Informe seu CEP</p>
+          <p class="cep-sub">Para ver o atendimento PetVitaliz perto de você.</p>
+
+          <form class="cep-form" (ngSubmit)="buscarCep()">
+            <input type="text" name="cep" inputmode="numeric" maxlength="9" placeholder="00000-000"
+              autocomplete="postal-code" aria-label="CEP" [(ngModel)]="cepDigitado" (ngModelChange)="mascararCep()" />
+            <button type="submit" [disabled]="buscandoCep">{{ buscandoCep ? 'Buscando…' : 'Confirmar' }}</button>
+          </form>
+
+          @if (erroCep) {
+            <p class="cep-erro">{{ erroCep }}</p>
+          }
+
+          @if (cepInfo && !erroCep) {
+            <div class="cep-resultado">
+              <span class="ms">pin_drop</span>
+              <div>
+                <strong>{{ cepInfo.bairro ? cepInfo.bairro + ', ' : '' }}{{ cepInfo.cidade }} - {{ cepInfo.uf }}</strong>
+                <p>{{ mensagemCep }}</p>
+              </div>
+            </div>
+            <button type="button" class="cep-limpar" (click)="limparCep()">Remover CEP</button>
+          }
+
+          <a class="cep-link" href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank"
+            rel="noopener">Não sei meu CEP</a>
+        </div>
+      }
+
+    </div>
+
+    <form class="busca" role="search" (ngSubmit)="buscar()" (focusout)="fecharSugestoes()">
+
+      <input type="search" name="busca" placeholder="O que seu pet precisa?" autocomplete="off"
+        aria-label="Buscar no site" role="combobox" aria-controls="sugestoes-busca"
+        [attr.aria-expanded]="sugestoesVisiveis && sugestoesFiltradas.length > 0"
+        [attr.aria-activedescendant]="indiceAtivo >= 0 ? 'sugestao-' + indiceAtivo : null"
+        [(ngModel)]="termoBusca" (ngModelChange)="aoDigitar()" (focus)="abrirSugestoes()"
+        (keydown)="aoTeclar($event)" />
+
+      <button type="submit" class="busca-btn" aria-label="Buscar">
+        <span class="ms">search</span>
+      </button>
+
+      @if (sugestoesVisiveis && sugestoesFiltradas.length) {
+        <ul class="sugestoes" id="sugestoes-busca" role="listbox">
+          @if (!termoBusca.trim()) {
+            <li class="sugestoes-titulo" role="presentation">Buscas populares</li>
+          }
+          @for (s of sugestoesFiltradas; track s.texto; let i = $index) {
+            <li class="sugestao" role="option" [id]="'sugestao-' + i" [class.ativa]="i === indiceAtivo"
+              [attr.aria-selected]="i === indiceAtivo" (mousedown)="$event.preventDefault(); escolher(s)"
+              (mouseenter)="indiceAtivo = i">
+              {{ s.antes }}<strong>{{ s.destaque }}</strong>{{ s.depois }}
+            </li>
+          }
+        </ul>
+      }
+
+    </form>
+
+    @if (logado) {
+      <a class="btn-agendar buttons-desktop" routerLink="/user/agendamento">
+        <span class="ms">calendar_add_on</span>
+        Agendar consulta
+      </a>
+
+      <!-- Conta do cliente -->
+      <div class="conta" #contaArea>
+        <button type="button" class="conta-btn" (click)="toggleConta()" [attr.aria-expanded]="contaAberta"
+          aria-haspopup="menu" aria-label="Minha conta">
+          <span class="conta-avatar">{{ inicialUsuario }}</span>
+          <span class="conta-nome"><small>Olá,</small><strong>{{ primeiroNome }}</strong></span>
+          <span class="ms conta-seta">expand_more</span>
+        </button>
+
+        @if (contaAberta) {
+          <div class="conta-menu" role="menu">
+            <a class="conta-topo" routerLink="/user/conta" (click)="fecharConta()">
+              <span class="conta-avatar">{{ inicialUsuario }}</span>
+              <span>
+                <strong>{{ nomeUsuario }}</strong>
+                <small>Ver minha conta</small>
+              </span>
+            </a>
+            @for (item of menuConta; track item.rota) {
+              <a class="conta-item" role="menuitem" [class.divisor]="item.divisor" [routerLink]="item.rota" (click)="fecharConta()">
+                @if (item.icone === 'pets') {
+                  <svg class="ico-pata" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.6" cy="10.4" r="1.8"/><circle cx="10.1" cy="6.3" r="1.8"/><circle cx="13.9" cy="6.3" r="1.8"/><circle cx="17.4" cy="10.4" r="1.8"/><path d="M12 11.6c-2.4 0-4.8 3-4.8 5.2 0 1.5 1.2 2.3 2.5 2.3.9 0 1.5-.5 2.3-.5s1.4.5 2.3.5c1.3 0 2.5-.8 2.5-2.3 0-2.2-2.4-5.2-4.8-5.2z"/></svg>
+                } @else {
+                  <span class="ms">{{ item.icone }}</span>
+                }
+                {{ item.texto }}
+              </a>
+            }
+            <button type="button" class="conta-item conta-sair" role="menuitem" (click)="sair()">
+              <span class="ms">logout</span>Sair
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <a class="btn-entrar buttons-desktop" routerLink="/login">
+        <span class="ms">account_circle</span>
+        Entrar | Cadastrar
+      </a>
+    }
+
+    <button class="menu-mobile" type="button" (click)="toggleMenu()"
+      [attr.aria-label]="menuAberto ? 'Fechar menu' : 'Abrir menu'" [attr.aria-expanded]="menuAberto">
+      <span class="ms">{{ menuAberto ? 'close' : 'menu' }}</span>
+    </button>
+
   </div>
 
-  <button class="menu-mobile" type="button" (click)="toggleMenu()">
-    ☰
-  </button>
-
+  <!-- Barra de categorias (no celular vira o menu aberto) -->
   <div class="menu-area" [class.open]="menuAberto">
-    <nav class="nav">
-      <a routerLink="/" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }"
-        (click)="fecharMenu()">Home</a>
-      <a routerLink="/servicos" routerLinkActive="ativo" (click)="fecharMenu()">Nossos Serviços</a>
-      <a routerLink="/sobre-nos" routerLinkActive="ativo" (click)="fecharMenu()">Sobre Nós</a>
-      <a routerLink="/adocao" routerLinkActive="ativo" (click)="fecharMenu()">Adoção</a>
-      <a routerLink="/contato" routerLinkActive="ativo" (click)="fecharMenu()">Contato</a>
+
+    <nav class="catbar" aria-label="Navegação principal">
+
+      @if (logado) {
+        @for (l of linksLogado; track l.rota) {
+          <a class="cat-link" [routerLink]="l.rota" routerLinkActive="ativo" (click)="fecharMenu()">{{ l.texto }}</a>
+        }
+      } @else {
+        <a class="cat-link" href="/" [class.ativo]="secaoAtiva === 'topo'" (click)="irPara($event, 'topo')">Home</a>
+
+        <!-- Planos de saúde -->
+        <div class="cat-dropdown" [class.aberto]="submenuAberto === 'planos'">
+
+          <button type="button" class="cat-link" [class.ativo]="secaoAtiva === 'planos'" (click)="toggleSubmenu('planos')"
+            [attr.aria-expanded]="submenuAberto === 'planos'">
+            Planos de saúde
+            <span class="ms chevron">expand_more</span>
+          </button>
+
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/#planos" (click)="irPara($event, 'planos')">
+              <span class="ms item-icon">health_and_safety</span>
+              <span>
+                <strong>Conheça os planos</strong>
+                <small>Compare preços e coberturas</small>
+              </span>
+            </a>
+            <a class="dropdown-item" routerLink="/cadastro" (click)="fecharMenu()">
+              <span class="ms item-icon">assignment_turned_in</span>
+              <span>
+                <strong>Contratar um plano</strong>
+                <small>Crie sua conta de tutor</small>
+              </span>
+            </a>
+            <a class="dropdown-item" routerLink="/login" (click)="fecharMenu()">
+              <span class="ms item-icon">account_circle</span>
+              <span>
+                <strong>Já sou cliente</strong>
+                <small>Acesse seu plano</small>
+              </span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Serviços -->
+        <div class="cat-dropdown" [class.aberto]="submenuAberto === 'servicos'">
+
+          <button type="button" class="cat-link" [class.ativo]="secaoAtiva === 'servicos'" (click)="toggleSubmenu('servicos')"
+            [attr.aria-expanded]="submenuAberto === 'servicos'">
+            Serviços
+            <span class="ms chevron">expand_more</span>
+          </button>
+
+          <div class="dropdown-menu">
+            @for (item of servicos; track item.titulo) {
+              <a class="dropdown-item" href="/#servicos" (click)="irPara($event, 'servicos')">
+                <span class="ms item-icon">{{ item.icone }}</span>
+                <span>
+                  <strong>{{ item.titulo }}</strong>
+                  <small>{{ item.descricao }}</small>
+                </span>
+              </a>
+            }
+            <a class="dropdown-all" href="/#servicos" (click)="irPara($event, 'servicos')">
+              Ver todos os serviços
+              <span class="ms">arrow_forward</span>
+            </a>
+          </div>
+
+        </div>
+
+        <a class="cat-link" href="/#adocao" [class.ativo]="secaoAtiva === 'adocao'"
+          (click)="irPara($event, 'adocao')">Adoção</a>
+        <a class="cat-link" href="/#sobre" [class.ativo]="secaoAtiva === 'sobre'"
+          (click)="irPara($event, 'sobre')">Sobre nós</a>
+        <a class="cat-link" href="/#contato" [class.ativo]="secaoAtiva === 'contato'"
+          (click)="irPara($event, 'contato')">Contato</a>
+      }
+
     </nav>
 
-    <div class="buttons">
-      <button class="btn-outline" type="button" routerLink="/cadastro" (click)="fecharMenu()">
-        Cadastre-se
-      </button>
-
-      <button class="btn-primary" type="button" routerLink="/login" (click)="fecharMenu()">
-        Entrar
-      </button>
+    <!-- Botões só aparecem aqui no celular -->
+    <div class="buttons-mobile">
+      @if (logado) {
+        <a class="btn-agendar" routerLink="/user/agendamento" (click)="fecharMenu()">
+          <span class="ms">calendar_add_on</span>
+          Agendar consulta
+        </a>
+      } @else {
+        <a class="btn-entrar" routerLink="/login" (click)="fecharMenu()">
+          <span class="ms">account_circle</span>
+          Entrar | Cadastrar
+        </a>
+      }
     </div>
+
   </div>
+
 </header>

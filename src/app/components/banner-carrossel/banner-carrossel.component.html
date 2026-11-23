@@ -1,0 +1,70 @@
+<section class="carrossel" aria-roledescription="carrossel" aria-label="Destaques da PetVitaliz"
+  (mouseenter)="pausar(true)" (mouseleave)="pausar(false)" (focusin)="pausar(true)" (focusout)="pausar(false)">
+
+  <div class="janela">
+
+    <div class="trilho" #trilho [class.arrastando]="arrastando"
+      [style.--i]="atual" [style.--drag]="deslocamento + 'px'"
+      (pointerdown)="comecarArraste($event, trilho)" (pointermove)="moverArraste($event)"
+      (pointerup)="terminarArraste()" (pointercancel)="terminarArraste()" (pointerleave)="terminarArraste()">
+
+      @for (b of banners; track b.titulo; let i = $index) {
+        <article class="slide" [attr.aria-hidden]="i !== atual" role="group"
+          [attr.aria-label]="'Banner ' + (i + 1) + ' de ' + banners.length" (click)="clicarSlide(i)">
+
+          <div class="card" [attr.data-tema]="b.tema">
+
+            <div class="texto">
+              <p class="etiqueta">{{ b.etiqueta }} <strong>petvitaliz</strong></p>
+              <h2>
+                <span>{{ b.titulo }}</span>
+                <span class="destaque">{{ b.destaque }}</span>
+              </h2>
+
+              <ul class="checks">
+                @for (c of b.checks; track c) {
+                  <li><span class="ms">check</span>{{ c }}</li>
+                }
+              </ul>
+
+              <button type="button" class="botao" [tabindex]="i === atual ? 0 : -1"
+                (click)="$event.stopPropagation(); clicar(b, i)">
+                {{ b.botao }}
+                <span class="ms">arrow_forward</span>
+              </button>
+
+              @if (b.nota) {
+                <p class="nota">{{ b.nota }}</p>
+              }
+            </div>
+
+            <div class="foto" [class.direita]="b.encostarDireita" [style.--ajuste]="(b.ajusteCirculo || 0) + 'px'">
+              <span class="circulo"></span>
+              <img [class.suave]="b.suavizarEsquerda" [src]="b.imagem" [alt]="b.titulo + ' ' + b.destaque"
+                draggable="false" />
+            </div>
+
+          </div>
+
+        </article>
+      }
+
+    </div>
+
+    <button type="button" class="seta seta-esq" (click)="anterior()" aria-label="Banner anterior">
+      <span class="ms">arrow_back</span>
+    </button>
+    <button type="button" class="seta seta-dir" (click)="proximo()" aria-label="Próximo banner">
+      <span class="ms">arrow_forward</span>
+    </button>
+
+  </div>
+
+  <div class="pontos">
+    @for (b of banners; track b.titulo; let i = $index) {
+      <button type="button" [class.ativo]="i === atual" (click)="irPara(i)"
+        [attr.aria-label]="'Ir para o banner ' + (i + 1)" [attr.aria-current]="i === atual"></button>
+    }
+  </div>
+
+</section>

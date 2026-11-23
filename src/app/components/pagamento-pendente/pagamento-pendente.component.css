@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300,0,0&display=block');
+
+:host { display: block; color: #183B72; }
+
+.ms {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-block;
+  white-space: nowrap;
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 0, 'wght' 300;
+}
+
+.pendente { padding: 8px 0; text-align: center; }
+h3 { margin: 0; font-size: 22px; font-weight: 800; }
+.sub { margin: 6px auto 18px; max-width: 360px; color: #52627D; font-size: 14px; line-height: 1.5; }
+
+.qr { position: relative; width: 200px; height: 200px; margin: 0 auto; padding: 10px; border: 1.5px solid #E1E6F0; border-radius: 18px; background: #ffffff; box-sizing: border-box; }
+.qr svg { display: block; width: 100%; height: 100%; }
+.qr-logo { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: #ffffff; transform: translate(-50%, -50%); box-shadow: 0 0 0 4px #ffffff; }
+.qr-logo img { width: 30px; height: 30px; }
+
+.boleto-icone { display: inline-grid; place-items: center; width: 84px; height: 84px; border-radius: 20px; background: #E8EEFA; color: #21479B; }
+.boleto-icone .ms { font-size: 48px; }
+
+.valor { margin: 14px 0 2px; font-size: 24px; font-weight: 800; color: #21479B; }
+.prazo { display: inline-flex; align-items: center; gap: 4px; margin: 0; color: #71809A; font-size: 13px; }
+
+.rotulo { display: block; margin: 18px 0 6px; font-size: 13px; font-weight: 600; color: #52627D; text-align: left; }
+.codigo { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border: 1.5px dashed #C9D6EE; border-radius: 12px; background: #F6F8FC; text-align: left; }
+.codigo code { flex: 1; min-width: 0; overflow: hidden; color: #52627D; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; }
+.codigo button { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; height: 36px; padding: 0 12px; border: none; border-radius: 10px; background: #21479B; color: #ffffff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+.status { display: inline-flex; align-items: center; gap: 8px; margin: 18px 0 4px; color: #C58F00; font-size: 14px; font-weight: 700; }
+.ponto { width: 10px; height: 10px; border-radius: 50%; background: #FECA3E; animation: pulsar 1.2s ease-in-out infinite; }
+@keyframes pulsar { 50% { opacity: 0.35; transform: scale(0.7); } }
+.demo { margin: 4px auto 0; max-width: 380px; color: #9AA6B8; font-size: 12px; line-height: 1.5; }
+
+.girando { display: inline-block; width: 56px; height: 56px; margin: 18px 0 16px; border: 5px solid #E8EEFA; border-top-color: #21479B; border-radius: 50%; animation: girar 0.9s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) { .ponto, .girando { animation-duration: 3s; } }

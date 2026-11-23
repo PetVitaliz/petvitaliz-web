@@ -1,72 +1,156 @@
-<section class="plano-page">
+<main class="plano-pagina">
 
-  <div class="hero">
-    <span>MEU PLANO</span>
-    <h1>Gerencie o plano do seu Pet</h1>
-    <p>
-      Consulte benefícios, cobertura e informações da sua assinatura.
-    </p>
-  </div>
+  <header class="topo">
+    <h1>Meu plano</h1>
+    <p>Acompanhe a cobertura dos seus pets, o uso do mês e a sua assinatura.</p>
+  </header>
 
-  <div *ngIf="carregando" class="loading-state">
-    <p>Carregando informações do plano...</p>
-  </div>
+  @if (sucesso) { <p class="alerta ok"><span class="ms">check_circle</span> {{ sucesso }}</p> }
+  @if (erro) { <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p> }
 
-  <div *ngIf="!carregando">
-    <p class="erro" *ngIf="erro">{{ erro }}</p>
+  @for (x of semPet; track x.id_pet) {
+    <div class="orfao">
+      <span class="ms">info</span>
+      <span>O <strong>{{ x.plano.nome }}</strong> ainda está ligado a um pet que foi excluído.</span>
+      <button type="button" [disabled]="removendo !== null" (click)="removerPlanoSemPet(x)">{{ removendo === x.id_pet ? 'Removendo…' : 'Remover plano' }}</button>
+    </div>
+  }
 
-    <div *ngIf="planos.length > 0; else semPlano">
-      <div class="plano-card" *ngFor="let plano of planos">
-        <div class="plano-header">
-          <div>
-            <small>PLANO DE {{ plano.nomePet | uppercase }}</small>
-            <h2>{{ plano.nome }}</h2>
-          </div>
-          <div class="status">
-            Ativo
-          </div>
-        </div>
+  @if (carregando) {
+    <p class="carregando">Carregando seus planos…</p>
+  } @else if (!pets.length) {
 
-        <div class="valor">
-          <span>Mensalidade</span>
-          <h3>R$ {{ plano.preco }}/mês</h3>
-        </div>
+    <section class="vazio">
+      <span class="vazio-icone"><app-icone-pet especie=""></app-icone-pet></span>
+      <h2>Você ainda não tem pets cadastrados</h2>
+      <p>Cadastre seu pet para contratar um plano e agendar consultas.</p>
+      <a class="btn btn-amarelo" routerLink="/user/listar/pet"><span class="ms">add</span> Cadastrar meu pet</a>
+    </section>
 
-        <div class="beneficios">
-          <h4>Benefícios inclusos</h4>
-          <p class="descricao-plano" *ngIf="plano.descricao">{{ plano.descricao }}</p>
+  } @else {
 
-          <ul *ngIf="plano.listaBeneficios.length > 0">
-            <li *ngFor="let beneficio of plano.listaBeneficios">
-              ✓ {{ beneficio }}
-            </li>
-          </ul>
-        </div>
-
-        <div class="acoes">
-          <a routerLink="/user/planos-pet" class="btn-secondary">
-            Contratar para outro pet
-          </a>
-
-          <button class="btn-danger" [disabled]="cancelandoPet !== null" (click)="cancelarPlano(plano)">
-            {{ cancelandoPet === plano.id_pet ? 'Cancelando...' : 'Cancelar Plano' }}
-          </button>
-        </div>
-      </div>
+    <!-- Seus pets -->
+    <p class="rotulo">Seus pets</p>
+    <div class="pets">
+      @for (p of pets; track p.id_pet) {
+        <button type="button" class="pet" [class.ativo]="p.id_pet === petId" (click)="petId = p.id_pet; sucesso = ''">
+          <span class="pet-foto">
+            @if (p.foto_url) { <img [src]="p.foto_url" [alt]="'Foto de ' + p.nome" /> } @else { <app-icone-pet [especie]="p.especie"></app-icone-pet> }
+          </span>
+          <span class="pet-texto">
+            <strong>{{ p.nome }}</strong>
+            <small [style.color]="p.plano?.cor">{{ p.plano ? p.plano.nomeCurto : 'Sem plano' }}</small>
+          </span>
+        </button>
+      }
     </div>
 
-    <ng-template #semPlano>
-      <div class="sem-plano">
-        <div class="icone">🐾</div>
-        <h2>Nenhum plano contratado</h2>
-        <p>
-          Nenhum dos seus pets possui um plano ativo no momento.
-        </p>
-        <a routerLink="/user/planos-pet" class="btn-primary">
-          Contratar Plano
-        </a>
-      </div>
-    </ng-template>
-  </div>
+    @if (pet && pet.plano) {
+      <div class="grade">
+        <div>
+          <!-- Plano do pet -->
+          <section class="cartao-plano" [style.--cor]="pet.plano.cor">
+            <div class="cp-topo">
+              <span class="coroa"><svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+              <span class="cp-nome"><small>Plano de {{ pet.nome }}</small><strong>{{ pet.plano.nome }}</strong></span>
+              @if (cancelado) { <span class="selo-ativo selo-cancelado">Cancelado</span> } @else { <span class="selo-ativo">Ativo</span> }
+            </div>
+            <p class="cp-preco"><strong>{{ moeda(precoMes) }}</strong>/mês</p>
+            @if (textoCobranca) { <p class="cp-linha">{{ textoCobranca }}</p> }
+            <div class="cp-periodo">
+              <div class="cp-periodo-topo">
+                <span>{{ cancelado ? 'Ativo até ' + renovaEm : 'Período atual até ' + renovaEm }}</span>
+                <strong>{{ textoFaltam }}</strong>
+              </div>
+              <span class="cp-barra"><i [style.width.%]="progresso"></i></span>
+            </div>
+            <dl class="cp-dados">
+              <div><dt>{{ cancelado ? 'Termina em' : 'Renova em' }}</dt><dd>{{ renovaEm || '—' }}</dd></div>
+              <div><dt>Pagamento</dt><dd>{{ assinatura ? (assinatura.metodo === 'pix' ? 'Pix' : assinatura.metodo === 'boleto' ? 'Boleto' : 'Cartão' + (assinatura.cartaoFinal ? ' •••• ' + assinatura.cartaoFinal : '')) : '—' }}</dd></div>
+            </dl>
+            @if (cancelado) {
+              <div class="cp-cancelado">
+                <p>
+                  @if (petSeraExcluido) {
+                    {{ pet.nome }} será excluído em {{ renovaEm }}, junto com o plano. Até lá, pode usar tudo normalmente.
+                  } @else {
+                    O plano não será renovado. {{ pet.nome }} pode usar tudo normalmente até {{ renovaEm }}.
+                  }
+                </p>
+                <button type="button" class="btn btn-amarelo" (click)="manterPlano()">{{ petSeraExcluido ? 'Desfazer exclusão' : 'Manter plano' }}</button>
+              </div>
+            } @else if (trocaAgendada) { <p class="cp-aviso"><span class="ms">event_repeat</span> Muda para o {{ trocaAgendada }} em {{ renovaEm }}</p> }
+            @if (!cancelado) {
+            <div class="cp-acoes">
+              <button type="button" class="btn btn-amarelo" (click)="janela = 'mudar'">Mudar de plano</button>
+              <button type="button" class="btn btn-claro" (click)="janela = 'gerenciar'">Gerenciar assinatura</button>
+            </div>
+            }
+          </section>
 
-</section>
+          <!-- O que está incluso -->
+          @if (pet.plano.beneficios.length) {
+            <section class="card">
+              <h2>O que está incluso</h2>
+              <ul class="inclusos">
+                @for (b of pet.plano.beneficios; track b.texto) {
+                  <li><span class="ms">check_circle</span><span class="b-texto">{{ b.texto }}</span><span class="b-qtd">{{ b.quantidade }}</span></li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
+
+        <!-- Uso do mês -->
+        <section class="card uso">
+          <h2>Uso do mês</h2>
+          <p class="nota">As cotas renovam todo dia 1º. Consultas canceladas não contam.</p>
+          <ul>
+            @for (u of uso; track u.id) {
+              <li>
+                <div class="uso-linha">
+                  <span>{{ u.nome }}</span>
+                  @if (u.cota === 'ilimitado') {
+                    <strong class="ilimitado">Ilimitado</strong>
+                  } @else {
+                    <strong [class.esgotado]="u.usados >= u.cota">{{ u.usados }} de {{ u.cota }}</strong>
+                  }
+                </div>
+                @if (u.cota !== 'ilimitado') {
+                  <span class="barra"><i [style.width.%]="porcentagem(u)" [class.cheia]="u.usados >= u.cota"></i></span>
+                  @if (u.usados >= u.cota) { <small class="esgotado">Cota esgotada este mês</small> }
+                }
+              </li>
+            }
+          </ul>
+          @if (consultaEsgotada) {
+            <button type="button" class="btn btn-azul cheio" disabled>Cota de consultas esgotada</button>
+          } @else {
+            <a class="btn btn-azul cheio" routerLink="/user/agendamento" [queryParams]="{ pet: pet.id_pet }"><span class="ms">calendar_add_on</span> Agendar consulta</a>
+          }
+        </section>
+      </div>
+    } @else if (pet) {
+      <section class="sem-plano">
+        <span class="coroa grande-sem"><svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+        <div>
+          <h2>{{ pet.nome }} ainda não tem plano</h2>
+          <p>Escolha um plano abaixo para liberar consultas, vacinas, banho e tosa e mais.</p>
+        </div>
+      </section>
+    }
+
+    <!-- Planos (mesmo carrossel da home) -->
+    @if (disponiveis.length && pet && !pet.plano) {
+      <section class="escolher">
+        <h2>Planos para {{ pet.nome }}</h2>
+        <app-planos-carrossel [planos]="disponiveis" [(ciclo)]="ciclo" textoBotao="Contratar" (escolher)="escolherPlano($event)"></app-planos-carrossel>
+      </section>
+    }
+  }
+
+  @if (janela && pet && pet.plano) {
+    <app-gerenciar-plano [modo]="janela" [pet]="{ id_pet: pet.id_pet, nome: pet.nome }" [plano]="pet.plano" [planos]="disponiveis"
+      (fechar)="janela = null" (alterado)="aposAlterar($event)"></app-gerenciar-plano>
+  }
+</main>

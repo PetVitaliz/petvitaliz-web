@@ -28,6 +28,7 @@
       <div>
         <span>Pets cadastrados</span>
         <strong>{{ clientes.length }}</strong>
+        <small *ngIf="apiTemPlano">{{ totalComPlano }} com plano</small>
       </div>
     </div>
 
@@ -93,8 +94,22 @@
       <option value="Outro">Outros</option>
     </select>
 
+    <select class="sort" [(ngModel)]="filtroPlano" (change)="aplicarFiltros()" aria-label="Plano">
+      <option value="todos">Todos os planos</option>
+      <option value="com">Com plano</option>
+      <option value="sem">Sem plano</option>
+      <option value="bronze">Plano Bronze</option>
+      <option value="prata">Plano Prata</option>
+      <option value="ouro">Plano Ouro</option>
+      <option value="diamante">Plano Diamante</option>
+    </select>
+
     <button type="button" class="btn btn-ghost" (click)="limparFiltros()">Limpar</button>
   </section>
+
+  <p class="aviso-plano" *ngIf="!carregando && clientes.length && !apiTemPlano">
+    O servidor ainda não envia o plano de cada pet nesta lista. Assim que a resposta de <code>/adm/listar/clientes</code> trouxer o plano, ele aparece na coluna Plano.
+  </p>
 
   <!-- TABELA -->
   <div class="table-card">
@@ -106,6 +121,7 @@
             <th>Tutor</th>
             <th>Telefone</th>
             <th>Espécie</th>
+            <th>Plano</th>
             <th>Status</th>
             <th class="col-acoes">Ações</th>
           </tr>
@@ -114,7 +130,7 @@
         <tbody>
           <ng-container *ngIf="carregando">
             <tr *ngFor="let _ of [1, 2, 3, 4]">
-              <td colspan="6"><div class="skeleton"></div></td>
+              <td colspan="7"><div class="skeleton"></div></td>
             </tr>
           </ng-container>
 
@@ -135,6 +151,16 @@
               <td class="cell-muted">{{ cliente.telefone }}</td>
 
               <td><span class="tag">{{ especieDoPet(cliente) }}</span></td>
+
+              <td>
+                <ng-container *ngIf="planoDe(cliente) as plano; else semPlano">
+                  <span class="plano-tag" [attr.data-nivel]="plano.nivel">
+                    <svg class="ico" viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
+                    {{ plano.nome }}
+                  </span>
+                </ng-container>
+                <ng-template #semPlano><span class="plano-sem">{{ apiTemPlano ? 'Sem plano' : '—' }}</span></ng-template>
+              </td>
 
               <td>
                 <span class="pill"
@@ -168,7 +194,7 @@
             </tr>
 
             <tr *ngIf="clientesFiltrados.length === 0">
-              <td colspan="6" class="empty">Nenhum cliente encontrado.</td>
+              <td colspan="7" class="empty">Nenhum cliente encontrado.</td>
             </tr>
           </ng-container>
         </tbody>
@@ -275,6 +301,7 @@
         <div class="detalhe"><small>Tutor</small><strong>{{ clienteSelecionado.tutor }}</strong></div>
         <div class="detalhe"><small>Telefone</small><strong>{{ clienteSelecionado.telefone }}</strong></div>
         <div class="detalhe"><small>Espécie</small><strong>{{ especieDoPet(clienteSelecionado) }}</strong></div>
+        <div class="detalhe"><small>Plano</small><strong>{{ planoDe(clienteSelecionado)?.nome || (apiTemPlano ? 'Sem plano' : '—') }}</strong></div>
         <div class="detalhe">
           <small>Status</small>
           <span class="pill"

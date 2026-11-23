@@ -1,0 +1,44 @@
+<div class="pendente">
+  @if (fase === 'aguardando') {
+    @if (metodo === 'pix') {
+      <h3>Pague com Pix</h3>
+      <p class="sub">Abra o app do seu banco, escolha Pix e leia o QR Code.</p>
+
+      <div class="qr" role="img" aria-label="QR Code Pix de demonstração">
+        <svg [attr.viewBox]="'-2 -2 ' + (tamanho + 4) + ' ' + (tamanho + 4)" shape-rendering="crispEdges">
+          <rect x="-2" y="-2" [attr.width]="tamanho + 4" [attr.height]="tamanho + 4" fill="#ffffff"/>
+          @for (m of modulos; track $index) {
+            <rect [attr.x]="m.x" [attr.y]="m.y" width="1" height="1" fill="#183B72"/>
+          }
+        </svg>
+        <span class="qr-logo"><img src="assets/icons/favicon-192.png" alt="" /></span>
+      </div>
+
+      <p class="valor">{{ moeda(valor) }}</p>
+      <p class="prazo"><span class="ms">schedule</span> Expira em {{ prazo }}</p>
+
+      <span class="rotulo">Pix copia e cola</span>
+      <div class="codigo">
+        <code>{{ codigo }}</code>
+        <button type="button" (click)="copiar()"><span class="ms">{{ copiado ? 'check' : 'content_copy' }}</span> {{ copiado ? 'Copiado' : 'Copiar' }}</button>
+      </div>
+    } @else {
+      <h3>Boleto gerado</h3>
+      <p class="sub">Pague no app do banco, internet banking ou lotérica.</p>
+      <div class="boleto-icone"><span class="ms">barcode</span></div>
+      <p class="valor">{{ moeda(valor) }}</p>
+      <span class="rotulo">Linha digitável</span>
+      <div class="codigo">
+        <code>{{ codigo }}</code>
+        <button type="button" (click)="copiar()"><span class="ms">{{ copiado ? 'check' : 'content_copy' }}</span> {{ copiado ? 'Copiado' : 'Copiar' }}</button>
+      </div>
+    }
+
+    <p class="status"><span class="ponto"></span> Aguardando pagamento…</p>
+    <p class="demo">Modo de demonstração: este código não pode ser pago de verdade. O pagamento será confirmado em instantes.</p>
+  } @else {
+    <span class="girando" aria-hidden="true"></span>
+    <h3>Processando pagamento</h3>
+    <p class="sub">Recebemos seu {{ metodo === 'pix' ? 'Pix' : 'boleto' }}. Estamos confirmando com o banco…</p>
+  }
+</div>

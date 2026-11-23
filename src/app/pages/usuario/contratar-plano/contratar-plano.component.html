@@ -1,0 +1,234 @@
+<main class="checkout">
+
+  @if (carregando) {
+    <p class="carregando">Carregando o plano…</p>
+  } @else if (plano) {
+
+    @if (etapa === 'detalhes' || etapa === 'pagamento') {
+      <header class="topo">
+        @if (etapa === 'detalhes') {
+          <a class="voltar" routerLink="/user/meu-plano"><span class="ms">arrow_back</span> Trocar plano</a>
+        } @else {
+          <button type="button" class="voltar" (click)="voltar()"><span class="ms">arrow_back</span> Detalhes do plano</button>
+        }
+        <h1>{{ etapa === 'detalhes' ? 'Contratar plano' : 'Pagamento' }}</h1>
+        <div class="passos" aria-hidden="true">
+          <i class="feito"></i><i [class.feito]="etapa === 'pagamento'"></i>
+        </div>
+      </header>
+    }
+
+    <div class="grade" [class.sozinho]="etapa === 'aguardando' || etapa === 'processando' || etapa === 'sucesso'">
+
+      <section class="principal">
+
+        <!-- ================= Detalhes ================= -->
+        @if (etapa === 'detalhes') {
+          <div class="card plano-escolhido" [style.--cor]="plano.cor">
+            <span class="coroa"><svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+            <div>
+              <small>Plano escolhido</small>
+              <h2>{{ plano.nome }}</h2>
+              @if (plano.resumo) { <p>{{ plano.resumo }}</p> }
+            </div>
+          </div>
+
+          <h3 class="secao">Pet vinculado</h3>
+          <p class="secao-sub">Escolha o pet que vai receber o plano.</p>
+          @if (pets.length) {
+            <div class="pets">
+              @for (p of pets; track p.id_pet) {
+                <button type="button" class="pet" [class.ativo]="petId === p.id_pet" [disabled]="!!petsComPlano[p.id_pet]"
+                  [attr.aria-pressed]="petId === p.id_pet" (click)="escolherPet(p)">
+                  <span class="pet-foto">
+                    @if (p.foto_url) { <img [src]="p.foto_url" [alt]="'Foto de ' + p.nome" /> }
+                    @else { <app-icone-pet [especie]="p.especie"></app-icone-pet> }
+                  </span>
+                  <span class="pet-info">
+                    <strong>{{ p.nome }}</strong>
+                    <small>{{ petsComPlano[p.id_pet] ? 'Já tem ' + petsComPlano[p.id_pet] : (p.especie | titlecase) }}</small>
+                  </span>
+                  <span class="radio" aria-hidden="true"></span>
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="card aviso-pets">
+              <span>Cadastre um pet para contratar o plano.</span>
+              <a class="btn btn-amarelo" routerLink="/user/listar/pet">Cadastrar pet</a>
+            </div>
+          }
+
+          @if (plano.beneficios.length) {
+            <h3 class="secao">O que está incluso</h3>
+            <ul class="card inclusos">
+              @for (b of plano.beneficios; track b.texto) {
+                <li><span class="ms">check_circle</span><span class="b-texto">{{ b.texto }}</span><span class="b-qtd">{{ b.quantidade }}</span></li>
+              }
+            </ul>
+          }
+
+          <h3 class="secao">Ciclo de cobrança</h3>
+          <div class="ciclos">
+            <button type="button" class="ciclo" [class.ativo]="ciclo === 'mensal'" (click)="ciclo = 'mensal'">
+              <span class="ciclo-topo"><span class="ms">calendar_month</span><span class="radio" aria-hidden="true"></span></span>
+              <strong>Mensal</strong>
+              <span class="ciclo-preco">{{ moeda(precoMes('mensal')) }}<small>/mês</small></span>
+            </button>
+            <button type="button" class="ciclo" [class.ativo]="ciclo === 'anual'" (click)="ciclo = 'anual'">
+              <span class="ciclo-topo"><span class="ms">event_repeat</span><span class="radio" aria-hidden="true"></span></span>
+              <strong>Anual @if (economia(plano) > 0) { <span class="off">{{ economia(plano) }}% OFF</span> }</strong>
+              <span class="ciclo-preco">{{ moeda(precoMes('anual')) }}<small>/mês</small></span>
+            </button>
+          </div>
+
+          <label class="termos">
+            <input type="checkbox" [(ngModel)]="aceitouTermos" />
+            <span class="caixa" aria-hidden="true"><span class="ms">check</span></span>
+            <span>Li e aceito os <a routerLink="/user/conta/termos" target="_blank">Termos de uso e a Política de privacidade</a>.</span>
+          </label>
+
+          @if (erro) { <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p> }
+        }
+
+        <!-- ================= Pagamento ================= -->
+        @if (etapa === 'pagamento') {
+          <h3 class="secao primeira">Forma de pagamento</h3>
+          <div class="metodos" role="radiogroup" aria-label="Forma de pagamento">
+            <button type="button" class="metodo" role="radio" [class.ativo]="metodo === 'cartao'" [attr.aria-checked]="metodo === 'cartao'" (click)="metodo = 'cartao'">
+              <span class="ms">credit_card</span>
+              <span><strong>Cartão de crédito</strong><small>{{ ciclo === 'anual' ? 'Em até 12x' : 'Cobrança mensal no cartão' }}</small></span>
+              <span class="radio" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="metodo" role="radio" [class.ativo]="metodo === 'pix'" [attr.aria-checked]="metodo === 'pix'" (click)="metodo = 'pix'">
+              <span class="ms">qr_code_2</span>
+              <span><strong>Pix</strong><small>Pagamento à vista, na hora</small></span>
+              <span class="radio" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="metodo" role="radio" [class.ativo]="metodo === 'boleto'" [attr.aria-checked]="metodo === 'boleto'" (click)="metodo = 'boleto'">
+              <span class="ms">barcode</span>
+              <span><strong>Boleto bancário</strong><small>Compensa em até 3 dias úteis</small></span>
+              <span class="radio" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          @if (metodo === 'cartao') {
+            @if (podeParcelar) {
+              <h3 class="secao">Parcelas</h3>
+              <label class="campo">
+                <span class="select">
+                  <select [(ngModel)]="parcelas" aria-label="Quantidade de parcelas">
+                    @for (n of opcoesParcelas; track n) {
+                      <option [ngValue]="n">{{ textoParcela(n) }}</option>
+                    }
+                  </select>
+                  <span class="ms">expand_more</span>
+                </span>
+              </label>
+              <p class="dica">Até 4x sem juros. Acima disso, juros de 1,99% ao mês.</p>
+            }
+
+            <h3 class="secao">Dados do cartão</h3>
+            <div class="card form-cartao">
+              <label class="campo inteiro">Número do cartão
+                <span class="com-bandeira">
+                  <input inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" [(ngModel)]="cartao.numero" (ngModelChange)="mascararNumero()" />
+                  @if (bandeira) { <span class="bandeira">{{ bandeira }}</span> }
+                </span>
+              </label>
+              <label class="campo inteiro">Nome impresso no cartão
+                <input autocomplete="cc-name" placeholder="Como está no cartão" [(ngModel)]="cartao.nome" />
+              </label>
+              <label class="campo">Validade
+                <input inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA" [(ngModel)]="cartao.validade" (ngModelChange)="mascararValidade()" />
+              </label>
+              <label class="campo">CVV
+                <input inputmode="numeric" autocomplete="cc-csc" placeholder="123" [(ngModel)]="cartao.cvv" (ngModelChange)="mascararCvv()" />
+              </label>
+              <label class="lembrar inteiro"><input type="checkbox" [(ngModel)]="salvarCartao" /> Salvar cartão em Formas de pagamento</label>
+            </div>
+          }
+
+          @if (metodo === 'pix') {
+            <div class="card alternativo">
+              <span class="alt-icone"><span class="ms">qr_code_2</span></span>
+              <h4>Pagamento via Pix</h4>
+              <p>Ao clicar em "Gerar Pix", mostramos o QR Code e o código copia e cola. O plano é ativado assim que o pagamento é confirmado.</p>
+            </div>
+          }
+
+          @if (metodo === 'boleto') {
+            <div class="card alternativo">
+              <span class="alt-icone"><span class="ms">barcode</span></span>
+              <h4>Pagamento por boleto</h4>
+              <p>Ao clicar em "Gerar boleto", mostramos a linha digitável. O plano é ativado assim que o pagamento é confirmado.</p>
+            </div>
+          }
+
+          @if (erroPagamento) { <p class="alerta erro"><span class="ms">error</span> {{ erroPagamento }}</p> }
+        }
+
+        <!-- ================= Pix / boleto: código e confirmação ================= -->
+        @if (etapa === 'aguardando' && metodo !== 'cartao') {
+          <div class="card">
+            <app-pagamento-pendente [metodo]="metodo" [valor]="totalFinal" (confirmado)="ativarPlano()"></app-pagamento-pendente>
+          </div>
+        }
+
+        <!-- ================= Processando ================= -->
+        @if (etapa === 'processando') {
+          <div class="card estado">
+            <span class="girando" aria-hidden="true"></span>
+            <h2>{{ metodo === 'cartao' ? 'Processando pagamento' : 'Aguardando confirmação' }}</h2>
+            <p>{{ metodo === 'pix' ? 'Confirmando o pagamento do Pix…' : metodo === 'boleto' ? 'Confirmando o pagamento do boleto…' : 'Falando com a operadora do cartão…' }}</p>
+          </div>
+        }
+
+        <!-- ================= Sucesso ================= -->
+        @if (etapa === 'sucesso') {
+          <div class="card estado">
+            <span class="ok-icone"><span class="ms">check</span></span>
+            <h2>Pagamento concluído!</h2>
+            <p>O {{ plano.nome }} de {{ pet?.nome }} já está ativo.</p>
+            <dl class="resumo-final">
+              <div><dt>Pet</dt><dd>{{ pet?.nome }}</dd></div>
+              <div><dt>Plano</dt><dd>{{ plano.nome }}</dd></div>
+              <div><dt>Cobrança</dt><dd>{{ ciclo === 'anual' ? 'Anual' : 'Mensal' }}</dd></div>
+              <div><dt>Pagamento</dt><dd>{{ nomeMetodo }}</dd></div>
+              <div><dt>Total</dt><dd>{{ moeda(totalFinal) }}</dd></div>
+            </dl>
+            <div class="estado-botoes">
+              <a class="btn btn-azul" routerLink="/user/agendamento" [queryParams]="{ pet: pet?.id_pet }"><span class="ms">calendar_add_on</span> Agendar consulta</a>
+              <a class="btn btn-contorno" routerLink="/user/meu-plano">Ver meu plano</a>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- ================= Resumo (lateral) ================= -->
+      @if (etapa === 'detalhes' || etapa === 'pagamento') {
+        <aside class="card resumo">
+          <h3>Resumo da contratação</h3>
+          <dl>
+            <div><dt>Pet</dt><dd>{{ pet?.nome || 'Escolha um pet' }}</dd></div>
+            <div><dt>Plano</dt><dd>{{ plano.nome }}</dd></div>
+            <div><dt>Cobrança</dt><dd>{{ ciclo === 'anual' ? 'Anual (12 meses)' : 'Mensal' }}</dd></div>
+            @if (etapa === 'pagamento' && podeParcelar && parcelas > 1) {
+              <div><dt>Parcelas</dt><dd>{{ parcelas }}x de {{ moeda(valorParcela(parcelas)) }}</dd></div>
+            }
+          </dl>
+          <div class="total"><span>Total</span><strong>{{ moeda(etapa === 'pagamento' ? totalFinal : total) }}</strong></div>
+
+          @if (etapa === 'detalhes') {
+            <button type="button" class="btn btn-azul cheio" (click)="continuarParaPagamento()">Continuar para pagamento</button>
+          } @else {
+            <button type="button" class="btn btn-azul cheio" (click)="pagar()">
+              <span class="ms">{{ metodo === 'cartao' ? 'lock' : metodo === 'pix' ? 'qr_code_2' : 'barcode' }}</span> {{ textoBotaoPagar }}
+            </button>
+            <p class="seguro"><span class="ms">verified_user</span> Pagamento seguro</p>
+          }
+        </aside>
+      }
+    </div>
+  }
+</main>

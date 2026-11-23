@@ -1,230 +1,519 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300,0,0&display=block');
+
+/* Ícones de traço fino (Material Symbols Outlined) */
+.ms {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
 
 :host {
   display: block;
   min-height: 100vh;
-  background: #f3f8ff;
-  font-family: 'Inter', sans-serif;
+  background: #F6F8FC;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 .cadastro-page {
-  min-height: calc(100vh - 90px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 20px;
-}
-
-.cadastro-card {
-  width: 100%;
-  max-width: 670px;
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 44px 48px 38px;
-  box-sizing: border-box;
-  border: 1px solid #e9edf7;
-}
-
-.cadastro-card h2 {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 800;
-  color: #25327c;
-}
-
-.subtitle {
-  margin: 4px 0 34px;
-  font-size: 15px;
-  color: #4b5563;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px;
-  margin-bottom: 22px;
-}
-
-.form-group {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 20px 56px;
 }
 
-.form-group.full {
-  margin-bottom: 22px;
-}
+/* ---------- Botão voltar ---------- */
 
-.form-group label {
-  margin-bottom: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #374151;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid #edf0f7;
-  border-radius: 10px;
-  font-size: 13px;
-  color: #111827;
+.btn-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-right: auto;
+  margin-left: max(0px, calc((100% - 1100px) / 2));
+  padding: 9px 16px;
+  border-radius: 999px;
   background: #ffffff;
-  outline: none;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  border: 1px solid #E1E6F0;
+  color: #183B72;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s ease;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #4b5dcc;
-  box-shadow: 0 0 0 3px rgba(75, 93, 204, 0.08);
+.btn-voltar .ms {
+  font-size: 18px;
+  transition: transform 0.2s ease;
 }
 
-.form-group input::placeholder {
-  color: #9ca3af;
+.btn-voltar:hover {
+  border-color: #21479B;
 }
 
-.password-wrapper {
+.btn-voltar:hover .ms {
+  transform: translateX(-3px);
+}
+
+/* ---------- Card ---------- */
+
+.cadastro-shell {
+  width: 100%;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 0.8fr 1.4fr;
+  background: #ffffff;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid #E1E6F0;
+  box-shadow: 0 22px 60px rgba(24, 59, 114, 0.08);
+}
+
+/* ---------- Painel da marca ---------- */
+
+.brand-panel {
+  position: relative;
+  overflow: hidden;
+  background: #183B72;
+  color: #ffffff;
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+}
+
+.deco {
+  position: absolute;
+  border-radius: 50%;
+  background: #21479B;
+  pointer-events: none;
+}
+
+.deco-1 {
+  width: 260px;
+  height: 260px;
+  top: -90px;
+  right: -90px;
+  opacity: 0.6;
+}
+
+.deco-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -90px;
+  left: -70px;
+  opacity: 0.45;
+}
+
+.brand-top,
+.beneficios,
+.brand-footer {
   position: relative;
 }
 
-.password-wrapper input {
-  padding-right: 46px;
+.brand-top h1 {
+  margin: 0 0 12px;
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.brand-top p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #C9D6EE;
+}
+
+.beneficios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.beneficios li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.beneficio-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.brand-footer {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #C9D6EE;
+}
+
+.brand-footer .ms {
+  font-size: 18px;
+}
+
+/* ---------- Formulário ---------- */
+
+.form-panel {
+  padding: 44px 48px 40px;
+}
+
+.form-panel h2 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #183B72;
+}
+
+.subtitle {
+  margin: 0 0 28px;
+  font-size: 14px;
+  color: #52627D;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 18px;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #183B72;
+}
+
+.input-box {
+  position: relative;
+  height: 50px;
+  border: 1px solid #E1E6F0;
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-box:hover {
+  border-color: #C9D6EE;
+}
+
+.input-box:focus-within {
+  border-color: #21479B;
+  box-shadow: 0 0 0 4px rgba(33, 71, 155, 0.12);
+}
+
+.input-icon {
+  font-size: 20px;
+  color: #71809A;
+}
+
+.input-box:focus-within .input-icon {
+  color: #21479B;
+}
+
+.input-box input,
+.input-box select {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #183B72;
+}
+
+.input-box input::placeholder {
+  color: #71809A;
+}
+
+.select-box select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 28px;
+}
+
+.select-box select.vazio {
+  color: #71809A;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  color: #71809A;
+  pointer-events: none;
 }
 
 .eye-btn {
-  position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 14px;
+  color: #71809A;
+  display: flex;
+  padding: 4px;
+  border-radius: 8px;
 }
+
+.eye-btn:hover {
+  color: #21479B;
+  background: #E8EEFA;
+}
+
+/* Força da senha */
 
 .password-strength {
   margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .strength-bar {
-  width: 100%;
-  height: 7px;
-  background: #e5e7eb;
+  flex: 1;
+  height: 5px;
   border-radius: 999px;
+  background: #E8EEFA;
   overflow: hidden;
 }
 
 .strength-bar span {
   display: block;
   height: 100%;
+  width: 0;
   border-radius: 999px;
-  transition: 0.3s ease;
-}
-
-.password-strength.fraca .strength-bar span {
-  width: 33%;
-  background: #ef4444;
-}
-
-.password-strength.media .strength-bar span {
-  width: 66%;
-  background: #f59e0b;
-}
-
-.password-strength.forte .strength-bar span {
-  width: 100%;
-  background: #22c55e;
+  transition: width 0.3s ease, background 0.3s ease;
 }
 
 .password-strength p {
-  margin: 7px 0 0;
+  margin: 0;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.password-strength.fraca p {
-  color: #ef4444;
+.password-strength.fraca .strength-bar span { width: 33%; background: #DC2626; }
+.password-strength.fraca p { color: #DC2626; }
+
+.password-strength.media .strength-bar span { width: 66%; background: #B45309; }
+.password-strength.media p { color: #B45309; }
+
+.password-strength.forte .strength-bar span { width: 100%; background: #16865B; }
+.password-strength.forte p { color: #16865B; }
+
+/* Mensagens */
+
+.erro,
+.sucesso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 22px 0 0;
 }
 
-.password-strength.media p {
-  color: #f59e0b;
+.erro .ms,
+.sucesso .ms {
+  font-size: 18px;
 }
-
-.password-strength.forte p {
-  color: #22c55e;
-}
-
 
 .erro {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  padding: 10px 15px;
-  border-radius: 30px;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 15px;
-  text-align: center;
+  color: #b42318;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
 }
 
 .sucesso {
-  color: #155724;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  padding: 10px 15px;
-  border-radius: 30px;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 15px;
-  text-align: center;
+  color: #16865B;
+  background: #e7f6ef;
+  border: 1px solid #b7e4cf;
 }
+
+/* Botão */
 
 .btn-submit {
-  display: block;
-  width: 310px;
-  height: 44px;
-  margin: 34px auto 18px;
+  width: 100%;
+  height: 52px;
+  margin-top: 24px;
   border: none;
-  border-radius: 999px;
-  background: #4b5dcc;
-  color: #ffffff;
+  border-radius: 12px;
+  background: #FECA3E;
+  color: #183B72;
   font-size: 15px;
   font-weight: 700;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 10px 22px rgba(254, 202, 62, 0.35);
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.btn-submit:hover {
-  background: #3547b7;
+.btn-submit .ms {
+  transition: transform 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #F5BD25;
+  transform: translateY(-2px);
+}
+
+.btn-submit:hover:not(:disabled) .ms {
+  transform: translateX(3px);
+}
+
+.btn-submit:disabled {
+  cursor: wait;
+  opacity: 0.85;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(24, 59, 114, 0.25);
+  border-top-color: #183B72;
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
 }
 
 .login-link {
+  margin: 20px 0 0;
   text-align: center;
-  margin: 0;
-  font-size: 13px;
-  color: #111827;
+  font-size: 14px;
+  color: #52627D;
 }
 
 .login-link a {
-  color: #111827;
-  text-decoration: none;
+  color: #21479B;
   font-weight: 700;
+  text-decoration: none;
 }
 
-@media (max-width: 700px) {
-  .cadastro-card {
-    padding: 36px 26px;
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Responsivo ---------- */
+
+/* Notebook pequeno: painel mais estreito */
+@media (max-width: 1100px) {
+  .brand-panel {
+    padding: 40px 30px;
   }
 
-  .form-row {
+  .brand-top h1 {
+    font-size: 24px;
+  }
+
+  .form-panel {
+    padding: 40px 36px 36px;
+  }
+}
+
+/* Tablet: some o painel azul, fica só o formulário */
+@media (max-width: 900px) {
+  .cadastro-shell {
     grid-template-columns: 1fr;
-    gap: 18px;
+    max-width: 640px;
   }
 
-  .btn-submit {
-    width: 100%;
+  .brand-panel {
+    display: none;
+  }
+
+  .btn-voltar {
+    margin-left: max(0px, calc((100% - 640px) / 2));
   }
 }
+
+/* Celular: campos em uma coluna */
+@media (max-width: 620px) {
+  .cadastro-page {
+    padding: 20px 16px 32px;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+
+  .cadastro-shell {
+    border-radius: 22px;
+  }
+
+  .form-panel {
+    padding: 30px 20px 26px;
+  }
+
+  .form-panel h2 {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    margin-bottom: 22px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .input-box {
+    height: 50px;
+  }
+
+  /* 16px evita o zoom automático do iPhone ao tocar no campo */
+  .input-box input,
+  .input-box select {
+    font-size: 16px;
+  }
+}
+
+/* Logo da marca no painel */
+.brand-logo { display: inline-block; margin-bottom: 34px; }
+.brand-logo img { display: block; width: 190px; height: auto; }

@@ -27,6 +27,17 @@ export class LoginComponent {
 
   constructor(private router: Router, private http: HttpClient) {}
 
+  get perfilDetectado(): 'admin' | 'funcionario' | null {
+    const e = this.email.trim().toLowerCase();
+    if (e.endsWith('@petvitaliz.com') && (e.startsWith('adm') || e.includes('admin'))) {
+      return 'admin';
+    }
+    if (e.endsWith('@petvitalizfuncionario.com')) {
+      return 'funcionario';
+    }
+    return null;
+  }
+
   entrar() {
     this.erro = '';
 

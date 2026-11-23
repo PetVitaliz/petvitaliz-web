@@ -1,17 +1,24 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 import { formatarPreco, nomeDoPlano } from '../../../core/utils/formato-plano';
 import { environment } from '../../../environments/environment';
 import { DataMaskDirective } from './data-mask.directive';
+import { IconePetComponent } from '../../../components/icone-pet/icone-pet.component';
+import { PlanoCheckoutComponent } from '../../../components/plano-checkout/plano-checkout.component';
+import { moeda } from '../../../core/utils/montar-plano';
+import { lerPlanosDoCliente } from '../../../core/utils/planos-resposta';
+import { agendarCancelamento, desfazerCancelamento, diasRestantes, fimDoPeriodo, garantirAssinatura, petsParaExcluir, processarCancelamentosVencidos, registrarContratacao, textoDias } from '../../../core/utils/assinaturas';
+import { ExcluirPetComponent } from '../../../components/excluir-pet/excluir-pet.component';
+import { PagamentoPendenteComponent } from '../../../components/pagamento-pendente/pagamento-pendente.component';
 
 @Component({
   selector: 'app-listar-cadastro-pet',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, DataMaskDirective],
+  imports: [CommonModule, FormsModule, RouterModule, DataMaskDirective, IconePetComponent, PlanoCheckoutComponent, PagamentoPendenteComponent, ExcluirPetComponent],
   templateUrl: './listar-cadastro-pet.component.html',
   styleUrl: './listar-cadastro-pet.component.css'
 })
@@ -36,6 +43,116 @@ export class ListarCadastroPetComponent implements OnInit {
   idade: string | number = '';
   sexo = '';
   peso: number | null = null;
+
+  // ---------- Cadastro em etapas (igual ao app) ----------
+  // 3 etapas; com "Escolher um plano agora" ganha Plano e Pagamento
+  etapa = 1;
+  @ViewChild(PlanoCheckoutComponent) checkout?: PlanoCheckoutComponent;
+  readonly moeda = moeda;
+
+  // Depois de concluir: tela de processando / sucesso dentro da própria janela
+  finalizacao: 'processando' | 'aguardando' | 'sucesso' | 'erro-plano' | null = null;
+  metodoFinal: 'cartao' | 'pix' | 'boleto' = 'cartao';
+  private cicloFinal: 'mensal' | 'anual' = 'mensal';
+  private cartaoFinal = '';
+  private bandeiraFinal = '';
+  motivoErroPlano = '';
+  private idProdutoFinal = 0;
+  resumoFinal: { pet: string; plano: string; ciclo: string; metodo: string; total: number; idPet: number | null } | null = null;
+
+  get nomesEtapas(): string[] {
+    const base = ['Identificação', 'Características', 'Sobre o pet'];
+    return this.escolherPlano ? [...base, 'Plano', 'Pagamento'] : base;
+  }
+  raca = '';
+  jeitinho: string[] = [];
+  adora: string[] = [];
+  bio = '';
+  readonly limiteBio = 200;
+  escolherPlano = false;
+
+  readonly especies = [
+    { valor: 'cachorro', texto: 'Cachorro' },
+    { valor: 'gato', texto: 'Gato' },
+    { valor: 'ave', texto: 'Ave' },
+    { valor: 'coelho', texto: 'Coelho' },
+    { valor: 'outro', texto: 'Outro' }
+  ];
+
+  readonly tracos = [
+    { id: 'brincalhao', icone: 'sentiment_satisfied', macho: 'Brincalhão', femea: 'Brincalhona' },
+    { id: 'carinhoso', icone: 'favorite', macho: 'Carinhoso', femea: 'Carinhosa' },
+    { id: 'dorminhoco', icone: 'bedtime', macho: 'Dorminhoco', femea: 'Dorminhoca' },
+    { id: 'sociavel', icone: 'group', macho: 'Sociável', femea: 'Sociável' },
+    { id: 'agitado', icone: 'bolt', macho: 'Agitado', femea: 'Agitada' },
+    { id: 'medroso', icone: 'thunderstorm', macho: 'Medroso', femea: 'Medrosa' }
+  ];
+
+  readonly gostos = [
+    { id: 'passear', icone: 'directions_walk', texto: 'Passear' },
+    { id: 'petiscos', icone: 'cookie', texto: 'Petiscos' },
+    { id: 'bolinha', icone: 'sports_baseball', texto: 'Bolinha' },
+    { id: 'agua', icone: 'water_drop', texto: 'Água' },
+    { id: 'sofa', icone: 'weekend', texto: 'Sofá' }
+  ];
+
+  get ehMacho(): boolean {
+    return this.sexo !== 'Fêmea';
+  }
+
+  textoTraco(t: { macho: string; femea: string }): string {
+    return this.ehMacho ? t.macho : t.femea;
+  }
+
+  alternar(lista: string[], id: string): void {
+    const i = lista.indexOf(id);
+    if (i >= 0) lista.splice(i, 1); else lista.push(id);
+  }
+
+  private validarEtapa(n: number): boolean {
+    this.erro = '';
+    if (n === 1) {
+      if (!this.nomePet.trim()) { this.exibirErro('Informe o nome do seu pet.'); return false; }
+      if (!this.especie) { this.exibirErro('Escolha a espécie.'); return false; }
+      if (this.especie === 'outro' && !this.outraEspecie.trim()) { this.exibirErro('Conte qual é a espécie.'); return false; }
+    }
+    if (n === 2) {
+      if (!this.sexo) { this.exibirErro('Escolha o sexo.'); return false; }
+      if (!this.dataPelaIdade(this.idadeAprox, this.unidadeIdade)) { this.exibirErro('Informe a idade aproximada do pet.'); return false; }
+      if (this.peso === null || Number(this.peso) <= 0) { this.exibirErro('Informe o peso do pet.'); return false; }
+    }
+    return true;
+  }
+
+  avancarEtapa(): void {
+    if (!this.validarEtapa(this.etapa)) return;
+    if (this.etapa === 4) {
+      const erro = this.checkout?.validarPlano() || '';
+      if (erro) { this.exibirErro(erro); return; }
+    }
+    if (this.etapa < this.nomesEtapas.length) this.etapa++;
+  }
+
+  voltarEtapa(): void {
+    this.erro = '';
+    if (this.etapa > 1) this.etapa--;
+  }
+
+  // Junta raça, jeitinho, gostos e o texto livre nas observações do pet
+  private montarObservacoes(): string {
+    const partes: string[] = [];
+    if (this.raca.trim()) partes.push(`Raça: ${this.raca.trim()}.`);
+    const jeito = this.tracos.filter((t) => this.jeitinho.includes(t.id)).map((t) => this.textoTraco(t));
+    if (jeito.length) partes.push(`Jeitinho: ${jeito.join(', ')}.`);
+    const gosta = this.gostos.filter((g) => this.adora.includes(g.id)).map((g) => g.texto);
+    if (gosta.length) partes.push(`Adora: ${gosta.join(', ')}.`);
+    if (this.bio.trim()) partes.push(this.bio.trim());
+    return partes.join(' ');
+  }
+
+  // Idade aproximada (igual ao app): número + anos/meses
+  idadeAprox = '';
+  unidadeIdade: 'anos' | 'meses' = 'anos';
   
   fotoPreview: string | ArrayBuffer | null = null;
   fotoArquivo: File | null = null;
@@ -46,10 +163,16 @@ export class ListarCadastroPetComponent implements OnInit {
   erro = '';
   sucesso = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     this.carregarDadosLocais();
+    this.saidas = petsParaExcluir();
+    processarCancelamentosVencidos(this.http, environment.apiUrl, () => {
+      this.saidas = petsParaExcluir();
+      this.buscarPetsDoBanco();
+      this.buscarPlanoAtivoReal();
+    });
     this.buscarPetsDoBanco();
     this.buscarPlanoAtivoReal();
   }
@@ -80,11 +203,12 @@ export class ListarCadastroPetComponent implements OnInit {
   buscarPlanoAtivoReal(): void {
     this.http.get<any>(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
       next: (response: any) => {
-        const planos: any[] = response?.planos || [];
+        const planos: any[] = lerPlanosDoCliente(response);
         this.planosPorPet = {};
         planos.forEach((p: any) => {
           this.planosPorPet[p.id_pet] = {
             nome: nomeDoPlano(p.produto?.nome) || 'Plano',
+            id_produto: p.produto?.id_produto,
             preco: `R$ ${formatarPreco(p.produto?.preco)}`,
             descricao: p.produto?.descricao
           };
@@ -96,6 +220,42 @@ export class ListarCadastroPetComponent implements OnInit {
 
   get planoContratado(): any {
     return this.petSelecionado ? this.planosPorPet[this.petSelecionado.id_pet] || null : null;
+  }
+
+  // ---------- Ajudantes do visual ----------
+
+  selecionarPet(p: any): void {
+    this.petSelecionado = p;
+    this.erro = '';
+    this.sucesso = '';
+  }
+
+  planoDoPet(p: any): any {
+    return p ? this.planosPorPet[p.id_pet] || null : null;
+  }
+
+  get qtdComPlano(): number {
+    return this.pets.filter((p) => this.planosPorPet[p.id_pet]).length;
+  }
+
+  // bronze, prata, ouro ou diamante (mesmas cores da página de admin)
+  nivelDoPlano(p: any): string {
+    const nome = String(this.planoDoPet(p)?.nome || '').toLowerCase();
+    return ['bronze', 'prata', 'ouro', 'diamante'].find((n) => nome.includes(n)) || 'outro';
+  }
+
+  especieTexto(p: any): string {
+    const e = p?.especie === 'outro' ? p?.outra_especie || 'Outro' : p?.especie || '';
+    return e ? e.charAt(0).toUpperCase() + e.slice(1) : 'Pet';
+  }
+
+  sexoTexto(p: any): string {
+    return p?.sexo === 'M' || p?.sexo === 'Macho' ? 'Macho' : 'Fêmea';
+  }
+
+  pesoTexto(p: any): string {
+    const n = Number(p?.peso);
+    return n > 0 ? `${n.toLocaleString('pt-BR')} kg` : '—';
   }
 
   get nomeTutor(): string { return this.usuarioLogado?.nome || 'Responsável'; }
@@ -196,6 +356,41 @@ export class ListarCadastroPetComponent implements OnInit {
     return `${ano}-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}T00:00:00.000Z`;
   }
 
+  // ---------- Idade aproximada ----------
+
+  soNumeros(valor: string): string {
+    return String(valor || '').replace(/\D/g, '').slice(0, 2);
+  }
+
+  // Data de nascimento aproximada a partir da idade (o servidor guarda a data)
+  private dataPelaIdade(valor: string, unidade: 'anos' | 'meses'): string | null {
+    const n = parseInt(valor, 10);
+    if (isNaN(n) || n < 0) return null;
+    if (unidade === 'anos' && n > 35) return null;
+    if (unidade === 'meses' && (n < 1 || n > 36)) return null;
+
+    const d = new Date();
+    if (unidade === 'anos') {
+      d.setFullYear(d.getFullYear() - n);
+    } else {
+      d.setMonth(d.getMonth() - n);
+    }
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T00:00:00.000Z`;
+  }
+
+  // Preenche o campo de idade na edição a partir da data salva
+  private idadePelaData(dataISO: string): { valor: string; unidade: 'anos' | 'meses' } {
+    const d = new Date(dataISO);
+    if (!dataISO || isNaN(d.getTime())) return { valor: '', unidade: 'anos' };
+    const hoje = new Date();
+    let meses = (hoje.getFullYear() - d.getUTCFullYear()) * 12 + (hoje.getMonth() - d.getUTCMonth());
+    if (hoje.getDate() < d.getUTCDate()) meses--;
+    meses = Math.max(0, meses);
+    return meses < 12
+      ? { valor: String(Math.max(1, meses)), unidade: 'meses' }
+      : { valor: String(Math.floor(meses / 12)), unidade: 'anos' };
+  }
+
   abrirCadastroPet(): void {
     this.erro = '';
     this.sucesso = '';
@@ -214,6 +409,18 @@ export class ListarCadastroPetComponent implements OnInit {
     this.outraEspecie = '';
     this.dataNascimentoInput = '';
     this.idade = ''; 
+    this.idadeAprox = '';
+    this.unidadeIdade = 'anos';
+    this.etapa = 1;
+    this.raca = '';
+    this.jeitinho = [];
+    this.adora = [];
+    this.bio = '';
+    this.escolherPlano = false;
+    this.finalizacao = null;
+    this.resumoFinal = null;
+    this.motivoErroPlano = '';
+    this.erro = '';
     this.sexo = '';
     this.peso = null;
     this.fotoPreview = null;
@@ -249,16 +456,28 @@ export class ListarCadastroPetComponent implements OnInit {
     this.erro = '';
     this.sucesso = '';
 
+    // Confere as etapas anteriores e volta para a que tiver problema
+    if (!this.validarEtapa(1)) { this.etapa = 1; return; }
+    if (!this.validarEtapa(2)) { this.etapa = 2; return; }
+
+    // Com plano: confere plano e pagamento antes de cadastrar
+    if (this.escolherPlano) {
+      const erroPlano = this.checkout?.validarPlano() ?? 'Escolha um plano.';
+      if (erroPlano) { this.etapa = 4; this.exibirErro(erroPlano); return; }
+      const erroPagamento = this.checkout?.validarPagamento() ?? '';
+      if (erroPagamento) { this.etapa = 5; this.exibirErro(erroPagamento); return; }
+    }
+
     if (!this.nomePet.trim()) return this.exibirErro('Informe o nome do pet.');
     if (!this.especie) return this.exibirErro('Selecione a espécie.');
     if (!this.sexo) return this.exibirErro('Selecione o sexo.');
     if (this.peso === null || Number(this.peso) <= 0) return this.exibirErro('Peso inválido.');
 
-    const dataISO = this.converterParaISO(this.dataNascimentoInput);
-    if (!dataISO) return this.exibirErro('Insira uma data de nascimento válida (DD/MM/AAAA).');
+    const dataISO = this.dataPelaIdade(this.idadeAprox, this.unidadeIdade);
+    if (!dataISO) return this.exibirErro('Informe a idade aproximada do pet.');
 
     this.salvando = true;
-    const anosIdade = new Date().getFullYear() - new Date(dataISO).getFullYear();
+    const anosIdade = this.unidadeIdade === 'anos' ? parseInt(this.idadeAprox, 10) : 0;
 
     const formData = new FormData();
     formData.append('nome', this.nomePet.trim());
@@ -268,14 +487,19 @@ export class ListarCadastroPetComponent implements OnInit {
     formData.append('peso', this.peso.toString());
     formData.append('data_nascimento', dataISO.split('T')[0]);
 
-    const idadeFinal = this.idade ? this.idade.toString() : Math.max(0, anosIdade).toString();
-    formData.append('idade', idadeFinal);
+    formData.append('idade', Math.max(0, anosIdade).toString());
+    formData.append('observacoes', this.montarObservacoes());
 
     if (this.fotoArquivo) formData.append('image', this.fotoArquivo);
 
     this.http.post(`${environment.apiUrl}/user/listar/pet/cadastar`, formData, { withCredentials: true })
       .subscribe({
-        next: () => {
+        next: (res: any) => {
+          // Com plano: continua na janela, contrata e mostra a confirmação
+          if (this.escolherPlano) {
+            this.contratarPlanoDoNovoPet(res);
+            return;
+          }
           this.sucesso = 'Pet cadastrado com sucesso!';
           this.modalCadastroAberto = false;
           this.limparFormularioCadastro();
@@ -288,10 +512,108 @@ export class ListarCadastroPetComponent implements OnInit {
       });
   }
 
+  // Acha o pet recém-cadastrado e ativa o plano escolhido nas etapas 4 e 5
+  private contratarPlanoDoNovoPet(resposta: any): void {
+    const c = this.checkout;
+    if (!c || !c.plano) { this.finalizacao = 'erro-plano'; this.salvando = false; return; }
+
+    const nome = this.nomePet.trim();
+    const idsAntes = new Set(this.pets.map((p) => p.id_pet));
+    this.resumoFinal = {
+      pet: nome,
+      plano: c.plano.nome,
+      ciclo: c.ciclo === 'anual' ? 'Anual' : 'Mensal',
+      metodo: c.nomeMetodo,
+      total: c.totalFinal,
+      idPet: null
+    };
+    this.idProdutoFinal = Number(c.plano.id_produto);
+    this.metodoFinal = c.metodo;
+    this.cicloFinal = c.ciclo;
+    this.cartaoFinal = c.cartao.numero.replace(/\D/g, '').slice(-4);
+    this.bandeiraFinal = c.bandeira || 'Cartão';
+    this.finalizacao = 'processando';
+
+    const ativar = (idPet: number | null) => {
+      if (!idPet) {
+        this.motivoErroPlano = 'Não encontramos o pet recém-cadastrado na sua lista.';
+        this.finalizacao = 'erro-plano';
+        this.salvando = false;
+        return;
+      }
+      this.resumoFinal!.idPet = idPet;
+      // Pix e boleto: mostra o QR Code / linha digitável e espera a confirmação
+      if (this.metodoFinal !== 'cartao') {
+        this.finalizacao = 'aguardando';
+        return;
+      }
+      setTimeout(() => this.ativarPlanoDoNovoPet(), 1200);
+    };
+
+    const idDaResposta = Number(resposta?.id_pet ?? resposta?.pet?.id_pet ?? resposta?.Pet?.id_pet) || null;
+    if (idDaResposta) { ativar(idDaResposta); return; }
+
+    this.http.get<any>(`${environment.apiUrl}/user/listar/pet`, { withCredentials: true }).subscribe({
+      next: (r) => {
+        const lista: any[] = r?.pets || r?.Pets || [];
+        const novos = lista.filter((p) => !idsAntes.has(p.id_pet));
+        const novo = novos.find((p) => String(p.nome).trim() === nome) || novos[novos.length - 1]
+          || [...lista].filter((p) => String(p.nome).trim() === nome).sort((a, b) => b.id_pet - a.id_pet)[0];
+        ativar(novo?.id_pet ?? null);
+      },
+      error: () => ativar(null)
+    });
+  }
+
+  ativarPlanoDoNovoPet(): void {
+    const idPet = this.resumoFinal?.idPet;
+    if (!idPet) { this.finalizacao = 'erro-plano'; return; }
+    this.http.post(`${environment.apiUrl}/user/planos/pagamento`, { id_produto: this.idProdutoFinal, id_pet: idPet }, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          registrarContratacao({
+            idPet,
+            idProduto: this.idProdutoFinal,
+            plano: this.resumoFinal?.plano || 'Plano',
+            ciclo: this.cicloFinal,
+            metodo: this.metodoFinal,
+            cartaoFinal: this.metodoFinal === 'cartao' ? this.cartaoFinal : undefined,
+            bandeira: this.metodoFinal === 'cartao' ? this.bandeiraFinal : undefined,
+            valorPago: this.resumoFinal?.total || 0
+          });
+          // Fecha a janela e mostra o plano já ativo em "Meu plano"
+          this.salvando = false;
+          this.modalCadastroAberto = false;
+          this.limparFormularioCadastro();
+          this.router.navigate(['/user/meu-plano'], { queryParams: { ativado: idPet } });
+        },
+        error: (err) => {
+          console.error('Erro ao ativar o plano do pet:', err);
+          this.motivoErroPlano = err?.error?.mensagem || err?.error?.message || err?.error?.erro
+            || `O servidor recusou a ativação (erro ${err?.status || 'de conexão'}).`;
+          this.finalizacao = 'erro-plano';
+          this.salvando = false;
+        }
+      });
+  }
+
+  concluirFinalizacao(): void {
+    const id = this.resumoFinal?.idPet;
+    this.modalCadastroAberto = false;
+    this.limparFormularioCadastro();
+    this.buscarPetsDoBanco();
+    this.buscarPlanoAtivoReal();
+    if (id) setTimeout(() => this.petSelecionado = this.pets.find((p) => p.id_pet === id) || this.petSelecionado, 600);
+  }
+
   editarPet(): void {
     if (!this.petSelecionado) return;
     this.petForm = { ...this.petSelecionado };
     this.petForm.dataNascimentoInput = this.formatarParaDataBR(this.petForm.data_nascimento);
+    const idade = this.idadePelaData(this.petForm.data_nascimento);
+    this.petForm.idadeAprox = idade.valor;
+    this.petForm.unidadeIdade = idade.unidade;
+    this.petForm.idadeOriginal = `${idade.valor} ${idade.unidade}`;
     
     this.fotoPreviewEdicao = this.petSelecionado.foto_url;
     this.fotoArquivoEdicao = null;
@@ -304,11 +626,17 @@ export class ListarCadastroPetComponent implements OnInit {
     this.erro = '';
     if (!this.petForm.nome?.trim()) return this.exibirErro('Informe o nome do pet.');
     
-    const dataISO = this.converterParaISO(this.petForm.dataNascimentoInput);
-    if (!dataISO) return this.exibirErro('Data de nascimento inválida.');
+    // Se a idade não mudou, mantém a data de nascimento que já estava salva
+    const idadeIgual = `${this.petForm.idadeAprox} ${this.petForm.unidadeIdade}` === this.petForm.idadeOriginal;
+    const dataISO = idadeIgual && this.petForm.data_nascimento
+      ? this.petForm.data_nascimento
+      : this.dataPelaIdade(this.petForm.idadeAprox, this.petForm.unidadeIdade);
+    if (!dataISO) return this.exibirErro('Informe a idade aproximada do pet.');
 
     this.salvando = true;
-    const anosIdade = new Date().getFullYear() - new Date(dataISO).getFullYear();
+    const anosIdade = Math.floor(
+      (Date.now() - new Date(dataISO).getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+    );
 
     const formData = new FormData();
     formData.append('nome', this.petForm.nome.trim());
@@ -319,8 +647,7 @@ export class ListarCadastroPetComponent implements OnInit {
     formData.append('data_nascimento', dataISO.split('T')[0]);
     formData.append('observacoes', this.petForm.observacoes || '');
 
-    const idadeFinal = this.petForm.idade ? this.petForm.idade.toString() : Math.max(0, anosIdade).toString();
-    formData.append('idade', idadeFinal);
+    formData.append('idade', Math.max(0, anosIdade).toString());
 
     if (this.fotoArquivoEdicao) {
       formData.append('image', this.fotoArquivoEdicao);
@@ -348,13 +675,83 @@ export class ListarCadastroPetComponent implements OnInit {
     this.fotoArquivoEdicao = null;
   }
 
+  // ---------- Excluir pet ----------
+
+  // Pets com exclusão agendada (saem junto com o plano no fim do período pago)
+  saidas: Record<number, Date> = {};
+  confirmandoExclusao = false;
+  excluindo = false;
+  infoExclusao = { plano: '', ciclo: 'mensal', fim: '', dias: '' };
+
+  saidaDoPet(p: any): string {
+    const d = p ? this.saidas[p.id_pet] : null;
+    return d ? d.toLocaleDateString('pt-BR') : '';
+  }
+
+  diasParaSaida(p: any): string {
+    const d = p ? this.saidas[p.id_pet] : null;
+    if (!d) return '';
+    const hoje = new Date();
+    const dias = Math.max(0, Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+      - new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()).getTime()) / 86400000));
+    return textoDias(dias);
+  }
+
   excluirPet(): void {
-    if (!this.petSelecionado || !confirm(`Excluir o histórico de ${this.petSelecionado.nome}?`)) return;
-    this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${this.petSelecionado.id_pet}`, { withCredentials: true })
+    const pet = this.petSelecionado;
+    if (!pet) return;
+    const plano = this.planosPorPet[pet.id_pet];
+    if (plano) {
+      const a = garantirAssinatura(pet.id_pet, { id_produto: plano.id_produto, nome: plano.nome });
+      this.infoExclusao = {
+        plano: plano.nome,
+        ciclo: a.ciclo === 'anual' ? 'anual' : 'mensal',
+        fim: fimDoPeriodo(a).toLocaleDateString('pt-BR'),
+        dias: textoDias(diasRestantes(a)).replace(/^./, (c) => c.toUpperCase())
+      };
+    } else {
+      this.infoExclusao = { plano: '', ciclo: '', fim: '', dias: '' };
+    }
+    this.confirmandoExclusao = true;
+  }
+
+  confirmarExclusao(): void {
+    const pet = this.petSelecionado;
+    if (!pet) return;
+    const plano = this.planosPorPet[pet.id_pet];
+
+    // Com plano: não apaga agora. Cancela a renovação e agenda a saída do pet para o fim do período pago
+    if (plano) {
+      const a = agendarCancelamento(pet.id_pet, { id_produto: plano.id_produto, nome: plano.nome }, true);
+      this.saidas = petsParaExcluir();
+      this.confirmandoExclusao = false;
+      this.sucesso = `${pet.nome} será excluído em ${fimDoPeriodo(a).toLocaleDateString('pt-BR')}, junto com o ${plano.nome}. Até lá, continua usando o plano normalmente.`;
+      return;
+    }
+
+    this.excluindo = true;
+    this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${pet.id_pet}`, { withCredentials: true })
       .subscribe({
-        next: () => { this.sucesso = 'Pet removido.'; this.buscarPetsDoBanco(); },
-        error: (err) => this.exibirErro(mensagemDeErro(err, 'Não foi possível excluir o registro.'))
+        next: () => {
+          this.excluindo = false;
+          this.confirmandoExclusao = false;
+          this.sucesso = `${pet.nome} foi excluído.`;
+          this.buscarPetsDoBanco();
+        },
+        error: (err) => {
+          this.excluindo = false;
+          this.confirmandoExclusao = false;
+          this.exibirErro(mensagemDeErro(err, 'Não foi possível excluir o pet.'));
+        }
       });
+  }
+
+  desfazerExclusao(): void {
+    const pet = this.petSelecionado;
+    if (!pet) return;
+    desfazerCancelamento(pet.id_pet);
+    this.saidas = petsParaExcluir();
+    this.sucesso = `Pronto! ${pet.nome} continua com você e o plano volta a renovar normalmente.`;
   }
 
   private exibirErro(msg: string) {

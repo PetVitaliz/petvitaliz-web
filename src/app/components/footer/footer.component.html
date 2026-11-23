@@ -1,61 +1,68 @@
-<footer class="footer">
+<footer class="footer" id="contato">
+  <div class="footer-conteudo">
 
-  <div class="footer-brand">
-    <div class="footer-logo">
-      <img src="assets/img/logoWhite.png" alt="PetVitaliz" />
+    <!-- Marca -->
+    <div class="col col-marca">
+      <a class="footer-logo" href="/" aria-label="PetVitaliz - início">
+        <img src="assets/img/logo-footer.png" alt="PetVitaliz" />
+      </a>
+      <p class="tagline">Saúde, carinho e cuidado para o seu pet, em cada fase da vida.</p>
     </div>
+
+    <!-- Navegação -->
+    <nav class="col" aria-label="Links do rodapé">
+      <h3>Navegação</h3>
+      <ul class="links">
+        <li><button type="button" (click)="irParaPlanoPet()">Planos de saúde</button></li>
+        <li><button type="button" (click)="irParaServicos()">Serviços</button></li>
+        <li><button type="button" (click)="irParaAdocao()">Adoção</button></li>
+        <li><button type="button" (click)="irParaSobreNos()">Sobre nós</button></li>
+        <li><button type="button" (click)="irParaAreaCliente()">Área do cliente</button></li>
+      </ul>
+    </nav>
+
+    <!-- Contato -->
+    <div class="col">
+      <h3>Contato</h3>
+      <ul class="info">
+        <li><span class="ms">call</span><a href="tel:+551140028922">+55 (11) 4002-8922</a></li>
+        <li><span class="ms">mail</span><a href="mailto:equipepetvitaliz@gmail.com">equipepetvitaliz&#64;gmail.com</a></li>
+        <li><span class="ms">schedule</span><span>Seg. a sex., 8h às 20h<br />Sáb. e dom., 9h às 20h</span></li>
+        <li><span class="ms">location_on</span>
+          <span>Av. Paulista, 1000 - Bela Vista<br />São Paulo - SP
+            <a class="link-mapa" [href]="linkMapa" target="_blank" rel="noopener">Ver no mapa <span class="ms">open_in_new</span></a>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Formulário -->
+    <form class="col col-form" (ngSubmit)="enviarMensagem()">
+      <h3>Envie uma mensagem</h3>
+      <div class="linha">
+        <input type="text" name="nome" [(ngModel)]="contato.dados.nome" placeholder="Nome" autocomplete="name" aria-label="Nome" />
+        <input type="email" name="email" [(ngModel)]="contato.dados.email" placeholder="E-mail" autocomplete="email" aria-label="E-mail" />
+      </div>
+      <span class="select-box">
+        <select name="assunto" [(ngModel)]="contato.dados.assunto" aria-label="Assunto">
+          @for (a of contato.assuntos; track a) {
+            <option [value]="a">{{ a }}</option>
+          }
+        </select>
+        <span class="ms">expand_more</span>
+      </span>
+      <textarea name="mensagem" rows="3" [(ngModel)]="contato.dados.mensagem" placeholder="Como podemos ajudar você e seu pet?" aria-label="Mensagem"></textarea>
+
+      @if (avisoContato) {
+        <p class="aviso"><span class="ms">info</span><span>{{ avisoContato }} <a routerLink="/login">Entrar</a></span></p>
+      }
+
+      <button type="submit" class="btn-enviar">Enviar <span class="ms">send</span></button>
+    </form>
+
   </div>
 
-  <img
-    class="footer-paw-big"
-    src="assets/img/banner.png"
-    alt="Pata decorativa"
-  />
-
-  <div class="footer-links">
-    <div>
-      <h3>Features</h3>
-      <a (click)="irParaSobreNos()">About Us</a>
-      <a (click)="irParaSobreNos()">Our Team</a>
-    </div>
-
-    <div>
-      <h3>Solutions</h3>
-      <a (click)="irParaServicos()">Service</a>
-      <a (click)="irParaHome()">Testimonials</a>
-    </div>
-
-    <div>
-      <h3>Resources</h3>
-      <a (click)="irParaPlanoPet()">Pricing</a>
-    </div>
-
-    <div>
-      <h3>About</h3>
-      <a (click)="irParaSobreNos()">Industry Insight</a>
-    </div>
+  <div class="footer-base">
+    <p>&copy; {{ ano }} PetVitaliz. Todos os direitos reservados.</p>
   </div>
-
-  <div class="footer-bottom">
-    <p>2025 PetVitaliz, All right reserved</p>
-
-    <div class="footer-social">
-      <a href="#" target="_blank">
-        <img src="assets/img/Instagram.png" alt="Instagram" />
-      </a>
-
-      <a href="#" target="_blank">
-        <img src="assets/img/Behance.png" alt="Behance" />
-      </a>
-
-      <a href="#" target="_blank">
-        <img src="assets/img/Dribbble.png" alt="Dribbble" />
-      </a>
-
-      <a href="#" target="_blank">
-        <img src="assets/img/LinkedIn.png" alt="LinkedIn" />
-      </a>
-    </div>
-  </div>
-
 </footer>

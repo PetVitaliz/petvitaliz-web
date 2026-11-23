@@ -1,403 +1,482 @@
-<section class="pet-page">
-  <div class="page-inner">
+<main class="pets-pagina">
 
-    <div class="page-title-row">
-      <div class="page-title">
-        <h1>Meus Pets</h1>
-        <p>Gerencie os pets cadastrados, planos e informações do tutor.</p>
-      </div>
-
-      <button type="button" class="btn-add-pet" (click)="abrirCadastroPet()">
-        + Adicionar pet
-      </button>
+  <!-- Topo -->
+  <header class="pets-topo">
+    <div>
+      <h1>Meus pets</h1>
+      @if (pets.length) {
+        <p>{{ pets.length }} {{ pets.length === 1 ? 'pet cadastrado' : 'pets cadastrados' }}
+          · {{ qtdComPlano }} com plano ativo</p>
+      } @else {
+        <p>Cadastre seus pets para agendar consultas e contratar planos.</p>
+      }
     </div>
-
-    <p class="erro" *ngIf="erro">{{ erro }}</p>
-    <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
-
-    <div class="empty-state" *ngIf="pets.length === 0">
-      <h2>Nenhum pet cadastrado</h2>
-      <p>Cadastre um pet para visualizar as informações aqui.</p>
-
-      <button type="button" (click)="abrirCadastroPet()">
-        Cadastrar pet
+    @if (pets.length) {
+      <button type="button" class="btn btn-amarelo" (click)="abrirCadastroPet()">
+        <span class="ms">add</span> Adicionar pet
       </button>
-    </div>
+    }
+  </header>
 
-    <main class="profile-dashboard" *ngIf="pets.length > 0 && petSelecionado">
+  @if (sucesso && !modalCadastroAberto && !editando) {
+    <p class="alerta ok"><span class="ms">check_circle</span> {{ sucesso }}</p>
+  }
+  @if (erro && !modalCadastroAberto && !editando) {
+    <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p>
+  }
 
-      <aside class="profile-sidebar">
-        <div class="pet-photo">
-          <img *ngIf="petSelecionado.foto_url" [src]="petSelecionado.foto_url" alt="Foto do pet">
-          <div *ngIf="!petSelecionado.foto_url" class="photo-empty"></div>
-        </div>
+  @if (!pets.length) {
 
-        <h2>{{ petSelecionado.nome }}</h2>
+    <!-- Nenhum pet -->
+    <section class="vazio">
+      <span class="vazio-icone"><ng-container *ngTemplateOutlet="iconePet; context: { $implicit: '' }"></ng-container></span>
+      <h2>Cadastre seu primeiro pet</h2>
+      <p>Com o pet cadastrado você agenda consultas e contrata um plano de saúde para ele.</p>
+      <button type="button" class="btn btn-amarelo" (click)="abrirCadastroPet()">
+        <span class="ms">add</span> Cadastrar pet
+      </button>
+    </section>
 
-        <p>
-          <span style="text-transform: capitalize;">{{ petSelecionado.especie === 'outro' ? petSelecionado.outra_especie : petSelecionado.especie }}</span>
-          • {{ obterIdadeExtenso(petSelecionado.data_nascimento) }}
-        </p>
+  } @else {
 
-        <div class="sidebar-badges">
-          <div>
-            <small>PESO</small>
-            <strong>{{ petSelecionado.peso }}kg</strong>
-          </div>
+    <div class="pets-layout">
 
-          <div>
-            <small>SEXO</small>
-            <strong>{{ petSelecionado.sexo === 'M' ? 'Macho' : 'Fêmea' }}</strong>
-          </div>
-        </div>
+      <!-- Lista de pets -->
+      <nav class="pets-lista" aria-label="Seus pets">
+        @for (p of pets; track p.id_pet) {
+          <button type="button" class="pet-item" [class.ativo]="p.id_pet === petSelecionado?.id_pet"
+            (click)="selecionarPet(p)" [attr.aria-current]="p.id_pet === petSelecionado?.id_pet ? 'true' : null">
+            <span class="pet-foto">
+              @if (p.foto_url) {
+                <img [src]="p.foto_url" [alt]="'Foto de ' + p.nome" />
+              } @else {
+                <ng-container *ngTemplateOutlet="iconePet; context: { $implicit: p.especie }"></ng-container>
+              }
+            </span>
+            <span class="pet-item-info">
+              <strong>{{ p.nome }}</strong>
+              <small>{{ especieTexto(p) }} · {{ obterIdadeExtenso(p.data_nascimento) }}</small>
+              @if (saidaDoPet(p)) {
+                <span class="etiqueta saida">Sai em {{ saidaDoPet(p) }}</span>
+              } @else if (planoDoPet(p)) {
+                <span class="etiqueta" [attr.data-nivel]="nivelDoPlano(p)">{{ planoDoPet(p).nome }}</span>
+              } @else {
+                <span class="etiqueta sem">Sem plano</span>
+              }
+            </span>
+          </button>
+        }
+        <button type="button" class="pet-novo" (click)="abrirCadastroPet()">
+          <span class="ms">add</span> Novo pet
+        </button>
+      </nav>
 
-        <div class="plan-mini" style="margin-bottom: 12px; background: #f3f6ff; border: 1px solid #dbe3f0;">
-          <span>Classificação de Tamanho</span>
-          <strong style="color: #5D6ED3;">Porte {{ calcularPortePet(petSelecionado.especie, petSelecionado.peso) }}</strong>
-          <small>Baseado no peso atual</small>
-        </div>
+      <!-- Detalhes do pet -->
+      @if (petSelecionado) {
+        <section class="pet-detalhe">
 
-        <div class="pet-selector" *ngIf="pets.length > 1">
-          <small>MEUS PETS</small>
-          
-          <div class="pet-avatars-grid">
-            <button 
-              type="button" 
-              class="pet-avatar-card" 
-              *ngFor="let p of pets"
-              [class.selecionado]="p.id_pet === petSelecionado?.id_pet"
-              (click)="petSelecionado = p; erro = ''; sucesso = ''"
-            >
-              <div class="avatar-img-wrapper">
-                <img *ngIf="p.foto_url" [src]="p.foto_url" alt="Foto de {{ p.nome }}">
-                <div *ngIf="!p.foto_url" class="avatar-empty-placeholder"></div>
-              </div>
-              <span class="avatar-pet-name">{{ p.nome }}</span>
+          <div class="detalhe-topo">
+            <span class="pet-foto grande">
+              @if (petSelecionado.foto_url) {
+                <img [src]="petSelecionado.foto_url" [alt]="'Foto de ' + petSelecionado.nome" />
+              } @else {
+                <ng-container *ngTemplateOutlet="iconePet; context: { $implicit: petSelecionado.especie }"></ng-container>
+              }
+            </span>
+            <div class="detalhe-nome">
+              <h2>{{ petSelecionado.nome }}</h2>
+              <p>{{ especieTexto(petSelecionado) }} · {{ sexoTexto(petSelecionado) }} · {{ obterIdadeExtenso(petSelecionado.data_nascimento) }}</p>
+            </div>
+            <button type="button" class="btn btn-contorno" (click)="editarPet()">
+              <span class="ms">edit</span> Editar
             </button>
           </div>
-        </div>
 
-        <div class="plan-mini" *ngIf="planoContratado">
-          <span>Plano ativo</span>
-          <strong>{{ planoContratado.nome }}</strong>
-          <small>{{ planoContratado.preco }} /mês</small>
-        </div>
-
-        <div class="plan-mini empty" *ngIf="!planoContratado">
-          <span>Plano ativo</span>
-          <strong>Nenhum plano</strong>
-          <small>Contrate para proteger seu pet</small>
-        </div>
-      </aside>
-
-      <section class="profile-content">
-        <div class="content-header">
-          <div>
-            <span>ÁREA DO USUÁRIO</span>
-            <h2>Resumo do perfil</h2>
-          </div>
-
-          <strong>Perfil verificado</strong>
-        </div>
-
-        <div class="profile-sections">
-
-          <article class="section-card">
-            <div class="section-title">
-              <span>01</span>
-              <div>
-                <h3>Dados do Tutor</h3>
-                <p>Informações principais do responsável.</p>
-              </div>
+          @if (saidaDoPet(petSelecionado)) {
+            <div class="alerta saida">
+              <span class="ms">event_busy</span>
+              <span><strong>{{ petSelecionado.nome }} será excluído em {{ saidaDoPet(petSelecionado) }} ({{ diasParaSaida(petSelecionado) }}).</strong> O plano foi cancelado e não renova. Até lá, tudo funciona normalmente.</span>
+              <button type="button" (click)="desfazerExclusao()">Desfazer</button>
             </div>
+          }
 
-            <div class="compact-grid">
-              <div>
-                <small>NOME</small>
-                <strong>{{ nomeTutor }}</strong>
-              </div>
+          <dl class="info-grade">
+            <div><dt>Peso</dt><dd>{{ pesoTexto(petSelecionado) }}</dd></div>
+            <div><dt>Porte</dt><dd>{{ calcularPortePet(petSelecionado.especie || '', petSelecionado.peso) }}</dd></div>
+            <div><dt>Idade</dt><dd>{{ obterIdadeExtenso(petSelecionado.data_nascimento) }}</dd></div>
+            <div><dt>Sexo</dt><dd>{{ sexoTexto(petSelecionado) }}</dd></div>
+          </dl>
 
-              <div>
-                <small>E-MAIL</small>
-                <strong>{{ emailTutor }}</strong>
-              </div>
-
-              <div>
-                <small>STATUS</small>
-                <strong>Perfil ativo</strong>
-              </div>
-
-              <div>
-                <small>CONTA</small>
-                <strong>Usuário PetVitaliz</strong>
-              </div>
-            </div>
-          </article>
-
-          <article class="section-card plan-section" *ngIf="planoContratado">
-            <div class="section-title">
-              <span>02</span>
-              <div>
-                <h3>Plano Contratado</h3>
-                <p>{{ planoContratado.descricao }}</p>
-              </div>
-            </div>
-
-            <div class="plan-row">
-              <div>
-                <small>PLANO</small>
+          @if (planoContratado) {
+            <a class="plano-card" routerLink="/user/meu-plano">
+              <span class="plano-coroa" [attr.data-nivel]="nivelDoPlano(petSelecionado)"><span class="ms">workspace_premium</span></span>
+              <span class="plano-texto">
                 <strong>{{ planoContratado.nome }}</strong>
-              </div>
-
-              <div>
-                <small>VALOR</small>
-                <strong>{{ planoContratado.preco }} /mês</strong>
-              </div>
-
-              <a routerLink="/user/meu-plano">Gerenciar plano</a>
+                <small>{{ planoContratado.preco }}/mês{{ planoContratado.descricao ? ' · ' + planoContratado.descricao : '' }}</small>
+              </span>
+              <span class="plano-link">Ver cobertura <span class="ms">arrow_forward</span></span>
+            </a>
+          } @else {
+            <div class="plano-card vazio-plano">
+              <span class="plano-coroa"><span class="ms">health_and_safety</span></span>
+              <span class="plano-texto">
+                <strong>{{ petSelecionado.nome }} ainda não tem plano</strong>
+                <small>Cuide da saúde dele com um plano PetVitaliz.</small>
+              </span>
+              <a class="btn btn-amarelo" routerLink="/user/planos-pet">Contratar plano</a>
             </div>
-          </article>
+          }
 
-          <article class="section-card plan-section empty-plan" *ngIf="!planoContratado">
-            <div class="section-title">
-              <span>02</span>
-              <div>
-                <h3>Plano Contratado</h3>
-                <p>Você ainda não possui um plano ativo.</p>
-              </div>
+          <div class="observacoes">
+            <h3>Observações</h3>
+            <p>{{ petSelecionado.observacoes || 'Nenhuma observação registrada.' }}</p>
+          </div>
+
+          <div class="detalhe-acoes">
+            <a class="btn btn-azul" routerLink="/user/agendamento" [queryParams]="{ pet: petSelecionado.id_pet }">
+              <span class="ms">calendar_add_on</span> Agendar consulta
+            </a>
+            @if (!saidaDoPet(petSelecionado)) {
+            <button type="button" class="btn-excluir" (click)="excluirPet()">
+              <span class="ms">delete</span> Excluir pet
+            </button>
+            }
+          </div>
+
+        </section>
+      }
+    </div>
+  }
+
+  <!-- ================= Janela: cadastrar pet (etapas iguais ao app) ================= -->
+  @if (modalCadastroAberto) {
+    <div class="janela-fundo" (click)="finalizacao ? null : fecharCadastroPet()">
+      <div class="janela" role="dialog" aria-modal="true" aria-labelledby="titulo-cadastro" (click)="$event.stopPropagation()">
+
+      @if (finalizacao) {
+
+        <!-- Processando / concluído -->
+        <div class="final">
+          @if (finalizacao === 'processando') {
+            <span class="girando" aria-hidden="true"></span>
+            <h2 id="titulo-cadastro">{{ metodoFinal === 'cartao' ? 'Cadastrando ' + resumoFinal?.pet + ' e processando o pagamento…' : 'Cadastrando ' + resumoFinal?.pet + '…' }}</h2>
+            <p>{{ metodoFinal === 'cartao' ? 'Falando com a operadora do cartão.' : 'Em seguida geramos o ' + (metodoFinal === 'pix' ? 'Pix' : 'boleto') + '.' }}</p>
+          } @else if (finalizacao === 'aguardando' && metodoFinal !== 'cartao') {
+            <app-pagamento-pendente [metodo]="metodoFinal" [valor]="resumoFinal?.total || 0" (confirmado)="ativarPlanoDoNovoPet()"></app-pagamento-pendente>
+          } @else if (finalizacao === 'sucesso') {
+            <span class="ok-icone"><span class="ms">check</span></span>
+            <h2 id="titulo-cadastro">Tudo certo!</h2>
+            <p>{{ resumoFinal?.pet }} foi cadastrado e o {{ resumoFinal?.plano }} já está ativo.</p>
+            <dl class="final-resumo">
+              <div><dt>Plano</dt><dd>{{ resumoFinal?.plano }}</dd></div>
+              <div><dt>Cobrança</dt><dd>{{ resumoFinal?.ciclo }}</dd></div>
+              <div><dt>Pagamento</dt><dd>{{ resumoFinal?.metodo }}</dd></div>
+              <div><dt>Total</dt><dd>{{ moeda(resumoFinal?.total || 0) }}</dd></div>
+            </dl>
+            <div class="final-botoes">
+              <a class="btn btn-azul" routerLink="/user/agendamento" [queryParams]="{ pet: resumoFinal?.idPet }">Agendar consulta</a>
+              <button type="button" class="btn btn-texto" (click)="concluirFinalizacao()">Ver meus pets</button>
             </div>
-
-            <div class="plan-row">
-              <div>
-                <small>PLANO</small>
-                <strong>Nenhum plano ativo</strong>
-              </div>
-              
-              <a routerLink="/user/planos-pet" [queryParams]="{ pet: petSelecionado?.id_pet }">Contratar plano</a>
+          } @else {
+            <span class="aviso-icone"><span class="ms">info</span></span>
+            <h2 id="titulo-cadastro">{{ resumoFinal?.pet || 'O pet' }} foi cadastrado</h2>
+            <p>Mas não conseguimos ativar o plano agora. Nenhuma cobrança foi feita. Tente contratar em Meu plano.</p>
+            @if (motivoErroPlano) { <p class="motivo"><span class="ms">error</span> {{ motivoErroPlano }}</p> }
+            <div class="final-botoes">
+              <a class="btn btn-azul" routerLink="/user/meu-plano">Ir para Meu plano</a>
+              <button type="button" class="btn btn-texto" (click)="concluirFinalizacao()">Fechar</button>
             </div>
-          </article>
-
-          <article class="section-card">
-            <div class="section-title">
-              <span>03</span>
-              <div>
-                <h3>Dados do Pet</h3>
-                <p>Informações cadastradas pelo tutor.</p>
-              </div>
-            </div>
-
-            <div class="compact-grid">
-              <div>
-                <small>NOME DO PET</small>
-                <strong>{{ petSelecionado.nome }}</strong>
-              </div>
-
-              <div>
-                <small>ESPÉCIE</small>
-                <strong style="text-transform: capitalize;">{{ petSelecionado.especie }}</strong>
-              </div>
-
-              <div>
-                <small>IDADE DETALHADA</small>
-                <strong>{{ obterIdadeExtenso(petSelecionado.data_nascimento) }}</strong>
-              </div>
-
-              <div>
-                <small>PESO ATUAL</small>
-                <strong>{{ petSelecionado.peso }} kg</strong>
-              </div>
-
-              <div>
-                <small>SEXO</small>
-                <strong>{{ petSelecionado.sexo === 'M' || petSelecionado.sexo === 'Macho' ? 'Macho' : 'Fêmea' }}</strong>
-              </div>
-
-              <div *ngIf="petSelecionado.especie === 'outro'">
-                <small>QUAL ESPÉCIE?</small>
-                <strong>{{ petSelecionado.outra_especie }}</strong>
-              </div>
-            </div>
-
-            <div class="observacao">
-              <small>OBSERVAÇÕES</small>
-              <p>{{ petSelecionado.observacoes || 'Nenhuma observação registrada.' }}</p>
-            </div>
-          </article>
+          }
         </div>
 
-        <div class="actions">
-          <button type="button" class="btn-edit" (click)="editarPet()">Editar informações</button>
-          <button type="button" class="btn-delete" (click)="excluirPet()">Excluir registro</button>
-        </div>
-      </section>
-    </main>
+      } @else {
 
-    <div class="modal-overlay" *ngIf="modalCadastroAberto">
-      <div class="pet-modal-card">
-
-        <div class="pet-modal-header">
-          <h2>Cadastrar Pet</h2>
-          <button type="button" class="btn-close-modal" (click)="fecharCadastroPet()">×</button>
+        <div class="janela-topo">
+          <h2 id="titulo-cadastro">{{ etapa > 3 ? 'Contratar plano' : 'Cadastrar pet' }}</h2>
+          <button type="button" class="fechar" (click)="fecharCadastroPet()" aria-label="Fechar"><span class="ms">close</span></button>
         </div>
 
-        <div class="pet-modal-body">
-          <p class="erro" *ngIf="erro" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 15px; padding: 10px; background: #fee2e2; border-radius: 8px;">
-             {{ erro }}
-          </p>
-
-          <label class="modal-photo-upload">
-            <input type="file" accept="image/*" (change)="carregarFoto($event)" #fileInput>
-            <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto do pet">
-            <div *ngIf="!fotoPreview" class="modal-photo-placeholder">
-              <span>Adicionar foto</span>
-            </div>
-            <strong>+</strong>
-          </label>
-
-          <div class="modal-form-grid">
-            <div class="modal-field full">
-              <label>Nome do Pet</label>
-              <input type="text" placeholder="Ex: Thor" [(ngModel)]="nomePet">
-            </div>
-
-            <div class="modal-field">
-              <label>Espécie</label>
-              <select [(ngModel)]="especie">
-                <option value="">Selecione</option>
-                <option value="cachorro">Cachorro</option>
-                <option value="gato">Gato</option>
-                <option value="ave">Ave</option>
-                <option value="coelho">Coelho</option>
-                <option value="outro">Outro</option>
-              </select>
-            </div>
-
-            <div class="modal-field">
-              <label>Sexo</label>
-              <select [(ngModel)]="sexo">
-                <option value="">Selecione</option>
-                <option value="Macho">Macho</option>
-                <option value="Fêmea">Fêmea</option>
-              </select>
-            </div>
-
-            <div class="modal-field full" *ngIf="especie === 'outro'">
-              <label>Qual a espécie?</label>
-              <input type="text" placeholder="Ex: Porquinho-da-índia" [(ngModel)]="outraEspecie">
-            </div>
-
-            <div class="modal-field">
-              <label>Data de Nascimento</label>
-              <input type="text" appDataMask="date" placeholder="DD/MM/AAAA" [(ngModel)]="dataNascimentoInput">
-            </div>
-
-            <div class="modal-field">
-              <label>Peso (kg)</label>
-              <div class="modal-weight-field">
-                <input type="number" min="0.1" max="100" step="0.1" placeholder="Ex: 12.5" [(ngModel)]="peso">
-                <span>KG</span>
-              </div>
-            </div>
-
-            <div class="modal-field full" *ngIf="peso && peso > 0" style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 5px;">
-              <span style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">PORTE ESTIMADO</span>
-              <strong style="color: #1e3a8a; font-size: 14px;">Porte {{ calcularPortePet(especie, peso) }}</strong>
-            </div>
+        <!-- Etapas -->
+        <div class="etapas">
+          <div class="etapas-texto">
+            <span>Etapa {{ etapa }} de {{ nomesEtapas.length }}</span>
+            <span>{{ nomesEtapas[etapa - 1] }}</span>
+          </div>
+          <div class="etapas-barras" aria-hidden="true">
+            @for (nome of nomesEtapas; track nome; let n = $index) {
+              <i [class.feita]="n + 1 <= etapa"></i>
+            }
           </div>
         </div>
 
-        <div class="pet-modal-actions">
-          <button type="button" class="btn-modal-cancel" (click)="fecharCadastroPet()">Cancelar</button>
-          <button type="button" class="btn-modal-save" [disabled]="salvando" (click)="confirmarCadastro()">
-            {{ salvando ? 'Salvando...' : 'Salvar' }}
+        @if (erro) { <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p> }
+
+        <!-- Etapa 1: identificação -->
+        @if (etapa === 1) {
+          <label class="foto-upload">
+            <input type="file" accept="image/*" (change)="carregarFoto($event)" #fileInput />
+            @if (fotoPreview) {
+              <img [src]="fotoPreview" alt="Foto do pet" />
+            } @else {
+              <span class="foto-vazia"><app-icone-pet [especie]="especie"></app-icone-pet></span>
+            }
+            <span class="camera"><span class="ms">photo_camera</span></span>
+            <small>{{ fotoPreview ? 'Trocar foto' : 'Adicionar foto (opcional)' }}</small>
+          </label>
+
+          <div class="campos">
+            <label class="inteiro">Nome
+              <input type="text" placeholder="Ex.: Lua" maxlength="30" [(ngModel)]="nomePet" />
+            </label>
+
+            <div class="campo inteiro">
+              <span class="rotulo">Espécie</span>
+              <div class="opcoes" role="radiogroup" aria-label="Espécie">
+                @for (e of especies; track e.valor) {
+                  <button type="button" class="opcao" role="radio" [class.ativa]="especie === e.valor"
+                    [attr.aria-checked]="especie === e.valor" (click)="especie = e.valor">{{ e.texto }}</button>
+                }
+              </div>
+            </div>
+
+            @if (especie === 'outro') {
+              <label class="inteiro">Qual a espécie?
+                <input type="text" placeholder="Ex.: Porquinho-da-índia" [(ngModel)]="outraEspecie" />
+              </label>
+            }
+
+            <label class="inteiro"><span>Raça <span class="opcional">(opcional)</span></span>
+              <input type="text" placeholder="Ex.: Golden Retriever ou SRD" [(ngModel)]="raca" />
+            </label>
+          </div>
+        }
+
+        <!-- Etapa 2: características -->
+        @if (etapa === 2) {
+          <div class="campos">
+            <div class="campo inteiro">
+              <span class="rotulo">Sexo</span>
+              <div class="opcoes duas" role="radiogroup" aria-label="Sexo">
+                <button type="button" class="opcao" role="radio" [class.ativa]="sexo === 'Macho'" [attr.aria-checked]="sexo === 'Macho'" (click)="sexo = 'Macho'">
+                  <span class="ms">male</span> Macho
+                </button>
+                <button type="button" class="opcao" role="radio" [class.ativa]="sexo === 'Fêmea'" [attr.aria-checked]="sexo === 'Fêmea'" (click)="sexo = 'Fêmea'">
+                  <span class="ms">female</span> Fêmea
+                </button>
+              </div>
+            </div>
+
+            <div class="campo inteiro">
+              <label for="idade-cadastro">Idade aproximada</label>
+              <span class="idade">
+                <input id="idade-cadastro" type="text" inputmode="numeric" maxlength="2"
+                  [placeholder]="unidadeIdade === 'anos' ? 'Ex.: 4' : 'Ex.: 6'"
+                  [ngModel]="idadeAprox" (ngModelChange)="idadeAprox = soNumeros($event)" />
+                <span class="unidade" role="group" aria-label="Unidade da idade">
+                  <button type="button" [class.ativo]="unidadeIdade === 'anos'" [attr.aria-pressed]="unidadeIdade === 'anos'" (click)="unidadeIdade = 'anos'">anos</button>
+                  <button type="button" [class.ativo]="unidadeIdade === 'meses'" [attr.aria-pressed]="unidadeIdade === 'meses'" (click)="unidadeIdade = 'meses'">meses</button>
+                </span>
+              </span>
+            </div>
+
+            <label class="inteiro">Peso
+              <span class="com-unidade">
+                <input type="number" min="0.1" max="100" step="0.1" placeholder="Ex.: 28,5" [(ngModel)]="peso" />
+                <span>kg</span>
+              </span>
+            </label>
+
+            @if (peso && peso > 0) {
+              <p class="porte inteiro"><span class="ms">straighten</span> Porte estimado: <strong>{{ calcularPortePet(especie, peso) }}</strong></p>
+            }
+          </div>
+        }
+
+        <!-- Etapa 3: sobre o pet -->
+        @if (etapa === 3) {
+          <div class="sobre-topo">
+            <span class="pet-foto">
+              @if (fotoPreview) {
+                <img [src]="fotoPreview" alt="" />
+              } @else {
+                <app-icone-pet [especie]="especie"></app-icone-pet>
+              }
+            </span>
+            <div>
+              <strong>Conta pra gente sobre {{ ehMacho ? 'o' : 'a' }} {{ nomePet.trim() || 'seu pet' }}</strong>
+              <small>Tudo opcional, clique para marcar</small>
+            </div>
+          </div>
+
+          <div class="campo">
+            <span class="rotulo">{{ ehMacho ? 'Jeitinho dele' : 'Jeitinho dela' }}</span>
+            <div class="chips">
+              @for (t of tracos; track t.id) {
+                <button type="button" class="chip" [class.ativo]="jeitinho.includes(t.id)" [attr.aria-pressed]="jeitinho.includes(t.id)" (click)="alternar(jeitinho, t.id)">
+                  <span class="ms">{{ t.icone }}</span> {{ textoTraco(t) }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="campo">
+            <span class="rotulo">{{ ehMacho ? 'Ele adora' : 'Ela adora' }}</span>
+            <div class="chips">
+              @for (g of gostos; track g.id) {
+                <button type="button" class="chip amarelo" [class.ativo]="adora.includes(g.id)" [attr.aria-pressed]="adora.includes(g.id)" (click)="alternar(adora, g.id)">
+                  <span class="ms">{{ g.icone }}</span> {{ g.texto }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="campos">
+            <label class="inteiro">Algo mais?
+              <textarea rows="3" [maxlength]="limiteBio" placeholder="Ex.: tem medo de trovão, não gosta de banho…" [(ngModel)]="bio"></textarea>
+              <span class="contador">{{ bio.length }}/{{ limiteBio }}</span>
+            </label>
+          </div>
+
+          <label class="plano-check">
+            <input type="checkbox" [(ngModel)]="escolherPlano" />
+            <span class="caixa" aria-hidden="true"><span class="ms">check</span></span>
+            <span>
+              <strong>Escolher um plano agora</strong>
+              <small>Opcional. Dá para contratar depois.</small>
+            </span>
+          </label>
+        }
+
+        <!-- Etapas 4 e 5: plano e pagamento (fica montado para não perder as escolhas) -->
+        @if (escolherPlano) {
+          <div [hidden]="etapa < 4">
+            <app-plano-checkout [etapa]="etapa === 5 ? 'pagamento' : 'plano'" [nomePet]="nomePet.trim()"></app-plano-checkout>
+          </div>
+        }
+
+        <div class="janela-acoes">
+          @if (etapa === 1) {
+            <button type="button" class="btn btn-texto" (click)="fecharCadastroPet()">Cancelar</button>
+          } @else {
+            <button type="button" class="btn btn-texto" (click)="voltarEtapa()"><span class="ms">arrow_back</span> Voltar</button>
+          }
+
+          @if (etapa < nomesEtapas.length) {
+            <button type="button" class="btn btn-azul" (click)="avancarEtapa()">
+              {{ etapa === 3 ? 'Continuar para o plano' : etapa === 4 ? 'Continuar para pagamento' : 'Continuar' }}
+            </button>
+          } @else {
+            <button type="button" class="btn btn-azul" [disabled]="salvando" (click)="confirmarCadastro()">
+              <app-icone-pet class="pata-botao" especie=""></app-icone-pet>
+              {{ salvando ? 'Salvando…' : (escolherPlano ? 'Pagar e concluir' : 'Concluir cadastro') }}
+            </button>
+          }
+        </div>
+      }
+
+      </div>
+    </div>
+  }
+
+  <!-- ================= Janela: editar pet ================= -->
+  @if (editando) {
+    <div class="janela-fundo" (click)="cancelarEdicao()">
+      <div class="janela" role="dialog" aria-modal="true" aria-labelledby="titulo-edicao" (click)="$event.stopPropagation()">
+
+        <div class="janela-topo">
+          <h2 id="titulo-edicao">Editar {{ petForm.nome }}</h2>
+          <button type="button" class="fechar" (click)="cancelarEdicao()" aria-label="Fechar"><span class="ms">close</span></button>
+        </div>
+
+        @if (erro) { <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p> }
+
+        <label class="foto-upload">
+          <input type="file" accept="image/*" (change)="carregarFotoEdicao($event)" />
+          @if (fotoPreviewEdicao) {
+            <img [src]="fotoPreviewEdicao" alt="Foto do pet" />
+          } @else {
+            <span class="ms">add_a_photo</span>
+          }
+          <small>Trocar foto</small>
+        </label>
+
+        <div class="campos">
+          <label class="inteiro">Nome do pet
+            <input type="text" [(ngModel)]="petForm.nome" />
+          </label>
+
+          <label>Espécie
+            <span class="select"><select [(ngModel)]="petForm.especie">
+              <option value="cachorro">Cachorro</option>
+              <option value="gato">Gato</option>
+              <option value="ave">Ave</option>
+              <option value="coelho">Coelho</option>
+              <option value="outro">Outro</option>
+            </select><span class="ms">expand_more</span></span>
+          </label>
+
+          <label>Sexo
+            <span class="select"><select [(ngModel)]="petForm.sexo">
+              <option value="M">Macho</option>
+              <option value="F">Fêmea</option>
+            </select><span class="ms">expand_more</span></span>
+          </label>
+
+          @if (petForm.especie === 'outro') {
+            <label class="inteiro">Qual a espécie?
+              <input type="text" [(ngModel)]="petForm.outra_especie" />
+            </label>
+          }
+
+          <div class="campo">
+            <label for="idade-edicao">Idade aproximada</label>
+            <span class="idade">
+              <input id="idade-edicao" type="text" inputmode="numeric" maxlength="2"
+                [placeholder]="petForm.unidadeIdade === 'meses' ? 'Ex.: 6' : 'Ex.: 4'"
+                [ngModel]="petForm.idadeAprox" (ngModelChange)="petForm.idadeAprox = soNumeros($event)" />
+              <span class="unidade" role="group" aria-label="Unidade da idade">
+                <button type="button" [class.ativo]="petForm.unidadeIdade !== 'meses'" [attr.aria-pressed]="petForm.unidadeIdade !== 'meses'" (click)="petForm.unidadeIdade = 'anos'">anos</button>
+                <button type="button" [class.ativo]="petForm.unidadeIdade === 'meses'" [attr.aria-pressed]="petForm.unidadeIdade === 'meses'" (click)="petForm.unidadeIdade = 'meses'">meses</button>
+              </span>
+            </span>
+          </div>
+
+          <label>Peso
+            <span class="com-unidade">
+              <input type="number" min="0.1" max="100" step="0.1" [(ngModel)]="petForm.peso" />
+              <span>kg</span>
+            </span>
+          </label>
+
+          @if (petForm.peso && petForm.peso > 0) {
+            <p class="porte inteiro"><span class="ms">straighten</span> Porte estimado: <strong>{{ calcularPortePet(petForm.especie || '', petForm.peso) }}</strong></p>
+          }
+
+          <label class="inteiro">Observações
+            <textarea rows="3" placeholder="Ex.: tem medo de trovão, não gosta de banho…" [(ngModel)]="petForm.observacoes"></textarea>
+          </label>
+        </div>
+
+        <div class="janela-acoes">
+          <button type="button" class="btn btn-texto" (click)="cancelarEdicao()">Cancelar</button>
+          <button type="button" class="btn btn-azul" [disabled]="salvando" (click)="salvarEdicao()">
+            {{ salvando ? 'Salvando…' : 'Salvar alterações' }}
           </button>
         </div>
 
       </div>
     </div>
+  }
 
-    <div class="modal-overlay" *ngIf="editando">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2>Editar Dados de {{ petForm.nome }}</h2>
-          <button type="button" class="btn-close-modal" (click)="cancelarEdicao()">×</button>
-        </div>
+  <!-- Ícone do pet (contorno), conforme a espécie -->
+  <ng-template #iconePet let-especie>
+    <app-icone-pet [especie]="especie"></app-icone-pet>
+  </ng-template>
 
-        <div class="modal-body">
-          <p class="erro" *ngIf="erro" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 15px; padding: 10px; background: #fee2e2; border-radius: 8px;">
-             {{ erro }}
-          </p>
+</main>
 
-          <label class="modal-photo-upload" style="margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; width: 120px;">
-            <input type="file" accept="image/*" (change)="carregarFotoEdicao($event)">
-            <img *ngIf="fotoPreviewEdicao" [src]="fotoPreviewEdicao" alt="Foto do pet editada">
-            <div *ngIf="!fotoPreviewEdicao" class="modal-photo-placeholder">
-              <span>Alterar foto</span>
-            </div>
-            <strong>+</strong>
-          </label>
-
-          <div class="modal-grid">
-            <div class="modal-field">
-              <small>NOME DO PET</small>
-              <input type="text" [(ngModel)]="petForm.nome" class="edit-input">
-            </div>
-
-            <div class="modal-field">
-              <small>ESPÉCIE</small>
-              <select [(ngModel)]="petForm.especie" class="edit-input">
-                <option value="cachorro">Cachorro</option>
-                <option value="gato">Gato</option>
-                <option value="ave">Ave</option>
-                <option value="coelho">Coelho</option>
-                <option value="outro">Outro</option>
-              </select>
-            </div>
-
-            <div class="modal-field" *ngIf="petForm.especie === 'outro'">
-              <small>QUAL ESPÉCIE?</small>
-              <input type="text" [(ngModel)]="petForm.outra_especie" class="edit-input">
-            </div>
-
-            <div class="modal-field">
-              <small>DATA DE NASCIMENTO</small>
-              <input type="text" appDataMask="date" [(ngModel)]="petForm.dataNascimentoInput" class="edit-input" placeholder="DD/MM/AAAA">
-            </div>
-
-            <div class="modal-field">
-              <small>PESO (KG)</small>
-              <input type="number" min="0.1" max="100" step="0.1" [(ngModel)]="petForm.peso" class="edit-input">
-            </div>
-
-            <div class="modal-field">
-              <small>SEXO</small>
-              <select [(ngModel)]="petForm.sexo" class="edit-input">
-                <option value="M">Macho</option>
-                <option value="F">Fêmea</option>
-              </select>
-            </div>
-            
-            <div class="modal-field" *ngIf="petForm.peso && petForm.peso > 0" style="grid-column: span 2; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #ced4da; margin-top: 4px;">
-              <small style="color: #64748b; font-weight: bold; display: block; margin-bottom: 2px;">RECALCULANDO PORTE</small>
-              <strong style="color: #1e3a8a;">Porte {{ calcularPortePet(petForm.especie, petForm.peso) }}</strong>
-            </div>
-
-          </div>
-
-          <div class="modal-field full-width" style="margin-top: 15px;">
-            <small>OBSERVAÇÕES</small>
-            <textarea [(ngModel)]="petForm.observacoes" class="edit-textarea"></textarea>
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn-cancel" (click)="cancelarEdicao()">Cancelar</button>
-          <button type="button" class="btn-save" [disabled]="salvando" (click)="salvarEdicao()">
-            {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
+@if (confirmandoExclusao && petSelecionado) {
+  <app-excluir-pet [nomePet]="petSelecionado.nome" [plano]="infoExclusao.plano" [ciclo]="infoExclusao.ciclo"
+    [fim]="infoExclusao.fim" [dias]="infoExclusao.dias" [processando]="excluindo"
+    (confirmar)="confirmarExclusao()" (cancelar)="confirmandoExclusao = false"></app-excluir-pet>
+}
