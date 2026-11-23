@@ -444,7 +444,7 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
     return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
   }
 
-  salvarDados(): void {
+    salvarDados(): void {
     const e = this.edicao;
     const tel = e.telefone.replace(/\D/g, '');
     if (!e.nome.trim()) { this.erroDados = 'Informe seu nome.'; return; }
@@ -459,39 +459,28 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
       data_nascimento: e.nascimento || null
     };
 
-    // O servidor ainda não documenta a rota de edição do cliente: tenta as mais prováveis
-    const rotas = ['/user/perfil-dados/atualizar', '/user/atualizar/perfil', '/user/perfil/atualizar'];
     this.salvandoDados = true;
     this.erroDados = '';
+    this.okDados = '';
 
-    const tentar = (i: number): void => {
-      if (i >= rotas.length) {
+    this.http.put<any>(`${environment.apiUrl}/user/perfil-dados/atualizar`, payload, { withCredentials: true }).subscribe({
+      next: (res) => {
         this.salvandoDados = false;
-        this.erroDados = 'A edição de dados ainda não está disponível no servidor. Fale com o suporte para corrigir.';
-        return;
+        this.editando = false;
+        this.bruto = { nome: payload.nome, sobrenome: payload.sobrenome, nascimentoIso: e.nascimento || this.bruto.nascimentoIso };
+        this.perfil.nome = [payload.nome, payload.sobrenome].filter(Boolean).join(' ');
+        if (tel) this.perfil.telefone = tel;
+        if (e.nascimento) this.perfil.nascimento = e.nascimento.split('-').reverse().join('/');
+        this.okDados = res?.mensagem || 'Dados atualizados.';
+        try {
+          const u = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+          localStorage.setItem('usuarioLogado', JSON.stringify({ ...u, nome: this.perfil.nome }));
+        } catch { /* sem armazenamento */ }
+      },
+      error: (err) => {
+        this.salvandoDados = false;
+        this.erroDados = err.error?.mensagem || 'Não foi possível salvar. Tente de novo.';
       }
-      this.http.put<any>(`${environment.apiUrl}${rotas[i]}`, payload, { withCredentials: true }).subscribe({
-        next: (res) => {
-          this.salvandoDados = false;
-          this.editando = false;
-          this.bruto = { nome: payload.nome, sobrenome: payload.sobrenome, nascimentoIso: e.nascimento };
-          this.perfil.nome = [payload.nome, payload.sobrenome].filter(Boolean).join(' ');
-          this.perfil.telefone = tel;
-          this.perfil.nascimento = e.nascimento ? e.nascimento.split('-').reverse().join('/') : '';
-          this.okDados = res?.mensagem || 'Dados atualizados.';
-          try {
-            const u = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
-            localStorage.setItem('usuarioLogado', JSON.stringify({ ...u, nome: this.perfil.nome }));
-          } catch { /* sem armazenamento */ }
-        },
-        error: (err) => {
-          const naoExiste = err.status === 404 || err.status === 405 || /rota não encontrada/i.test(err.error?.mensagem || '');
-          if (naoExiste) { tentar(i + 1); return; }
-          this.salvandoDados = false;
-          this.erroDados = err.error?.mensagem || 'Não foi possível salvar. Tente de novo.';
-        }
-      });
-    };
-    tentar(0);
+    });
   }
 }
