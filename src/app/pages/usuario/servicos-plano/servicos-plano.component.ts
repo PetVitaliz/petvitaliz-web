@@ -22,6 +22,7 @@ interface PetServicos {
 }
 
 const FOTOS: Record<string, string> = {
+  consulta: 'assets/img/servicos/fotos/consulta.jpg',
   vacinacao: 'assets/img/servicos/fotos/vacinacao.jpg',
   exames: 'assets/img/servicos/fotos/exames.jpg',
   banho_tosa: 'assets/img/servicos/fotos/banho-tosa.jpg',
