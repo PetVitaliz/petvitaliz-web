@@ -2,76 +2,155 @@
 
   <header class="topo">
     <h1>Meu plano</h1>
-    <p>Acompanhe a cobertura dos seus pets e contrate novos planos.</p>
+    <p>Acompanhe a cobertura dos seus pets, o uso do mês e a sua assinatura.</p>
   </header>
 
-  @if (erro) { <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p> }
   @if (sucesso) { <p class="alerta ok"><span class="ms">check_circle</span> {{ sucesso }}</p> }
+  @if (erro) { <p class="alerta erro"><span class="ms">error</span> {{ erro }}</p> }
+
+  @for (x of semPet; track x.id_pet) {
+    <div class="orfao">
+      <span class="ms">info</span>
+      <span>O <strong>{{ x.plano.nome }}</strong> ainda está ligado a um pet que foi excluído.</span>
+      <button type="button" [disabled]="removendo !== null" (click)="removerPlanoSemPet(x)">{{ removendo === x.id_pet ? 'Removendo…' : 'Remover plano' }}</button>
+    </div>
+  }
 
   @if (carregando) {
     <p class="carregando">Carregando seus planos…</p>
+  } @else if (!pets.length) {
+
+    <section class="vazio">
+      <span class="vazio-icone"><app-icone-pet especie=""></app-icone-pet></span>
+      <h2>Você ainda não tem pets cadastrados</h2>
+      <p>Cadastre seu pet para contratar um plano e agendar consultas.</p>
+      <a class="btn btn-amarelo" routerLink="/user/listar/pet"><span class="ms">add</span> Cadastrar meu pet</a>
+    </section>
+
   } @else {
 
-    @if (ativos.length) {
-      <!-- Planos ativos -->
-      <section class="ativos">
-        @for (a of ativos; track a.id_pet) {
-          <article class="ativo" [style.--cor]="a.plano.cor">
-            <div class="ativo-topo">
-              <span class="coroa grande">
-                <svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
-              </span>
-              <div class="ativo-nome">
-                <small>Plano de {{ a.nomePet }}</small>
-                <h2>{{ a.plano.nome }}</h2>
-              </div>
-              <span class="selo-ativo">Ativo</span>
+    <!-- Seus pets -->
+    <p class="rotulo">Seus pets</p>
+    <div class="pets">
+      @for (p of pets; track p.id_pet) {
+        <button type="button" class="pet" [class.ativo]="p.id_pet === petId" (click)="petId = p.id_pet; sucesso = ''">
+          <span class="pet-foto">
+            @if (p.foto_url) { <img [src]="p.foto_url" [alt]="'Foto de ' + p.nome" /> } @else { <app-icone-pet [especie]="p.especie"></app-icone-pet> }
+          </span>
+          <span class="pet-texto">
+            <strong>{{ p.nome }}</strong>
+            <small [style.color]="p.plano?.cor">{{ p.plano ? p.plano.nomeCurto : 'Sem plano' }}</small>
+          </span>
+        </button>
+      }
+    </div>
+
+    @if (pet && pet.plano) {
+      <div class="grade">
+        <div>
+          <!-- Plano do pet -->
+          <section class="cartao-plano" [style.--cor]="pet.plano.cor">
+            <div class="cp-topo">
+              <span class="coroa"><svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+              <span class="cp-nome"><small>Plano de {{ pet.nome }}</small><strong>{{ pet.plano.nome }}</strong></span>
+              @if (cancelado) { <span class="selo-ativo selo-cancelado">Cancelado</span> } @else { <span class="selo-ativo">Ativo</span> }
             </div>
+            <p class="cp-preco"><strong>{{ moeda(precoMes) }}</strong>/mês</p>
+            @if (textoCobranca) { <p class="cp-linha">{{ textoCobranca }}</p> }
+            <div class="cp-periodo">
+              <div class="cp-periodo-topo">
+                <span>{{ cancelado ? 'Ativo até ' + renovaEm : 'Período atual até ' + renovaEm }}</span>
+                <strong>{{ textoFaltam }}</strong>
+              </div>
+              <span class="cp-barra"><i [style.width.%]="progresso"></i></span>
+            </div>
+            <dl class="cp-dados">
+              <div><dt>{{ cancelado ? 'Termina em' : 'Renova em' }}</dt><dd>{{ renovaEm || '—' }}</dd></div>
+              <div><dt>Pagamento</dt><dd>{{ assinatura ? (assinatura.metodo === 'pix' ? 'Pix' : assinatura.metodo === 'boleto' ? 'Boleto' : 'Cartão' + (assinatura.cartaoFinal ? ' •••• ' + assinatura.cartaoFinal : '')) : '—' }}</dd></div>
+            </dl>
+            @if (cancelado) {
+              <div class="cp-cancelado">
+                <p>
+                  @if (petSeraExcluido) {
+                    {{ pet.nome }} será excluído em {{ renovaEm }}, junto com o plano. Até lá, pode usar tudo normalmente.
+                  } @else {
+                    O plano não será renovado. {{ pet.nome }} pode usar tudo normalmente até {{ renovaEm }}.
+                  }
+                </p>
+                <button type="button" class="btn btn-amarelo" (click)="manterPlano()">{{ petSeraExcluido ? 'Desfazer exclusão' : 'Manter plano' }}</button>
+              </div>
+            } @else if (trocaAgendada) { <p class="cp-aviso"><span class="ms">event_repeat</span> Muda para o {{ trocaAgendada }} em {{ renovaEm }}</p> }
+            @if (!cancelado) {
+            <div class="cp-acoes">
+              <button type="button" class="btn btn-amarelo" (click)="janela = 'mudar'">Mudar de plano</button>
+              <button type="button" class="btn btn-claro" (click)="janela = 'gerenciar'">Gerenciar assinatura</button>
+            </div>
+            }
+          </section>
 
-            <p class="ativo-preco"><strong>{{ moeda(a.plano.mensal) }}</strong>/mês</p>
-
-            @if (a.plano.beneficios.length) {
-              <ul class="ativo-beneficios">
-                @for (b of a.plano.beneficios; track b.texto) {
+          <!-- O que está incluso -->
+          @if (pet.plano.beneficios.length) {
+            <section class="card">
+              <h2>O que está incluso</h2>
+              <ul class="inclusos">
+                @for (b of pet.plano.beneficios; track b.texto) {
                   <li><span class="ms">check_circle</span><span class="b-texto">{{ b.texto }}</span><span class="b-qtd">{{ b.quantidade }}</span></li>
                 }
               </ul>
-            }
+            </section>
+          }
+        </div>
 
-            <div class="ativo-acoes">
-              <a class="btn btn-azul" routerLink="/user/agendamento" [queryParams]="{ pet: a.id_pet }">
-                <span class="ms">calendar_add_on</span> Agendar consulta
-              </a>
-              <button type="button" class="btn-cancelar" [disabled]="cancelandoPet !== null" (click)="cancelarPlano(a)">
-                {{ cancelandoPet === a.id_pet ? 'Cancelando…' : 'Cancelar plano' }}
-              </button>
-            </div>
-          </article>
-        }
-      </section>
-    } @else {
-      <!-- Nenhum plano -->
-      <section class="vazio">
-        <span class="vazio-coroa">
-          <svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
-        </span>
-        <h2>Nenhum plano contratado</h2>
-        <p>Escolha abaixo o plano ideal e garanta consultas, vacinas e cuidados para o seu pet.</p>
+        <!-- Uso do mês -->
+        <section class="card uso">
+          <h2>Uso do mês</h2>
+          <p class="nota">As cotas renovam todo dia 1º. Consultas canceladas não contam.</p>
+          <ul>
+            @for (u of uso; track u.id) {
+              <li>
+                <div class="uso-linha">
+                  <span>{{ u.nome }}</span>
+                  @if (u.cota === 'ilimitado') {
+                    <strong class="ilimitado">Ilimitado</strong>
+                  } @else {
+                    <strong [class.esgotado]="u.usados >= u.cota">{{ u.usados }} de {{ u.cota }}</strong>
+                  }
+                </div>
+                @if (u.cota !== 'ilimitado') {
+                  <span class="barra"><i [style.width.%]="porcentagem(u)" [class.cheia]="u.usados >= u.cota"></i></span>
+                  @if (u.usados >= u.cota) { <small class="esgotado">Cota esgotada este mês</small> }
+                }
+              </li>
+            }
+          </ul>
+          @if (consultaEsgotada) {
+            <button type="button" class="btn btn-azul cheio" disabled>Cota de consultas esgotada</button>
+          } @else {
+            <a class="btn btn-azul cheio" routerLink="/user/agendamento" [queryParams]="{ pet: pet.id_pet }"><span class="ms">calendar_add_on</span> Agendar consulta</a>
+          }
+        </section>
+      </div>
+    } @else if (pet) {
+      <section class="sem-plano">
+        <span class="coroa grande-sem"><svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+        <div>
+          <h2>{{ pet.nome }} ainda não tem plano</h2>
+          <p>Escolha um plano abaixo para liberar consultas, vacinas, banho e tosa e mais.</p>
+        </div>
       </section>
     }
 
-    <!-- Planos para escolher (mesmo carrossel da home) -->
-    @if (disponiveis.length && (!ativos.length || petsSemPlano.length || !pets.length)) {
+    <!-- Planos (mesmo carrossel da home) -->
+    @if (disponiveis.length && pet && !pet.plano) {
       <section class="escolher">
-        <h2>{{ ativos.length ? 'Contrate para seus outros pets' : 'Escolha um plano' }}</h2>
-        @if (!pets.length) {
-          <p class="aviso-pet"><span class="ms">info</span> Você vai precisar cadastrar um pet para contratar. <a routerLink="/user/listar/pet">Cadastrar pet</a></p>
-        } @else if (petsSemPlano.length) {
-          <p class="aviso-pet">Disponível para {{ petsSemPlano.length === 1 ? petsSemPlano[0].nome : petsSemPlano.length + ' pets sem plano' }}.</p>
-        }
+        <h2>Planos para {{ pet.nome }}</h2>
         <app-planos-carrossel [planos]="disponiveis" [(ciclo)]="ciclo" textoBotao="Contratar" (escolher)="escolherPlano($event)"></app-planos-carrossel>
       </section>
     }
   }
 
+  @if (janela && pet && pet.plano) {
+    <app-gerenciar-plano [modo]="janela" [pet]="{ id_pet: pet.id_pet, nome: pet.nome }" [plano]="pet.plano" [planos]="disponiveis"
+      (fechar)="janela = null" (alterado)="aposAlterar($event)"></app-gerenciar-plano>
+  }
 </main>

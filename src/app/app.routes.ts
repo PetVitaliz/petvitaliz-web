@@ -11,7 +11,7 @@ import { LoginComponent } from './pages/publico/login/login.component';
 import { EsqueciSenhaComponent } from './pages/publico/esqueci-senha/esqueci-senha.component';
 import { CadastroComponent } from './pages/publico/cadastro/cadastro.component';
 import { ResetSenhaComponent } from './pages/publico/reset-senha/reset-senha.component';
-import { ServicosComponent } from './pages/publico/servicos/servicos.component';
+import { ServicosPlanoComponent } from './pages/usuario/servicos-plano/servicos-plano.component';
 import { SobreNosComponent } from './pages/publico/sobre-nos/sobre-nos.component';
 import { AdocaoComponent } from './pages/publico/adocao/adocao.component';
 
@@ -69,7 +69,7 @@ export const routes: Routes = [
 },
 {
   path: 'user/servicos',
-  component: ServicosComponent,
+  component: ServicosPlanoComponent,
   canActivate: [authUsuarioGuard]
 },
 {

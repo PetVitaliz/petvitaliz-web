@@ -1,46 +1,5 @@
 <main class="conta-pagina" [class.com-secao]="secao">
 
-  <!-- ===== Coluna da esquerda: perfil + menu (no celular é a tela "Meu perfil") ===== -->
-  <aside class="lateral">
-
-    <div class="perfil-card">
-      <span class="avatar">{{ inicial }}</span>
-      <div class="perfil-info">
-        <strong>{{ perfil.nome || 'Cliente PetVitaliz' }}</strong>
-        <small>{{ perfil.email }}</small>
-      </div>
-    </div>
-
-    <p class="grupo-titulo">Conta</p>
-    <nav class="lista">
-      @for (item of itensConta; track item.secao) {
-        <a class="linha" [routerLink]="['/user/conta', item.secao]" [class.ativa]="secao === item.secao">
-          <span class="ms">{{ item.icone }}</span>
-          <span>{{ item.titulo }}</span>
-          <span class="ms seta">chevron_right</span>
-        </a>
-      }
-    </nav>
-
-    <p class="grupo-titulo">Suporte</p>
-    <nav class="lista">
-      <a class="linha" routerLink="/user/contato">
-        <span class="ms">support_agent</span>
-        <span>Ajuda e suporte</span>
-        <span class="ms seta">chevron_right</span>
-      </a>
-      <a class="linha" [routerLink]="['/user/conta', 'termos']" [class.ativa]="secao === 'termos'">
-        <span class="ms">description</span>
-        <span>Termos e privacidade</span>
-        <span class="ms seta">chevron_right</span>
-      </a>
-    </nav>
-
-    <button type="button" class="btn-sair" (click)="sair()">
-      <span class="ms">logout</span> Sair da conta
-    </button>
-
-  </aside>
 
   <!-- ===== Conteúdo ===== -->
   <section class="conteudo">
@@ -49,71 +8,136 @@
       <a class="voltar" routerLink="/user/conta"><span class="ms">arrow_back</span> Minha conta</a>
       <h1 class="titulo">{{ titulos[secao] }}</h1>
     } @else {
-      <h1 class="titulo">Olá, {{ (perfil.nome || 'tutor').split(' ')[0] }}!</h1>
-      <p class="sub">Tudo da sua conta PetVitaliz em um só lugar.</p>
+      <header class="cabeca">
+        <span class="avatar avatar-g">{{ inicial }}</span>
+        <div>
+          <p class="sobre">Minha conta</p>
+          <h1 class="titulo">{{ perfil.nome || 'Cliente PetVitaliz' }}</h1>
+          <p class="cabeca-email">{{ perfil.email }}</p>
+        </div>
+        <a class="btn btn-contorno" [routerLink]="['/user/conta', 'dados']" [queryParams]="{ editar: 1 }">Editar dados</a>
+      </header>
     }
 
     @switch (secao) {
 
       <!-- ---------- Início da conta ---------- -->
       @case (null) {
-        <div class="atalhos">
-          <a class="atalho" routerLink="/user/listar/pet">
-            <span class="atalho-icone"><svg class="ico-pata" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.6" cy="10.4" r="1.8"/><circle cx="10.1" cy="6.3" r="1.8"/><circle cx="13.9" cy="6.3" r="1.8"/><circle cx="17.4" cy="10.4" r="1.8"/><path d="M12 11.6c-2.4 0-4.8 3-4.8 5.2 0 1.5 1.2 2.3 2.5 2.3.9 0 1.5-.5 2.3-.5s1.4.5 2.3.5c1.3 0 2.5-.8 2.5-2.3 0-2.2-2.4-5.2-4.8-5.2z"/></svg></span>
-            <strong>Meus pets</strong>
-            <small>{{ carregando ? '…' : plural(qtdPets, 'pet', 'pets', 'Nenhum') }}</small>
-          </a>
-          <a class="atalho" routerLink="/user/agendamento">
-            <span class="atalho-icone"><span class="ms">calendar_month</span></span>
-            <strong>Consultas</strong>
-            <small>{{ carregando ? '…' : plural(qtdConsultas, 'próxima', 'próximas', 'Nenhuma marcada') }}</small>
-          </a>
-          <a class="atalho ouro" routerLink="/user/meu-plano">
-            <span class="atalho-icone"><span class="ms">workspace_premium</span></span>
-            <strong>Meu plano</strong>
-            <small>{{ carregando ? '…' : plural(qtdPlanos, 'ativo', 'ativos', 'Nenhum ativo') }}</small>
-          </a>
+        <section class="resumo" aria-label="Resumo da conta">
+          <div>
+            <span class="r-rotulo">Pets cadastrados</span>
+            <strong class="r-valor">{{ numero(qtdPets, falhouPets) }}</strong>
+            <a routerLink="/user/listar/pet">Ver meus pets</a>
+          </div>
+          <div>
+            <span class="r-rotulo">Próximas consultas</span>
+            <strong class="r-valor">{{ numero(qtdConsultas, falhouConsultas) }}</strong>
+            <a routerLink="/user/agendamento">{{ qtdConsultas ? 'Ver consultas' : 'Agendar consulta' }}</a>
+          </div>
+          <div>
+            <span class="r-rotulo">Planos ativos</span>
+            <strong class="r-valor">{{ numero(qtdPlanos, falhouPlanos) }}</strong>
+            <a routerLink="/user/meu-plano">Ver meu plano</a>
+          </div>
+        </section>
+
+        <div class="duas-colunas">
+          <section class="painel">
+            <div class="painel-topo">
+              <h2>Seus pets</h2>
+              <a routerLink="/user/listar/pet"><span class="ms">add</span> Cadastrar pet</a>
+            </div>
+            @if (carregando) {
+              <p class="painel-vazio">Carregando…</p>
+            } @else if (falhouPets) {
+              <p class="painel-vazio">Não foi possível carregar seus pets agora. Atualize a página.</p>
+            } @else if (!petsResumo.length) {
+              <p class="painel-vazio">Você ainda não cadastrou nenhum pet.</p>
+            } @else {
+              <ul class="pets-lista">
+                @for (p of petsResumo; track p.id_pet) {
+                  <li><a routerLink="/user/listar/pet">
+                    <span class="pet-av">
+                      @if (p.foto_url) { <img [src]="p.foto_url" [alt]="'Foto de ' + p.nome" /> } @else { <app-icone-pet [especie]="p.especie"></app-icone-pet> }
+                    </span>
+                    <span class="pet-txt">
+                      <strong>{{ p.nome }}</strong>
+                      <small>{{ p.especie | titlecase }}{{ p.especie && p.idade ? ' · ' : '' }}{{ p.idade }}</small>
+                    </span>
+                    <span class="pet-plano"><i [style.background]="p.cor || '#C9D6EE'"></i>{{ p.plano || 'Sem plano' }}</span>
+                    <span class="ms seta">chevron_right</span>
+                  </a></li>
+                }
+              </ul>
+            }
+          </section>
+
+          <section class="painel">
+            <div class="painel-topo">
+              <h2>Dados pessoais</h2>
+              <a [routerLink]="['/user/conta', 'dados']" [queryParams]="{ editar: 1 }">Editar</a>
+            </div>
+            <dl class="info">
+              <div><dt>Telefone</dt><dd>{{ perfil.telefone ? mascaraTelefone(perfil.telefone) : '—' }}</dd></div>
+              <div><dt>Data de nascimento</dt><dd>{{ perfil.nascimento || '—' }}</dd></div>
+              <div><dt>CPF</dt><dd>{{ perfil.cpf || '—' }}</dd></div>
+            </dl>
+          </section>
         </div>
 
-        <div class="card">
-          <div class="card-topo">
-            <h2>Avisos</h2>
-            <a [routerLink]="['/user/conta', 'notificacoes']">Ver todos</a>
-          </div>
-          @if (avisos.length) {
-            <ul class="avisos">
-              @for (a of avisos; track a.titulo + a.texto) {
-                <li><a [routerLink]="a.rota" class="aviso">
-                  <span class="aviso-icone" [attr.data-tom]="a.tom"><span class="ms">{{ a.icone }}</span></span>
-                  <span><strong>{{ a.titulo }}</strong><small>{{ a.texto }}</small></span>
-                </a></li>
-              }
-            </ul>
-          } @else {
-            <p class="vazio">{{ carregando ? 'Carregando…' : 'Tudo em dia por aqui.' }}</p>
-          }
-        </div>
+        <h2 class="secao-titulo">Configurações</h2>
+        <nav class="config">
+          <a [routerLink]="['/user/conta', 'pagamento']"><span class="ms">credit_card</span><span><strong>Formas de pagamento</strong><small>Cartões salvos para as cobranças</small></span><span class="ms seta">chevron_right</span></a>
+          <a [routerLink]="['/user/conta', 'notificacoes']"><span class="ms">notifications</span><span><strong>Notificações</strong><small>Lembretes de consultas e avisos do plano</small></span><span class="ms seta">chevron_right</span></a>
+          <a [routerLink]="['/user/conta', 'seguranca']"><span class="ms">shield</span><span><strong>Segurança</strong><small>Senha e exclusão da conta</small></span><span class="ms seta">chevron_right</span></a>
+          <a routerLink="/user/contato"><span class="ms">help</span><span><strong>Ajuda e suporte</strong><small>Fale com a equipe PetVitaliz</small></span><span class="ms seta">chevron_right</span></a>
+          <a [routerLink]="['/user/conta', 'termos']"><span class="ms">description</span><span><strong>Termos e privacidade</strong><small>Como cuidamos dos seus dados</small></span><span class="ms seta">chevron_right</span></a>
+          <button type="button" class="sair" (click)="sair()"><span class="ms">logout</span><span><strong>Sair da conta</strong><small>Encerrar a sessão neste aparelho</small></span></button>
+        </nav>
       }
 
       <!-- ---------- Dados pessoais ---------- -->
       @case ('dados') {
-        <div class="card">
+        <div class="card" [class.editando]="editando">
           <div class="dados-topo">
             <span class="avatar grande">{{ inicial }}</span>
             <div>
               <strong>{{ perfil.nome || '—' }}</strong>
               <small>Cliente PetVitaliz</small>
             </div>
+            @if (!editando) {
+              <button type="button" class="btn btn-amarelo btn-editar" (click)="comecarEdicao()">
+                <span class="ms">edit</span> Editar dados
+              </button>
+            }
           </div>
-          <dl class="dados">
-            <div><dt>Nome completo</dt><dd>{{ perfil.nome || '—' }}</dd></div>
-            <div><dt>E-mail</dt><dd>{{ perfil.email || '—' }}</dd></div>
-            <div><dt>Data de nascimento</dt><dd>{{ perfil.nascimento || '—' }}</dd></div>
-            <div><dt>Telefone</dt><dd>{{ perfil.telefone || '—' }}</dd></div>
-            <div><dt>CPF</dt><dd>{{ perfil.cpf || '—' }}</dd></div>
-          </dl>
-          <p class="nota"><span class="ms">info</span> Para corrigir algum dado, fale com o suporte. O CPF não pode ser alterado depois do cadastro.</p>
-          <a class="btn btn-contorno" routerLink="/user/contato">Falar com o suporte</a>
+
+          @if (okDados) { <p class="msg ok"><span class="ms">check_circle</span> {{ okDados }}</p> }
+
+          @if (!editando) {
+            <dl class="dados">
+              <div><dt>Nome completo</dt><dd>{{ perfil.nome || '—' }}</dd></div>
+              <div><dt>E-mail</dt><dd>{{ perfil.email || '—' }}</dd></div>
+              <div><dt>Data de nascimento</dt><dd>{{ perfil.nascimento || '—' }}</dd></div>
+              <div><dt>Telefone</dt><dd>{{ perfil.telefone || '—' }}</dd></div>
+              <div><dt>CPF</dt><dd>{{ perfil.cpf || '—' }}</dd></div>
+            </dl>
+          } @else {
+            <form class="form form-dados" (ngSubmit)="salvarDados()">
+              <label>Nome<input name="nome" [(ngModel)]="edicao.nome" required autocomplete="given-name" /></label>
+              <label>Sobrenome<input name="sobrenome" [(ngModel)]="edicao.sobrenome" autocomplete="family-name" /></label>
+              <label>Telefone<input name="telefone" [ngModel]="edicao.telefone" (ngModelChange)="edicao.telefone = mascaraTelefone($event)" inputmode="tel" placeholder="(11) 91234-5678" autocomplete="tel" /></label>
+              <label>Data de nascimento<input name="nascimento" type="date" [(ngModel)]="edicao.nascimento" [max]="hojeIso" /></label>
+              <label class="travado">E-mail<input [value]="perfil.email" disabled /></label>
+              <label class="travado">CPF<input [value]="perfil.cpf" disabled /></label>
+              <p class="nota inteira"><span class="ms">lock</span> E-mail e CPF não podem ser alterados.</p>
+              @if (erroDados) { <p class="msg erro inteira"><span class="ms">error</span> {{ erroDados }}</p> }
+              <div class="acoes-form inteira">
+                <button type="button" class="btn-texto" (click)="editando = false" [disabled]="salvandoDados">Cancelar</button>
+                <button type="submit" class="btn btn-azul" [disabled]="salvandoDados">{{ salvandoDados ? 'Salvando…' : 'Salvar alterações' }}</button>
+              </div>
+            </form>
+          }
         </div>
       }
 
@@ -225,12 +249,48 @@
 
       <!-- ---------- Segurança ---------- -->
       @case ('seguranca') {
-        <div class="card">
+        <p class="sub">Proteja o acesso à sua conta e aos dados dos seus pets.</p>
+
+        <div class="card status-conta">
+          <span class="ms circulo verde">verified_user</span>
+          <span><strong>Você está conectado com segurança</strong><small>{{ perfil.email }} · {{ aparelho }}</small></span>
+        </div>
+
+        <h2 class="secao-titulo">Acesso</h2>
+        <div class="card lista-seg">
           <div class="linha-acao">
             <span class="ms circulo">key</span>
-            <span><strong>Alterar senha</strong><small>Enviamos um código para o seu e-mail para criar uma nova senha.</small></span>
+            <span><strong>Alterar senha</strong><small>Enviamos um código para {{ perfil.email || 'o seu e-mail' }} para criar uma nova senha.</small></span>
             <a class="btn btn-contorno" routerLink="/esqueci-senha">Alterar</a>
           </div>
+          <div class="linha-acao">
+            <span class="ms circulo">computer</span>
+            <span><strong>Este aparelho <em class="tag-sessao">Sessão atual</em></strong><small>{{ aparelho }}</small></span>
+            <button type="button" class="btn btn-contorno" (click)="sair()">Sair deste aparelho</button>
+          </div>
+        </div>
+
+        <h2 class="secao-titulo">Privacidade e dados</h2>
+        <div class="card lista-seg">
+          <div class="linha-acao">
+            <span class="ms circulo">download</span>
+            <span><strong>Baixar meus dados</strong><small>Um arquivo com seu perfil, pets, planos e consultas.</small></span>
+            <button type="button" class="btn btn-contorno" [disabled]="carregando" (click)="baixarDados()">{{ carregando ? 'Carregando…' : 'Baixar' }}</button>
+          </div>
+          <div class="linha-acao">
+            <span class="ms circulo">description</span>
+            <span><strong>Termos e privacidade</strong><small>Como a PetVitaliz usa e protege seus dados.</small></span>
+            <a class="btn btn-contorno" [routerLink]="['/user/conta', 'termos']">Ver</a>
+          </div>
+        </div>
+
+        <h2 class="secao-titulo">Dicas de segurança</h2>
+        <div class="card">
+          <ul class="dicas">
+            <li>A PetVitaliz nunca pede sua senha por WhatsApp, telefone ou e-mail.</li>
+            <li>Use uma senha só para a PetVitaliz, com letras, números e símbolos.</li>
+            <li>Em computador compartilhado, saia da conta ao terminar.</li>
+          </ul>
         </div>
 
         <h2 class="zona">Zona de perigo</h2>
@@ -238,7 +298,7 @@
           <div class="linha-acao">
             <span class="ms circulo">delete_forever</span>
             <span><strong>Excluir conta</strong><small>Cancela os planos e apaga pets e agendamentos. Essa ação não pode ser desfeita.</small></span>
-            <a class="btn btn-perigo" routerLink="/user/contato">Solicitar</a>
+            <a class="btn btn-perigo" routerLink="/user/contato">Solicitar exclusão</a>
           </div>
         </div>
       }

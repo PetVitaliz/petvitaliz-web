@@ -21,7 +21,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f3f8ff;
+  background: #F6F8FC;
   font-family: 'Inter', sans-serif;
 }
 
@@ -46,7 +46,7 @@
   border-radius: 999px;
   background: #ffffff;
   border: 1px solid #e4e9f4;
-  color: #08245f;
+  color: #183B72;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -59,7 +59,7 @@
 }
 
 .btn-voltar:hover {
-  border-color: #4758c8;
+  border-color: #21479B;
 }
 
 .btn-voltar:hover .ms {
@@ -83,7 +83,7 @@
 .brand-panel {
   position: relative;
   overflow: hidden;
-  background: #08245f;
+  background: #183B72;
   color: #ffffff;
   padding: 48px 44px;
   display: flex;
@@ -95,7 +95,7 @@
 .deco {
   position: absolute;
   border-radius: 50%;
-  background: #4758c8;
+  background: #21479B;
   pointer-events: none;
 }
 
@@ -199,7 +199,7 @@
   margin: 0 0 8px;
   font-size: 28px;
   font-weight: 800;
-  color: #08245f;
+  color: #183B72;
 }
 
 .subtitle {
@@ -231,7 +231,7 @@
   margin-bottom: 8px;
   font-size: 12px;
   font-weight: 700;
-  color: #4254c5;
+  color: #21479B;
   text-decoration: none;
 }
 
@@ -256,8 +256,8 @@
 }
 
 .input-box:focus-within {
-  border-color: #4758c8;
-  box-shadow: 0 0 0 4px rgba(71, 88, 200, 0.12);
+  border-color: #21479B;
+  box-shadow: 0 0 0 4px rgba(33, 71, 155, 0.12);
 }
 
 .input-icon {
@@ -266,7 +266,7 @@
 }
 
 .input-box:focus-within .input-icon {
-  color: #4758c8;
+  color: #21479B;
 }
 
 .input-box input {
@@ -295,8 +295,8 @@
 }
 
 .eye-btn:hover {
-  color: #4758c8;
-  background: #eef0fb;
+  color: #21479B;
+  background: #E8EEFA;
 }
 
 .eye-btn .ms {
@@ -310,8 +310,8 @@
   gap: 6px;
   padding: 5px 12px;
   border-radius: 999px;
-  background: #eef0fb;
-  color: #3c3489;
+  background: #E8EEFA;
+  color: #183B72;
   font-size: 12px;
   font-weight: 600;
   animation: aparecer 0.2s ease;
@@ -339,7 +339,7 @@
 .remember input {
   width: 16px;
   height: 16px;
-  accent-color: #4758c8;
+  accent-color: #21479B;
 }
 
 .erro {
@@ -365,8 +365,8 @@
   height: 54px;
   border: none;
   border-radius: 14px;
-  background: #4758c8;
-  color: #ffffff;
+  background: #FECA3E;
+  color: #183B72;
   font-size: 15px;
   font-weight: 700;
   font-family: 'Inter', sans-serif;
@@ -375,7 +375,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 12px 22px rgba(71, 88, 200, 0.28);
+  box-shadow: 0 10px 22px rgba(254, 202, 62, 0.35);
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -385,7 +385,7 @@
 }
 
 .btn-login:hover:not(:disabled) {
-  background: #3547b7;
+  background: #F5BD25;
   transform: translateY(-2px);
 }
 
@@ -401,8 +401,8 @@
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #ffffff;
+  border: 2px solid rgba(24, 59, 114, 0.25);
+  border-top-color: #183B72;
   border-radius: 50%;
   animation: girar 0.8s linear infinite;
 }
@@ -436,7 +436,7 @@
 }
 
 .register a {
-  color: #4254c5;
+  color: #21479B;
   font-weight: 700;
   text-decoration: none;
 }
@@ -481,3 +481,7 @@
     height: 52px;
   }
 }
+
+/* Logo da marca no painel */
+.brand-logo { display: inline-block; margin-bottom: 34px; }
+.brand-logo img { display: block; width: 190px; height: auto; }

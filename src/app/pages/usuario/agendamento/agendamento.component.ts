@@ -7,6 +7,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { IconePetComponent } from '../../../components/icone-pet/icone-pet.component';
+import { lerPlanosDoCliente } from '../../../core/utils/planos-resposta';
 import {
   PLAN_CORES, PLAN_NAMES, PREFIXO_SERVICO, PlanId, Quota, SERVICES, ServiceId, ServiceInfo,
   getMinimumPlan, getPlanId, getServiceQuota, servicoDaConsulta
@@ -81,6 +82,7 @@ export class AgendamentoComponent implements OnInit {
   carregandoHorarios = false;
 
   private petDaUrl: number | null = null;
+  private servicoDaUrl: string | null = null;
 
   constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) {
     this.gerarGradeHorarios();
@@ -89,6 +91,7 @@ export class AgendamentoComponent implements OnInit {
   ngOnInit(): void {
     const pet = Number(this.route.snapshot.queryParamMap.get('pet'));
     this.petDaUrl = pet > 0 ? pet : null;
+    this.servicoDaUrl = this.route.snapshot.queryParamMap.get('servico');
     this.carregarDados();
   }
 
@@ -104,7 +107,7 @@ export class AgendamentoComponent implements OnInit {
       this.pets = pets?.pets || pets?.Pets || [];
 
       this.planosPorPet = {};
-      (planos?.planos || []).forEach((p: any) => {
+      lerPlanosDoCliente(planos).forEach((p: any) => {
         const id = getPlanId(p.produto?.nome);
         if (id) this.planosPorPet[p.id_pet] = id;
       });
@@ -116,6 +119,14 @@ export class AgendamentoComponent implements OnInit {
       const doLink = this.pets.find((p) => p.id_pet === this.petDaUrl);
       if (doLink && this.planoDe(doLink)) {
         this.selecionarPet(doLink);
+        // Veio da página de Serviços: serviço já escolhido, segue para data e horário
+        const servico = SERVICES.find((s) => s.id === this.servicoDaUrl);
+        if (servico && this.estado(servico.id) === 'liberado') {
+          this.selecionarServico(servico);
+          this.etapaAtual = 3;
+        } else if (servico) {
+          this.etapaAtual = 2;
+        }
       } else if (this.petsComPlano.length === 1) {
         this.selecionarPet(this.petsComPlano[0]);
       }

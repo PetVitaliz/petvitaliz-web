@@ -25,3 +25,14 @@
   font-weight: 700;
   color: #b33a3a;
 }
+
+/* Plano do pet */
+.plano-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: #eef1f8; color: #283593; }
+.plano-tag .ico { width: 14px; height: 14px; stroke-width: 1.8; }
+.plano-tag[data-nivel='bronze'] { background: #F6E7DC; color: #8A4B1F; }
+.plano-tag[data-nivel='prata'] { background: #EEF1F5; color: #4F5B6C; }
+.plano-tag[data-nivel='ouro'] { background: #FFF5D6; color: #8A6400; }
+.plano-tag[data-nivel='diamante'] { background: #E2F4FB; color: #1F6F8F; }
+.plano-sem { font-size: 13px; color: #8a93a8; }
+.aviso-plano { margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; background: #fff7e0; color: #7a5a00; font-size: 13px; }
+.aviso-plano code { font-size: 12px; }

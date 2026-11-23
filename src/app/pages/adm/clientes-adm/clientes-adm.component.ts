@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { mensagemDeErro } from '../../../core/utils/mensagem-erro';
 import { environment } from '../../../environments/environment';
+import { PLAN_NAMES, PlanId, getPlanId } from '../../../core/plan-coverage';
 
 interface ClienteAdm {
   id_pet?: number;
@@ -36,6 +37,7 @@ export class ClientesAdmComponent implements OnInit {
 
   busca = '';
   especie = 'Todas';
+  filtroPlano = 'todos';
   status = 'Todos';
 
   paginaAtual = 1;
@@ -64,6 +66,59 @@ export class ClientesAdmComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarClientesDoBanco();
+    this.carregarProdutos();
+  }
+
+  // ---------- Plano de cada pet ----------
+
+  private produtos: Record<number, string> = {};
+  /** A resposta do servidor traz alguma informação de plano? */
+  apiTemPlano = false;
+
+  private carregarProdutos(): void {
+    this.http.get<any>(`${environment.apiUrl}/adm/listar/produtos`, { withCredentials: true }).subscribe({
+      next: (res) => {
+        this.produtos = {};
+        (res?.produtos || []).forEach((p: any) => { this.produtos[Number(p.id_produto)] = String(p.nome || ''); });
+      },
+      error: () => {}
+    });
+  }
+
+  private static readonly CHAVES_PLANO = ['plano', 'plano_nome', 'nome_plano', 'planoNome', 'produto', 'assinatura', 'id_produto', 'tem_plano', 'planos', 'include'];
+
+  /** Procura o plano nos campos mais prováveis da resposta (do pet ou do tutor). */
+  planoDe(c: any): { nome: string; nivel: PlanId | 'outro' } | null {
+    if (!c) return null;
+    const lista = Array.isArray(c.planos) ? c.planos : [];
+    const doPet = lista.find((p: any) => Number(p?.id_pet) === Number(c.id_pet)) || lista[0];
+    const candidatos = [
+      c.plano, c.plano_nome, c.nome_plano, c.planoNome, c.plano?.nome, c.produto?.nome,
+      c.assinatura?.nome, c.assinatura?.plano, c.assinatura?.produto?.nome, c.include?.nome,
+      doPet?.produto?.nome, doPet?.nome,
+      c.id_produto ? this.produtos[Number(c.id_produto)] : null,
+      c.assinatura?.id_produto ? this.produtos[Number(c.assinatura.id_produto)] : null
+    ];
+    for (const v of candidatos) {
+      if (typeof v === 'string' && v.trim()) {
+        const nome = v.split(' | ')[0].trim();
+        const id = getPlanId(nome);
+        return { nome: id ? PLAN_NAMES[id] : nome, nivel: id || 'outro' };
+      }
+    }
+    return null;
+  }
+
+  get totalComPlano(): number {
+    return this.clientes.filter(c => this.planoDe(c)).length;
+  }
+
+  private passaPlano(c: any): boolean {
+    if (this.filtroPlano === 'todos') return true;
+    const p = this.planoDe(c);
+    if (this.filtroPlano === 'com') return !!p;
+    if (this.filtroPlano === 'sem') return !p;
+    return p?.nivel === this.filtroPlano;
   }
 
   carregarClientesDoBanco(): void {
@@ -72,6 +127,7 @@ export class ClientesAdmComponent implements OnInit {
       next: (res) => {
         if (res && res.clientes) {
           this.clientes = res.clientes;
+          this.apiTemPlano = this.clientes.some((c: any) => ClientesAdmComponent.CHAVES_PLANO.some(k => k in (c || {})));
         }
         this.carregando = false;
       },
@@ -123,7 +179,7 @@ export class ClientesAdmComponent implements OnInit {
       const passaEspecie = this.especie === 'Todas' || this.especieDoPet(cliente) === this.especie;
       const passaStatus = this.status === 'Todos' || cliente.status === this.status;
 
-      return passaBusca && passaEspecie && passaStatus;
+      return passaBusca && passaEspecie && passaStatus && this.passaPlano(cliente);
     });
   }
 
@@ -148,6 +204,7 @@ export class ClientesAdmComponent implements OnInit {
     this.busca = '';
     this.especie = 'Todas';
     this.status = 'Todos';
+    this.filtroPlano = 'todos';
     this.paginaAtual = 1;
   }
 

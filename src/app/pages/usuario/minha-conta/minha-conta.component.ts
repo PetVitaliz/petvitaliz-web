@@ -6,6 +6,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { lerPlanosDoCliente } from '../../../core/utils/planos-resposta';
+import { IconePetComponent } from '../../../components/icone-pet/icone-pet.component';
+import { montarPlano } from '../../../core/utils/montar-plano';
+import { SairService } from '../../../core/services/sair.service';
+import { processarCancelamentosVencidos } from '../../../core/utils/assinaturas';
 
 type Secao = 'dados' | 'pagamento' | 'notificacoes' | 'seguranca' | 'termos';
 
@@ -30,7 +35,7 @@ type Aviso = {
 @Component({
   selector: 'app-minha-conta',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, IconePetComponent],
   templateUrl: './minha-conta.component.html',
   styleUrl: './minha-conta.component.css'
 })
@@ -57,12 +62,26 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
   // ---------- Dados da conta ----------
   carregando = true;
   perfil = { nome: '', email: '', cpf: '', telefone: '', nascimento: '' };
+  private bruto = { nome: '', sobrenome: '', nascimentoIso: '' };
+
+  // Edição dos dados pessoais
+  editando = false;
+  salvandoDados = false;
+  erroDados = '';
+  okDados = '';
+  edicao = { nome: '', sobrenome: '', telefone: '', nascimento: '' };
+  readonly hojeIso = new Date().toISOString().split('T')[0];
   qtdPets = 0;
+  falhouPets = false;
+  falhouConsultas = false;
+  falhouPlanos = false;
+  petsResumo: { id_pet: number; nome: string; especie: string; foto_url: string | null; idade: string; plano: string; cor: string }[] = [];
+  private abrirEdicao = false;
   qtdConsultas = 0;
   qtdPlanos = 0;
   avisos: Aviso[] = [];
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router, private sairService: SairService) {}
 
   ngOnInit(): void {
     this.sub = this.route.paramMap.subscribe((p) => {
@@ -72,8 +91,12 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
       window.scrollTo({ top: 0 });
     });
 
+    // "Editar dados" da página inicial chega aqui com ?editar=1
+    this.abrirEdicao = this.route.snapshot.queryParamMap.get('editar') === '1';
+
     this.carregarPreferencias();
     this.carregarCartoes();
+    processarCancelamentosVencidos(this.http, environment.apiUrl, () => this.carregarDados());
     this.carregarDados();
   }
 
@@ -109,6 +132,7 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
     }).subscribe((r: any) => {
       this.carregando = false;
 
+      this.brutos = r;
       const p = r.perfil;
       if (p) {
         this.perfil.nome = [p.nome, p.sobrenome].filter(Boolean).join(' ') || this.perfil.nome;
@@ -117,16 +141,37 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
         this.perfil.telefone = p.telefone || p.celular || '';
         const nasc = p.data_nascimento || p.dataNascimento || '';
         this.perfil.nascimento = nasc ? String(nasc).split('T')[0].split('-').reverse().join('/') : '';
+        this.bruto = { nome: p.nome || '', sobrenome: p.sobrenome || '', nascimentoIso: nasc ? String(nasc).split('T')[0] : '' };
       }
 
       const pets: any[] = r.pets?.pets || r.pets?.Pets || [];
-      const planos: any[] = r.planos?.planos || [];
+      const planos: any[] = lerPlanosDoCliente(r.planos);
       const hoje = new Date().toISOString().split('T')[0];
       const proximas = (r.consultas?.consultas || [])
         .filter((c: any) => c.data_consulta && c.data_consulta.split('T')[0] >= hoje)
         .filter((c: any) => !String(c.status || '').toLowerCase().includes('cancel'))
         .sort((a: any, b: any) => String(a.data_consulta).localeCompare(String(b.data_consulta)));
 
+      this.falhouPets = !r.pets;
+      this.falhouConsultas = !r.consultas;
+      this.falhouPlanos = !r.planos;
+      this.petsResumo = pets.map((pet: any) => {
+        const pl = planos.find((x: any) => Number(x.id_pet) === Number(pet.id_pet));
+        const montado = pl ? montarPlano(pl.produto || {}) : null;
+        return {
+          id_pet: pet.id_pet,
+          nome: pet.nome,
+          especie: pet.especie || '',
+          foto_url: pet.foto_url || null,
+          idade: this.idadePet(pet.data_nascimento),
+          plano: montado ? montado.nome : '',
+          cor: montado ? montado.cor : ''
+        };
+      });
+      if (this.abrirEdicao && this.secao === 'dados') {
+        this.abrirEdicao = false;
+        this.comecarEdicao();
+      }
       this.qtdPets = pets.length;
       this.qtdPlanos = planos.length;
       this.qtdConsultas = proximas.length;
@@ -166,6 +211,56 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
   private formatarCpf(v: string): string {
     const n = String(v).replace(/\D/g, '');
     return n.length === 11 ? `${n.slice(0, 3)}.${n.slice(3, 6)}.${n.slice(6, 9)}-${n.slice(9)}` : n;
+  }
+
+  private idadePet(nasc: string | null | undefined): string {
+    if (!nasc) return '';
+    const [a, m, d] = String(nasc).split('T')[0].split('-').map(Number);
+    if (!a) return '';
+    const hoje = new Date();
+    let meses = (hoje.getFullYear() - a) * 12 + (hoje.getMonth() + 1 - m) - (hoje.getDate() < (d || 1) ? 1 : 0);
+    if (meses < 0) meses = 0;
+    if (meses < 12) return meses <= 1 ? (meses === 1 ? '1 mês' : 'Menos de 1 mês') : `${meses} meses`;
+    const anos = Math.floor(meses / 12);
+    return anos === 1 ? '1 ano' : `${anos} anos`;
+  }
+
+  numero(n: number, falhou: boolean): string {
+    return this.carregando ? '…' : falhou ? '—' : String(n);
+  }
+
+  // ---------- Segurança ----------
+
+  private brutos: any = {};
+
+  // Navegador e sistema deste aparelho (só o que o próprio navegador informa)
+  get aparelho(): string {
+    const ua = navigator.userAgent;
+    const nav = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Chrome\//.test(ua) ? 'Chrome'
+      : /Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'Navegador';
+    const so = /Windows/.test(ua) ? 'Windows' : /Android/.test(ua) ? 'Android' : /iPhone|iPad/.test(ua) ? 'iOS'
+      : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : 'seu sistema';
+    return `${nav} no ${so}`;
+  }
+
+  baixarDados(): void {
+    const r = this.brutos || {};
+    const dados = {
+      geradoEm: new Date().toISOString(),
+      perfil: { ...this.perfil },
+      pets: r.pets?.pets || r.pets?.Pets || [],
+      planos: lerPlanosDoCliente(r.planos),
+      consultas: r.consultas?.consultas || [],
+      cartoesSalvos: this.cartoes.map((c: any) => ({ bandeira: c.bandeira, final: c.final, validade: c.validade })),
+      preferenciasDeAvisos: { ...this.prefs }
+    };
+    const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `meus-dados-petvitaliz-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   plural(n: number, um: string, varios: string, nenhum: string): string {
@@ -323,11 +418,80 @@ export class MinhaContaComponent implements OnInit, OnDestroy {
 
   // ---------- Sair ----------
   sair(): void {
-    if (!confirm('Deseja realmente sair da sua conta?')) return;
-    this.http.get(`${environment.apiUrl}/user/logout`, { withCredentials: true }).subscribe({
-      error: (err) => console.error('Erro ao realizar logout no servidor:', err)
-    });
-    localStorage.removeItem('usuarioLogado');
-    this.router.navigate(['/']);
+    this.sairService.pedir();
+  }
+
+  // ---------- Editar dados pessoais ----------
+
+  comecarEdicao(): void {
+    const partes = this.perfil.nome.trim().split(/\s+/);
+    this.edicao = {
+      nome: this.bruto.nome || partes[0] || '',
+      sobrenome: this.bruto.nome ? this.bruto.sobrenome : partes.slice(1).join(' '),
+      telefone: this.mascaraTelefone(this.perfil.telefone),
+      nascimento: this.bruto.nascimentoIso
+    };
+    this.erroDados = '';
+    this.okDados = '';
+    this.editando = true;
+  }
+
+  mascaraTelefone(valor: string): string {
+    const d = String(valor || '').replace(/\D/g, '').slice(0, 11);
+    if (d.length <= 2) return d.length ? `(${d}` : '';
+    if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  }
+
+  salvarDados(): void {
+    const e = this.edicao;
+    const tel = e.telefone.replace(/\D/g, '');
+    if (!e.nome.trim()) { this.erroDados = 'Informe seu nome.'; return; }
+    if (tel && tel.length < 10) { this.erroDados = 'Telefone incompleto. Use DDD + número.'; return; }
+    if (e.nascimento && e.nascimento > this.hojeIso) { this.erroDados = 'A data de nascimento não pode ser no futuro.'; return; }
+
+    const payload = {
+      nome: e.nome.trim(),
+      sobrenome: e.sobrenome.trim(),
+      email: this.perfil.email,
+      telefone: tel || null,
+      data_nascimento: e.nascimento || null
+    };
+
+    // O servidor ainda não documenta a rota de edição do cliente: tenta as mais prováveis
+    const rotas = ['/user/perfil-dados/atualizar', '/user/atualizar/perfil', '/user/perfil/atualizar'];
+    this.salvandoDados = true;
+    this.erroDados = '';
+
+    const tentar = (i: number): void => {
+      if (i >= rotas.length) {
+        this.salvandoDados = false;
+        this.erroDados = 'A edição de dados ainda não está disponível no servidor. Fale com o suporte para corrigir.';
+        return;
+      }
+      this.http.put<any>(`${environment.apiUrl}${rotas[i]}`, payload, { withCredentials: true }).subscribe({
+        next: (res) => {
+          this.salvandoDados = false;
+          this.editando = false;
+          this.bruto = { nome: payload.nome, sobrenome: payload.sobrenome, nascimentoIso: e.nascimento };
+          this.perfil.nome = [payload.nome, payload.sobrenome].filter(Boolean).join(' ');
+          this.perfil.telefone = tel;
+          this.perfil.nascimento = e.nascimento ? e.nascimento.split('-').reverse().join('/') : '';
+          this.okDados = res?.mensagem || 'Dados atualizados.';
+          try {
+            const u = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+            localStorage.setItem('usuarioLogado', JSON.stringify({ ...u, nome: this.perfil.nome }));
+          } catch { /* sem armazenamento */ }
+        },
+        error: (err) => {
+          const naoExiste = err.status === 404 || err.status === 405 || /rota não encontrada/i.test(err.error?.mensagem || '');
+          if (naoExiste) { tentar(i + 1); return; }
+          this.salvandoDados = false;
+          this.erroDados = err.error?.mensagem || 'Não foi possível salvar. Tente de novo.';
+        }
+      });
+    };
+    tentar(0);
   }
 }

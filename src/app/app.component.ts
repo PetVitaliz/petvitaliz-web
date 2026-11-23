@@ -3,6 +3,7 @@ import { NgIf } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { HeaderComponent } from './components/header/header.component';
+import { ConfirmarSairComponent } from './components/confirmar-sair/confirmar-sair.component';
 import { FooterComponent } from './components/footer/footer.component';
 
 import { HeaderFuncionarioComponent } from './pages/funcionario/header-funcionario/header-funcionario.component';
@@ -11,7 +12,7 @@ import { HeaderAdmComponent } from './pages/adm/header-adm/header-adm.component'
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
+  imports: [ConfirmarSairComponent, 
     RouterOutlet,
     NgIf,
     HeaderComponent,
@@ -37,7 +38,7 @@ export class AppComponent {
   // Páginas de acesso (login e cadastro): tela cheia, sem header/footer
   isAuthRoute(): boolean {
     const rota = this.router.url.split('?')[0].split('#')[0];
-    return rota === '/login' || rota === '/cadastro';
+    return ['/login', '/cadastro', '/esqueci-senha', '/reset-senha'].includes(rota);
   }
 
   isUsuarioRoute(): boolean {

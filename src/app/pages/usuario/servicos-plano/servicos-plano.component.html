@@ -1,0 +1,111 @@
+<main class="servicos">
+
+  <header class="topo">
+    <h1>Serviços</h1>
+    <p>Veja o que o plano de cada pet cobre e agende em um clique.</p>
+  </header>
+
+  @if (carregando) {
+    <p class="carregando">Carregando serviços…</p>
+  } @else if (!pets.length) {
+    <section class="vazio">
+      <span class="vazio-icone"><app-icone-pet especie=""></app-icone-pet></span>
+      <h2>Nenhum pet cadastrado</h2>
+      <p>Cadastre um pet para ver os serviços disponíveis no plano dele.</p>
+      <a class="btn btn-amarelo" routerLink="/user/listar/pet">Adicionar pet</a>
+    </section>
+  } @else {
+
+    <div class="barra">
+      <div class="pets" role="radiogroup" aria-label="Escolha o pet">
+        @for (p of pets; track p.id_pet) {
+          <button type="button" class="pet" role="radio" [attr.aria-checked]="p.id_pet === petId" [class.selecionado]="p.id_pet === petId" (click)="petId = p.id_pet">
+            <span class="pet-foto">
+              @if (p.foto_url) { <img [src]="p.foto_url" [alt]="'Foto de ' + p.nome" /> } @else { <app-icone-pet [especie]="p.especie"></app-icone-pet> }
+            </span>
+            <span class="pet-texto">
+              <strong>{{ p.nome }}</strong>
+              <small [class.com-plano]="p.planId">{{ p.planId ? nomesPlano[p.planId] : 'Sem plano' }}</small>
+            </span>
+          </button>
+        }
+      </div>
+      <label class="busca">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" [(ngModel)]="busca" placeholder="Buscar serviço" aria-label="Buscar serviço" />
+      </label>
+    </div>
+
+    @if (pet && !pet.planId) {
+      <section class="aviso">
+        <span class="coroa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+        <div>
+          <strong>{{ pet.nome }} ainda não tem plano</strong>
+          <p>Contrate um plano para usar consultas, exames, banho e tosa e mais.</p>
+        </div>
+        <button type="button" class="btn btn-amarelo" (click)="irParaPlanos()">Contratar plano</button>
+      </section>
+    }
+
+    <div class="grade">
+      @for (s of lista; track s.id) {
+        <button type="button" class="card" [class.bloq]="cota(s) === null" [class.sem-foto]="!fotos[s.id]" (click)="abrir(s)"
+          [style.background-image]="fotos[s.id] ? 'url(' + fotos[s.id] + ')' : null">
+          @if (!fotos[s.id]) {
+            <span class="card-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v6a5 5 0 0 0 10 0V3"/><path d="M11 14v1.5a5 5 0 0 0 10 0V12"/><circle cx="21" cy="10" r="2"/></svg></span>
+          }
+          @if (cota(s) === null) { <span class="cadeado"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span> }
+          <span class="card-info">
+            <strong>{{ s.nome }}</strong>
+            <small>{{ s.descricao }}</small>
+            @if (cota(s); as q) {
+              <span class="selo">{{ textoCota(q) }}</span>
+            } @else {
+              <span class="selo selo-bloq">{{ pet?.planId ? 'A partir do ' + planoMinimo(s) : 'Precisa de plano' }}</span>
+            }
+          </span>
+          @if (cota(s) !== null) {
+            <span class="agendar">Agendar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          }
+        </button>
+      } @empty {
+        <p class="nada">Nenhum serviço encontrado para “{{ busca }}”.</p>
+      }
+    </div>
+
+    @if (faltando; as f) {
+      <section class="upgrade">
+        <span class="coroa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+        <div>
+          <strong>Quer {{ f.nomes.toLowerCase() }} para {{ pet?.nome }}?</strong>
+          <p>Esses serviços estão no {{ f.plano }}.</p>
+        </div>
+        <button type="button" class="btn btn-amarelo" (click)="irParaPlanos()">Mudar de plano</button>
+      </section>
+    }
+
+    <ol class="passos">
+      <li><span>1</span><div><strong>Escolha o serviço</strong><small>Cada pet tem a cobertura do seu plano</small></div></li>
+      <li><span>2</span><div><strong>Agende</strong><small>Data e horário já com o pet escolhido</small></div></li>
+      <li><span>3</span><div><strong>Acompanhe</strong><small>Tudo fica em Consultas</small></div></li>
+    </ol>
+  }
+
+  @if (bloqueado) {
+    <div class="fundo" (click)="bloqueado = null">
+      <div class="janela" role="dialog" aria-modal="true" [attr.aria-label]="bloqueado.nome" (click)="$event.stopPropagation()">
+        <span class="janela-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        <h2>{{ bloqueado.nome }}</h2>
+        <p>
+          @if (pet?.planId) {
+            Não está incluso no plano de {{ pet?.nome }}. Disponível a partir do {{ planoMinimo(bloqueado) }}.
+          } @else {
+            {{ pet?.nome }} ainda não tem plano. {{ bloqueado.nome }} está disponível a partir do {{ planoMinimo(bloqueado) }}.
+          }
+        </p>
+        <button type="button" class="btn btn-amarelo cheio" (click)="irParaPlanos()">{{ pet?.planId ? 'Mudar de plano' : 'Ver planos' }}</button>
+        <button type="button" class="btn-texto" (click)="bloqueado = null">Agora não</button>
+      </div>
+    </div>
+  }
+</main>

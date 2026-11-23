@@ -1,0 +1,131 @@
+<div class="fundo" (click)="processando ? null : fechar.emit()">
+  <div class="janela" role="dialog" aria-modal="true" [attr.aria-label]="modo === 'mudar' ? 'Mudar de plano' : 'Gerenciar assinatura'" (click)="$event.stopPropagation()">
+
+    <div class="topo">
+      <h2>{{ modo === 'mudar' ? 'Mudar de plano' : 'Gerenciar assinatura' }}</h2>
+      <button type="button" class="fechar" (click)="fechar.emit()" [disabled]="processando" aria-label="Fechar"><span class="ms">close</span></button>
+    </div>
+
+    <div class="atual" [style.--cor]="plano.cor">
+      <span class="coroa"><svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+      <span><small>Plano de {{ pet.nome }}</small><strong>{{ plano.nome }}</strong></span>
+      <span class="atual-preco">{{ moeda(ciclo === 'anual' ? plano.anual : plano.mensal) }}<small>/mês</small></span>
+    </div>
+
+    @if (erro) { <p class="erro"><span class="ms">error</span> {{ erro }}</p> }
+
+    <!-- ================= Gerenciar ================= -->
+    @if (modo === 'gerenciar' && assinatura && cancelado) {
+      <div class="confirmar">
+        <p><strong>Plano cancelado.</strong> {{ pet.nome }} continua com o {{ plano.nome }} até {{ dataCurta(fimPeriodo) }} ({{ dias }}). Depois disso, não há novas cobranças{{ assinatura.cancelamento?.excluirPet ? ' e ' + pet.nome + ' será excluído' : '' }}.</p>
+        <div class="acoes">
+          <button type="button" class="btn btn-azul cheio" (click)="manterPlano()">{{ assinatura.cancelamento?.excluirPet ? 'Desfazer exclusão e manter plano' : 'Manter meu plano' }}</button>
+        </div>
+      </div>
+    } @else if (modo === 'gerenciar' && assinatura) {
+
+      @if (trocaAgendada) {
+        <p class="info"><span class="ms">event_repeat</span> Muda para o {{ trocaAgendada.nome }} em {{ dataCurta(proxima) }}.</p>
+      }
+
+      <h3>Forma de pagamento</h3>
+      <div class="opcoes">
+        @for (m of ['cartao', 'pix', 'boleto']; track m) {
+          <button type="button" class="opcao" [class.ativa]="metodoProxima === m" (click)="alterarMetodo($any(m))">
+            <span class="ms">{{ m === 'cartao' ? 'credit_card' : m === 'pix' ? 'qr_code_2' : 'barcode' }}</span>
+            <span>{{ nomeMetodo($any(m), m === 'cartao' ? assinatura.cartaoFinal : undefined) }}</span>
+            @if (assinatura.metodo === m) { <em>Atual</em> }
+          </button>
+        }
+      </div>
+      <p class="nota">Alterar para a próxima cobrança.</p>
+
+      <h3>Próxima cobrança</h3>
+      <div class="linha">
+        <span><strong>{{ dataCurta(proxima) }}</strong><small>{{ nomeMetodo(metodoProxima, assinatura.cartaoFinal) }}</small></span>
+        <strong class="valor">{{ moeda(precoCiclo(plano, cicloProximo)) }}</strong>
+      </div>
+
+      <h3>Ciclo de cobrança</h3>
+      <div class="opcoes duas">
+        <button type="button" class="opcao" [class.ativa]="cicloProximo === 'mensal'" (click)="alterarCiclo('mensal')">
+          <span>Mensal · {{ moeda(plano.mensal) }}/mês</span> @if (ciclo === 'mensal') { <em>Atual</em> }
+        </button>
+        <button type="button" class="opcao" [class.ativa]="cicloProximo === 'anual'" (click)="alterarCiclo('anual')">
+          <span>Anual · {{ moeda(plano.anual) }}/mês</span> @if (ciclo === 'anual') { <em>Atual</em> }
+        </button>
+      </div>
+      <p class="nota">A troca de ciclo vale a partir da próxima renovação.</p>
+
+      <h3>Faturas</h3>
+      @if (assinatura.faturas.length) {
+        <ul class="faturas">
+          @for (f of assinatura.faturas; track f.id) {
+            <li>
+              <span><strong>{{ f.descricao }}</strong><small>Pago em {{ dataCurta(f.data) }} · {{ f.metodo }}</small></span>
+              <span class="fatura-valor">{{ moeda(f.valor) }}<em>Paga</em></span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="nota">As faturas aparecem aqui a partir da próxima cobrança.</p>
+      }
+
+      <div class="acoes">
+        <button type="button" class="btn btn-azul" (click)="modo = 'mudar'">Mudar de plano</button>
+        @if (!confirmandoCancelamento) {
+          <button type="button" class="btn btn-perigo" (click)="confirmandoCancelamento = true">Cancelar plano</button>
+        }
+      </div>
+
+      @if (confirmandoCancelamento) {
+        <div class="confirmar">
+          <p><strong>Cancelar o {{ plano.nome }}?</strong> O plano não será renovado, mas {{ pet.nome }} continua usando consultas, vacinas e os demais serviços até {{ dataCurta(fimPeriodo) }} ({{ dias }}). O valor já pago não é devolvido.</p>
+          <div class="acoes">
+            <button type="button" class="btn btn-perigo cheio" [disabled]="processando" (click)="cancelar()">Confirmar cancelamento</button>
+            <button type="button" class="btn btn-contorno cheio" [disabled]="processando" (click)="confirmandoCancelamento = false">Manter plano</button>
+          </div>
+        </div>
+      }
+    }
+
+    <!-- ================= Mudar de plano ================= -->
+    @if (modo === 'mudar') {
+      @if (pagandoDiferenca && escolhido) {
+        <app-pagamento-pendente [metodo]="$any(assinatura?.metodo)" [valor]="diferenca" (confirmado)="aplicarUpgrade()"></app-pagamento-pendente>
+      } @else {
+        <h3>Escolha o novo plano</h3>
+        <div class="planos">
+          @for (p of outrosPlanos; track p.id_produto) {
+            <button type="button" class="plano" [style.--cor]="p.cor" [class.ativo]="escolhido?.id_produto === p.id_produto"
+              [disabled]="ehAtual(p)" (click)="escolhido = p">
+              <span class="coroa pequena"><svg viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg></span>
+              <span class="plano-texto"><strong>{{ p.nomeCurto }}</strong><small>{{ p.resumo }}</small></span>
+              @if (ehAtual(p)) { <em class="selo">Plano atual</em> }
+              @else { <span class="plano-preco">{{ moeda(ciclo === 'anual' ? p.anual : p.mensal) }}<small>/mês</small></span> }
+            </button>
+          }
+        </div>
+
+        @if (escolhido && !ehAtual(escolhido)) {
+          <div class="resumo">
+            @if (ehUpgrade(escolhido)) {
+              <p>A mudança vale na hora: você paga só a diferença dos dias que faltam no ciclo atual.</p>
+              <div class="linha"><span>Diferença a pagar agora</span><strong class="valor">{{ moeda(diferenca) }}</strong></div>
+              <div class="linha"><span>Pagamento</span><strong>{{ nomeMetodo(assinatura!.metodo, assinatura!.cartaoFinal) }}</strong></div>
+            } @else {
+              <p>A mudança para um plano menor vale na próxima renovação, em {{ dataCurta(proxima) }}. Até lá {{ pet.nome }} continua com o {{ plano.nome }}.</p>
+            }
+          </div>
+        }
+
+        <div class="acoes">
+          <button type="button" class="btn btn-azul" [disabled]="!escolhido || ehAtual(escolhido) || processando" (click)="confirmarMudanca()">
+            {{ processando ? 'Mudando…' : escolhido && !ehAtual(escolhido) ? 'Mudar para ' + escolhido.nomeCurto : 'Confirmar mudança' }}
+          </button>
+          <button type="button" class="btn btn-contorno" [disabled]="processando" (click)="fechar.emit()">Manter plano atual</button>
+        </div>
+      }
+    }
+  </div>
+</div>

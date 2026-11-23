@@ -11,7 +11,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './reset-senha.component.html',
-  styleUrl: './reset-senha.component.css'
+  styleUrls: ['../login/login.component.css', '../recuperar-senha.css']
 })
 export class ResetSenhaComponent {
   senha = '';
@@ -25,6 +25,10 @@ export class ResetSenhaComponent {
   carregando = false;
 
   constructor(private router: Router, private http: HttpClient) {}
+
+  get temLetraENumero(): boolean {
+    return /[a-zA-Z]/.test(this.senha) && /\d/.test(this.senha);
+  }
 
   redefinirSenha() {
     this.erro = '';

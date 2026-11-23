@@ -10,12 +10,15 @@ import { DataMaskDirective } from './data-mask.directive';
 import { IconePetComponent } from '../../../components/icone-pet/icone-pet.component';
 import { PlanoCheckoutComponent } from '../../../components/plano-checkout/plano-checkout.component';
 import { moeda } from '../../../core/utils/montar-plano';
+import { lerPlanosDoCliente } from '../../../core/utils/planos-resposta';
+import { agendarCancelamento, desfazerCancelamento, diasRestantes, fimDoPeriodo, garantirAssinatura, petsParaExcluir, processarCancelamentosVencidos, registrarContratacao, textoDias } from '../../../core/utils/assinaturas';
+import { ExcluirPetComponent } from '../../../components/excluir-pet/excluir-pet.component';
 import { PagamentoPendenteComponent } from '../../../components/pagamento-pendente/pagamento-pendente.component';
 
 @Component({
   selector: 'app-listar-cadastro-pet',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, DataMaskDirective, IconePetComponent, PlanoCheckoutComponent, PagamentoPendenteComponent],
+  imports: [CommonModule, FormsModule, RouterModule, DataMaskDirective, IconePetComponent, PlanoCheckoutComponent, PagamentoPendenteComponent, ExcluirPetComponent],
   templateUrl: './listar-cadastro-pet.component.html',
   styleUrl: './listar-cadastro-pet.component.css'
 })
@@ -50,6 +53,10 @@ export class ListarCadastroPetComponent implements OnInit {
   // Depois de concluir: tela de processando / sucesso dentro da própria janela
   finalizacao: 'processando' | 'aguardando' | 'sucesso' | 'erro-plano' | null = null;
   metodoFinal: 'cartao' | 'pix' | 'boleto' = 'cartao';
+  private cicloFinal: 'mensal' | 'anual' = 'mensal';
+  private cartaoFinal = '';
+  private bandeiraFinal = '';
+  motivoErroPlano = '';
   private idProdutoFinal = 0;
   resumoFinal: { pet: string; plano: string; ciclo: string; metodo: string; total: number; idPet: number | null } | null = null;
 
@@ -160,6 +167,12 @@ export class ListarCadastroPetComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDadosLocais();
+    this.saidas = petsParaExcluir();
+    processarCancelamentosVencidos(this.http, environment.apiUrl, () => {
+      this.saidas = petsParaExcluir();
+      this.buscarPetsDoBanco();
+      this.buscarPlanoAtivoReal();
+    });
     this.buscarPetsDoBanco();
     this.buscarPlanoAtivoReal();
   }
@@ -190,11 +203,12 @@ export class ListarCadastroPetComponent implements OnInit {
   buscarPlanoAtivoReal(): void {
     this.http.get<any>(`${environment.apiUrl}/user/planos`, { withCredentials: true }).subscribe({
       next: (response: any) => {
-        const planos: any[] = response?.planos || [];
+        const planos: any[] = lerPlanosDoCliente(response);
         this.planosPorPet = {};
         planos.forEach((p: any) => {
           this.planosPorPet[p.id_pet] = {
             nome: nomeDoPlano(p.produto?.nome) || 'Plano',
+            id_produto: p.produto?.id_produto,
             preco: `R$ ${formatarPreco(p.produto?.preco)}`,
             descricao: p.produto?.descricao
           };
@@ -405,6 +419,7 @@ export class ListarCadastroPetComponent implements OnInit {
     this.escolherPlano = false;
     this.finalizacao = null;
     this.resumoFinal = null;
+    this.motivoErroPlano = '';
     this.erro = '';
     this.sexo = '';
     this.peso = null;
@@ -514,10 +529,18 @@ export class ListarCadastroPetComponent implements OnInit {
     };
     this.idProdutoFinal = Number(c.plano.id_produto);
     this.metodoFinal = c.metodo;
+    this.cicloFinal = c.ciclo;
+    this.cartaoFinal = c.cartao.numero.replace(/\D/g, '').slice(-4);
+    this.bandeiraFinal = c.bandeira || 'Cartão';
     this.finalizacao = 'processando';
 
     const ativar = (idPet: number | null) => {
-      if (!idPet) { this.finalizacao = 'erro-plano'; this.salvando = false; return; }
+      if (!idPet) {
+        this.motivoErroPlano = 'Não encontramos o pet recém-cadastrado na sua lista.';
+        this.finalizacao = 'erro-plano';
+        this.salvando = false;
+        return;
+      }
       this.resumoFinal!.idPet = idPet;
       // Pix e boleto: mostra o QR Code / linha digitável e espera a confirmação
       if (this.metodoFinal !== 'cartao') {
@@ -547,8 +570,30 @@ export class ListarCadastroPetComponent implements OnInit {
     if (!idPet) { this.finalizacao = 'erro-plano'; return; }
     this.http.post(`${environment.apiUrl}/user/planos/pagamento`, { id_produto: this.idProdutoFinal, id_pet: idPet }, { withCredentials: true })
       .subscribe({
-        next: () => { this.finalizacao = 'sucesso'; this.salvando = false; },
-        error: () => { this.finalizacao = 'erro-plano'; this.salvando = false; }
+        next: () => {
+          registrarContratacao({
+            idPet,
+            idProduto: this.idProdutoFinal,
+            plano: this.resumoFinal?.plano || 'Plano',
+            ciclo: this.cicloFinal,
+            metodo: this.metodoFinal,
+            cartaoFinal: this.metodoFinal === 'cartao' ? this.cartaoFinal : undefined,
+            bandeira: this.metodoFinal === 'cartao' ? this.bandeiraFinal : undefined,
+            valorPago: this.resumoFinal?.total || 0
+          });
+          // Fecha a janela e mostra o plano já ativo em "Meu plano"
+          this.salvando = false;
+          this.modalCadastroAberto = false;
+          this.limparFormularioCadastro();
+          this.router.navigate(['/user/meu-plano'], { queryParams: { ativado: idPet } });
+        },
+        error: (err) => {
+          console.error('Erro ao ativar o plano do pet:', err);
+          this.motivoErroPlano = err?.error?.mensagem || err?.error?.message || err?.error?.erro
+            || `O servidor recusou a ativação (erro ${err?.status || 'de conexão'}).`;
+          this.finalizacao = 'erro-plano';
+          this.salvando = false;
+        }
       });
   }
 
@@ -630,13 +675,83 @@ export class ListarCadastroPetComponent implements OnInit {
     this.fotoArquivoEdicao = null;
   }
 
+  // ---------- Excluir pet ----------
+
+  // Pets com exclusão agendada (saem junto com o plano no fim do período pago)
+  saidas: Record<number, Date> = {};
+  confirmandoExclusao = false;
+  excluindo = false;
+  infoExclusao = { plano: '', ciclo: 'mensal', fim: '', dias: '' };
+
+  saidaDoPet(p: any): string {
+    const d = p ? this.saidas[p.id_pet] : null;
+    return d ? d.toLocaleDateString('pt-BR') : '';
+  }
+
+  diasParaSaida(p: any): string {
+    const d = p ? this.saidas[p.id_pet] : null;
+    if (!d) return '';
+    const hoje = new Date();
+    const dias = Math.max(0, Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+      - new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()).getTime()) / 86400000));
+    return textoDias(dias);
+  }
+
   excluirPet(): void {
-    if (!this.petSelecionado || !confirm(`Excluir o histórico de ${this.petSelecionado.nome}?`)) return;
-    this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${this.petSelecionado.id_pet}`, { withCredentials: true })
+    const pet = this.petSelecionado;
+    if (!pet) return;
+    const plano = this.planosPorPet[pet.id_pet];
+    if (plano) {
+      const a = garantirAssinatura(pet.id_pet, { id_produto: plano.id_produto, nome: plano.nome });
+      this.infoExclusao = {
+        plano: plano.nome,
+        ciclo: a.ciclo === 'anual' ? 'anual' : 'mensal',
+        fim: fimDoPeriodo(a).toLocaleDateString('pt-BR'),
+        dias: textoDias(diasRestantes(a)).replace(/^./, (c) => c.toUpperCase())
+      };
+    } else {
+      this.infoExclusao = { plano: '', ciclo: '', fim: '', dias: '' };
+    }
+    this.confirmandoExclusao = true;
+  }
+
+  confirmarExclusao(): void {
+    const pet = this.petSelecionado;
+    if (!pet) return;
+    const plano = this.planosPorPet[pet.id_pet];
+
+    // Com plano: não apaga agora. Cancela a renovação e agenda a saída do pet para o fim do período pago
+    if (plano) {
+      const a = agendarCancelamento(pet.id_pet, { id_produto: plano.id_produto, nome: plano.nome }, true);
+      this.saidas = petsParaExcluir();
+      this.confirmandoExclusao = false;
+      this.sucesso = `${pet.nome} será excluído em ${fimDoPeriodo(a).toLocaleDateString('pt-BR')}, junto com o ${plano.nome}. Até lá, continua usando o plano normalmente.`;
+      return;
+    }
+
+    this.excluindo = true;
+    this.http.delete(`${environment.apiUrl}/user/listar/pet/delete/${pet.id_pet}`, { withCredentials: true })
       .subscribe({
-        next: () => { this.sucesso = 'Pet removido.'; this.buscarPetsDoBanco(); },
-        error: (err) => this.exibirErro(mensagemDeErro(err, 'Não foi possível excluir o registro.'))
+        next: () => {
+          this.excluindo = false;
+          this.confirmandoExclusao = false;
+          this.sucesso = `${pet.nome} foi excluído.`;
+          this.buscarPetsDoBanco();
+        },
+        error: (err) => {
+          this.excluindo = false;
+          this.confirmandoExclusao = false;
+          this.exibirErro(mensagemDeErro(err, 'Não foi possível excluir o pet.'));
+        }
       });
+  }
+
+  desfazerExclusao(): void {
+    const pet = this.petSelecionado;
+    if (!pet) return;
+    desfazerCancelamento(pet.id_pet);
+    this.saidas = petsParaExcluir();
+    this.sucesso = `Pronto! ${pet.nome} continua com você e o plano volta a renovar normalmente.`;
   }
 
   private exibirErro(msg: string) {

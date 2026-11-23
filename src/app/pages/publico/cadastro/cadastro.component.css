@@ -379,8 +379,8 @@
   margin-top: 24px;
   border: none;
   border-radius: 12px;
-  background: #21479B;
-  color: #ffffff;
+  background: #FECA3E;
+  color: #183B72;
   font-size: 15px;
   font-weight: 700;
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -389,7 +389,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 12px 22px rgba(33, 71, 155, 0.28);
+  box-shadow: 0 10px 22px rgba(254, 202, 62, 0.35);
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -398,7 +398,7 @@
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: #183C98;
+  background: #F5BD25;
   transform: translateY(-2px);
 }
 
@@ -414,8 +414,8 @@
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #ffffff;
+  border: 2px solid rgba(24, 59, 114, 0.25);
+  border-top-color: #183B72;
   border-radius: 50%;
   animation: girar 0.8s linear infinite;
 }
@@ -513,3 +513,7 @@
     font-size: 16px;
   }
 }
+
+/* Logo da marca no painel */
+.brand-logo { display: inline-block; margin-bottom: 34px; }
+.brand-logo img { display: block; width: 190px; height: auto; }

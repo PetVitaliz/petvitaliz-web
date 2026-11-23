@@ -171,6 +171,9 @@
   font-weight: 700;
 }
 
+.etiqueta.saida { background: #FCEBEB; color: #B3261E; }
+.alerta.saida { background: #FFF5D6; color: #6B4E00; margin: 0 0 16px; }
+.alerta.saida button { flex-shrink: 0; margin-left: auto; padding: 8px 14px; border: none; border-radius: 10px; background: #183B72; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 .etiqueta.sem { color: #71809A; font-weight: 600; }
 .etiqueta[data-nivel='bronze'] { background: #F6E7DC; color: #8A4B1F; }
 .etiqueta[data-nivel='prata'] { background: #EEF1F5; color: #4F5B6C; }
@@ -520,6 +523,8 @@
 .final-resumo div { padding: 10px 12px; border-radius: 12px; background: #F6F8FC; }
 .final-resumo dt { font-size: 12px; font-weight: 600; color: #71809A; }
 .final-resumo dd { margin: 2px 0 0; font-size: 14px; font-weight: 700; }
+.motivo { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px !important; padding: 10px 12px; border-radius: 12px; background: #FCEBEB; color: #B3261E !important; font-size: 13px; font-weight: 600; }
+.motivo .ms { font-size: 18px; }
 .final-botoes { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
 
 /* ---------- Responsivo ---------- */

@@ -1,65 +1,106 @@
-<section class="esqueci-page">
-  <div class="esqueci-card">
-    <h2>Esqueceu sua senha?</h2>
+<section class="login-page">
 
-    <p class="subtitle" *ngIf="!enviouCodigo">
-      Insira seu e-mail cadastrado e enviaremos o código de verificação para redefinir sua senha.
-    </p>
-    <p class="subtitle" *ngIf="enviouCodigo">
-      Insira o código de 6 dígitos enviado para o e-mail: <strong>{{ email }}</strong>
-    </p>
+  <a routerLink="/login" class="btn-voltar">
+    <span class="ms">arrow_back</span>
+    Voltar para o login
+  </a>
 
-    <form (ngSubmit)="enviarLink()" *ngIf="!enviouCodigo">
-      <div class="form-group">
-        <label for="email">E-mail</label>
-        <div class="input-box">
-          <span class="material-icons input-icon">mail</span>
-          <input type="email" id="email" name="email" placeholder="Coloque seu e-mail" [(ngModel)]="email">
-        </div>
+  <div class="login-shell">
+
+    <!-- Painel da marca (some no celular) -->
+    <aside class="brand-panel">
+      <span class="deco deco-1"></span>
+      <span class="deco deco-2"></span>
+
+      <div class="brand-top">
+        <a routerLink="/" class="brand-logo" aria-label="PetVitaliz, ir para a home"><img src="assets/img/logo-footer.png" alt="PetVitaliz" /></a>
+        <h1>Recupere seu acesso em poucos passos</h1>
+        <p>Enviamos um código para o seu e-mail e você cria uma nova senha.</p>
       </div>
 
-      <p class="erro" *ngIf="erro">{{ erro }}</p>
-      <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+      <ol class="perfis passos">
+        <li [class.atual]="!enviouCodigo" [class.feito]="enviouCodigo">
+          <span class="perfil-icon"><span class="ms" *ngIf="enviouCodigo">check</span><span class="passo-num" *ngIf="!enviouCodigo">1</span></span>
+          <div><strong>Seu e-mail</strong><small>O mesmo do cadastro</small></div>
+        </li>
+        <li [class.atual]="enviouCodigo">
+          <span class="perfil-icon"><span class="passo-num">2</span></span>
+          <div><strong>Código de verificação</strong><small>6 dígitos enviados por e-mail</small></div>
+        </li>
+        <li>
+          <span class="perfil-icon"><span class="passo-num">3</span></span>
+          <div><strong>Nova senha</strong><small>E pronto, é só entrar</small></div>
+        </li>
+      </ol>
 
-      <button type="submit" class="btn-submit" [disabled]="carregando">
-        {{ carregando ? 'Enviando...' : 'Enviar código' }}
-        <span>→</span>
-      </button>
-    </form>
+      <p class="brand-footer">
+        <span class="ms">verified_user</span>
+        Ambiente seguro e dados protegidos
+      </p>
+    </aside>
 
-    <form (ngSubmit)="verificarCodigo()" *ngIf="enviouCodigo">
-      <div class="form-group">
-        <label for="codigoOtp">Código de Verificação</label>
-        <div class="input-box">
-          <span class="material-icons input-icon">lock_open</span>
-          <input type="text" id="codigoOtp" name="codigoOtp" placeholder="Digite o código de 6 dígitos" [(ngModel)]="codigoOtp" maxlength="6">
-        </div>
-      </div>
+    <!-- Formulário -->
+    <div class="form-panel">
 
-      <p class="erro" *ngIf="erro">{{ erro }}</p>
-      <p class="sucesso" *ngIf="sucesso">{{ sucesso }}</p>
+      <ng-container *ngIf="!enviouCodigo">
+        <span class="etapa">Passo 1 de 3</span>
+        <h2>Esqueceu sua senha?</h2>
+        <p class="subtitle">Informe o e-mail cadastrado e enviaremos um código para criar uma nova senha.</p>
 
-      <button type="submit" class="btn-submit" [disabled]="carregando">
-        {{ carregando ? 'Validando...' : 'Confirmar Código' }}
-        <span>→</span>
-      </button>
-    </form>
+        <form (ngSubmit)="enviarLink()">
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <div class="input-box">
+              <span class="ms input-icon">mail</span>
+              <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" [(ngModel)]="email" (ngModelChange)="erro = ''">
+            </div>
+          </div>
 
-    <a routerLink="/login" class="back-login">
-      <span class="material-icons">arrow_back</span>
-      Voltar para o login
-    </a>
+          <p class="erro" *ngIf="erro"><span class="ms">error</span> {{ erro }}</p>
 
-    <div class="security-box">
-      <div class="security-icon">
-        <span class="material-icons">verified_user</span>
-      </div>
-      <div class="security-content">
-        <strong>AMBIENTE SEGURO</strong>
-        <p>
-          Utilizamos protocolos avançados de segurança para proteger suas informações e garantir uma experiência confiável dentro da plataforma PetVitaliz.
-        </p>
-      </div>
+          <button type="submit" class="btn-login" [disabled]="carregando">
+            <ng-container *ngIf="!carregando">Enviar código <span class="ms">arrow_forward</span></ng-container>
+            <ng-container *ngIf="carregando"><span class="spinner"></span> Enviando…</ng-container>
+          </button>
+        </form>
+      </ng-container>
+
+      <ng-container *ngIf="enviouCodigo">
+        <span class="etapa">Passo 2 de 3</span>
+        <h2>Digite o código</h2>
+        <p class="subtitle">Enviamos um código de 6 dígitos para <strong>{{ email }}</strong>. Confira também a caixa de spam.</p>
+
+        <form (ngSubmit)="verificarCodigo()">
+          <div class="form-group">
+            <label for="codigoOtp">Código de verificação</label>
+            <input class="codigo-input" type="text" id="codigoOtp" name="codigoOtp" inputmode="numeric" autocomplete="one-time-code"
+              placeholder="••••••" maxlength="6" [ngModel]="codigoOtp" (ngModelChange)="codigoOtp = somenteDigitos($event); erro = ''">
+          </div>
+
+          <div class="acoes-codigo">
+            <button type="button" class="link-btn" (click)="trocarEmail()">Trocar e-mail</button>
+            <button type="button" class="link-btn" [disabled]="carregando || espera > 0" (click)="reenviar()">
+              {{ espera > 0 ? 'Reenviar em ' + espera + 's' : 'Reenviar código' }}
+            </button>
+          </div>
+
+          <p class="sucesso" *ngIf="sucesso"><span class="ms">check_circle</span> {{ sucesso }}</p>
+          <p class="erro" *ngIf="erro"><span class="ms">error</span> {{ erro }}</p>
+
+          <button type="submit" class="btn-login" [disabled]="carregando || codigoOtp.length < 6">
+            <ng-container *ngIf="!carregando">Confirmar código <span class="ms">arrow_forward</span></ng-container>
+            <ng-container *ngIf="carregando"><span class="spinner"></span> Validando…</ng-container>
+          </button>
+        </form>
+      </ng-container>
+
+      <div class="divider"><span>ou</span></div>
+
+      <p class="register">
+        Lembrou a senha?
+        <a routerLink="/login">Entrar na conta</a>
+      </p>
     </div>
+
   </div>
 </section>

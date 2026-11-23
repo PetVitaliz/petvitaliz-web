@@ -3,7 +3,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f3f8ff;
+  background: #F6F8FC;
   font-family: 'Inter', sans-serif;
 }
 
@@ -30,7 +30,7 @@
   text-align: center;
   font-size: 26px;
   font-weight: 800;
-  color: #08245f;
+  color: #183B72;
 }
 
 .subtitle {
@@ -66,8 +66,8 @@
 }
 
 .input-box:focus-within {
-  border-color: #4758c8;
-  box-shadow: 0 0 0 4px rgba(71, 88, 200, 0.1);
+  border-color: #21479B;
+  box-shadow: 0 0 0 4px rgba(33, 71, 155, 0.1);
 }
 
 .input-box span {
@@ -119,13 +119,13 @@
   height: 56px;
   border: none;
   border-radius: 14px;
-  background: #4758c8;
-  color: #ffffff;
+  background: #FECA3E;
+  color: #183B72;
   font-size: 15px;
   font-weight: 700;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
-  box-shadow: 0 12px 22px rgba(71, 88, 200, 0.28);
+  box-shadow: 0 10px 22px rgba(254, 202, 62, 0.35);
   transition: 0.3s ease;
 }
 
@@ -135,7 +135,7 @@
 }
 
 .btn-submit:hover {
-  background: #3547b7;
+  background: #183B72;
   transform: translateY(-2px);
 }
 
@@ -148,7 +148,7 @@
   text-decoration: none;
   font-size: 14px;
   font-weight: 700;
-  color: #4254c5;
+  color: #21479B;
 }
 
 .back-login:hover {
@@ -174,7 +174,7 @@
   margin-bottom: 8px;
   font-size: 12px;
   font-weight: 800;
-  color: #08245f;
+  color: #183B72;
 }
 
 .security-box p {
@@ -213,3 +213,6 @@
     height: 52px;
   }
 }
+/* Logo no topo do card */
+.card-logo { display: block; width: fit-content; margin: 0 auto 22px; }
+.card-logo img { display: block; width: 170px; height: auto; }

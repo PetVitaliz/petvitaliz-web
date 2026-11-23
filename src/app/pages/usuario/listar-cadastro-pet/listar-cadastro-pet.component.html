@@ -56,8 +56,10 @@
             <span class="pet-item-info">
               <strong>{{ p.nome }}</strong>
               <small>{{ especieTexto(p) }} · {{ obterIdadeExtenso(p.data_nascimento) }}</small>
-              @if (planoDoPet(p); as plano) {
-                <span class="etiqueta" [attr.data-nivel]="nivelDoPlano(p)">{{ plano.nome }}</span>
+              @if (saidaDoPet(p)) {
+                <span class="etiqueta saida">Sai em {{ saidaDoPet(p) }}</span>
+              } @else if (planoDoPet(p)) {
+                <span class="etiqueta" [attr.data-nivel]="nivelDoPlano(p)">{{ planoDoPet(p).nome }}</span>
               } @else {
                 <span class="etiqueta sem">Sem plano</span>
               }
@@ -89,6 +91,14 @@
               <span class="ms">edit</span> Editar
             </button>
           </div>
+
+          @if (saidaDoPet(petSelecionado)) {
+            <div class="alerta saida">
+              <span class="ms">event_busy</span>
+              <span><strong>{{ petSelecionado.nome }} será excluído em {{ saidaDoPet(petSelecionado) }} ({{ diasParaSaida(petSelecionado) }}).</strong> O plano foi cancelado e não renova. Até lá, tudo funciona normalmente.</span>
+              <button type="button" (click)="desfazerExclusao()">Desfazer</button>
+            </div>
+          }
 
           <dl class="info-grade">
             <div><dt>Peso</dt><dd>{{ pesoTexto(petSelecionado) }}</dd></div>
@@ -126,9 +136,11 @@
             <a class="btn btn-azul" routerLink="/user/agendamento" [queryParams]="{ pet: petSelecionado.id_pet }">
               <span class="ms">calendar_add_on</span> Agendar consulta
             </a>
+            @if (!saidaDoPet(petSelecionado)) {
             <button type="button" class="btn-excluir" (click)="excluirPet()">
               <span class="ms">delete</span> Excluir pet
             </button>
+            }
           </div>
 
         </section>
@@ -169,6 +181,7 @@
             <span class="aviso-icone"><span class="ms">info</span></span>
             <h2 id="titulo-cadastro">{{ resumoFinal?.pet || 'O pet' }} foi cadastrado</h2>
             <p>Mas não conseguimos ativar o plano agora. Nenhuma cobrança foi feita. Tente contratar em Meu plano.</p>
+            @if (motivoErroPlano) { <p class="motivo"><span class="ms">error</span> {{ motivoErroPlano }}</p> }
             <div class="final-botoes">
               <a class="btn btn-azul" routerLink="/user/meu-plano">Ir para Meu plano</a>
               <button type="button" class="btn btn-texto" (click)="concluirFinalizacao()">Fechar</button>
@@ -461,3 +474,9 @@
   </ng-template>
 
 </main>
+
+@if (confirmandoExclusao && petSelecionado) {
+  <app-excluir-pet [nomePet]="petSelecionado.nome" [plano]="infoExclusao.plano" [ciclo]="infoExclusao.ciclo"
+    [fim]="infoExclusao.fim" [dias]="infoExclusao.dias" [processando]="excluindo"
+    (confirmar)="confirmarExclusao()" (cancelar)="confirmandoExclusao = false"></app-excluir-pet>
+}

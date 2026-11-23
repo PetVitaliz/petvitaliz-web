@@ -8,6 +8,8 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { PlanoMontado, economiaAnual, montarPlano, moeda } from '../../../core/utils/montar-plano';
 import { IconePetComponent } from '../../../components/icone-pet/icone-pet.component';
+import { lerPlanosDoCliente } from '../../../core/utils/planos-resposta';
+import { registrarContratacao } from '../../../core/utils/assinaturas';
 import { PagamentoPendenteComponent } from '../../../components/pagamento-pendente/pagamento-pendente.component';
 
 type Etapa = 'detalhes' | 'pagamento' | 'aguardando' | 'processando' | 'sucesso';
@@ -71,7 +73,7 @@ export class ContratarPlanoComponent implements OnInit, OnDestroy {
       }
       this.plano = montarPlano(produto);
       this.pets = pets?.pets || pets?.Pets || [];
-      (planos?.planos || []).forEach((p: any) => {
+      lerPlanosDoCliente(planos).forEach((p: any) => {
         this.petsComPlano[p.id_pet] = String(p.produto?.nome || 'um plano').split(' | ')[0];
       });
 
@@ -225,11 +227,24 @@ export class ContratarPlanoComponent implements OnInit, OnDestroy {
     this.http.post(`${environment.apiUrl}/user/planos/pagamento`, payload, { withCredentials: true }).subscribe({
       next: () => {
         if (this.metodo === 'cartao' && this.salvarCartao) this.guardarCartao();
-        this.etapa = 'sucesso';
+        registrarContratacao({
+          idPet: Number(this.pet.id_pet),
+          idProduto: Number(this.plano!.id_produto),
+          plano: this.plano!.nome,
+          ciclo: this.ciclo,
+          metodo: this.metodo,
+          cartaoFinal: this.metodo === 'cartao' ? this.cartao.numero.replace(/\D/g, '').slice(-4) : undefined,
+          bandeira: this.metodo === 'cartao' ? this.bandeira || 'Cartão' : undefined,
+          valorPago: this.totalFinal
+        });
+        // Mostra o plano já ativo em "Meu plano"
+        this.router.navigate(['/user/meu-plano'], { queryParams: { ativado: this.pet.id_pet } });
       },
       error: (err) => {
         this.etapa = 'pagamento';
-        this.erroPagamento = err.error?.mensagem || 'Não foi possível concluir o pagamento. Tente de novo.';
+        console.error('Erro ao ativar o plano:', err);
+        this.erroPagamento = err.error?.mensagem || err.error?.message || err.error?.erro
+          || `Não foi possível ativar o plano (erro ${err.status || 'de conexão'}). Tente de novo.`;
       }
     });
   }

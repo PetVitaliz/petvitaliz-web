@@ -1,3 +1,4 @@
+import { SairService } from '../../core/services/sair.service';
 import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -128,7 +129,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.logado ? this.popularesLogado : this.populares;
   }
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private sairService: SairService) {}
 
   private normalizar(valor: string): string {
     return valor.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
@@ -393,15 +394,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   sair(): void {
-    if (!confirm('Deseja realmente sair da sua conta?')) {
-      return;
-    }
     this.fecharConta();
-    this.http.get(`${environment.apiUrl}/user/logout`, { withCredentials: true }).subscribe({
-      error: (err) => console.error('Erro ao realizar logout no servidor:', err)
-    });
-    localStorage.removeItem('usuarioLogado');
-    this.router.navigate(['/']);
+    this.sairService.pedir();
   }
 
   clicarLogo(evento: Event): void {
