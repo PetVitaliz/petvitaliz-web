@@ -147,8 +147,13 @@ export class HomeAdmComponent implements OnInit {
               dataObj = new Date(ano, mes - 1, dia);
             }
 
+            const hojeZero = this.inicioDoDia(new Date());
+            const dia = this.mesmoDia(dataObj, hojeZero) ? 'Hoje'
+              : dataObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
             return {
               dataObj,
+              dia,
               hora: c.hora_inicio,
               horario: `${c.hora_inicio} - ${horaFimFormatada}`,
               pet: c.pet?.nome || 'Paciente',
@@ -168,16 +173,28 @@ export class HomeAdmComponent implements OnInit {
     });
   }
 
+  get consultasDeHoje(): any[] {
+    const hoje = this.inicioDoDia(new Date());
+    return this.consultas.filter(c => c.dataObj && this.mesmoDia(c.dataObj, hoje));
+  }
+
+  get proximasConsultas(): any[] {
+    const hoje = this.inicioDoDia(new Date());
+    return this.consultas
+      .filter(c => c.dataObj && c.dataObj >= hoje && c.cor !== 'verde')
+      .sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime() || String(a.hora).localeCompare(String(b.hora)));
+  }
+
   get consultasHomePaginadas(): any[] {
-    return this.consultas.slice(0, 5);
+    return this.proximasConsultas.slice(0, 5);
   }
 
   get consultasEmEspera(): number {
-    return this.consultas.filter(c => c.cor === 'laranja').length;
+    return this.consultasDeHoje.filter(c => c.cor === 'laranja').length;
   }
 
   get consultasFinalizadas(): number {
-    return this.consultas.filter(c => c.cor === 'verde').length;
+    return this.consultasDeHoje.filter(c => c.cor === 'verde').length;
   }
 
   get dataFormatada(): string {

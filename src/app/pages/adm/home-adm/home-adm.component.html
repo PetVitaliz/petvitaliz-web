@@ -64,10 +64,10 @@
         <svg class="ico" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
       </span>
       <div class="kpi-texto">
-        <span>Consultas</span>
+        <span>Consultas hoje</span>
         <small>{{ consultasEmEspera }} em espera · {{ consultasFinalizadas }} finalizadas</small>
       </div>
-      <strong>{{ carregandoConsultas ? '–' : consultas.length }}</strong>
+      <strong>{{ carregandoConsultas ? '–' : consultasDeHoje.length }}</strong>
     </a>
   </section>
 
@@ -81,7 +81,7 @@
         <div class="panel-head">
           <div>
             <h3>Agenda de consultas</h3>
-            <p>Próximos atendimentos · {{ dataLabel }}</p>
+            <p>Próximos atendimentos a partir de hoje · {{ dataLabel }}</p>
           </div>
           <a routerLink="/adm/consultas" class="link-action">
             Ver agenda
@@ -95,9 +95,9 @@
         </div>
 
         <ng-container *ngIf="!carregandoConsultas">
-          <ul class="lista" *ngIf="consultas.length > 0">
+          <ul class="lista" *ngIf="proximasConsultas.length > 0">
             <li *ngFor="let c of consultasHomePaginadas">
-              <span class="hora">{{ c.horario }}</span>
+              <span class="hora">{{ c.horario }}<small class="hora-dia">{{ c.dia }}</small></span>
               <div class="lista-info">
                 <strong>{{ c.pet }} <small>{{ c.raca }}</small></strong>
                 <span>{{ c.detalhe }}</span>
@@ -111,7 +111,7 @@
             </li>
           </ul>
 
-          <div class="vazio" *ngIf="consultas.length === 0">
+          <div class="vazio" *ngIf="proximasConsultas.length === 0">
             <svg class="ico" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
             Nenhuma consulta agendada.
           </div>
